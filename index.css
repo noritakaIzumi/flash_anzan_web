@@ -1,0 +1,139 @@
+/*noinspection CssUnknownTarget*/
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Kosugi+Maru&family=Open+Sans&family=Squada+One&display=swap');
+
+@font-face {
+    font-family: "ABACUS2";
+    src: url("font/ABACUS2.woff");
+}
+
+html {
+    margin: 0 50px;
+}
+
+body {
+    max-width: 800px;
+    margin: auto;
+}
+
+p {
+    margin: 10px 0;
+}
+
+hr {
+    border-top: 1px solid #8c8b8b;
+    margin: 5px 0;
+}
+
+.title {
+    margin: 20px 0;
+    font-family: 'Balsamiq Sans', cursive;
+    font-size: 60px;
+}
+
+.font {
+    font-family: 'Kosugi Maru', sans-serif;
+    font-size: 30px;
+    padding: 5px 0;
+}
+
+.calculate-area, #number-area {
+    width: 100%;
+    height: 310px;
+}
+
+.calculate-area {
+    text-align: center;
+    display: table;
+    background-color: black;
+}
+
+#number-area {
+    display: table-cell;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 90px;
+    color: limegreen;
+    font-family: 'ABACUS2', sans-serif;
+}
+
+#button-area {
+    /*text-align: center;*/
+}
+
+#config-basic, #config-advanced {
+    margin: 0 10px;
+}
+
+.input-area {
+    margin-right: 24px;
+}
+
+.label-area {
+    width: 100%;
+}
+
+.input-box {
+    padding: 10px 15px;
+    font-size: 30px;
+    width: 200px;
+    border-radius: 3px;
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.input-box:focus {
+    border: 2px solid #ff9900;
+    z-index: 10;
+    outline: 0;
+}
+
+.btn-gradient-3d {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 4px;
+    color: #ffffff;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.29);
+}
+
+.btn-gradient-3d:active {
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+    border-bottom: none;
+}
+
+.btn-blue {
+    font-family: 'Kosugi Maru', sans-serif;
+    padding: 0.25em;
+    font-size: 30px;
+    background-image: linear-gradient(#6795fd 0%, #67ceff 100%);
+    border-bottom: solid 3px #5e7fca;
+}
+
+.btn-blue:disabled {
+    /* 20 % of the enable */
+    background-image: linear-gradient(rgba(103, 149, 253, 0.2) 0%, rgba(103, 206, 255, 0.2) 100%);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.06);
+    border-bottom: solid 3px rgba(94, 127, 202, 0.2);
+}
+
+.btn-orange {
+    padding: 0.5em 1em;
+    font-family: 'Squada One', cursive;
+    font-size: 42px;
+    background-image: linear-gradient(45deg, #FFC107 0%, #ff8b5f 100%);
+    border-bottom: solid 3px #c58668;
+    margin: 5px;
+}
+
+.btn-orange:disabled {
+    /* 20 % of the enable */
+    background-image: linear-gradient(45deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 139, 95, 0.2) 100%);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.06);
+    border-bottom: solid 3px rgba(197, 134, 104, 0.2);
+}
+
+.index-config-basic, #answer-area, #number-history-area, #number-history-stringify {
+    display: none;
+}
