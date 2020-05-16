@@ -1,2 +1,8 @@
 # Editor config
 .idea
+
+# Node modules
+node_modules
+
+# Compiled app directory
+flash_anzan*

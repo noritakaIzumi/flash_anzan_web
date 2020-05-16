@@ -1,0 +1,25 @@
+{
+  "name": "flash_anzan",
+  "version": "1.0.0",
+  "description": "`index.html` をブラウザで開くとすぐに遊ぶことができます．",
+  "main": "main.js",
+  "dependencies": {
+    "electron": "^8.3.0",
+    "electron-packager": "^14.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron ./src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noritakaIzumi/flash_anzan_web.git"
+  },
+  "author": "Noritaka IZUMI <noritaka.izumi@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noritakaIzumi/flash_anzan_web/issues"
+  },
+  "homepage": "https://github.com/noritakaIzumi/flash_anzan_web#readme"
+}

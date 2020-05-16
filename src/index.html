@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Flash Anzan</title>
-    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="index.css">
+    <script type="text/javascript" src="http://www.openjs.com/scripts/events/keyboard_shortcuts/shortcut.js"></script>
 </head>
 <body>
-<h1 class="title">Flash Anzan</h1>
+<!--<h1 class="title white">Flash Anzan</h1>-->
 <div class="calculate-area">
+    <div id="answer-title" class="font">答え：</div>
     <div id="number-area"></div>
 </div>
 <hr>
@@ -21,26 +23,30 @@
 <hr>
 <div id="config-basic">
     <span class="font index-config-basic">[基本設定]</span>
-    <div class="config-block float-left" style="float: left">
+    <div class="config-block float-left">
         <div class="label-area font"><label for="digit">Digit</label></div>
         <div class="input-area">
-            <input id="digit" class="input-box" type="text" value="1">
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('digit', 1)">＋</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('digit', -1)">－</button>
+            <input id="digit" class="input-box disable-config-target" type="number" value="1">
+            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('digit', 1)">＋
+            </button>
+            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('digit', -1)">－
+            </button>
         </div>
     </div>
     <div class="config-block">
         <div class="label-area font"><label for="length">Number length</label></div>
         <div class="input-area">
-            <input id="length" class="input-box" type="text" value="5">
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('length', 1)">＋</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('length', -1)">－</button>
+            <input id="length" class="input-box disable-config-target" type="number" value="3">
+            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('length', 1)">＋
+            </button>
+            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('length', -1)">－
+            </button>
         </div>
     </div>
     <div class="config-block">
         <div class="label-area font"><label for="time">Time [second(s)]</label></div>
         <div class="input-area">
-            <input id="time" class="input-box" type="text" value="5">
+            <input id="time" class="input-box" type="number" value="5">
             <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', 1000)">＋1</button>
             <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', -1000)">－1</button>
             <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', 100)">＋0.1</button>
@@ -60,14 +66,12 @@
     </div>
 </div>
 <hr>
-<div id="answer-area" class="font">
-    <p>Answer: <span id="sum"></span>
-        <button class="btn-gradient-3d btn-blue" onclick="toggleNumberHistoryArea()">Number History</button>
-    </p>
-    <p id="number-history-area">Number history:<br><span id="number-history-display"></span></p>
+<div id="result-section" class="font">
+    <p id="answer-area">Answer: <span id="answer-number"></span></p>
+    <button class="btn-gradient-3d btn-blue" onclick="toggleNumberHistoryArea()">Number History</button>
+    <p id="number-history-area"><span id="number-history-display"></span></p>
     <p id="number-history-stringify"></p>
-    <hr>
 </div>
-<script type="text/javascript" src="./index.js"></script>
+<script type="text/javascript" src="index.js"></script>
 </body>
 </html>
