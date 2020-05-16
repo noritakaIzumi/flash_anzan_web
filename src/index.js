@@ -139,7 +139,6 @@ function flash(config = {}) {
     } else {
         numbers = generateNumbers(digitParam, lengthParam);
     }
-    console.log(numbers); // わざと出力している
     const localeStringNumbers = numbers.map((n) => n.toLocaleString());
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
@@ -210,17 +209,14 @@ function displayAnswer() {
     disableConfigTarget.map((element) => element.disabled = false);
     answerButton.disabled = true;
     answerTitle.style.display = "block";
-    // resultSection.style.display = "block";
+    resultSection.style.display = "block";
     numberArea.innerText = answerNumber.innerText;
     new Audio(answerSoundUrl).play().then(r => r);
 }
 
-function toggleNumberHistoryArea() {
-    if (numberHistoryArea.style.display === "block") {
-        numberHistoryArea.style.display = "none";
-    } else {
-        numberHistoryArea.style.display = "block";
-    }
+function displayNumberHistoryArea() {
+    document.getElementById("number-history-button").disabled = true;
+    numberHistoryArea.style.display = "block";
 }
 
 // Shortcuts
