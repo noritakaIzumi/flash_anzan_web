@@ -204,18 +204,21 @@ function flash(config = {}) {
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 }
 
+const numberHistoryButton = document.getElementById("number-history-button");
+
 function displayAnswer() {
     startButton.disabled = false;
     disableConfigTarget.map((element) => element.disabled = false);
     answerButton.disabled = true;
     answerTitle.style.display = "block";
-    resultSection.style.display = "block";
     numberArea.innerText = answerNumber.innerText;
     new Audio(answerSoundUrl).play().then(r => r);
+    resultSection.style.display = "block";
+    numberHistoryButton.disabled = false;
 }
 
 function displayNumberHistoryArea() {
-    document.getElementById("number-history-button").disabled = true;
+    numberHistoryButton.disabled = true;
     numberHistoryArea.style.display = "block";
 }
 
