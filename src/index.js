@@ -330,7 +330,7 @@ function flash(config = {}) {
     let localeStringNumbers;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
-            localeStringNumbers = numbers.map((p) => p[0].toLocaleString() + " * " + p[1].toLocaleString());
+            localeStringNumbers = numbers.map((p) => p[0].toLocaleString() + "*" + p[1].toLocaleString());
             break;
         case modeNames.addition:
         default:
