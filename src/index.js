@@ -120,8 +120,10 @@ function flash(config = {}) {
     function generateSounds() {
         let sounds = [];
         for (let i = 0; i < lengthParam; ++i) {
-            sounds.push(new Audio(tickSoundUrl));
-            sounds.push(new Audio());
+            const tickSound = new Audio(tickSoundUrl);
+            tickSound.load();
+            sounds.push(tickSound);
+            sounds.push("");
         }
         return sounds;
     }
@@ -134,7 +136,7 @@ function flash(config = {}) {
         } else if (lengthParam < numberHistory.length) {
             numbers = numberHistory.slice(0, lengthParam);
         } else {
-            numbers = numberHistory.concat(generateNumbers(digitParam, lengthParam - numberHistory.length))
+            numbers = numberHistory.concat(generateNumbers(digitParam, lengthParam - numberHistory.length));
         }
     } else {
         numbers = generateNumbers(digitParam, lengthParam);
@@ -142,13 +144,23 @@ function flash(config = {}) {
     const localeStringNumbers = numbers.map((n) => n.toLocaleString());
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
-    let index = 0;
 
     // setTimeout に登録するので，引数無しで実装する
-    function toggleNumber() {
-        numberArea.innerText = toggleNumberSuite[index];
-        soundSuite[index].play();
-        index++;
+    let flag = 0;
+    let toggleNumberFunctions = [];
+    for (let i = 0; i < toggleNumberSuite.length; i++) {
+        if (flag === 0) {
+            toggleNumberFunctions.push(() => {
+                numberArea.innerText = toggleNumberSuite[i];
+                soundSuite[i].play();
+            });
+            flag = 1;
+        } else {
+            toggleNumberFunctions.push(() => {
+                numberArea.innerText = toggleNumberSuite[i];
+            });
+            flag = 0;
+        }
     }
 
     function disableButtons() {
@@ -163,15 +175,13 @@ function flash(config = {}) {
         answerButton.disabled = false;
     }
 
-    const beep1 = new Audio(beepSoundUrl);
-    const beep2 = new Audio(beepSoundUrl);
-
-    function playBeep1() {
-        beep1.play().then(r => r);
-    }
-
-    function playBeep2() {
-        beep2.play().then(r => r);
+    let playBeepFunctions = [];
+    for (let i = 0; i < 2; i++) {
+        const beep = new Audio(beepSoundUrl);
+        beep.load();
+        playBeepFunctions.push(() => {
+            beep.play().then(r => r);
+        });
     }
 
     // Register flash events
@@ -179,19 +189,22 @@ function flash(config = {}) {
     const beepInterval = 875;
     const flashStartTiming = offset + beepInterval * 2;
     setTimeout(disableButtons, 0);
-    setTimeout(playBeep1, offset);
-    setTimeout(playBeep2, offset + beepInterval);
+    setTimeout(playBeepFunctions[0], offset);
+    setTimeout(playBeepFunctions[1], offset + beepInterval);
     // 1 回目の表示が遅延することがあるので，ウォーミングアップで 1 回見えない文字を光らせておく
     setTimeout(() => numberArea.style.color = "black", flashStartTiming - 100);
     setTimeout(() => numberArea.innerText = "0", flashStartTiming - 75);
     setTimeout(() => numberArea.innerText = "", flashStartTiming - 50);
     setTimeout(() => numberArea.style.color = "limegreen", flashStartTiming - 25);
     let toggleTiming = flashStartTiming;
+    let j = 0;
     for (let i = 0; i < localeStringNumbers.length; i++) {
-        setTimeout(toggleNumber, toggleTiming);
+        setTimeout(toggleNumberFunctions[j], toggleTiming);
+        j++;
         toggleTiming += flashOnTime;
-        setTimeout(toggleNumber, toggleTiming);
+        setTimeout(toggleNumberFunctions[j], toggleTiming);
         toggleTiming += flashOffTime;
+        j++;
     }
     setTimeout(enableButtons, flashStartTiming + timeMsParam);
 
