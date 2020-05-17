@@ -7,70 +7,123 @@
     <script type="text/javascript" src="http://www.openjs.com/scripts/events/keyboard_shortcuts/shortcut.js"></script>
 </head>
 <body>
-<!--<h1 class="title white">Flash Anzan</h1>-->
 <div class="calculate-area">
-    <div id="answer-title" class="font">答え：</div>
-    <div id="number-area"></div>
+    <div id="answer-title" class="font display-none">答え：</div>
+    <div id="question-number-area" class="number-area"></div>
 </div>
 <hr>
-<div id="button-area">
-    <button id="start-button" class="btn-gradient-3d btn-orange font" onclick="flash()">Start</button>
-    <button id="answer-button" class="btn-gradient-3d btn-orange font" onclick="displayAnswer()" disabled>Answer
+<div id="play-button-area" class="operation-panel">
+    <button id="start-button" class="btn-gradient-3d btn-orange font button" onclick="flash()">
+        Start
     </button>
-    <button id="repeat-button" class="btn-gradient-3d btn-orange font" onclick="flash({repeat: true})" disabled>Repeat
+    <button id="answer-button" class="btn-gradient-3d btn-orange font button" onclick="displayAnswer()" disabled>
+        Answer
+    </button>
+    <button id="repeat-button" class="btn-gradient-3d btn-orange font button" onclick="flash({repeat: true})" disabled>
+        Repeat
     </button>
 </div>
 <hr>
-<div id="config-basic">
-    <span class="font index-config-basic">[基本設定]</span>
-    <div class="config-block float-left">
-        <div class="label-area font"><label for="digit">Digit</label></div>
-        <div class="input-area">
-            <input id="digit" class="input-box disable-config-target" type="number" value="1">
-            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('digit', 1)">＋
-            </button>
-            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('digit', -1)">－
-            </button>
-        </div>
-    </div>
-    <div class="config-block">
-        <div class="label-area font"><label for="length">Number length</label></div>
-        <div class="input-area">
-            <input id="length" class="input-box disable-config-target" type="number" value="3">
-            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('length', 1)">＋
-            </button>
-            <button class="btn-gradient-3d btn-blue disable-config-target" onclick="increaseParam('length', -1)">－
-            </button>
-        </div>
-    </div>
-    <div class="config-block">
-        <div class="label-area font"><label for="time">Time [second(s)]</label></div>
-        <div class="input-area">
-            <input id="time" class="input-box" type="number" value="5">
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', 1000)">＋1</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', -1000)">－1</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', 100)">＋0.1</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('time', -100)">－0.1</button>
-        </div>
-    </div>
+<div id="mode-button-area" class="operation-panel">
+    <button id="addition-button" class="btn-gradient-3d btn-blue font button btn-blue-active"
+            onclick="changeMode((this.id).split('-')[0]);">たし算
+    </button>
+    <button id="subtraction-button" class="btn-gradient-3d btn-blue font button"
+            onclick="changeMode((this.id).split('-')[0]);" disabled>ひき算（加減算）
+    </button>
+    <button id="multiplication-button" class="btn-gradient-3d btn-blue font button"
+            onclick="changeMode((this.id).split('-')[0]);">かけ算
+    </button>
 </div>
-<div id="config-advanced" style="display: none;">
-    <span class="font">[高度な設定]</span>
-    <div class="config-block float-left">
-        <div class="label-area font"><label for="flash-rate">Flash rate [percent]</label></div>
-        <div class="input-area">
-            <input id="flash-rate" class="input-box" type="text" value="60">
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('flashRate', 1)">＋</button>
-            <button class="btn-gradient-3d btn-blue" onclick="increaseParam('flashRate', -1)">－</button>
+<hr>
+<div id="current-mode" class="display-none"></div>
+<div id="mode-config-area">
+    <div id="addition-mode-config">
+        <div class="operation-panel float-left">
+            <div class="font">[基本設定]</div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="addition-digit">桁数</label></div>
+                <div class="input-area">
+                    <input id="addition-digit" class="input-box disable-config-target" type="number"><span class="font"> 桁</span>
+                </div>
+            </div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="addition-length">口数</label></div>
+                <div class="input-area">
+                    <input id="addition-length" class="input-box disable-config-target" type="number"><span
+                        class="font"> 口</span>
+                </div>
+            </div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="addition-time">秒数</label></div>
+                <div class="input-area">
+                    <input id="addition-time" class="input-box" type="number"><span class="font"> 秒</span>
+                </div>
+            </div>
+        </div>
+        <div class="operation-panel" style="display: none;">
+            <div class="font">[高度な設定]</div>
+            <div class="config-block">
+                <div class="label-area font"><label for="addition-flashrate">Flash rate</label>
+                </div>
+                <div class="input-area">
+                    <input id="addition-flashrate" class="input-box" type="number"><span class="font"> ％</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="multiplication-mode-config">
+        <div class="operation-panel float-left">
+            <div class="font">[基本設定]</div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="multiplication-digit-1">かけられる数</label></div>
+                <div class="input-area">
+                    <input id="multiplication-digit-1" class="input-box disable-config-target" type="number"><span
+                        class="font"> 桁 ×</span>
+                </div>
+            </div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="multiplication-digit-2">かける数</label></div>
+                <div class="input-area">
+                    <input id="multiplication-digit-2" class="input-box disable-config-target" type="number"><span
+                        class="font"> 桁</span>
+                </div>
+            </div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="multiplication-length">口数</label></div>
+                <div class="input-area">
+                    <input id="multiplication-length" class="input-box disable-config-target" type="number"><span
+                        class="font"> 口</span>
+                </div>
+            </div>
+            <div class="config-block float-left">
+                <div class="label-area font"><label for="multiplication-time">秒数</label></div>
+                <div class="input-area">
+                    <input id="multiplication-time" class="input-box" type="number"><span class="font"> 秒</span>
+                </div>
+            </div>
+        </div>
+        <div class="operation-panel" style="display: none;">
+            <div class="font">[高度な設定]</div>
+            <div class="config-block">
+                <div class="label-area font"><label for="multiplication-flashrate">Flash rate</label>
+                </div>
+                <div class="input-area">
+                    <input id="multiplication-flashrate" class="input-box" type="number"><span class="font"> ％</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <hr>
-<div id="result-section" class="font">
-    <p id="answer-area">Answer: <span id="answer-number"></span></p>
-    <button id="number-history-button" class="btn-gradient-3d btn-blue" onclick="displayNumberHistoryArea()">Number History</button>
-    <p id="number-history-area"><span id="number-history-display"></span></p>
-    <p id="number-history-stringify"></p>
+<div id="result-section" class="operation-panel font display-none">
+    <p id="previous-mode" style="display: none;"></p>
+    <p id="answer-area" style="display: none;">Answer: <span id="answer-number"></span></p>
+    <button id="number-history-button" class="btn-gradient-3d btn-blue"
+            onclick="displayNumberHistoryArea()">Number History
+    </button>
+    <p id="number-history-area" class="display-none"><span id="number-history-display"></span></p>
+    <p id="number-history-stringify" style="display: none;"></p>
 </div>
 <script type="text/javascript" src="index.js"></script>
 </body>

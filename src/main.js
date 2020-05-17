@@ -10,7 +10,7 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
         },
-        width: 820, height: 820,
+        width: 800, height: 800,
     });
 
     // メインウィンドウに表示するURLを指定します
