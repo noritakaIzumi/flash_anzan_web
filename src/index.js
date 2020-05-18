@@ -94,18 +94,6 @@ additionButton = document.getElementById("addition-button");
 subtractionButton = document.getElementById("subtraction-button");
 multiplicationButton = document.getElementById("multiplication-button");
 
-(() => {
-    // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
-    new Audio(beepSoundUrl).load();
-    new Audio(tickSoundUrl).load();
-    new Audio(answerSoundUrl).load();
-    // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
-    setTimeout(() => numberArea.style.color = "black", 100);
-    setTimeout(() => numberArea.innerText = "0", 200);
-    setTimeout(() => numberArea.innerText = "", 300);
-    setTimeout(() => numberArea.style.color = "limegreen", 400);
-})();
-
 function fixValue(limit, targetValue) {
     return Math.floor(Math.min(limit.upper, Math.max(limit.lower, targetValue)));
 }
@@ -195,8 +183,6 @@ function setDefaultValue() {
     currentMode.innerText = modeNames.addition;
     changeMode(currentMode.innerText);
 }
-
-setDefaultValue();
 
 function changeMode(mode) {
     const buttonIdName = mode + '-button';
@@ -458,15 +444,6 @@ function displayNumberHistoryArea() {
     numberHistoryArea.style.display = "block";
 }
 
-// Shortcuts
-shortcut.add("s", () => startButton.click());
-shortcut.add("a", () => answerButton.click());
-shortcut.add("r", () => repeatButton.click());
-
-shortcut.add("z", () => additionButton.click());
-shortcut.add("x", () => subtractionButton.click());
-shortcut.add("c", () => multiplicationButton.click());
-
 function changeShortcut(mode) {
     shortcut.remove("y");
     shortcut.remove("h");
@@ -510,4 +487,28 @@ function changeShortcut(mode) {
     }
 }
 
-shortcut.add("n", () => numberHistoryButton.click());
+(() => {
+    // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
+    setTimeout(() => new Audio(beepSoundUrl).load(), 100);
+    setTimeout(() => new Audio(tickSoundUrl).load(), 200);
+    setTimeout(() => new Audio(answerSoundUrl).load(), 300);
+
+    // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
+    setTimeout(() => numberArea.style.color = "black", 400);
+    setTimeout(() => numberArea.innerText = "0", 500);
+    setTimeout(() => numberArea.innerText = "", 600);
+    setTimeout(() => numberArea.style.color = "limegreen", 700);
+
+    setTimeout(setDefaultValue, 800);
+
+    // Register Shortcuts
+    shortcut.add("s", () => startButton.click());
+    shortcut.add("a", () => answerButton.click());
+    shortcut.add("r", () => repeatButton.click());
+
+    shortcut.add("z", () => additionButton.click());
+    shortcut.add("x", () => subtractionButton.click());
+    shortcut.add("c", () => multiplicationButton.click());
+
+    shortcut.add("n", () => numberHistoryButton.click());
+})();

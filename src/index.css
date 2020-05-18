@@ -31,18 +31,29 @@ hr {
     font-size: 60px;
 }
 
-.font {
-    font-family: 'Kosugi Maru', sans-serif;
-    font-size: 24px;
-    color: white;
-    padding: 5px 0;
-}
-
 .white {
     color: white;
 }
 
-.float-left {
+.font {
+    font-family: 'Kosugi Maru', sans-serif;
+    color: white;
+    padding: 5px 0;
+}
+
+@media screen and (min-width: 500px) {
+    .font {
+        font-size: 24px;
+    }
+}
+
+@media screen and (max-width: 499px) {
+    .font {
+        font-size: 16px;
+    }
+}
+
+.config-block-float-left {
     float: left;
 }
 
@@ -50,7 +61,26 @@ hr {
 
 .calculate-area, .number-area {
     width: 100%;
-    height: 400px;
+}
+
+@media screen and (min-width: 500px) {
+    .calculate-area, .number-area {
+        height: 400px;
+    }
+
+    .number-area {
+        font-size: 90px;
+    }
+}
+
+@media screen and (max-width: 499px) {
+    .calculate-area, .number-area {
+        height: 270px;
+    }
+
+    .number-area {
+        font-size: 60px;
+    }
 }
 
 .calculate-area {
@@ -70,7 +100,6 @@ hr {
     display: table-cell;
     vertical-align: middle;
     font-weight: bold;
-    font-size: 90px;
     font-family: 'ABACUS2', sans-serif;
 }
 
@@ -80,8 +109,19 @@ hr {
     margin: 0 10px;
 }
 
-.button {
-    margin-right: 10px;
+@media screen and (min-width: 500px) {
+    .button {
+        margin-right: 10px;
+    }
+}
+
+@media screen and (max-width: 499px) {
+    .button {
+    }
+}
+
+.config-block {
+    display: inline-block;
 }
 
 .input-area {
@@ -89,14 +129,32 @@ hr {
     margin-bottom: 6px;
 }
 
-.label-area {
-    width: 100%;
+@media screen and (min-width: 500px) {
+    .label-area {
+        width: 100%;
+    }
+
+    .input-box {
+        font-size: 24px;
+        width: 120px;
+        padding: 10px 15px;
+    }
+}
+
+@media screen and (max-width: 499px) {
+    .label-area {
+        float: left;
+        padding: 5px 0;
+    }
+
+    .input-box {
+        font-size: 16px;
+        width: 81px;
+        padding: 5px 10px;
+    }
 }
 
 .input-box {
-    padding: 10px 15px;
-    font-size: 24px;
-    width: 120px;
     border-radius: 3px;
     border: 2px solid #ddd;
     box-sizing: border-box;
@@ -131,7 +189,6 @@ hr {
 .btn-blue {
     font-family: 'Kosugi Maru', sans-serif;
     padding: 0.25em;
-    font-size: 24px;
     background-image: linear-gradient(#6795fd 0%, #67ceff 100%);
     border-bottom: solid 3px #5e7fca;
 }
@@ -139,7 +196,6 @@ hr {
 .btn-blue-active {
     font-family: 'Kosugi Maru', sans-serif;
     padding: 0.25em;
-    font-size: 24px;
     background-image: linear-gradient(#9567fd 0%, #ce67ff 100%);
     border-bottom: solid 3px #ca5ea8;
 }
@@ -152,9 +208,7 @@ hr {
 }
 
 .btn-orange {
-    padding: 0.5em 1em;
     font-family: 'Squada One', cursive;
-    font-size: 30px;
     background-image: linear-gradient(45deg, #FFC107 0%, #ff8b5f 100%);
     border-bottom: solid 3px #c58668;
 }
@@ -164,6 +218,36 @@ hr {
     background-image: linear-gradient(45deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 139, 95, 0.2) 100%);
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.06);
     border-bottom: solid 3px rgba(197, 134, 104, 0.2);
+}
+
+@media screen and (min-width: 500px) {
+    .btn-blue {
+        font-size: 24px;
+    }
+
+    .btn-blue-active {
+        font-size: 24px;
+    }
+
+    .btn-orange {
+        padding: 0.5em 1em;
+        font-size: 30px;
+    }
+}
+
+@media screen and (max-width: 499px) {
+    .btn-blue {
+        font-size: 16px;
+    }
+
+    .btn-blue-active {
+        font-size: 16px;
+    }
+
+    .btn-orange {
+        padding: 0.25em 0.5em;
+        font-size: 20px;
+    }
 }
 
 .display-none {

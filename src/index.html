@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Flash Anzan</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
     <link rel="shortcut icon" href="image/favicon.ico" />
     <link rel="stylesheet" href="index.css">
     <script type="text/javascript" src="lib/shortcut.js"></script>
@@ -30,7 +31,7 @@
             onclick="changeMode((this.id).split('-')[0]);">たし算
     </button>
     <button id="subtraction-button" class="btn-gradient-3d btn-blue font button"
-            onclick="changeMode((this.id).split('-')[0]);" disabled>ひき算（加減算）
+            onclick="changeMode((this.id).split('-')[0]);" disabled>ひき算
     </button>
     <button id="multiplication-button" class="btn-gradient-3d btn-blue font button"
             onclick="changeMode((this.id).split('-')[0]);">かけ算
@@ -42,13 +43,13 @@
     <div id="addition-mode-config">
         <div class="operation-panel">
             <div class="font">[基本設定]</div>
-            <div class="config-block float-left">
+            <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="addition-digit">桁数</label></div>
                 <div class="input-area">
                     <input id="addition-digit" class="input-box disable-config-target" type="number"><span class="font"> 桁</span>
                 </div>
             </div>
-            <div class="config-block float-left">
+            <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="addition-length">口数</label></div>
                 <div class="input-area">
                     <input id="addition-length" class="input-box disable-config-target" type="number"><span
@@ -76,21 +77,21 @@
     <div id="multiplication-mode-config">
         <div class="operation-panel">
             <div class="font">[基本設定]</div>
-            <div class="config-block float-left">
+            <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="multiplication-digit-1">かけられる数</label></div>
                 <div class="input-area">
                     <input id="multiplication-digit-1" class="input-box disable-config-target" type="number"><span
-                        class="font"> 桁 ×</span>
+                        class="font"> 桁×</span>
                 </div>
             </div>
-            <div class="config-block float-left">
+            <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="multiplication-digit-2">かける数</label></div>
                 <div class="input-area">
                     <input id="multiplication-digit-2" class="input-box disable-config-target" type="number"><span
                         class="font"> 桁</span>
                 </div>
             </div>
-            <div class="config-block float-left">
+            <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="multiplication-length">口数</label></div>
                 <div class="input-area">
                     <input id="multiplication-length" class="input-box disable-config-target" type="number"><span
