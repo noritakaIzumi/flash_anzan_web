@@ -100,10 +100,10 @@ multiplicationButton = document.getElementById("multiplication-button");
     new Audio(tickSoundUrl).load();
     new Audio(answerSoundUrl).load();
     // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
-    setTimeout(() => numberArea.style.color = "black", 25);
-    setTimeout(() => numberArea.innerText = "0", 50);
-    setTimeout(() => numberArea.innerText = "", 75);
-    setTimeout(() => numberArea.style.color = "limegreen", 100);
+    setTimeout(() => numberArea.style.color = "black", 100);
+    setTimeout(() => numberArea.innerText = "0", 200);
+    setTimeout(() => numberArea.innerText = "", 300);
+    setTimeout(() => numberArea.style.color = "limegreen", 400);
 })();
 
 function fixValue(limit, targetValue) {
