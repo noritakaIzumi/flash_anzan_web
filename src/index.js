@@ -463,9 +463,9 @@ shortcut.add("s", () => startButton.click());
 shortcut.add("a", () => answerButton.click());
 shortcut.add("r", () => repeatButton.click());
 
-shortcut.add("1", () => additionButton.click());
-shortcut.add("2", () => subtractionButton.click());
-shortcut.add("3", () => multiplicationButton.click());
+shortcut.add("z", () => additionButton.click());
+shortcut.add("x", () => subtractionButton.click());
+shortcut.add("c", () => multiplicationButton.click());
 
 function changeShortcut(mode) {
     shortcut.remove("y");
