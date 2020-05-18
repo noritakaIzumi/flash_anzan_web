@@ -65,9 +65,10 @@ answerNumber = document.getElementById("answer-number");
 numberHistoryArea = document.getElementById("number-history-area");
 
 soundDirectory = "./sound";
-beepSoundUrl = soundDirectory + "/beep.wav";
-tickSoundUrl = soundDirectory + "/tick.wav";
-answerSoundUrl = soundDirectory + "/answer.wav";
+soundNameExtension = ".ogg";
+beepSoundUrl = soundDirectory + "/beep" + soundNameExtension;
+tickSoundUrl = soundDirectory + "/tick" + soundNameExtension;
+answerSoundUrl = soundDirectory + "/answer" + soundNameExtension;
 
 currentMode = document.getElementById("current-mode");
 
@@ -92,6 +93,18 @@ numberHistoryButton = document.getElementById("number-history-button");
 additionButton = document.getElementById("addition-button");
 subtractionButton = document.getElementById("subtraction-button");
 multiplicationButton = document.getElementById("multiplication-button");
+
+(() => {
+    // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
+    new Audio(beepSoundUrl).load();
+    new Audio(tickSoundUrl).load();
+    new Audio(answerSoundUrl).load();
+    // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
+    setTimeout(() => numberArea.style.color = "black", 25);
+    setTimeout(() => numberArea.innerText = "0", 50);
+    setTimeout(() => numberArea.innerText = "", 75);
+    setTimeout(() => numberArea.style.color = "limegreen", 100);
+})();
 
 function fixValue(limit, targetValue) {
     return Math.floor(Math.min(limit.upper, Math.max(limit.lower, targetValue)));
@@ -415,11 +428,6 @@ function flash(config = {}) {
     setTimeout(disableButtons, 0);
     setTimeout(playBeepFunctions[0], offset);
     setTimeout(playBeepFunctions[1], offset + beepInterval);
-    // 1 回目の表示が遅延することがあるので，ウォーミングアップで 1 回見えない文字を光らせておく
-    setTimeout(() => numberArea.style.color = "black", flashStartTiming - 100);
-    setTimeout(() => numberArea.innerText = "0", flashStartTiming - 75);
-    setTimeout(() => numberArea.innerText = "", flashStartTiming - 50);
-    setTimeout(() => numberArea.style.color = "limegreen", flashStartTiming - 25);
     let toggleTiming = flashStartTiming;
     for (let i = 0; i < toggleNumberSuite.length; i++) {
         setTimeout(toggleNumberFunctions[i], toggleTiming);
