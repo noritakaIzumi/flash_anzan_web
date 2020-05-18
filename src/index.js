@@ -1,11 +1,13 @@
 // TODO: このファイルをクラス化して共通部分をまとめる
 //  switch 文もまとめる
 
-const modeNames = {
+/* Global variables */
+
+modeNames = {
     addition: "addition",
     multiplication: "multiplication",
 };
-const limits = {
+limits = {
     addition: {
         digit: {
             upper: 14,
@@ -47,6 +49,49 @@ const limits = {
         },
     }
 };
+
+answerTitle = document.getElementById("answer-title");
+numberArea = document.getElementById("question-number-area");
+
+startButton = document.getElementById("start-button");
+answerButton = document.getElementById("answer-button");
+repeatButton = document.getElementById("repeat-button");
+
+disableConfigTarget = Array.from(document.getElementsByClassName("disable-config-target"));
+
+resultSection = document.getElementById("result-section");
+previousMode = document.getElementById("previous-mode");
+answerNumber = document.getElementById("answer-number");
+numberHistoryArea = document.getElementById("number-history-area");
+
+soundDirectory = "./sound";
+beepSoundUrl = soundDirectory + "/beep.wav";
+tickSoundUrl = soundDirectory + "/tick.wav";
+answerSoundUrl = soundDirectory + "/answer.wav";
+
+currentMode = document.getElementById("current-mode");
+
+additionDigitElement = document.getElementById("addition-digit");
+additionLengthElement = document.getElementById("addition-length");
+additionTimeElement = document.getElementById("addition-time");
+additionFlashRateElement = document.getElementById("addition-flashrate");
+multiplicationDigit1Element = document.getElementById("multiplication-digit-1");
+multiplicationDigit2Element = document.getElementById("multiplication-digit-2");
+multiplicationLengthElement = document.getElementById("multiplication-length");
+multiplicationTimeElement = document.getElementById("multiplication-time");
+multiplicationFlashRateElement = document.getElementById("multiplication-flashrate");
+
+multiplyFigure = "*";
+
+numberHistoryDisplay = document.getElementById("number-history-display");
+numberHistoryDisplayDelimiter = " → ";
+numberHistoryString = document.getElementById("number-history-stringify");
+numberHistoryStringifyDelimiter = "|";
+
+numberHistoryButton = document.getElementById("number-history-button");
+additionButton = document.getElementById("addition-button");
+subtractionButton = document.getElementById("subtraction-button");
+multiplicationButton = document.getElementById("multiplication-button");
 
 function fixValue(limit, targetValue) {
     return Math.floor(Math.min(limit.upper, Math.max(limit.lower, targetValue)));
@@ -103,37 +148,6 @@ function increaseParam(id, amount) {
     }
 }
 
-const answerTitle = document.getElementById("answer-title");
-const numberArea = document.getElementById("question-number-area");
-
-const startButton = document.getElementById("start-button");
-const answerButton = document.getElementById("answer-button");
-const repeatButton = document.getElementById("repeat-button");
-
-const disableConfigTarget = Array.from(document.getElementsByClassName("disable-config-target"));
-
-const resultSection = document.getElementById("result-section");
-const previousMode = document.getElementById("previous-mode");
-const answerNumber = document.getElementById("answer-number");
-const numberHistoryArea = document.getElementById("number-history-area");
-
-const soundDirectory = "./sound";
-const beepSoundUrl = soundDirectory + "/beep.wav";
-const tickSoundUrl = soundDirectory + "/tick.wav";
-const answerSoundUrl = soundDirectory + "/answer.wav";
-
-const currentMode = document.getElementById("current-mode");
-
-const additionDigitElement = document.getElementById("addition-digit");
-const additionLengthElement = document.getElementById("addition-length");
-const additionTimeElement = document.getElementById("addition-time");
-const additionFlashRateElement = document.getElementById("addition-flashrate");
-const multiplicationDigit1Element = document.getElementById("multiplication-digit-1");
-const multiplicationDigit2Element = document.getElementById("multiplication-digit-2");
-const multiplicationLengthElement = document.getElementById("multiplication-length");
-const multiplicationTimeElement = document.getElementById("multiplication-time");
-const multiplicationFlashRateElement = document.getElementById("multiplication-flashrate");
-
 function setDefaultValue() {
     additionDigitElement.max = limits.addition.digit.upper;
     additionDigitElement.min = limits.addition.digit.lower;
@@ -189,11 +203,6 @@ function changeMode(mode) {
     changeShortcut(mode);
     currentMode.innerText = mode;
 }
-
-const numberHistoryDisplay = document.getElementById("number-history-display");
-const numberHistoryDisplayDelimiter = " → ";
-const numberHistoryString = document.getElementById("number-history-stringify");
-const numberHistoryStringifyDelimiter = "|";
 
 function flash(config = {}) {
     const startButton = document.getElementById("start-button");
@@ -330,7 +339,7 @@ function flash(config = {}) {
     let localeStringNumbers;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
-            localeStringNumbers = numbers.map((p) => p[0].toLocaleString() + "*" + p[1].toLocaleString());
+            localeStringNumbers = numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
             break;
         case modeNames.addition:
         default:
@@ -420,8 +429,6 @@ function flash(config = {}) {
     setTimeout(enableButtons, flashStartTiming + timeMsParam);
 }
 
-const numberHistoryButton = document.getElementById("number-history-button");
-
 function displayAnswer() {
     answerButton.disabled = true;
     new Audio(answerSoundUrl).play().then(r => r);
@@ -442,10 +449,6 @@ function displayNumberHistoryArea() {
     numberHistoryButton.disabled = true;
     numberHistoryArea.style.display = "block";
 }
-
-const additionButton = document.getElementById("addition-button");
-const subtractionButton = document.getElementById("subtraction-button");
-const multiplicationButton = document.getElementById("multiplication-button");
 
 // Shortcuts
 shortcut.add("s", () => startButton.click());
