@@ -204,9 +204,6 @@ function changeMode(mode) {
 }
 
 function flash(config = {}) {
-    const startButton = document.getElementById("start-button");
-    const repeatButton = document.getElementById("repeat-button");
-
     let digitParam;
     let lengthParam;
     let timeMsParam;
@@ -416,8 +413,8 @@ function flash(config = {}) {
     setTimeout(playBeepFunctions[1], offset + beepInterval);
     let toggleTiming = flashStartTiming;
     for (let i = 0; i < toggleNumberSuite.length; i++) {
+        setTimeout(playTickFunctions[i], toggleTiming - 10);
         setTimeout(toggleNumberFunctions[i], toggleTiming);
-        setTimeout(playTickFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
     setTimeout(enableButtons, flashStartTiming + timeMsParam);
@@ -425,6 +422,7 @@ function flash(config = {}) {
 
 function displayAnswer() {
     answerButton.disabled = true;
+    repeatButton.disabled = true;
     new Audio(answerSoundUrl).play().then(r => r);
 
     setTimeout(() => {
@@ -432,6 +430,7 @@ function displayAnswer() {
         numberArea.innerText = answerNumber.innerText;
 
         startButton.disabled = false;
+        repeatButton.disabled = false;
         disableConfigTarget.map((element) => element.disabled = false);
 
         numberHistoryButton.disabled = false;
@@ -500,6 +499,9 @@ function changeShortcut(mode) {
     setTimeout(() => numberArea.style.color = "limegreen", 700);
 
     setTimeout(setDefaultValue, 800);
+    setTimeout(() => {
+        startButton.disabled = false;
+    }, 900);
 
     // Register Shortcuts
     shortcut.add("s", () => startButton.click());
