@@ -7,45 +7,64 @@ modeNames = {
     addition: "addition",
     multiplication: "multiplication",
 };
-limits = {
+param = {
     addition: {
         digit: {
-            upper: 14,
-            lower: 1,
+            max: 14,
+            min: 1,
+            default: 1,
         },
         length: {
-            upper: 30,
-            lower: 2,
+            max: 30,
+            min: 2,
+            default: 3,
         },
         time: {
-            upper: 30000,
-            lower: 1000,
+            max: 30000,
+            min: 1000,
+            default: 5000,
         },
         flashRate: {
-            upper: 99,
-            lower: 1,
+            max: 99,
+            min: 1,
+            default: 60,
+        },
+        offset: {
+            max: 500,
+            min: -500,
+            default: 10,
         },
     },
     multiplication: {
         digit1: {
-            upper: 7,
-            lower: 1,
+            max: 7,
+            min: 1,
+            default: 1,
         },
         digit2: {
-            upper: 7,
-            lower: 1,
+            max: 7,
+            min: 1,
+            default: 1,
         },
         length: {
-            upper: 30,
-            lower: 2,
+            max: 30,
+            min: 2,
+            default: 2,
         },
         time: {
-            upper: 30000,
-            lower: 1000,
+            max: 30000,
+            min: 1000,
+            default: 5000,
         },
         flashRate: {
-            upper: 99,
-            lower: 1,
+            max: 99,
+            min: 1,
+            default: 60,
+        },
+        offset: {
+            max: 500,
+            min: -500,
+            default: 10,
         },
     }
 };
@@ -53,9 +72,15 @@ limits = {
 answerTitle = document.getElementById("answer-title");
 numberArea = document.getElementById("question-number-area");
 
-startButton = document.getElementById("start-button");
-answerButton = document.getElementById("answer-button");
-repeatButton = document.getElementById("repeat-button");
+button = {
+    start: document.getElementById("start-button"),
+    answer: document.getElementById("answer-button"),
+    repeat: document.getElementById("repeat-button"),
+    numberHistory: document.getElementById("number-history-button"),
+    addition: document.getElementById("addition-button"),
+    subtraction: document.getElementById("subtraction-button"),
+    multiplication: document.getElementById("multiplication-button"),
+};
 
 disableConfigTarget = Array.from(document.getElementsByClassName("disable-config-target"));
 
@@ -64,23 +89,35 @@ previousMode = document.getElementById("previous-mode");
 answerNumber = document.getElementById("answer-number");
 numberHistoryArea = document.getElementById("number-history-area");
 
-soundDirectory = "./sound";
-soundNameExtension = ".ogg";
-beepSoundUrl = soundDirectory + "/beep" + soundNameExtension;
-tickSoundUrl = soundDirectory + "/tick" + soundNameExtension;
-answerSoundUrl = soundDirectory + "/answer" + soundNameExtension;
+sound = {
+    directory: "./sound",
+    extension: ".ogg",
+}
+soundUrl = {
+    beep: sound.directory + "/beep" + sound.extension,
+    tick: sound.directory + "/tick" + sound.extension,
+    answer: sound.directory + "/answer" + sound.extension,
+}
 
 currentMode = document.getElementById("current-mode");
 
-additionDigitElement = document.getElementById("addition-digit");
-additionLengthElement = document.getElementById("addition-length");
-additionTimeElement = document.getElementById("addition-time");
-additionFlashRateElement = document.getElementById("addition-flashrate");
-multiplicationDigit1Element = document.getElementById("multiplication-digit-1");
-multiplicationDigit2Element = document.getElementById("multiplication-digit-2");
-multiplicationLengthElement = document.getElementById("multiplication-length");
-multiplicationTimeElement = document.getElementById("multiplication-time");
-multiplicationFlashRateElement = document.getElementById("multiplication-flashrate");
+element = {
+    addition: {
+        digit: document.getElementById("addition-digit"),
+        length: document.getElementById("addition-length"),
+        time: document.getElementById("addition-time"),
+        flashRate: document.getElementById("addition-flashRate"),
+        offset: document.getElementById("addition-offset"),
+    },
+    multiplication: {
+        digit1: document.getElementById("multiplication-digit-1"),
+        digit2: document.getElementById("multiplication-digit-2"),
+        length: document.getElementById("multiplication-length"),
+        time: document.getElementById("multiplication-time"),
+        flashRate: document.getElementById("multiplication-flashRate"),
+        offset: document.getElementById("multiplication-offset"),
+    },
+};
 
 multiplyFigure = "*";
 
@@ -89,13 +126,8 @@ numberHistoryDisplayDelimiter = " → ";
 numberHistoryString = document.getElementById("number-history-stringify");
 numberHistoryStringifyDelimiter = "|";
 
-numberHistoryButton = document.getElementById("number-history-button");
-additionButton = document.getElementById("addition-button");
-subtractionButton = document.getElementById("subtraction-button");
-multiplicationButton = document.getElementById("multiplication-button");
-
 function fixValue(limit, targetValue) {
-    return Math.floor(Math.min(limit.upper, Math.max(limit.lower, targetValue)));
+    return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
 }
 
 function increaseParam(id, amount) {
@@ -106,80 +138,41 @@ function increaseParam(id, amount) {
 
     const currentValue = Number(element.value);
     const paramName = id.split("-")[1];
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            switch (paramName) {
-                case "digit":
-                    switch (id.split("-")[2]) {
-                        case "1":
-                            element.value = fixValue(limits.multiplication.digit1, Math.floor(currentValue) + amount).toString();
-                            return;
-                        case "2":
-                            element.value = fixValue(limits.multiplication.digit2, Math.floor(currentValue) + amount).toString();
-                            return;
-                    }
-                    return;
-                case "length":
-                    element.value = fixValue(limits.multiplication.length, Math.floor(currentValue) + amount).toString();
-                    return;
-                case "time":
-                    element.value = (fixValue(limits.multiplication.time, currentValue * 1000 + amount) / 1000).toString();
-                    return;
-                case "flashrate":
-                    element.value = fixValue(limits.multiplication.flashRate, currentValue + amount).toString();
-                    return;
+    switch (paramName) {
+        case "digit":
+            if (currentMode.innerText === modeNames.multiplication) {
+                element.value = fixValue(param[currentMode.innerText][paramName + id.split("-")[2]], Math.floor(currentValue) + amount).toString();
+            } else if (currentMode.innerText === modeNames.addition) {
+                element.value = fixValue(param[currentMode.innerText][paramName], Math.floor(currentValue) + amount).toString();
             }
-            break;
-        case modeNames.addition:
-        default:
-            switch (paramName) {
-                case "digit":
-                    element.value = fixValue(limits.addition.digit, Math.floor(currentValue) + amount).toString();
-                    return;
-                case "length":
-                    element.value = fixValue(limits.addition.length, Math.floor(currentValue) + amount).toString();
-                    return;
-                case "time":
-                    element.value = (fixValue(limits.addition.time, currentValue * 1000 + amount) / 1000).toString();
-                    return;
-                case "flashrate":
-                    element.value = fixValue(limits.addition.flashRate, currentValue + amount).toString();
-                    return;
-            }
+            return;
+        case "length":
+            element.value = fixValue(param[currentMode.innerText][paramName], Math.floor(currentValue) + amount).toString();
+            return;
+        case "time":
+            element.value = (fixValue(param[currentMode.innerText][paramName], currentValue * 1000 + amount) / 1000).toString();
+            return;
+        case "flashRate":
+            element.value = fixValue(param[currentMode.innerText][paramName], currentValue + amount).toString();
+            return;
     }
 }
 
-function setDefaultValue() {
-    additionDigitElement.max = limits.addition.digit.upper;
-    additionDigitElement.min = limits.addition.digit.lower;
-    additionLengthElement.max = limits.addition.length.upper;
-    additionLengthElement.min = limits.addition.length.lower;
-    additionTimeElement.max = limits.addition.time.upper / 1000;
-    additionTimeElement.min = limits.addition.time.lower / 1000;
-    additionFlashRateElement.max = limits.addition.flashRate.upper;
-    additionFlashRateElement.min = limits.addition.flashRate.lower;
-    multiplicationDigit1Element.max = limits.multiplication.digit1.upper;
-    multiplicationDigit1Element.min = limits.multiplication.digit1.lower;
-    multiplicationDigit2Element.max = limits.multiplication.digit2.upper;
-    multiplicationDigit2Element.min = limits.multiplication.digit2.lower;
-    multiplicationLengthElement.max = limits.multiplication.length.upper;
-    multiplicationLengthElement.min = limits.multiplication.length.lower;
-    multiplicationTimeElement.max = limits.multiplication.time.upper / 1000;
-    multiplicationTimeElement.min = limits.multiplication.time.lower / 1000;
-    multiplicationFlashRateElement.max = limits.multiplication.flashRate.upper;
-    multiplicationFlashRateElement.min = limits.multiplication.flashRate.lower;
-    additionDigitElement.value = 1;
-    additionLengthElement.value = 3;
-    additionTimeElement.value = 5;
-    additionTimeElement.step = 0.1;
-    additionFlashRateElement.value = 60;
-    multiplicationDigit1Element.value = 1;
-    multiplicationDigit2Element.value = 1;
-    multiplicationLengthElement.value = 2;
-    multiplicationTimeElement.value = 5;
-    multiplicationTimeElement.step = 0.1;
-    multiplicationFlashRateElement.value = 60;
-
+function setLimitAndDefaultValue() {
+    Object.keys(element).map((mode) => {
+        Object.keys(element[mode]).map((config) => {
+            if (config === "time") {
+                element[mode][config].max = param[mode][config].max / 1000;
+                element[mode][config].min = param[mode][config].min / 1000;
+                element[mode][config].value = param[mode][config].default / 1000;
+                element[mode][config].step = param[mode][config].step / 1000;
+            } else {
+                element[mode][config].max = param[mode][config].max;
+                element[mode][config].min = param[mode][config].min;
+                element[mode][config].value = param[mode][config].default;
+            }
+        });
+    });
     currentMode.innerText = modeNames.addition;
     changeMode(currentMode.innerText);
 }
@@ -204,36 +197,35 @@ function changeMode(mode) {
 }
 
 function flash(config = {}) {
-    let digitParam;
-    let lengthParam;
-    let timeMsParam;
-    let flashRateParam;
+    let requestParam = {
+        digit: 0,
+        length: 0,
+        time: 0,
+        flashRate: 0,
+        offset: 0,
+    };
     switch (currentMode.innerText) {
         case modeNames.multiplication:
-            digitParam = [
-                fixValue(limits.multiplication.digit1, Math.floor(Number(multiplicationDigit1Element.value))),
-                fixValue(limits.multiplication.digit2, Math.floor(Number(multiplicationDigit2Element.value)))
+            requestParam.digit = [
+                fixValue(param[currentMode.innerText].digit1, Math.floor(Number(element[currentMode.innerText].digit1.value))),
+                fixValue(param[currentMode.innerText].digit2, Math.floor(Number(element[currentMode.innerText].digit2.value)))
             ];
-            lengthParam = fixValue(limits.multiplication.length, Math.floor(Number(multiplicationLengthElement.value)));
-            timeMsParam = fixValue(limits.multiplication.time, Number(multiplicationTimeElement.value) * 1000);
-            flashRateParam = fixValue(limits.multiplication.flashRate, Number(multiplicationFlashRateElement.value));
-            multiplicationDigit1Element.value = digitParam[0];
-            multiplicationDigit2Element.value = digitParam[1];
-            multiplicationLengthElement.value = lengthParam;
-            multiplicationTimeElement.value = timeMsParam / 1000;
-            multiplicationFlashRateElement.value = flashRateParam;
+            element[currentMode.innerText].digit1.value = requestParam.digit[0];
+            element[currentMode.innerText].digit2.value = requestParam.digit[1];
             break;
         case modeNames.addition:
         default:
-            digitParam = fixValue(limits.addition.digit, Math.floor(Number(additionDigitElement.value)));
-            lengthParam = fixValue(limits.addition.length, Math.floor(Number(additionLengthElement.value)));
-            timeMsParam = fixValue(limits.addition.time, Number(additionTimeElement.value) * 1000);
-            flashRateParam = fixValue(limits.addition.flashRate, Number(additionFlashRateElement.value));
-            additionDigitElement.value = digitParam;
-            additionLengthElement.value = lengthParam;
-            additionTimeElement.value = timeMsParam / 1000;
-            additionFlashRateElement.value = flashRateParam;
+            requestParam.digit = fixValue(param[currentMode.innerText].digit, Math.floor(Number(element[currentMode.innerText].digit.value)));
+            element[currentMode.innerText].digit.value = requestParam.digit;
     }
+    requestParam.length = fixValue(param[currentMode.innerText].length, Math.floor(Number(element[currentMode.innerText].length.value)));
+    requestParam.time = fixValue(param[currentMode.innerText].time, Number(element[currentMode.innerText].time.value) * 1000);
+    requestParam.flashRate = fixValue(param[currentMode.innerText].flashRate, Number(element[currentMode.innerText].flashRate.value));
+    requestParam.offset = fixValue(param[currentMode.innerText].offset, Number(element[currentMode.innerText].offset.value))
+    element[currentMode.innerText].length.value = requestParam.length;
+    element[currentMode.innerText].time.value = requestParam.time / 1000;
+    element[currentMode.innerText].flashRate.value = requestParam.flashRate;
+    element[currentMode.innerText].offset.value = requestParam.offset;
 
     function getFlashTime(length, time, flashRate) {
         const averageFlashTime = time / (length * 2);
@@ -243,7 +235,7 @@ function flash(config = {}) {
     }
 
     // 点灯時間と消灯時間を算出する
-    const flashTime = getFlashTime(lengthParam, timeMsParam, flashRateParam);
+    const flashTime = getFlashTime(requestParam.length, requestParam.time, requestParam.flashRate);
     const flashOnTime = flashTime.on;
     const flashOffTime = flashTime.off;
 
@@ -289,8 +281,8 @@ function flash(config = {}) {
 
     function generateSounds() {
         let sounds = [];
-        for (let i = 0; i < lengthParam; ++i) {
-            const tickSound = new Audio(tickSoundUrl);
+        for (let i = 0; i < requestParam.length; ++i) {
+            const tickSound = new Audio(soundUrl.tick);
             tickSound.load();
             sounds.push(tickSound);
             sounds.push(new Audio());
@@ -312,25 +304,25 @@ function flash(config = {}) {
                 break;
             }
             digitIsSame =
-                digitParam[0] === splitFirstNumberHistory[0].length
-                && digitParam[1] === splitFirstNumberHistory[1].length;
+                requestParam.digit[0] === splitFirstNumberHistory[0].length
+                && requestParam.digit[1] === splitFirstNumberHistory[1].length;
             numberHistory = numberHistory.map((p) => p.split(arrayDelimiter).map((n) => Number(n)));
             break;
         case modeNames.addition:
         default:
-            digitIsSame = digitParam === firstNumberHistory.length;
+            digitIsSame = requestParam.digit === firstNumberHistory.length;
             numberHistory = numberHistory.map((n) => Number(n));
     }
     if (config.repeat && digitIsSame) {
-        if (lengthParam === numberHistory.length) {
+        if (requestParam.length === numberHistory.length) {
             numbers = numberHistory;
-        } else if (lengthParam < numberHistory.length) {
-            numbers = numberHistory.slice(0, lengthParam);
+        } else if (requestParam.length < numberHistory.length) {
+            numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            numbers = numberHistory.concat(generateNumbers(digitParam, lengthParam - numberHistory.length));
+            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length));
         }
     } else {
-        numbers = generateNumbers(digitParam, lengthParam);
+        numbers = generateNumbers(requestParam.digit, requestParam.length);
     }
     let localeStringNumbers;
     switch (currentMode.innerText) {
@@ -368,20 +360,20 @@ function flash(config = {}) {
     }
 
     function disableButtons() {
-        startButton.disabled = true;
-        repeatButton.disabled = true;
-        answerButton.disabled = true;
+        button.start.disabled = true;
+        button.repeat.disabled = true;
+        button.answer.disabled = true;
         disableConfigTarget.map((element) => element.disabled = true);
     }
 
     function enableButtons() {
-        repeatButton.disabled = false;
-        answerButton.disabled = false;
+        button.repeat.disabled = false;
+        button.answer.disabled = false;
     }
 
     let playBeepFunctions = [];
     for (let i = 0; i < 2; i++) {
-        const beep = new Audio(beepSoundUrl);
+        const beep = new Audio(soundUrl.beep);
         beep.load();
         playBeepFunctions.push(() => {
             beep.play().then(r => r);
@@ -405,112 +397,96 @@ function flash(config = {}) {
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 
     // Register flash events
-    const offset = 500;
+    const beforeBeepTime = 500;
     const beepInterval = 875;
-    const flashStartTiming = offset + beepInterval * 2;
+    const flashStartTiming = beforeBeepTime + beepInterval * 2;
     setTimeout(disableButtons, 0);
-    setTimeout(playBeepFunctions[0], offset);
-    setTimeout(playBeepFunctions[1], offset + beepInterval);
+    setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
+    setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
     for (let i = 0; i < toggleNumberSuite.length; i++) {
-        setTimeout(playTickFunctions[i], toggleTiming - 10);
+        setTimeout(playTickFunctions[i], toggleTiming - requestParam.offset);
         setTimeout(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setTimeout(enableButtons, flashStartTiming + timeMsParam);
+    setTimeout(enableButtons, toggleTiming);
 }
 
 function displayAnswer() {
-    answerButton.disabled = true;
-    repeatButton.disabled = true;
-    new Audio(answerSoundUrl).play().then(r => r);
+    button.answer.disabled = true;
+    button.repeat.disabled = true;
+    new Audio(soundUrl.answer).play().then(r => r);
 
     setTimeout(() => {
         answerTitle.style.display = "block";
         numberArea.innerText = answerNumber.innerText;
 
-        startButton.disabled = false;
-        repeatButton.disabled = false;
+        button.start.disabled = false;
+        button.repeat.disabled = false;
         disableConfigTarget.map((element) => element.disabled = false);
 
-        numberHistoryButton.disabled = false;
+        button.numberHistory.disabled = false;
         resultSection.style.display = "block";
     }, 1500);
 }
 
 function displayNumberHistoryArea() {
-    numberHistoryButton.disabled = true;
+    button.numberHistory.disabled = true;
     numberHistoryArea.style.display = "block";
 }
 
 function changeShortcut(mode) {
-    shortcut.remove("y");
-    shortcut.remove("h");
-    shortcut.remove("u");
-    shortcut.remove("j");
-    shortcut.remove("i");
-    shortcut.remove("k");
-    shortcut.remove("o");
-    shortcut.remove("l");
-    shortcut.remove("shift+o");
-    shortcut.remove("shift+l");
-    shortcut.remove("p");
-    shortcut.remove("shift+p");
+    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "p", "shift+p"].map((key) => {
+        shortcut.remove(key);
+    });
     switch (mode) {
         case modeNames.multiplication:
-            shortcut.add("y", () => increaseParam(modeNames.multiplication + "-digit-1", 1));
-            shortcut.add("h", () => increaseParam(modeNames.multiplication + "-digit-1", -1));
-            shortcut.add("u", () => increaseParam(modeNames.multiplication + "-digit-2", 1));
-            shortcut.add("j", () => increaseParam(modeNames.multiplication + "-digit-2", -1));
-            shortcut.add("i", () => increaseParam(modeNames.multiplication + "-length", 1));
-            shortcut.add("k", () => increaseParam(modeNames.multiplication + "-length", -1));
-            shortcut.add("o", () => increaseParam(modeNames.multiplication + "-time", 1000));
-            shortcut.add("l", () => increaseParam(modeNames.multiplication + "-time", -1000));
-            shortcut.add("shift+o", () => increaseParam(modeNames.multiplication + "-time", 100));
-            shortcut.add("shift+l", () => increaseParam(modeNames.multiplication + "-time", -100));
-            shortcut.add("p", () => increaseParam(modeNames.multiplication + "-flashrate", 1));
-            shortcut.add("shift+p", () => increaseParam(modeNames.multiplication + "-flashrate", -1));
+            shortcut.add("y", () => increaseParam(mode + "-digit-1", 1));
+            shortcut.add("h", () => increaseParam(mode + "-digit-1", -1));
+            shortcut.add("u", () => increaseParam(mode + "-digit-2", 1));
+            shortcut.add("j", () => increaseParam(mode + "-digit-2", -1));
             break;
         case modeNames.addition:
         default:
-            shortcut.add("u", () => increaseParam(modeNames.addition + "-digit", 1));
-            shortcut.add("j", () => increaseParam(modeNames.addition + "-digit", -1));
-            shortcut.add("i", () => increaseParam(modeNames.addition + "-length", 1));
-            shortcut.add("k", () => increaseParam(modeNames.addition + "-length", -1));
-            shortcut.add("o", () => increaseParam(modeNames.addition + "-time", 1000));
-            shortcut.add("l", () => increaseParam(modeNames.addition + "-time", -1000));
-            shortcut.add("shift+o", () => increaseParam(modeNames.addition + "-time", 100));
-            shortcut.add("shift+l", () => increaseParam(modeNames.addition + "-time", -100));
-            shortcut.add("p", () => increaseParam(modeNames.addition + "-flashrate", 1));
-            shortcut.add("shift+p", () => increaseParam(modeNames.addition + "-flashrate", -1));
+            shortcut.add("u", () => increaseParam(mode + "-digit", 1));
+            shortcut.add("j", () => increaseParam(mode + "-digit", -1));
     }
+    shortcut.add("i", () => increaseParam(mode + "-length", 1));
+    shortcut.add("k", () => increaseParam(mode + "-length", -1));
+    shortcut.add("o", () => increaseParam(mode + "-time", 1000));
+    shortcut.add("l", () => increaseParam(mode + "-time", -1000));
+    shortcut.add("shift+o", () => increaseParam(mode + "-time", 100));
+    shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
+    shortcut.add("p", () => increaseParam(mode + "-flashRate", 1));
+    shortcut.add("shift+p", () => increaseParam(mode + "-flashRate", -1));
 }
 
 (() => {
     // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
-    setTimeout(() => new Audio(beepSoundUrl).load(), 100);
-    setTimeout(() => new Audio(tickSoundUrl).load(), 200);
-    setTimeout(() => new Audio(answerSoundUrl).load(), 300);
+    setTimeout(() => new Audio(soundUrl.beep).load(), 100);
+    setTimeout(() => new Audio(soundUrl.tick).load(), 200);
+    setTimeout(() => new Audio(soundUrl.answer).load(), 300);
 
     // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
+    const currentNumberColor = numberArea.style.color;
     setTimeout(() => numberArea.style.color = "black", 400);
     setTimeout(() => numberArea.innerText = "0", 500);
     setTimeout(() => numberArea.innerText = "", 600);
-    setTimeout(() => numberArea.style.color = "limegreen", 700);
+    setTimeout(() => numberArea.style.color = currentNumberColor, 700);
 
-    setTimeout(setDefaultValue, 800);
+    setTimeout(setLimitAndDefaultValue, 800);
     setTimeout(() => {
-        startButton.disabled = false;
+        button.start.disabled = false;
     }, 900);
 
     // Register Shortcuts
-    shortcut.add("s", () => startButton.click());
-    shortcut.add("a", () => answerButton.click());
-    shortcut.add("r", () => repeatButton.click());
+    shortcut.add("s", () => button.start.click());
+    shortcut.add("a", () => button.answer.click());
+    shortcut.add("r", () => button.repeat.click());
 
-    shortcut.add("z", () => additionButton.click());
-    shortcut.add("x", () => subtractionButton.click());
-    shortcut.add("c", () => multiplicationButton.click());
+    shortcut.add("z", () => button.addition.click());
+    shortcut.add("x", () => button.subtraction.click());
+    shortcut.add("c", () => button.multiplication.click());
 
-    shortcut.add("n", () => numberHistoryButton.click());
+    shortcut.add("n", () => button.numberHistory.click());
 })();
