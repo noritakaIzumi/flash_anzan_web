@@ -91,7 +91,7 @@ hr {
     margin-top: 5px;
 }
 
-#answer-title {
+#header-message {
     position: absolute;
     margin: 10px;
     z-index: 10;
