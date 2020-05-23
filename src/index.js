@@ -94,7 +94,7 @@ numberHistoryArea = document.getElementById("number-history-area");
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
 sound = {
     directory: "./sound",
-    extension: ".wav",
+    extension: ".ogg",
 };
 soundUrl = {
     beep: sound.directory + "/beep" + sound.extension,
