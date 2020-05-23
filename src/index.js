@@ -94,7 +94,7 @@ numberHistoryArea = document.getElementById("number-history-area");
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
 sound = {
     directory: "./sound",
-    extension: ".ogg",
+    extension: ".wav",
 };
 soundUrl = {
     beep: sound.directory + "/beep" + sound.extension,
@@ -106,6 +106,7 @@ soundUrl = {
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
+
 
 element = {
     addition: {
@@ -530,7 +531,7 @@ function changeShortcut(mode) {
     // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
     let timeoutMs = 100;
     Object.keys(soundUrl).map((name) => {
-        new Audio(soundUrl[name]).load();
+        setTimeout(() => new Audio(soundUrl[name]).load(), timeoutMs);
         timeoutMs += 50;
     });
 
@@ -623,4 +624,11 @@ function deleteParams() {
     }
     localStorage.clear();
     window.alert("設定を削除しました");
+}
+
+function setSoundExtension(value) {
+    sound.extension = value;
+    Object.keys(soundUrl).map((name) => {
+        new Audio(soundUrl[name]).load();
+    });
 }

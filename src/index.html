@@ -36,7 +36,13 @@
 </div>
 <hr>
 <div id="current-mode" class="display-none"></div>
-<label><input type="checkbox" id="is-muted"><span style="color: white;">Mute Sound</span></label>
+<label><input type="checkbox" id="is-muted"><span style="color: white;">Mute</span></label>
+<label>
+    <select name="sound-extension" id="sound-extension" onchange="setSoundExtension(this.value);">
+        <option value=".wav" selected>wav</option>
+        <option value=".ogg">ogg</option>
+    </select>
+</label>
 <button id="load-params-button" onclick="loadParams();">Load</button>
 <button id="save-params-button" onclick="saveParams();">Save</button>
 <button id="delete-params-button" onclick="deleteParams();">Delete</button>
@@ -45,7 +51,8 @@
     <div id="addition-mode-config">
         <div class="operation-panel">
             <div class="font">[基本設定]
-                <button id="addition-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;" onclick="configOffset();"></button>
+                <button id="addition-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;"
+                        onclick="configOffset();"></button>
             </div>
             <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="addition-digit">桁数</label></div>
@@ -88,7 +95,8 @@
     <div id="multiplication-mode-config">
         <div class="operation-panel">
             <div class="font">[基本設定]
-                <button id="multiplication-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;" onclick="configOffset();"></button>
+                <button id="multiplication-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;"
+                        onclick="configOffset();"></button>
             </div>
             <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="multiplication-digit-1">かけられる数</label></div>
