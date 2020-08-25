@@ -35,7 +35,6 @@
     </button>
 </div>
 <hr>
-<div id="current-mode" class="display-none"></div>
 <label><input type="checkbox" id="is-muted"><span style="color: white;">Mute</span></label>
 <label>
     <select name="sound-extension" id="sound-extension" onchange="setSoundExtension(this.value);">
@@ -47,6 +46,9 @@
 <button id="save-params-button" onclick="saveParams();">Save</button>
 <button id="delete-params-button" onclick="deleteParams();">Delete</button>
 <hr>
+<div id="current-mode" class="display-none"></div>
+<div id="flashRate" class="display-none"></div>
+<div id="offset" class="display-none"></div>
 <div id="mode-config-area">
     <div id="addition-mode-config">
         <div class="operation-panel">

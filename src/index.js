@@ -66,7 +66,17 @@ param = {
             min: -500,
             default: 10,
         },
-    }
+    },
+    // flashRate: {
+    //     max: 99,
+    //     min: 1,
+    //     default: 60,
+    // },
+    // offset: {
+    //     max: 500,
+    //     min: -500,
+    //     default: 10,
+    // },
 };
 
 headerMessage = document.getElementById("header-message");
@@ -84,6 +94,7 @@ button = {
     multiplication: document.getElementById("multiplication-button"),
     additionSetOffset: document.getElementById("addition-set-offset"),
     multiplicationSetOffset: document.getElementById("multiplication-set-offset"),
+    // setOffset: document.getElementById(""),
 };
 
 resultSaved = document.getElementById("result-saved");
@@ -124,6 +135,11 @@ element = {
         flashRate: document.getElementById("multiplication-flashRate"),
         offset: document.getElementById("multiplication-offset"),
     },
+};
+
+commonElement = {
+    // flashRate: document.getElementById("flashRate"),
+    // offset: document.getElementById("offset"),
 };
 
 disableConfigTarget = [
@@ -500,7 +516,7 @@ function displayNumberHistoryArea() {
 }
 
 function changeShortcut(mode) {
-    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "p", "shift+p"].map((key) => {
+    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l", "p", "shift+p"].map((key) => {
         shortcut.remove(key);
     });
     switch (mode) {
