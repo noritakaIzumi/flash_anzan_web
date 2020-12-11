@@ -209,13 +209,31 @@ function flash(config = {}) {
         }, 1200);
     }
 
-    function receiveInput() {
-        const number = window.prompt("答えを入力してください（カンマは付けないでください）", "");
-        if (number) {
-            displayAnswer(number.trim());
-        } else {
-            enableButtons();
-        }
+    function unveilInputAnswerArea() {
+        inputAnswerArea.classList.add('show');
+        inputAnswerBox.focus();
+    }
+
+    function checkAnswer() {
+        inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
+        inputAnswerBox.value = '';
+        unveilInputAnswerArea();
+    }
+
+    function submitNumber() {
+        return (event) => {
+            if (event.key === "Enter") {
+                inputAnswerArea.classList.remove('show');
+                displayAnswer(inputAnswerBox.value.trim());
+                return;
+            }
+            if (event.key === "Escape") {
+                inputAnswerArea.classList.remove('show');
+                enableButtons();
+                return;
+            }
+            inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
+        };
     }
 
     // ここからフラッシュ出題の処理
@@ -368,7 +386,7 @@ function flash(config = {}) {
         setTimeout(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setTimeout(receiveInput, toggleTiming);
+    setTimeout(checkAnswer, toggleTiming);
 }
 
 function loadAudioObj(extension) {

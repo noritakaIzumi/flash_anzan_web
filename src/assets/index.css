@@ -68,8 +68,15 @@ hr {
         height: 400px;
     }
 
-    .number-area {
+    .number-area, #input-answer-box {
         font-size: 90px;
+    }
+
+    #input-answer-box {
+        height: 120px;
+        width: 500px;
+        margin-top: -60px;
+        margin-left: -250px;
     }
 }
 
@@ -78,8 +85,15 @@ hr {
         height: 270px;
     }
 
-    .number-area {
+    .number-area, #input-answer-box {
         font-size: 60px;
+    }
+
+    #input-answer-box {
+        height: 96px;
+        width: 300px;
+        margin-top: -48px;
+        margin-left: -150px;
     }
 }
 
@@ -292,4 +306,48 @@ hr {
 
 .display-none {
     display: none;
+}
+
+#input-answer-area {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#input-answer-box {
+    position: fixed;
+    background-color: white;
+    z-index: 2;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    font-family: 'ABACUS2', sans-serif;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.display-none.show {
+    display: block;
+    animation: show 300ms linear 0s;
 }
