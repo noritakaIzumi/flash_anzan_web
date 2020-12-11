@@ -180,9 +180,7 @@ function flash(config = {}) {
 
         button.repeat.disabled = true;
         if (!isMuted.checked) {
-            audioObj.answer[0].play().then(_ => {
-            }).catch(_ => {
-            });
+            audioObj.answer[0].play();
         }
 
         setTimeout(() => {
@@ -195,9 +193,7 @@ function flash(config = {}) {
                 headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
             }
             questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
-            resultAudio.play().then(_ => {
-            }).catch(_ => {
-            });
+            resultAudio.play();
 
             button.start.disabled = false;
             button.repeat.disabled = false;
@@ -329,7 +325,7 @@ function flash(config = {}) {
     if (!isMuted.checked) {
         audioObj.beep.map((a) => {
             playBeepFunctions.push(() => {
-                a.play().then(r => r);
+                a.play();
             });
         });
     } else {
@@ -379,14 +375,12 @@ function loadAudioObj(extension) {
             audioObj[name][i] = new Audio();
             const load = (src) => {
                 return () => {
-                    audioObj[name][i].play().then(_ => {
-                    }).catch(_ => {
-                    });
+                    audioObj[name][i].play();
                     audioObj[name][i].src = src;
                 };
             };
             setTimeout(load(audioPath), timeoutMs);
-            timeoutMs += 50;
+            timeoutMs += 10;
         }
     });
 }
@@ -396,7 +390,7 @@ function loadAudioObj(extension) {
     loadAudioObj(audioAttr.extension.ogg);
 
     (() => {
-        let timeoutMs = 2000;
+        let timeoutMs = 500;
         // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
         const currentNumberColor = questionNumberArea.style.color;
         const prepareGameFunctions = [
