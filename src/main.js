@@ -10,8 +10,9 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
         },
-        width: 800, height: 800,
+        width: 800, height: 600,
     });
+    mainWindow.maximize();
 
     // メインウィンドウに表示するURLを指定します
     // （今回はmain.jsと同じディレクトリのindex.html）
