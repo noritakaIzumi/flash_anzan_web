@@ -91,6 +91,36 @@ hr {
     margin-top: 5px;
 }
 
+@media screen and (min-width: 1025px) {
+    .big-size-number {
+        font-size: 180px;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .big-size-number {
+        font-size: 135px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .big-size-number {
+        font-size: 100px;
+    }
+}
+
+.full-screen {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border: 0;
+    margin: 0;
+}
+
 #header-message {
     position: absolute;
     margin: 10px;
@@ -250,6 +280,14 @@ hr {
         padding: 0.25em 0.5em;
         font-size: 20px;
     }
+}
+
+#mode-info {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    color: darkgreen;
+    margin: 7px;
 }
 
 .display-none {

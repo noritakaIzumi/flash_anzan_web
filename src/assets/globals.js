@@ -78,6 +78,8 @@ param = {
 
 headerMessage = document.getElementById("header-message");
 questionNumberArea = document.getElementById("question-number-area");
+calculateArea = document.getElementById('calculate-area');
+modeInfo = document.getElementById('mode-info');
 
 button = {
     loadParams: document.getElementById("load-params-button"),

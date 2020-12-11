@@ -99,6 +99,14 @@ function changeMode(mode) {
     currentMode.innerText = mode;
 }
 
+function expandCalculateArea() {
+    calculateArea.classList.add('full-screen');
+}
+
+function contractCalculateArea() {
+    calculateArea.classList.remove('full-screen');
+}
+
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
@@ -195,10 +203,7 @@ function flash(config = {}) {
             questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
             resultAudio.play();
 
-            button.start.disabled = false;
-            button.repeat.disabled = false;
-            disableConfigTarget.map((element) => element.disabled = false);
-
+            enableButtons();
             button.numberHistory.disabled = false;
             resultSaved.style.display = "block";
         }, 1200);
@@ -351,10 +356,10 @@ function flash(config = {}) {
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 
     // Register flash events
+    disableButtons();
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    setTimeout(disableButtons, 0);
     setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
     setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
@@ -376,7 +381,7 @@ function loadAudioObj(extension) {
             setTimeout(() => {
                 audioObj[name][i].load();
             }, timeoutMs);
-            timeoutMs += 10;
+            timeoutMs += 50;
         }
     });
 }
@@ -386,7 +391,7 @@ function loadAudioObj(extension) {
     loadAudioObj(audioAttr.extension.ogg);
 
     (() => {
-        let timeoutMs = 500;
+        let timeoutMs = 2000;
         // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
         const currentNumberColor = questionNumberArea.style.color;
         const prepareGameFunctions = [
@@ -416,5 +421,19 @@ function loadAudioObj(extension) {
         shortcut.add("c", () => button.multiplication.click());
 
         shortcut.add("n", () => button.numberHistory.click());
+
+        shortcut.add("w", () => {
+            if (calculateArea.dataset.fullScreen === "0") {
+                expandCalculateArea();
+                questionNumberArea.classList.add('big-size-number');
+                modeInfo.innerText = 'Full Screen';
+                calculateArea.dataset.fullScreen = "1";
+            } else {
+                questionNumberArea.classList.remove('big-size-number');
+                contractCalculateArea();
+                modeInfo.innerText = '';
+                calculateArea.dataset.fullScreen = "0";
+            }
+        });
     })();
 })();
