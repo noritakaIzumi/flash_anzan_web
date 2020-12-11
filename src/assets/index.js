@@ -372,14 +372,10 @@ function loadAudioObj(extension) {
     Object.keys(audioObj).forEach((name) => {
         audioPath = `${audioAttr.directory}/${name}.${extension}`;
         for (let i = 0; i < audioObj[name].length; i++) {
-            audioObj[name][i] = new Audio();
-            const load = (src) => {
-                return () => {
-                    audioObj[name][i].play();
-                    audioObj[name][i].src = src;
-                };
-            };
-            setTimeout(load(audioPath), timeoutMs);
+            audioObj[name][i] = new Audio(audioPath);
+            setTimeout(() => {
+                audioObj[name][i].load();
+            }, timeoutMs);
             timeoutMs += 10;
         }
     });
