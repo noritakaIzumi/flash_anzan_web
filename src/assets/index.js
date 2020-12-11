@@ -52,6 +52,34 @@ function setLimitAndDefaultValue() {
     changeMode(currentMode.innerText);
 }
 
+function changeShortcut(mode) {
+    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l", "p", "shift+p"].map((key) => {
+        shortcut.remove(key);
+    });
+    switch (mode) {
+        case modeNames.multiplication:
+            shortcut.add("y", () => increaseParam(mode + "-digit-1", 1));
+            shortcut.add("h", () => increaseParam(mode + "-digit-1", -1));
+            shortcut.add("u", () => increaseParam(mode + "-digit-2", 1));
+            shortcut.add("j", () => increaseParam(mode + "-digit-2", -1));
+            break;
+        case modeNames.addition:
+        default:
+            shortcut.add("u", () => increaseParam(mode + "-digit", 1));
+            shortcut.add("j", () => increaseParam(mode + "-digit", -1));
+    }
+    shortcut.add("i", () => increaseParam(mode + "-length", 1));
+    shortcut.add("k", () => increaseParam(mode + "-length", -1));
+    shortcut.add("o", () => increaseParam(mode + "-time", 1000));
+    shortcut.add("l", () => increaseParam(mode + "-time", -1000));
+    shortcut.add("shift+o", () => increaseParam(mode + "-time", 100));
+    shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
+    shortcut.add("ctrl+shift+o", () => increaseParam(mode + "-time", 10));
+    shortcut.add("ctrl+shift+l", () => increaseParam(mode + "-time", -10));
+    shortcut.add("p", () => increaseParam(mode + "-flashRate", 1));
+    shortcut.add("shift+p", () => increaseParam(mode + "-flashRate", -1));
+}
+
 function changeMode(mode) {
     const buttonIdName = mode + '-button';
     const configIdName = mode + '-mode-config';
@@ -72,47 +100,13 @@ function changeMode(mode) {
 }
 
 function flash(config = {}) {
-    let requestParam = {
-        digit: 0,
-        length: 0,
-        time: 0,
-        flashRate: 0,
-        offset: 0,
-    };
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            requestParam.digit = [
-                fixValue(param[currentMode.innerText].digit1, Math.floor(Number(element[currentMode.innerText].digit1.value))),
-                fixValue(param[currentMode.innerText].digit2, Math.floor(Number(element[currentMode.innerText].digit2.value)))
-            ];
-            element[currentMode.innerText].digit1.value = requestParam.digit[0];
-            element[currentMode.innerText].digit2.value = requestParam.digit[1];
-            break;
-        case modeNames.addition:
-        default:
-            requestParam.digit = fixValue(param[currentMode.innerText].digit, Math.floor(Number(element[currentMode.innerText].digit.value)));
-            element[currentMode.innerText].digit.value = requestParam.digit;
-    }
-    requestParam.length = fixValue(param[currentMode.innerText].length, Math.floor(Number(element[currentMode.innerText].length.value)));
-    requestParam.time = fixValue(param[currentMode.innerText].time, Number(element[currentMode.innerText].time.value) * 1000);
-    requestParam.flashRate = fixValue(param[currentMode.innerText].flashRate, Number(element[currentMode.innerText].flashRate.value));
-    requestParam.offset = fixValue(param[currentMode.innerText].offset, Number(element[currentMode.innerText].offset.value));
-    element[currentMode.innerText].length.value = requestParam.length;
-    element[currentMode.innerText].time.value = requestParam.time / 1000;
-    element[currentMode.innerText].flashRate.value = requestParam.flashRate;
-    element[currentMode.innerText].offset.value = requestParam.offset;
-
+    // Functions
     function getFlashTime(length, time, flashRate) {
         const averageFlashTime = time / (length * 2);
         const flashOnTime = Number(averageFlashTime) * (flashRate / 50);
         const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 50);
         return {on: flashOnTime, off: flashOffTime};
     }
-
-    // 点灯時間と消灯時間を算出する
-    const flashTime = getFlashTime(requestParam.length, requestParam.time, requestParam.flashRate);
-    const flashOnTime = flashTime.on;
-    const flashOffTime = flashTime.off;
 
     function generateNumbers(digit, length) {
         function getRandomInt(min, max) {
@@ -172,7 +166,108 @@ function flash(config = {}) {
         return sounds;
     }
 
+    function disableButtons() {
+        button.start.disabled = true;
+        button.repeat.disabled = true;
+        disableConfigTarget.map((element) => element.disabled = true);
+    }
 
+    function enableButtons() {
+        button.start.disabled = false;
+        button.repeat.disabled = false;
+        disableConfigTarget.map((element) => element.disabled = false);
+    }
+
+    function displayAnswer(number) {
+        if (number) {
+            headerMessage.innerText = "あなたの答え：" + Number(number).toLocaleString();
+        }
+
+        button.repeat.disabled = true;
+        if (!isMuted.checked) {
+            const answerAudio = new Audio();
+            answerAudio.play().then(_ => {
+            }).catch(_ => {
+            });
+            answerAudio.src = soundUrl.answer;
+            answerAudio.play().then(_ => {
+            }).catch(_ => {
+            });
+        }
+
+        setTimeout(() => {
+            const resultAudio = new Audio();
+            resultAudio.play().then(_ => {
+            }).catch(_ => {
+            });
+            if (number === answerNumber.innerText) {
+                resultAudio.src = soundUrl.correct;
+                headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
+            } else {
+                resultAudio.src = soundUrl.incorrect;
+                headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
+            }
+            questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
+            resultAudio.play().then(_ => {
+            }).catch(_ => {
+            });
+
+            button.start.disabled = false;
+            button.repeat.disabled = false;
+            disableConfigTarget.map((element) => element.disabled = false);
+
+            button.numberHistory.disabled = false;
+            resultSaved.style.display = "block";
+        }, 1200);
+    }
+
+    function receiveInput() {
+        const number = window.prompt("答えを入力してください（カンマは付けないでください）", "");
+        if (number) {
+            displayAnswer(number.trim());
+        } else {
+            enableButtons();
+        }
+    }
+
+    // ここからフラッシュ出題の処理
+    // 設定を取得する
+    let requestParam = {
+        digit: 0,
+        length: 0,
+        time: 0,
+        flashRate: 0,
+        offset: 0,
+    };
+    switch (currentMode.innerText) {
+        case modeNames.multiplication:
+            requestParam.digit = [
+                fixValue(param[currentMode.innerText].digit1, Math.floor(Number(element[currentMode.innerText].digit1.value))),
+                fixValue(param[currentMode.innerText].digit2, Math.floor(Number(element[currentMode.innerText].digit2.value)))
+            ];
+            element[currentMode.innerText].digit1.value = requestParam.digit[0];
+            element[currentMode.innerText].digit2.value = requestParam.digit[1];
+            break;
+        case modeNames.addition:
+        default:
+            requestParam.digit = fixValue(param[currentMode.innerText].digit, Math.floor(Number(element[currentMode.innerText].digit.value)));
+            element[currentMode.innerText].digit.value = requestParam.digit;
+    }
+    requestParam.length = fixValue(param[currentMode.innerText].length, Math.floor(Number(element[currentMode.innerText].length.value)));
+    requestParam.time = fixValue(param[currentMode.innerText].time, Number(element[currentMode.innerText].time.value) * 1000);
+    requestParam.flashRate = fixValue(param[currentMode.innerText].flashRate, Number(element[currentMode.innerText].flashRate.value));
+    requestParam.offset = fixValue(param[currentMode.innerText].offset, Number(element[currentMode.innerText].offset.value));
+    element[currentMode.innerText].length.value = requestParam.length;
+    element[currentMode.innerText].time.value = requestParam.time / 1000;
+    element[currentMode.innerText].flashRate.value = requestParam.flashRate;
+    element[currentMode.innerText].offset.value = requestParam.offset;
+
+    // 点灯時間と消灯時間を算出する
+    const flashTime = getFlashTime(requestParam.length, requestParam.time, requestParam.flashRate);
+    const flashOnTime = flashTime.on;
+    const flashOffTime = flashTime.off;
+
+    // 出題数字を生成、または前回の出題から読み込む
     let numbers;
     let numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter);
     let digitIsSame;
@@ -215,6 +310,8 @@ function flash(config = {}) {
         default:
             localeStringNumbers = numbers.map((n) => n.toLocaleString());
     }
+
+    // setTimeout に設定する関数を作成する
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
 
@@ -241,27 +338,6 @@ function flash(config = {}) {
         }
     }
 
-    function disableButtons() {
-        button.start.disabled = true;
-        button.repeat.disabled = true;
-        disableConfigTarget.map((element) => element.disabled = true);
-    }
-
-    function enableButtons() {
-        button.start.disabled = false;
-        button.repeat.disabled = false;
-        disableConfigTarget.map((element) => element.disabled = false);
-    }
-
-    function receiveInput() {
-        const number = window.prompt("答えを入力してください（カンマは付けないでください）", "");
-        if (number) {
-            displayAnswer(number.trim());
-        } else {
-            enableButtons();
-        }
-    }
-
     let playBeepFunctions = [];
     if (!isMuted.checked) {
         for (let i = 0; i < 2; i++) {
@@ -279,6 +355,7 @@ function flash(config = {}) {
         });
     }
 
+    // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     resultSaved.style.display = "none";
@@ -311,82 +388,7 @@ function flash(config = {}) {
     setTimeout(receiveInput, toggleTiming);
 }
 
-function displayAnswer(number) {
-    if (number) {
-        headerMessage.innerText = "あなたの答え：" + Number(number).toLocaleString();
-    }
-
-    button.repeat.disabled = true;
-    if (!isMuted.checked) {
-        const answerAudio = new Audio();
-        answerAudio.play().then(_ => {
-        }).catch(_ => {
-        });
-        answerAudio.src = soundUrl.answer;
-        answerAudio.play().then(_ => {
-        }).catch(_ => {
-        });
-    }
-
-    setTimeout(() => {
-        const resultAudio = new Audio();
-        resultAudio.play().then(_ => {
-        }).catch(_ => {
-        });
-        if (number === answerNumber.innerText) {
-            resultAudio.src = soundUrl.correct;
-            headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
-        } else {
-            resultAudio.src = soundUrl.incorrect;
-            headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
-        }
-        questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
-        resultAudio.play().then(_ => {
-        }).catch(_ => {
-        });
-
-        button.start.disabled = false;
-        button.repeat.disabled = false;
-        disableConfigTarget.map((element) => element.disabled = false);
-
-        button.numberHistory.disabled = false;
-        resultSaved.style.display = "block";
-    }, 1200);
-}
-
-function displayNumberHistoryArea() {
-    button.numberHistory.disabled = true;
-    numberHistoryArea.style.display = "block";
-}
-
-function changeShortcut(mode) {
-    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l", "p", "shift+p"].map((key) => {
-        shortcut.remove(key);
-    });
-    switch (mode) {
-        case modeNames.multiplication:
-            shortcut.add("y", () => increaseParam(mode + "-digit-1", 1));
-            shortcut.add("h", () => increaseParam(mode + "-digit-1", -1));
-            shortcut.add("u", () => increaseParam(mode + "-digit-2", 1));
-            shortcut.add("j", () => increaseParam(mode + "-digit-2", -1));
-            break;
-        case modeNames.addition:
-        default:
-            shortcut.add("u", () => increaseParam(mode + "-digit", 1));
-            shortcut.add("j", () => increaseParam(mode + "-digit", -1));
-    }
-    shortcut.add("i", () => increaseParam(mode + "-length", 1));
-    shortcut.add("k", () => increaseParam(mode + "-length", -1));
-    shortcut.add("o", () => increaseParam(mode + "-time", 1000));
-    shortcut.add("l", () => increaseParam(mode + "-time", -1000));
-    shortcut.add("shift+o", () => increaseParam(mode + "-time", 100));
-    shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
-    shortcut.add("ctrl+shift+o", () => increaseParam(mode + "-time", 10));
-    shortcut.add("ctrl+shift+l", () => increaseParam(mode + "-time", -10));
-    shortcut.add("p", () => increaseParam(mode + "-flashRate", 1));
-    shortcut.add("shift+p", () => increaseParam(mode + "-flashRate", -1));
-}
-
+// ページ読み込み時処理
 (() => {
     // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
     let timeoutMs = 100;
@@ -427,66 +429,3 @@ function changeShortcut(mode) {
         shortcut.add("n", () => button.numberHistory.click());
     })();
 })();
-
-function configOffset() {
-    const offset = window.prompt("オフセット (ms): 数字が大きいほど音が早く出ます", element[currentMode.innerText].offset.value);
-    if (offset) {
-        element[currentMode.innerText].offset.value = offset;
-    }
-}
-
-function loadParams() {
-    const loadedParams = localStorage.getItem(savedParamsKeyName);
-    if (!loadedParams) {
-        window.alert("設定がありません");
-        return;
-    }
-    const response = window.confirm("設定を読み込みますか？");
-    if (!response) {
-        return;
-    }
-    const parsedParams = JSON.parse(loadedParams);
-    Object.keys(parsedParams).map(
-        (mode) => {
-            Object.keys(parsedParams[mode]).map(
-                (paramName) => {
-                    element[mode][paramName].value = parsedParams[mode][paramName];
-                });
-        }
-    );
-}
-
-function saveParams() {
-    const response = window.confirm("設定を保存しますか？");
-    if (!response) {
-        return;
-    }
-    const params = {};
-    Object.keys(element).map(
-        (mode) => {
-            params[mode] = {};
-            Object.keys(element[mode]).map(
-                (paramName) => {
-                    params[mode][paramName] = element[mode][paramName].value;
-                });
-        }
-    );
-    localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
-    window.alert("設定を保存しました");
-}
-
-function deleteParams() {
-    const response = window.confirm("設定を削除しますか？");
-    if (!response) {
-        return;
-    }
-    localStorage.clear();
-    window.alert("設定を削除しました");
-}
-
-function setSoundExtension(value) {
-    sound.extension = value;
-    Object.keys(soundUrl).map((name) => {
-        new Audio(soundUrl[name]).load();
-    });
-}
