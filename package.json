@@ -1,7 +1,7 @@
 {
-  "name": "flash_anzan",
-  "version": "1.0.0",
-  "description": "`index.html` をブラウザで開くとすぐに遊ぶことができます．",
+  "name": "Flash Anzan",
+  "version": "0.2.3",
+  "description": "フラッシュ暗算で脳を鍛えよう",
   "main": "main.js",
   "dependencies": {
     "electron": "^8.5.2",
@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/noritakaIzumi/flash_anzan_web.git"
+    "url": "https://gitlab.com/technical-study/flash_anzan_web.git"
   },
   "author": "Noritaka IZUMI <noritaka.izumi@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/noritakaIzumi/flash_anzan_web/issues"
+    "url": "https://gitlab.com/technical-study/flash_anzan_web/issues"
   },
-  "homepage": "https://github.com/noritakaIzumi/flash_anzan_web#readme"
+  "homepage": "https://gitlab.com/technical-study/flash_anzan_web/blob/master/README.md"
 }
