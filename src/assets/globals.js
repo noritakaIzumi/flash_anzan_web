@@ -100,21 +100,23 @@ answerNumber = document.getElementById("answer-number");
 numberHistoryArea = document.getElementById("number-history-area");
 
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
-sound = {
+audioAttr = {
     directory: "./sound",
-    extension: ".ogg",
+    extension: {
+        ogg: 'ogg',
+        wav: 'wav',
+    },
 };
-soundUrl = {
-    beep: sound.directory + "/beep" + sound.extension,
-    tick: sound.directory + "/tick" + sound.extension,
-    answer: sound.directory + "/answer" + sound.extension,
-    correct: sound.directory + "/correct" + sound.extension,
-    incorrect: sound.directory + "/incorrect" + sound.extension,
+audioObj = {
+    beep: new Array(2),
+    tick: new Array(30),
+    answer: new Array(1),
+    correct: new Array(1),
+    incorrect: new Array(1),
 };
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
-
 
 element = {
     addition: {

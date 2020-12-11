@@ -55,11 +55,15 @@ function deleteParams() {
     window.alert("設定を削除しました");
 }
 
-function setSoundExtension(value) {
-    sound.extension = value;
-    Object.keys(soundUrl).map((name) => {
-        new Audio(soundUrl[name]).load();
-    });
+function setSoundExtension(extension) {
+    switch (extension) {
+        case 'ogg':
+            loadAudioObj(audioAttr.extension.ogg);
+            break;
+        case 'wav':
+            loadAudioObj(audioAttr.extension.wav);
+            break;
+    }
 }
 
 function displayNumberHistoryArea() {

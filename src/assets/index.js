@@ -152,12 +152,7 @@ function flash(config = {}) {
         let sounds = [];
         for (let i = 0; i < requestParam.length; ++i) {
             if (!isMuted.checked) {
-                const tickSound = new Audio();
-                tickSound.play().then(_ => {
-                }).catch(_ => {
-                });
-                tickSound.src = soundUrl.tick;
-                sounds.push(tickSound);
+                sounds.push(audioObj.tick[i]);
             } else {
                 sounds.push(new Audio());
             }
@@ -185,26 +180,18 @@ function flash(config = {}) {
 
         button.repeat.disabled = true;
         if (!isMuted.checked) {
-            const answerAudio = new Audio();
-            answerAudio.play().then(_ => {
-            }).catch(_ => {
-            });
-            answerAudio.src = soundUrl.answer;
-            answerAudio.play().then(_ => {
+            audioObj.answer[0].play().then(_ => {
             }).catch(_ => {
             });
         }
 
         setTimeout(() => {
-            const resultAudio = new Audio();
-            resultAudio.play().then(_ => {
-            }).catch(_ => {
-            });
+            let resultAudio;
             if (number === answerNumber.innerText) {
-                resultAudio.src = soundUrl.correct;
+                resultAudio = audioObj.correct[0];
                 headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
             } else {
-                resultAudio.src = soundUrl.incorrect;
+                resultAudio = audioObj.incorrect[0];
                 headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
             }
             questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
@@ -340,16 +327,11 @@ function flash(config = {}) {
 
     let playBeepFunctions = [];
     if (!isMuted.checked) {
-        for (let i = 0; i < 2; i++) {
-            const beep = new Audio();
-            beep.play().then(_ => {
-            }).catch(_ => {
-            });
-            beep.src = soundUrl.beep;
+        audioObj.beep.map((a) => {
             playBeepFunctions.push(() => {
-                beep.play().then(r => r);
+                a.play().then(r => r);
             });
-        }
+        });
     } else {
         playBeepFunctions.push(() => {
         });
@@ -388,16 +370,27 @@ function flash(config = {}) {
     setTimeout(receiveInput, toggleTiming);
 }
 
+function loadAudioObj(extension) {
+    let timeoutMs = 100;
+    let audioPath = '';
+    Object.keys(audioObj).forEach((name) => {
+        audioPath = `${audioAttr.directory}/${name}.${extension}`
+        for (let i = 0; i < audioObj[name].length; i++) {
+            audioObj[name][i] = new Audio(audioPath);
+            setTimeout(() => {
+                audioObj[name][i].load();
+            }, timeoutMs);
+            timeoutMs += 50;
+        }
+    });
+}
+
 // ページ読み込み時処理
 (() => {
-    // 先に音源を読み込む経験を積めば，ページ表示後最初から快適にプレイできるかもしれない．
-    let timeoutMs = 100;
-    Object.keys(soundUrl).map((name) => {
-        setTimeout(() => new Audio(soundUrl[name]).load(), timeoutMs);
-        timeoutMs += 50;
-    });
+    loadAudioObj(audioAttr.extension.ogg);
 
     (() => {
+        let timeoutMs = 2000;
         // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
         const currentNumberColor = questionNumberArea.style.color;
         const prepareGameFunctions = [
