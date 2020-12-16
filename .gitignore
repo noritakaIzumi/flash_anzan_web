@@ -9,3 +9,6 @@ flash-anzan*
 
 # desktop.ini
 **/desktop.ini
+
+# Other files
+src/debug.log

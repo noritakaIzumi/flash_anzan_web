@@ -117,6 +117,7 @@ audioObj = {
     answer: new Array(1),
     correct: new Array(1),
     incorrect: new Array(1),
+    silence: new Array(1),
 };
 
 currentMode = document.getElementById("current-mode");

@@ -201,6 +201,7 @@ function flash(config = {}) {
                 headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
             }
             questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
+            resultAudio.muted = isMuted.checked;
             resultAudio.play();
 
             enableButtons();
@@ -378,6 +379,9 @@ function flash(config = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
+    setTimeout(() => {
+        audioObj.silence[0].play();
+    }, 0);
     setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
     setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
