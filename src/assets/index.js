@@ -448,12 +448,10 @@ function loadAudioObj(extension) {
             if (calculateArea.dataset.fullScreen === "0") {
                 expandCalculateArea();
                 questionNumberArea.classList.add('big-size-number');
-                modeInfo.innerText = 'Full Screen';
                 calculateArea.dataset.fullScreen = "1";
             } else {
                 questionNumberArea.classList.remove('big-size-number');
                 contractCalculateArea();
-                modeInfo.innerText = '';
                 calculateArea.dataset.fullScreen = "0";
             }
         });

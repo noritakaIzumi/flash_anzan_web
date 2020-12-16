@@ -296,14 +296,6 @@ hr {
     }
 }
 
-#mode-info {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    color: darkgreen;
-    margin: 7px;
-}
-
 .display-none {
     display: none;
 }

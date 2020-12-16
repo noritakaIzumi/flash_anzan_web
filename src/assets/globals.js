@@ -79,7 +79,6 @@ param = {
 headerMessage = document.getElementById("header-message");
 questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
-modeInfo = document.getElementById('mode-info');
 inputAnswerArea = document.getElementById('input-answer-area');
 inputAnswerBox = document.getElementById('input-answer-box');
 
