@@ -7,12 +7,9 @@ let mainWindow;
 function createWindow() {
     // メインウィンドウを作成します
     mainWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: true,
-        },
-        width: 800, height: 600,
+        kiosk: true,
+        frame: false,
     });
-    mainWindow.maximize();
 
     // メインウィンドウに表示するURLを指定します
     // （今回はmain.jsと同じディレクトリのindex.html）
