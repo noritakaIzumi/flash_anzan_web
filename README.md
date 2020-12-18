@@ -1,6 +1,12 @@
 # flash_anzan_web
 
-`index.html` をブラウザで開くとすぐに遊ぶことができます．
+- すぐに遊びたい方
+
+https://technical-study.gitlab.io/flash_anzan_web/
+
+- リポジトリをクローンした方
+
+`index.html` をブラウザで開いても遊ぶことができます．
 
 ## Electron アプリのビルド方法
 
