@@ -1,11 +1,11 @@
 {
-  "name": "Flash Anzan",
-  "version": "0.2.3",
+  "name": "flash-anzan",
+  "version": "0.2.4",
   "description": "フラッシュ暗算で脳を鍛えよう",
   "main": "main.js",
   "dependencies": {
-    "electron": "^8.5.2",
-    "electron-packager": "^14.2.1"
+    "electron": "^11.1.1",
+    "electron-packager": "^15.2.0"
   },
   "devDependencies": {},
   "scripts": {
