@@ -82,20 +82,16 @@ function changeShortcut(mode) {
 
 function changeMode(mode) {
     const buttonIdName = mode + '-button';
+    document.getElementById(buttonIdName).checked = true;
+
     const configIdName = mode + '-mode-config';
-    const buttonTargetClassName = "btn-blue-active";
     const configTargetClassName = "display-none";
-    const modeButtons = document.getElementById("mode-button-area").children;
     const configAreas = document.getElementById("mode-config-area").children;
-    Array.from(modeButtons).map((element) => Array.from(element.classList).map((className) => {
-        if (className === buttonTargetClassName) {
-            element.classList.remove(className);
-        }
-    }));
     Array.from(configAreas).map((element) => element.classList.add(configTargetClassName));
-    document.getElementById(buttonIdName).classList.add(buttonTargetClassName);
     document.getElementById(configIdName).classList.remove(configTargetClassName);
+
     changeShortcut(mode);
+
     currentMode.innerText = mode;
 }
 

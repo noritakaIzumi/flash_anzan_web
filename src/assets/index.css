@@ -38,7 +38,6 @@ hr {
 .font {
     font-family: 'Kosugi Maru', sans-serif;
     color: white;
-    padding: 5px 0;
 }
 
 @media screen and (min-width: 500px) {
@@ -133,6 +132,7 @@ hr {
     bottom: 0;
     border: 0;
     margin: 0;
+    z-index: 10;
 }
 
 #header-message {
@@ -309,6 +309,7 @@ hr {
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 10;
 }
 
 #input-answer-box {
