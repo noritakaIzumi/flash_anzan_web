@@ -14,13 +14,14 @@
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
     <div id="header-message" class="font"></div>
     <div id="question-number-area" class="number-area"></div>
+    <p id="question-info-label"></p>
 </div>
 <hr>
 <div id="play-button-area" class="operation-panel">
-    <button type="button" id="start-button" class="btn btn-lg btn-danger" onclick="flash()" disabled>
+    <button type="button" id="start-button" class="btn btn-lg btn-danger" onclick="flash();" disabled>
         Start
     </button>
-    <button type="button" id="repeat-button" class="btn btn-lg btn-danger" onclick="flash({repeat: true})" disabled>
+    <button type="button" id="repeat-button" class="btn btn-lg btn-danger" onclick="flash({repeat: true});" disabled>
         Repeat
     </button>
 </div>
@@ -36,10 +37,6 @@
            id="multiplication-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);">
     <label class="btn btn-outline-primary" for="multiplication-button">かけ算</label>
 </div>
-<button type="button" id="load-params-button" class="btn btn-light" onclick="loadParams();">Load</button>
-<button type="button" id="save-params-button" class="btn btn-light" onclick="saveParams();">Save</button>
-<button type="button" id="delete-params-button" class="btn btn-light" onclick="deleteParams();">Delete</button>
-<hr>
 <label class="operation-panel">
     <select name="sound-extension" id="sound-extension" onchange="setSoundExtension(this.value);"
             class="form-select" aria-label="Default select example">
@@ -50,6 +47,21 @@
 <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
     <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off">
     <label class="btn btn-outline-secondary" for="is-muted">Mute</label>
+</div>
+<hr>
+<div class="btn-group operation-panel" role="group" aria-label="Basic example">
+    <button type="button" class="btn btn-outline-secondary" onclick="displayHelp();">Help</button>
+</div>
+<div class="btn-group operation-panel" role="group" aria-label="Basic example">
+    <button type="button" id="load-params-button" class="btn btn-outline-info" onclick="loadParams();">
+        Load
+    </button>
+    <button type="button" id="save-params-button" class="btn btn-outline-info" onclick="saveParams();">
+        Save
+    </button>
+    <button type="button" id="delete-params-button" class="btn btn-outline-info" onclick="deleteParams();">
+        Delete
+    </button>
 </div>
 <hr>
 <div id="current-mode" class="display-none"></div>
@@ -129,7 +141,7 @@
 <div id="result-saved" class="operation-panel display-none">
     <p id="previous-mode" style="display: none;"></p>
     <p id="answer-area" style="display: none;">Answer: <span id="answer-number"></span></p>
-    <button type="button" id="number-history-button" class="btn btn-info" onclick="displayNumberHistoryArea()">
+    <button type="button" id="number-history-button" class="btn btn-info" onclick="displayNumberHistoryArea();">
         Number History
     </button>
     <p id="number-history-area" class="p-1 mb-2 bg-warning text-dark"><span id="number-history-display"></span></p>

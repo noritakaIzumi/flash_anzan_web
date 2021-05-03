@@ -9,6 +9,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         kiosk: true,
         frame: false,
+        fullscreen: true,
     });
 
     // メインウィンドウに表示するURLを指定します

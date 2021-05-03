@@ -63,6 +63,7 @@ questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
 inputAnswerArea = document.getElementById('input-answer-area');
 inputAnswerBox = document.getElementById('input-answer-box');
+questionInfoLabel = document.getElementById('question-info-label')
 
 button = {
     loadParams: document.getElementById("load-params-button"),
