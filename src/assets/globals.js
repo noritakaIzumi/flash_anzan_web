@@ -21,16 +21,6 @@ param = {
             min: 1000,
             default: 5000,
         },
-        flashRate: {
-            max: 99,
-            min: 1,
-            default: 60,
-        },
-        offset: {
-            max: 500,
-            min: -500,
-            default: 10,
-        },
     },
     multiplication: {
         digit1: {
@@ -53,6 +43,8 @@ param = {
             min: 1000,
             default: 5000,
         },
+    },
+    common: {
         flashRate: {
             max: 99,
             min: 1,
@@ -64,16 +56,6 @@ param = {
             default: 10,
         },
     },
-    // flashRate: {
-    //     max: 99,
-    //     min: 1,
-    //     default: 60,
-    // },
-    // offset: {
-    //     max: 500,
-    //     min: -500,
-    //     default: 10,
-    // },
 };
 
 headerMessage = document.getElementById("header-message");
@@ -81,6 +63,7 @@ questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
 inputAnswerArea = document.getElementById('input-answer-area');
 inputAnswerBox = document.getElementById('input-answer-box');
+questionInfoLabel = document.getElementById('question-info-label')
 
 button = {
     loadParams: document.getElementById("load-params-button"),
@@ -92,9 +75,6 @@ button = {
     addition: document.getElementById("addition-button"),
     subtraction: document.getElementById("subtraction-button"),
     multiplication: document.getElementById("multiplication-button"),
-    additionSetOffset: document.getElementById("addition-set-offset"),
-    multiplicationSetOffset: document.getElementById("multiplication-set-offset"),
-    // setOffset: document.getElementById(""),
 };
 
 resultSaved = document.getElementById("result-saved");
@@ -127,27 +107,20 @@ element = {
         digit: document.getElementById("addition-digit"),
         length: document.getElementById("addition-length"),
         time: document.getElementById("addition-time"),
-        flashRate: document.getElementById("addition-flashRate"),
-        offset: document.getElementById("addition-offset"),
     },
     multiplication: {
         digit1: document.getElementById("multiplication-digit-1"),
         digit2: document.getElementById("multiplication-digit-2"),
         length: document.getElementById("multiplication-length"),
         time: document.getElementById("multiplication-time"),
-        flashRate: document.getElementById("multiplication-flashRate"),
-        offset: document.getElementById("multiplication-offset"),
+    },
+    common: {
+        flashRate: document.getElementById("common-flashRate"),
+        offset: document.getElementById("common-offset"),
     },
 };
 
-commonElement = {
-    // flashRate: document.getElementById("flashRate"),
-    // offset: document.getElementById("offset"),
-};
-
 disableConfigTarget = [
-    button.additionSetOffset,
-    button.multiplicationSetOffset,
     button.loadParams,
     button.saveParams,
     button.deleteParams

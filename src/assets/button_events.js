@@ -1,11 +1,3 @@
-// ボタンイベントなどに使用する関数
-function configOffset() {
-    const offset = window.prompt("オフセット (ms): 数字が大きいほど音が早く出ます", element[currentMode.innerText].offset.value.toString());
-    if (offset) {
-        element[currentMode.innerText].offset.value = Number(offset);
-    }
-}
-
 function loadParams() {
     const loadedParams = localStorage.getItem(savedParamsKeyName);
     if (!loadedParams) {
@@ -25,6 +17,8 @@ function loadParams() {
                 });
         }
     );
+
+    setQuestionInfoLabel();
 }
 
 function saveParams() {
