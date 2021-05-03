@@ -331,6 +331,17 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+#question-info-label {
+    color: #67ceff;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.hide-cursor {
+    cursor: none !important;
+}
+
 @keyframes show {
     from {
         opacity: 0;

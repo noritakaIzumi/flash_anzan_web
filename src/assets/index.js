@@ -16,21 +16,40 @@ function increaseParam(id, amount) {
     switch (paramName) {
         case "digit":
             if (currentMode.innerText === modeNames.multiplication) {
-                element.value = fixValue(param[currentMode.innerText][paramName + id.split("-")[2]], Math.floor(currentValue) + amount).toString();
+                element.value = fixValue(
+                    param[currentMode.innerText][paramName + id.split("-")[2]],
+                    Math.floor(currentValue) + amount
+                ).toString();
             } else if (currentMode.innerText === modeNames.addition) {
-                element.value = fixValue(param[currentMode.innerText][paramName], Math.floor(currentValue) + amount).toString();
+                element.value = fixValue(
+                    param[currentMode.innerText][paramName],
+                    Math.floor(currentValue) + amount
+                ).toString();
             }
-            return;
+            break;
         case "length":
-            element.value = fixValue(param[currentMode.innerText][paramName], Math.floor(currentValue) + amount).toString();
-            return;
+            element.value = fixValue(
+                param[currentMode.innerText][paramName],
+                Math.floor(currentValue) + amount
+            ).toString();
+            break;
         case "time":
-            element.value = (fixValue(param[currentMode.innerText][paramName], Math.round(currentValue * 1000) + amount) / 1000).toString();
-            return;
+            element.value = (
+                fixValue(
+                    param[currentMode.innerText][paramName],
+                    Math.round(currentValue * 1000) + amount
+                ) / 1000
+            ).toString();
+            break;
         case "flashRate":
-            element.value = fixValue(param[currentMode.innerText][paramName], currentValue + amount).toString();
-            return;
+            element.value = fixValue(
+                param.common[paramName],
+                currentValue + amount
+            ).toString();
+            break;
     }
+
+    setQuestionInfoLabel();
 }
 
 function setLimitAndDefaultValue() {
@@ -53,7 +72,7 @@ function setLimitAndDefaultValue() {
 }
 
 function changeShortcut(mode) {
-    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l", "p", "shift+p"].map((key) => {
+    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l"].map((key) => {
         shortcut.remove(key);
     });
     switch (mode) {
@@ -76,8 +95,6 @@ function changeShortcut(mode) {
     shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
     shortcut.add("ctrl+shift+o", () => increaseParam(mode + "-time", 10));
     shortcut.add("ctrl+shift+l", () => increaseParam(mode + "-time", -10));
-    shortcut.add("p", () => increaseParam("common-flashRate", 1));
-    shortcut.add("shift+p", () => increaseParam("common-flashRate", -1));
 }
 
 function changeMode(mode) {
@@ -93,6 +110,12 @@ function changeMode(mode) {
     changeShortcut(mode);
 
     currentMode.innerText = mode;
+
+    setQuestionInfoLabel();
+}
+
+function setQuestionInfoLabel() {
+    questionInfoLabel.innerText = `${currentMode.innerText}: ${JSON.stringify(getCurrentParam())}`;
 }
 
 function expandCalculateArea() {
@@ -101,6 +124,57 @@ function expandCalculateArea() {
 
 function contractCalculateArea() {
     calculateArea.classList.remove('full-screen');
+}
+
+function getCurrentParam() {
+    let requestParam = {
+        digit: 0,
+        length: 0,
+        time: 0,
+        flashRate: 0,
+        offset: 0,
+    };
+    switch (currentMode.innerText) {
+        case modeNames.multiplication:
+            requestParam.digit = [
+                fixValue(
+                    param[currentMode.innerText].digit1,
+                    Math.floor(Number(element[currentMode.innerText].digit1.value))
+                ),
+                fixValue(
+                    param[currentMode.innerText].digit2,
+                    Math.floor(Number(element[currentMode.innerText].digit2.value))
+                )
+            ];
+            element[currentMode.innerText].digit1.value = requestParam.digit[0];
+            element[currentMode.innerText].digit2.value = requestParam.digit[1];
+            break;
+        case modeNames.addition:
+        default:
+            requestParam.digit = fixValue(
+                param[currentMode.innerText].digit,
+                Math.floor(Number(element[currentMode.innerText].digit.value))
+            );
+            element[currentMode.innerText].digit.value = requestParam.digit;
+    }
+    requestParam.length = fixValue(
+        param[currentMode.innerText].length,
+        Math.floor(Number(element[currentMode.innerText].length.value))
+    );
+    requestParam.time = fixValue(
+        param[currentMode.innerText].time,
+        Number(element[currentMode.innerText].time.value) * 1000
+    );
+    requestParam.flashRate = fixValue(
+        param.common.flashRate,
+        Number(element.common.flashRate.value)
+    );
+    requestParam.offset = fixValue(
+        param.common.offset,
+        Number(element.common.offset.value)
+    );
+
+    return requestParam;
 }
 
 function flash(config = {}) {
@@ -192,9 +266,12 @@ function flash(config = {}) {
             if (number === answerNumber.innerText) {
                 resultAudio = audioObj.correct[0];
                 headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
-            } else {
+            } else if (number.length > 0) {
                 resultAudio = audioObj.incorrect[0];
                 headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
+            } else {
+                resultAudio = audioObj.silence[0];
+                headerMessage.innerText = "答え";
             }
             questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
             resultAudio.muted = isMuted.checked;
@@ -203,6 +280,7 @@ function flash(config = {}) {
             enableButtons();
             button.numberHistory.disabled = false;
             resultSaved.style.display = "block";
+            questionInfoLabel.style.display = "block";
         }, 1200);
     }
 
@@ -235,31 +313,7 @@ function flash(config = {}) {
 
     // ここからフラッシュ出題の処理
     // 設定を取得する
-    let requestParam = {
-        digit: 0,
-        length: 0,
-        time: 0,
-        flashRate: 0,
-        offset: 0,
-    };
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            requestParam.digit = [
-                fixValue(param[currentMode.innerText].digit1, Math.floor(Number(element[currentMode.innerText].digit1.value))),
-                fixValue(param[currentMode.innerText].digit2, Math.floor(Number(element[currentMode.innerText].digit2.value)))
-            ];
-            element[currentMode.innerText].digit1.value = requestParam.digit[0];
-            element[currentMode.innerText].digit2.value = requestParam.digit[1];
-            break;
-        case modeNames.addition:
-        default:
-            requestParam.digit = fixValue(param[currentMode.innerText].digit, Math.floor(Number(element[currentMode.innerText].digit.value)));
-            element[currentMode.innerText].digit.value = requestParam.digit;
-    }
-    requestParam.length = fixValue(param[currentMode.innerText].length, Math.floor(Number(element[currentMode.innerText].length.value)));
-    requestParam.time = fixValue(param[currentMode.innerText].time, Number(element[currentMode.innerText].time.value) * 1000);
-    requestParam.flashRate = fixValue(param.common.flashRate, Number(element.common.flashRate.value));
-    requestParam.offset = fixValue(param.common.offset, Number(element.common.offset.value));
+    let requestParam = getCurrentParam();
     element[currentMode.innerText].length.value = requestParam.length;
     element[currentMode.innerText].time.value = requestParam.time / 1000;
     element.common.flashRate.value = requestParam.flashRate;
@@ -356,6 +410,7 @@ function flash(config = {}) {
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
+    questionInfoLabel.style.display = "none";
     resultSaved.style.display = "none";
     numberHistoryArea.style.display = "none";
     previousMode.innerText = currentMode.innerText;
@@ -404,6 +459,22 @@ function loadAudioObj(extension) {
     });
 }
 
+function toggleFullscreenMode() {
+    if (calculateArea.dataset.fullScreen === "0") {
+        expandCalculateArea();
+        questionNumberArea.classList.add('big-size-number');
+        calculateArea.dataset.fullScreen = "1";
+    } else {
+        questionNumberArea.classList.remove('big-size-number');
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    }
+}
+
+function displayHelp() {
+    alert('w: フルスクリーンモード切替\nCtrl+w (Alt+F4): 終了');
+}
+
 // ページ読み込み時処理
 (() => {
     loadAudioObj(audioAttr.extension.ogg);
@@ -426,6 +497,18 @@ function loadAudioObj(extension) {
         });
     })();
 
+    // Hide cursor if stopped
+    (() => {
+        let timer;
+        window.addEventListener('mousemove', function() {
+            document.body.classList.remove("hide-cursor");
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                document.body.classList.add("hide-cursor");
+            }, 1000);
+        });
+    })();
+
     // Register Shortcuts
     (() => {
         shortcut.add("ctrl+o", () => button.loadParams.click());
@@ -440,16 +523,7 @@ function loadAudioObj(extension) {
 
         shortcut.add("n", () => button.numberHistory.click());
 
-        shortcut.add("w", () => {
-            if (calculateArea.dataset.fullScreen === "0") {
-                expandCalculateArea();
-                questionNumberArea.classList.add('big-size-number');
-                calculateArea.dataset.fullScreen = "1";
-            } else {
-                questionNumberArea.classList.remove('big-size-number');
-                contractCalculateArea();
-                calculateArea.dataset.fullScreen = "0";
-            }
-        });
+        shortcut.add("w", () => toggleFullscreenMode());
+        shortcut.add("q", () => displayHelp());
     })();
 })();
