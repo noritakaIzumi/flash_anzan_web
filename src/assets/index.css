@@ -102,6 +102,7 @@ hr {
     background-color: black;
     border: solid 1px white;
     margin-top: 5px;
+    cursor: none !important;
 }
 
 @media screen and (min-width: 1025px) {
@@ -336,10 +337,6 @@ input[type="number"] {
     position: absolute;
     right: 0;
     bottom: 0;
-}
-
-.hide-cursor {
-    cursor: none !important;
 }
 
 @keyframes show {

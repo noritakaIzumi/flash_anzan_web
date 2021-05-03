@@ -62,5 +62,22 @@ function setSoundExtension(extension) {
 
 function displayNumberHistoryArea() {
     button.numberHistory.disabled = true;
-    numberHistoryArea.style.display = "block";
+    numberHistoryArea.classList.remove('display-none');
+}
+
+function toggleFullscreenMode() {
+    if (!isFullscreen()) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    }
+}
+
+function displayHelp() {
+    alert(
+        '「W」キーを押すとフルスクリーンモードを切り替えます\n' +
+        '「Ctrl」キーを押しながら「W」キー（または「Alt」キーを押しながら「F4」キー）を押すと終了します'
+    );
 }

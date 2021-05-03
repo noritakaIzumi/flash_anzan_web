@@ -41,12 +41,6 @@ function increaseParam(id, amount) {
                 ) / 1000
             ).toString();
             break;
-        case "flashRate":
-            element.value = fixValue(
-                param.common[paramName],
-                currentValue + amount
-            ).toString();
-            break;
     }
 
     setQuestionInfoLabel();
@@ -120,9 +114,13 @@ function setQuestionInfoLabel() {
 
 function expandCalculateArea() {
     calculateArea.classList.add('full-screen');
+    questionNumberArea.classList.add('big-size-number');
+    questionInfoLabel.classList.remove('display-none');
 }
 
 function contractCalculateArea() {
+    questionInfoLabel.classList.add('display-none');
+    questionNumberArea.classList.remove('big-size-number');
     calculateArea.classList.remove('full-screen');
 }
 
@@ -240,14 +238,10 @@ function flash(config = {}) {
     }
 
     function disableButtons() {
-        button.start.disabled = true;
-        button.repeat.disabled = true;
         disableConfigTarget.map((element) => element.disabled = true);
     }
 
     function enableButtons() {
-        button.start.disabled = false;
-        button.repeat.disabled = false;
         disableConfigTarget.map((element) => element.disabled = false);
     }
 
@@ -279,8 +273,10 @@ function flash(config = {}) {
 
             enableButtons();
             button.numberHistory.disabled = false;
-            resultSaved.style.display = "block";
-            questionInfoLabel.style.display = "block";
+            resultSaved.classList.remove('display-none');
+            if (isFullscreen()) {
+                questionInfoLabel.classList.remove('display-none');
+            }
         }, 1200);
     }
 
@@ -302,9 +298,12 @@ function flash(config = {}) {
                 displayAnswer(inputAnswerBox.value.trim());
                 return;
             }
-            if (event.key === "Escape") {
+            if (event.key === "Escape" && window.confirm("回答をやめますか？")) {
                 inputAnswerArea.classList.remove('show');
                 enableButtons();
+                if (isFullscreen()) {
+                    questionInfoLabel.classList.remove('display-none');
+                }
                 return;
             }
             inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
@@ -410,9 +409,9 @@ function flash(config = {}) {
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
-    questionInfoLabel.style.display = "none";
-    resultSaved.style.display = "none";
-    numberHistoryArea.style.display = "none";
+    questionInfoLabel.classList.add('display-none');
+    resultSaved.classList.add('display-none');
+    numberHistoryArea.classList.add('display-none');
     previousMode.innerText = currentMode.innerText;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
@@ -459,20 +458,8 @@ function loadAudioObj(extension) {
     });
 }
 
-function toggleFullscreenMode() {
-    if (calculateArea.dataset.fullScreen === "0") {
-        expandCalculateArea();
-        questionNumberArea.classList.add('big-size-number');
-        calculateArea.dataset.fullScreen = "1";
-    } else {
-        questionNumberArea.classList.remove('big-size-number');
-        contractCalculateArea();
-        calculateArea.dataset.fullScreen = "0";
-    }
-}
-
-function displayHelp() {
-    alert('w: フルスクリーンモード切替\nCtrl+w (Alt+F4): 終了');
+function isFullscreen() {
+    return calculateArea.dataset.fullScreen === '1';
 }
 
 // ページ読み込み時処理
@@ -497,18 +484,6 @@ function displayHelp() {
         });
     })();
 
-    // Hide cursor if stopped
-    (() => {
-        let timer;
-        window.addEventListener('mousemove', function() {
-            document.body.classList.remove("hide-cursor");
-            clearTimeout(timer);
-            timer = setTimeout(function() {
-                document.body.classList.add("hide-cursor");
-            }, 1000);
-        });
-    })();
-
     // Register Shortcuts
     (() => {
         shortcut.add("ctrl+o", () => button.loadParams.click());
@@ -516,13 +491,10 @@ function displayHelp() {
         shortcut.add("ctrl+r", () => button.deleteParams.click());
         shortcut.add("s", () => button.start.click());
         shortcut.add("r", () => button.repeat.click());
-
         shortcut.add("z", () => button.addition.click());
         shortcut.add("x", () => button.subtraction.click());
         shortcut.add("c", () => button.multiplication.click());
-
         shortcut.add("n", () => button.numberHistory.click());
-
         shortcut.add("w", () => toggleFullscreenMode());
         shortcut.add("q", () => displayHelp());
     })();

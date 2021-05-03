@@ -121,6 +121,8 @@ element = {
 };
 
 disableConfigTarget = [
+    button.start,
+    button.repeat,
     button.loadParams,
     button.saveParams,
     button.deleteParams
