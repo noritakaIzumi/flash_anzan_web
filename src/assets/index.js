@@ -76,8 +76,8 @@ function changeShortcut(mode) {
     shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
     shortcut.add("ctrl+shift+o", () => increaseParam(mode + "-time", 10));
     shortcut.add("ctrl+shift+l", () => increaseParam(mode + "-time", -10));
-    shortcut.add("p", () => increaseParam(mode + "-flashRate", 1));
-    shortcut.add("shift+p", () => increaseParam(mode + "-flashRate", -1));
+    shortcut.add("p", () => increaseParam("common-flashRate", 1));
+    shortcut.add("shift+p", () => increaseParam("common-flashRate", -1));
 }
 
 function changeMode(mode) {
@@ -262,12 +262,12 @@ function flash(config = {}) {
     }
     requestParam.length = fixValue(param[currentMode.innerText].length, Math.floor(Number(element[currentMode.innerText].length.value)));
     requestParam.time = fixValue(param[currentMode.innerText].time, Number(element[currentMode.innerText].time.value) * 1000);
-    requestParam.flashRate = fixValue(param[currentMode.innerText].flashRate, Number(element[currentMode.innerText].flashRate.value));
-    requestParam.offset = fixValue(param[currentMode.innerText].offset, Number(element[currentMode.innerText].offset.value));
+    requestParam.flashRate = fixValue(param.common.flashRate, Number(element.common.flashRate.value));
+    requestParam.offset = fixValue(param.common.offset, Number(element.common.offset.value));
     element[currentMode.innerText].length.value = requestParam.length;
     element[currentMode.innerText].time.value = requestParam.time / 1000;
-    element[currentMode.innerText].flashRate.value = requestParam.flashRate;
-    element[currentMode.innerText].offset.value = requestParam.offset;
+    element.common.flashRate.value = requestParam.flashRate;
+    element.common.offset.value = requestParam.offset;
 
     // 点灯時間と消灯時間を算出する
     const flashTime = getFlashTime(requestParam.length, requestParam.time, requestParam.flashRate);

@@ -47,15 +47,10 @@
 <button id="delete-params-button" onclick="deleteParams();">Delete</button>
 <hr>
 <div id="current-mode" class="display-none"></div>
-<div id="flashRate" class="display-none"></div>
-<div id="offset" class="display-none"></div>
 <div id="mode-config-area">
     <div id="addition-mode-config">
         <div class="operation-panel">
-            <div class="font">[基本設定]
-                <button id="addition-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;"
-                        onclick="configOffset();"></button>
-            </div>
+            <div class="font">[基本設定]</div>
             <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="addition-digit">桁数</label></div>
                 <div class="input-area">
@@ -76,30 +71,10 @@
                 </div>
             </div>
         </div>
-        <div id="addition-more-config" class="operation-panel" style="display: none;">
-            <div class="font">[高度な設定]</div>
-            <div class="config-block">
-                <div class="label-area font"><label for="addition-flashRate">Flash rate</label>
-                </div>
-                <div class="input-area">
-                    <input id="addition-flashRate" class="input-box" type="number"><span class="font"> ％</span>
-                </div>
-            </div>
-            <div class="config-block">
-                <div class="label-area font"><label for="addition-offset">Offset</label>
-                </div>
-                <div class="input-area">
-                    <input id="addition-offset" class="input-box" type="number"><span class="font"> ms</span>
-                </div>
-            </div>
-        </div>
     </div>
     <div id="multiplication-mode-config">
         <div class="operation-panel">
-            <div class="font">[基本設定]
-                <button id="multiplication-set-offset" class="btn-gradient-3d btn-blue" style="vertical-align: top;"
-                        onclick="configOffset();"></button>
-            </div>
+            <div class="font">[基本設定]</div>
             <div class="config-block config-block-float-left">
                 <div class="label-area font"><label for="multiplication-digit-1">かけられる数</label></div>
                 <div class="input-area">
@@ -128,22 +103,22 @@
                 </div>
             </div>
         </div>
-        <div id="multiplication-more-config" class="operation-panel" style="display: none;">
-            <div class="font">[高度な設定]</div>
-            <div class="config-block">
-                <div class="label-area font"><label for="multiplication-flashRate">Flash rate</label>
-                </div>
-                <div class="input-area">
-                    <input id="multiplication-flashRate" class="input-box" type="number"><span class="font"> ％</span>
-                </div>
-            </div>
-            <div class="config-block">
-                <div class="label-area font"><label for="multiplication-offset">Offset</label>
-                </div>
-                <div class="input-area">
-                    <input id="multiplication-offset" class="input-box" type="number"><span class="font"> ms</span>
-                </div>
-            </div>
+    </div>
+</div>
+<div id="common-more-config" class="operation-panel">
+    <div class="font">[高度な設定]</div>
+    <div class="config-block">
+        <div class="label-area font"><label for="common-flashRate">Flash rate</label>
+        </div>
+        <div class="input-area">
+            <input id="common-flashRate" class="input-box" type="number"><span class="font"> ％</span>
+        </div>
+    </div>
+    <div class="config-block">
+        <div class="label-area font"><label for="common-offset">Offset</label>
+        </div>
+        <div class="input-area">
+            <input id="common-offset" class="input-box" type="number"><span class="font"> ms</span>
         </div>
     </div>
 </div>
