@@ -48,7 +48,7 @@ param = {
         flashRate: {
             max: 99,
             min: 1,
-            default: 60,
+            default: 55,
         },
         offset: {
             max: 500,
