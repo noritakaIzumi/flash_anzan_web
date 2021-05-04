@@ -387,7 +387,7 @@ function flash(config = {}) {
             localeStringNumbers = numbers.map((n) => n.toLocaleString());
     }
 
-    // setTimeout に設定する関数を作成する
+    // setFlashTimeOut に設定する関数を作成する
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
 
@@ -444,20 +444,36 @@ function flash(config = {}) {
     numberHistoryDisplay.innerText = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 
+    const start = new Date().getTime();
+    function setFlashTimeOut(fn, delay) {
+        const handle = {};
+        function loop() {
+            const current = new Date().getTime();
+            const delta = current - start;
+            if (delta >= delay) {
+                fn.call();
+            } else {
+                handle.value = requestAnimationFrame(loop);
+            }
+        }
+        handle.value = requestAnimationFrame(loop);
+        return handle
+    }
+
     // Register flash events
     disableButtons();
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
-    setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
+    setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
+    setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
     for (let i = 0; i < toggleNumberSuite.length; i++) {
-        setTimeout(playTickFunctions[i], toggleTiming - requestParam.offset);
-        setTimeout(toggleNumberFunctions[i], toggleTiming);
+        setFlashTimeOut(playTickFunctions[i], toggleTiming - requestParam.offset);
+        setFlashTimeOut(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setTimeout(checkAnswer, toggleTiming);
+    setFlashTimeOut(checkAnswer, toggleTiming);
 }
 
 function loadAudioObj(extension) {
