@@ -109,7 +109,20 @@ function changeMode(mode) {
 }
 
 function setQuestionInfoLabel() {
-    questionInfoLabel.innerText = `${currentMode.innerText}: ${JSON.stringify(getCurrentParam())}`;
+    const currentParam = getCurrentParam();
+    let labelText = '[現在の問題]\n';
+    switch (currentMode.innerText) {
+        case modeNames.addition:
+            labelText += `たし算 ${currentParam.digit} 桁 `;
+            break;
+        case modeNames.multiplication:
+            labelText += `かけ算 ${currentParam.digit[0]} 桁 × ${currentParam.digit[1]} 桁 `;
+            break;
+    }
+    labelText += `${currentParam.length} 口 ${currentParam.time / 1000} 秒 \n`;
+    labelText += `(flash rate: ${currentParam.flashRate} %, offset: ${currentParam.offset} ms)`;
+
+    questionInfoLabel.innerText = labelText;
 }
 
 function expandCalculateArea() {

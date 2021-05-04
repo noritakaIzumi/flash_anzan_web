@@ -333,10 +333,11 @@ input[type="number"] {
 }
 
 #question-info-label {
-    color: #67ceff;
     position: absolute;
     right: 0;
     bottom: 0;
+    text-align: right;
+    color: limegreen;
 }
 
 @keyframes show {
