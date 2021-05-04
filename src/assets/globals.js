@@ -98,6 +98,7 @@ audioObj = {
     incorrect: new Array(1),
     silence: new Array(1),
 };
+audioContext = new AudioContext();
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");

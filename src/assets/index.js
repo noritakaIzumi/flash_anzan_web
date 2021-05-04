@@ -188,6 +188,13 @@ function getCurrentParam() {
     return requestParam;
 }
 
+function prepareAudio(path) {
+    const audioElement = new Audio(path);
+    const track = audioContext.createMediaElementSource(audioElement);
+    track.connect(audioContext.destination);
+    return audioElement;
+}
+
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
@@ -243,9 +250,9 @@ function flash(config = {}) {
             if (!isMuted.checked) {
                 sounds.push(audioObj.tick[i]);
             } else {
-                sounds.push(new Audio());
+                sounds.push(prepareAudio());
             }
-            sounds.push(new Audio());
+            sounds.push(prepareAudio());
         }
         return sounds;
     }
@@ -442,9 +449,6 @@ function flash(config = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    setTimeout(() => {
-        audioObj.silence[0].play();
-    }, 0);
     setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
     setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
@@ -462,7 +466,7 @@ function loadAudioObj(extension) {
     Object.keys(audioObj).forEach((name) => {
         audioPath = `${audioAttr.directory}/${name}.${extension}`;
         for (let i = 0; i < audioObj[name].length; i++) {
-            audioObj[name][i] = new Audio(audioPath);
+            audioObj[name][i] = prepareAudio(audioPath);
             setTimeout(() => {
                 audioObj[name][i].load();
             }, timeoutMs);
@@ -478,6 +482,9 @@ function isFullscreen() {
 // ページ読み込み時処理
 (() => {
     loadAudioObj(audioAttr.extension.ogg);
+    button.start.addEventListener('click', () => {
+        audioContext.resume().then(() => {});
+    });
 
     (() => {
         let timeoutMs = 2000;
