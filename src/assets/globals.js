@@ -90,6 +90,7 @@ audioAttr = {
         wav: 'wav',
     },
 };
+defaultAudioExtension = audioAttr.extension.wav;
 audioObj = {
     beep: new Array(2),
     tick: new Array(30),

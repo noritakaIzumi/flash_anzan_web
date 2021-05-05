@@ -503,7 +503,7 @@ function isFullscreen() {
 
 // ページ読み込み時処理
 (() => {
-    loadAudioObj(audioAttr.extension.ogg);
+    loadAudioObj(defaultAudioExtension);
     button.start.addEventListener('click', () => {
         audioContext.resume().then(() => {
         });
