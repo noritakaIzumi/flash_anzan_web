@@ -188,13 +188,6 @@ function getCurrentParam() {
     return requestParam;
 }
 
-function prepareAudio(path) {
-    const audioElement = new Audio(path);
-    const track = audioContext.createMediaElementSource(audioElement);
-    track.connect(audioContext.destination);
-    return audioElement;
-}
-
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
@@ -250,9 +243,9 @@ function flash(config = {}) {
             if (!isMuted.checked) {
                 sounds.push(audioObj.tick[i]);
             } else {
-                sounds.push(prepareAudio());
+                sounds.push(audioObj.silence[0]);
             }
-            sounds.push(prepareAudio());
+            sounds.push(audioObj.silence[0]);
         }
         return sounds;
     }
@@ -482,7 +475,7 @@ function loadAudioObj(extension) {
     Object.keys(audioObj).forEach((name) => {
         audioPath = `${audioAttr.directory}/${name}.${extension}`;
         for (let i = 0; i < audioObj[name].length; i++) {
-            audioObj[name][i] = prepareAudio(audioPath);
+            audioObj[name][i] = new Howl({src: [audioPath]});
             setTimeout(() => {
                 audioObj[name][i].load();
             }, timeoutMs);
