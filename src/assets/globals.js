@@ -53,7 +53,7 @@ param = {
         offset: {
             max: 500,
             min: -500,
-            default: 10,
+            default: 0,
         },
     },
 };
