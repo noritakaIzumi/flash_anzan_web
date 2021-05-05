@@ -5,155 +5,203 @@
     <title>Flash Anzan</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
     <link rel="shortcut icon" href="image/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/index.css?ver=0.3.0">
+    <link href="assets/bootstrap@5.0.0-beta1.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/index.css?ver=0.4.3">
+    <script src="assets/howler_2_2_1.min.js"></script>
     <script type="text/javascript" src="lib/shortcut.js"></script>
 </head>
-<body>
+<body class="hide-cursor">
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
     <div id="header-message" class="font"></div>
     <div id="question-number-area" class="number-area"></div>
-    <p id="question-info-label"></p>
+    <p id="question-info-label" class="display-none"></p>
 </div>
 <hr>
-<div id="play-button-area" class="operation-panel">
-    <button type="button" id="start-button" class="btn btn-lg btn-danger" onclick="flash();" disabled>
-        Start
-    </button>
-    <button type="button" id="repeat-button" class="btn btn-lg btn-danger" onclick="flash({repeat: true});" disabled>
-        Repeat
-    </button>
-</div>
-<hr>
-<div id="mode-button-area" class="operation-panel btn-group" role="group" aria-label="Basic radio toggle button group">
-    <input type="radio" class="btn-check" name="btnradio"
-           id="addition-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);">
-    <label class="btn btn-outline-primary" for="addition-button">たし算</label>
-    <input type="radio" class="btn-check" name="btnradio"
-           id="subtraction-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);" disabled>
-    <label class="btn btn-outline-primary" for="subtraction-button">ひき算</label>
-    <input type="radio" class="btn-check" name="btnradio"
-           id="multiplication-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);">
-    <label class="btn btn-outline-primary" for="multiplication-button">かけ算</label>
-</div>
-<label class="operation-panel">
-    <select name="sound-extension" id="sound-extension" onchange="setSoundExtension(this.value);"
-            class="form-select" aria-label="Default select example">
-        <option value="ogg" selected>ogg</option>
-        <option value="wav">wav</option>
-    </select>
-</label>
-<div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-    <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off">
-    <label class="btn btn-outline-secondary" for="is-muted">Mute</label>
-</div>
-<hr>
-<div class="btn-group operation-panel" role="group" aria-label="Basic example">
-    <button type="button" class="btn btn-outline-secondary" onclick="displayHelp();">Help</button>
-</div>
-<div class="btn-group operation-panel" role="group" aria-label="Basic example">
-    <button type="button" id="load-params-button" class="btn btn-outline-info" onclick="loadParams();">
-        Load
-    </button>
-    <button type="button" id="save-params-button" class="btn btn-outline-info" onclick="saveParams();">
-        Save
-    </button>
-    <button type="button" id="delete-params-button" class="btn btn-outline-info" onclick="deleteParams();">
-        Delete
-    </button>
-</div>
-<hr>
-<div id="current-mode" class="display-none"></div>
-<div id="mode-config-area">
-    <div id="addition-mode-config">
-        <div class="operation-panel">
-            <div class="config-block config-block-float-left">
-                <div class="label-area font"><label for="addition-digit">桁数</label></div>
-                <div class="input-area">
-                    <input id="addition-digit" class="input-box" type="number"><span class="font"> 桁</span>
+<div class="operation-panel">
+    <div class="container">
+        <div id="play-button-area" class="btn-group">
+            <button type="button" id="start-button" class="btn btn-lg btn-danger" onclick="flash();" disabled>
+                Start
+            </button>
+            <button type="button" id="repeat-button" class="btn btn-lg btn-danger" onclick="flash({repeat: true});"
+                    disabled>
+                Repeat
+            </button>
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="input-group w-auto float-start pe-2">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="sound-extension">ext</label>
+            </div>
+            <select name="sound-extension" id="sound-extension" onchange="setSoundExtension(this.value);"
+                    class="form-select">
+                <option value="wav" selected>wav</option>
+                <option value="ogg">ogg</option>
+            </select>
+        </div>
+        <div class="btn-group" role="group">
+            <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off">
+            <label class="btn btn-outline-success" for="is-muted">Mute</label>
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div class="btn-group pe-2" role="group">
+            <button type="button" class="btn btn-outline-success" onclick="displayHelp();">Help</button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" id="load-params-button" class="btn btn-outline-info" onclick="loadParams();">
+                Load
+            </button>
+            <button type="button" id="save-params-button" class="btn btn-outline-info" onclick="saveParams();">
+                Save
+            </button>
+            <button type="button" id="delete-params-button" class="btn btn-outline-info" onclick="deleteParams();">
+                Delete
+            </button>
+        </div>
+    </div>
+    <hr>
+    <div class="container">
+        <div id="mode-button-area" class="btn-group pe-2" role="group">
+            <input type="radio" class="btn-check" name="btnradio"
+                   id="addition-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);">
+            <label class="btn btn-outline-primary" for="addition-button">たし算</label>
+            <input type="radio" class="btn-check" name="btnradio"
+                   id="subtraction-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);" disabled>
+            <label class="btn btn-outline-primary" for="subtraction-button">ひき算</label>
+            <input type="radio" class="btn-check" name="btnradio"
+                   id="multiplication-button" autocomplete="off" onclick="changeMode((this.id).split('-')[0]);">
+            <label class="btn btn-outline-primary" for="multiplication-button">かけ算</label>
+        </div>
+    </div>
+    <hr>
+    <div id="current-mode" class="display-none"></div>
+    <div id="mode-config-area">
+        <div id="addition-mode-config" class="container pt-1 w-auto">
+            <div class="row">
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">桁数</span>
+                    </div>
+                    <label for="addition-digit"></label>
+                    <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">桁</span>
+                    </div>
+                </div>
+                <div class="input-group mb-2 col"></div>
+            </div>
+            <div class="row">
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">口数</span>
+                    </div>
+                    <label for="addition-length"></label>
+                    <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">口</span>
+                    </div>
+                </div>
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">秒数</span>
+                    </div>
+                    <label for="addition-time"></label>
+                    <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">秒</span>
+                    </div>
                 </div>
             </div>
-            <div class="config-block config-block-float-left">
-                <div class="label-area font"><label for="addition-length">口数</label></div>
-                <div class="input-area">
-                    <input id="addition-length" class="input-box" type="number"><span
-                        class="font"> 口</span>
+        </div>
+        <div id="multiplication-mode-config" class="container pt-1 w-auto">
+            <div class="row">
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">桁数</span>
+                    </div>
+                    <label for="multiplication-digit-1"></label>
+                    <input type="text" inputmode="decimal" id="multiplication-digit-1" class="form-control text-end">
+                    <span class="input-group-text">桁</span>
+                    <span class="input-group-text">×</span>
+                    <label for="multiplication-digit-2"></label>
+                    <input type="text" inputmode="decimal" id="multiplication-digit-2" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">桁</span>
+                    </div>
                 </div>
             </div>
-            <div class="config-block">
-                <div class="label-area font"><label for="addition-time">秒数</label></div>
-                <div class="input-area">
-                    <input id="addition-time" class="input-box" type="number"><span class="font"> 秒</span>
+            <div class="row">
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">口数</span>
+                    </div>
+                    <label for="multiplication-length"></label>
+                    <input type="text" inputmode="decimal" id="multiplication-length" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">口</span>
+                    </div>
+                </div>
+                <div class="input-group mb-2 col">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">秒数</span>
+                    </div>
+                    <label for="multiplication-time"></label>
+                    <input type="text" inputmode="numeric" id="multiplication-time" class="form-control text-end">
+                    <div class="input-group-append">
+                        <span class="input-group-text">秒</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="multiplication-mode-config">
-        <div class="operation-panel">
-            <div class="config-block config-block-float-left">
-                <div class="label-area font"><label for="multiplication-digit-1">かけられる数</label></div>
-                <div class="input-area">
-                    <input id="multiplication-digit-1" class="input-box" type="number"><span
-                        class="font"> 桁×</span>
+    <div id="common-more-config" class="container pt-1 w-auto">
+        <div class="row">
+            <div class="input-group mb-2 col">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Flash rate</span>
+                </div>
+                <label for="common-flashRate"></label>
+                <input type="text" inputmode="numeric" id="common-flashRate" class="form-control text-end">
+                <div class="input-group-append">
+                    <span class="input-group-text">％</span>
                 </div>
             </div>
-            <div class="config-block config-block-float-left">
-                <div class="label-area font"><label for="multiplication-digit-2">かける数</label></div>
-                <div class="input-area">
-                    <input id="multiplication-digit-2" class="input-box" type="number"><span
-                        class="font"> 桁</span>
+        </div>
+        <div class="row">
+            <div class="input-group mb-2 col">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Offset</span>
                 </div>
-            </div>
-            <div class="config-block config-block-float-left">
-                <div class="label-area font"><label for="multiplication-length">口数</label></div>
-                <div class="input-area">
-                    <input id="multiplication-length" class="input-box" type="number"><span
-                        class="font"> 口</span>
-                </div>
-            </div>
-            <div class="config-block">
-                <div class="label-area font"><label for="multiplication-time">秒数</label></div>
-                <div class="input-area">
-                    <input id="multiplication-time" class="input-box" type="number"><span class="font"> 秒</span>
+                <label for="common-offset"></label>
+                <input type="text" inputmode="numeric" id="common-offset" class="form-control text-end">
+                <div class="input-group-append">
+                    <span class="input-group-text">ms</span>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div id="common-more-config" class="operation-panel">
-    <div class="config-block">
-        <div class="label-area font"><label for="common-flashRate">Flash rate</label>
-        </div>
-        <div class="input-area">
-            <input id="common-flashRate" class="input-box" type="number"><span class="font"> ％</span>
-        </div>
+    <hr>
+    <div id="result-saved" class="container pt-1 w-auto display-none">
+        <p id="previous-mode" style="display: none;"></p>
+        <p id="answer-area" style="display: none;">Answer: <span id="answer-number"></span></p>
+        <button type="button" id="number-history-button" class="btn btn-info" onclick="displayNumberHistoryArea();">
+            Number History
+        </button>
+        <p id="number-history-area" class="p-1 mb-2 bg-warning text-dark"><span id="number-history-display"></span></p>
+        <p id="number-history-stringify" style="display: none;"></p>
     </div>
-    <div class="config-block">
-        <div class="label-area font"><label for="common-offset">Offset</label>
-        </div>
-        <div class="input-area">
-            <input id="common-offset" class="input-box" type="number"><span class="font"> ms</span>
-        </div>
-    </div>
-</div>
-<hr>
-<div id="result-saved" class="operation-panel display-none">
-    <p id="previous-mode" style="display: none;"></p>
-    <p id="answer-area" style="display: none;">Answer: <span id="answer-number"></span></p>
-    <button type="button" id="number-history-button" class="btn btn-info" onclick="displayNumberHistoryArea();">
-        Number History
-    </button>
-    <p id="number-history-area" class="p-1 mb-2 bg-warning text-dark"><span id="number-history-display"></span></p>
-    <p id="number-history-stringify" style="display: none;"></p>
 </div>
 <div id="input-answer-area" class="display-none">
     <label><span style="color: darkgreen">答えを入力してください</span>
-        <input id="input-answer-box" type="number">
+        <input id="input-answer-box" type="number" inputmode="numeric">
     </label>
 </div>
-<script type="text/javascript" src="assets/globals.js?ver=0.3.0"></script>
-<script type="text/javascript" src="assets/index.js?ver=0.3.0"></script>
-<script type="text/javascript" src="assets/button_events.js?ver=0.3.0"></script>
+<script type="text/javascript" src="assets/globals.js?ver=0.4.3"></script>
+<script type="text/javascript" src="assets/index.js?ver=0.4.3"></script>
+<script type="text/javascript" src="assets/button_events.js?ver=0.4.3"></script>
 </body>
 </html>
