@@ -41,18 +41,12 @@ function increaseParam(id, amount) {
                 ) / 1000
             ).toString();
             break;
-        case "flashRate":
-            element.value = fixValue(
-                param.common[paramName],
-                currentValue + amount
-            ).toString();
-            break;
     }
 
     setQuestionInfoLabel();
 }
 
-function setLimitAndDefaultValue() {
+function setUpInputBox() {
     Object.keys(element).map((mode) => {
         Object.keys(element[mode]).map((config) => {
             if (config === "time") {
@@ -65,6 +59,16 @@ function setLimitAndDefaultValue() {
                 element[mode][config].min = param[mode][config].min;
                 element[mode][config].value = param[mode][config].default;
             }
+            element[mode][config].oninput = setQuestionInfoLabel;
+            element[mode][config].onfocus = function () {
+                this.tmp = this.value;
+                this.value = "";
+            };
+            element[mode][config].onblur = function () {
+                if (this.value === "") {
+                    this.value = this.tmp;
+                }
+            };
         });
     });
     currentMode.innerText = modeNames.addition;
@@ -115,14 +119,31 @@ function changeMode(mode) {
 }
 
 function setQuestionInfoLabel() {
-    questionInfoLabel.innerText = `${currentMode.innerText}: ${JSON.stringify(getCurrentParam())}`;
+    const currentParam = getCurrentParam();
+    let labelText = '[現在の問題]\n';
+    switch (currentMode.innerText) {
+        case modeNames.addition:
+            labelText += `たし算 ${currentParam.digit} 桁 `;
+            break;
+        case modeNames.multiplication:
+            labelText += `かけ算 ${currentParam.digit[0]} 桁 × ${currentParam.digit[1]} 桁 `;
+            break;
+    }
+    labelText += `${currentParam.length} 口 ${currentParam.time / 1000} 秒 \n`;
+    labelText += `(flash rate: ${currentParam.flashRate} %, offset: ${currentParam.offset} ms)`;
+
+    questionInfoLabel.innerText = labelText;
 }
 
 function expandCalculateArea() {
     calculateArea.classList.add('full-screen');
+    questionNumberArea.classList.add('big-size-number');
+    questionInfoLabel.classList.remove('display-none');
 }
 
 function contractCalculateArea() {
+    questionInfoLabel.classList.add('display-none');
+    questionNumberArea.classList.remove('big-size-number');
     calculateArea.classList.remove('full-screen');
 }
 
@@ -232,22 +253,18 @@ function flash(config = {}) {
             if (!isMuted.checked) {
                 sounds.push(audioObj.tick[i]);
             } else {
-                sounds.push(new Audio());
+                sounds.push(audioObj.silence[0]);
             }
-            sounds.push(new Audio());
+            sounds.push(audioObj.silence[0]);
         }
         return sounds;
     }
 
     function disableButtons() {
-        button.start.disabled = true;
-        button.repeat.disabled = true;
         disableConfigTarget.map((element) => element.disabled = true);
     }
 
     function enableButtons() {
-        button.start.disabled = false;
-        button.repeat.disabled = false;
         disableConfigTarget.map((element) => element.disabled = false);
     }
 
@@ -279,8 +296,10 @@ function flash(config = {}) {
 
             enableButtons();
             button.numberHistory.disabled = false;
-            resultSaved.style.display = "block";
-            questionInfoLabel.style.display = "block";
+            resultSaved.classList.remove('display-none');
+            if (isFullscreen()) {
+                questionInfoLabel.classList.remove('display-none');
+            }
         }, 1200);
     }
 
@@ -302,9 +321,12 @@ function flash(config = {}) {
                 displayAnswer(inputAnswerBox.value.trim());
                 return;
             }
-            if (event.key === "Escape") {
+            if (event.key === "Escape" && window.confirm("回答をやめますか？")) {
                 inputAnswerArea.classList.remove('show');
                 enableButtons();
+                if (isFullscreen()) {
+                    questionInfoLabel.classList.remove('display-none');
+                }
                 return;
             }
             inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
@@ -368,7 +390,7 @@ function flash(config = {}) {
             localeStringNumbers = numbers.map((n) => n.toLocaleString());
     }
 
-    // setTimeout に設定する関数を作成する
+    // setFlashTimeOut に設定する関数を作成する
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
 
@@ -410,9 +432,9 @@ function flash(config = {}) {
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
-    questionInfoLabel.style.display = "none";
-    resultSaved.style.display = "none";
-    numberHistoryArea.style.display = "none";
+    questionInfoLabel.classList.add('display-none');
+    resultSaved.classList.add('display-none');
+    numberHistoryArea.classList.add('display-none');
     previousMode.innerText = currentMode.innerText;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
@@ -425,23 +447,39 @@ function flash(config = {}) {
     numberHistoryDisplay.innerText = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 
+    const start = new Date().getTime();
+
+    function setFlashTimeOut(fn, delay) {
+        const handle = {};
+
+        function loop() {
+            const current = new Date().getTime();
+            const delta = current - start;
+            if (delta >= delay) {
+                fn.call();
+            } else {
+                handle.value = requestAnimationFrame(loop);
+            }
+        }
+
+        handle.value = requestAnimationFrame(loop);
+        return handle;
+    }
+
     // Register flash events
     disableButtons();
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    setTimeout(() => {
-        audioObj.silence[0].play();
-    }, 0);
-    setTimeout(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
-    setTimeout(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
+    setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
+    setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
     for (let i = 0; i < toggleNumberSuite.length; i++) {
-        setTimeout(playTickFunctions[i], toggleTiming - requestParam.offset);
-        setTimeout(toggleNumberFunctions[i], toggleTiming);
+        setFlashTimeOut(playTickFunctions[i], toggleTiming - requestParam.offset);
+        setFlashTimeOut(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setTimeout(checkAnswer, toggleTiming);
+    setFlashTimeOut(checkAnswer, toggleTiming);
 }
 
 function loadAudioObj(extension) {
@@ -450,7 +488,7 @@ function loadAudioObj(extension) {
     Object.keys(audioObj).forEach((name) => {
         audioPath = `${audioAttr.directory}/${name}.${extension}`;
         for (let i = 0; i < audioObj[name].length; i++) {
-            audioObj[name][i] = new Audio(audioPath);
+            audioObj[name][i] = new Howl({src: [audioPath]});
             setTimeout(() => {
                 audioObj[name][i].load();
             }, timeoutMs);
@@ -459,25 +497,17 @@ function loadAudioObj(extension) {
     });
 }
 
-function toggleFullscreenMode() {
-    if (calculateArea.dataset.fullScreen === "0") {
-        expandCalculateArea();
-        questionNumberArea.classList.add('big-size-number');
-        calculateArea.dataset.fullScreen = "1";
-    } else {
-        questionNumberArea.classList.remove('big-size-number');
-        contractCalculateArea();
-        calculateArea.dataset.fullScreen = "0";
-    }
-}
-
-function displayHelp() {
-    alert('w: フルスクリーンモード切替\nCtrl+w (Alt+F4): 終了');
+function isFullscreen() {
+    return calculateArea.dataset.fullScreen === '1';
 }
 
 // ページ読み込み時処理
 (() => {
-    loadAudioObj(audioAttr.extension.ogg);
+    loadAudioObj(defaultAudioExtension);
+    button.start.addEventListener('click', () => {
+        audioContext.resume().then(() => {
+        });
+    });
 
     (() => {
         let timeoutMs = 2000;
@@ -488,24 +518,12 @@ function displayHelp() {
             () => questionNumberArea.innerText = "0",
             () => questionNumberArea.innerText = "",
             () => questionNumberArea.style.color = currentNumberColor,
-            setLimitAndDefaultValue,
+            setUpInputBox,
             () => button.start.disabled = false,
         ];
         prepareGameFunctions.map((func) => {
             setTimeout(func, timeoutMs);
             timeoutMs += 50;
-        });
-    })();
-
-    // Hide cursor if stopped
-    (() => {
-        let timer;
-        window.addEventListener('mousemove', function() {
-            document.body.classList.remove("hide-cursor");
-            clearTimeout(timer);
-            timer = setTimeout(function() {
-                document.body.classList.add("hide-cursor");
-            }, 1000);
         });
     })();
 
@@ -516,13 +534,10 @@ function displayHelp() {
         shortcut.add("ctrl+r", () => button.deleteParams.click());
         shortcut.add("s", () => button.start.click());
         shortcut.add("r", () => button.repeat.click());
-
         shortcut.add("z", () => button.addition.click());
         shortcut.add("x", () => button.subtraction.click());
         shortcut.add("c", () => button.multiplication.click());
-
         shortcut.add("n", () => button.numberHistory.click());
-
         shortcut.add("w", () => toggleFullscreenMode());
         shortcut.add("q", () => displayHelp());
     })();
