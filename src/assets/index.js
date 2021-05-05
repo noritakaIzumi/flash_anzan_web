@@ -46,7 +46,7 @@ function increaseParam(id, amount) {
     setQuestionInfoLabel();
 }
 
-function setLimitAndDefaultValue() {
+function setUpInputBox() {
     Object.keys(element).map((mode) => {
         Object.keys(element[mode]).map((config) => {
             if (config === "time") {
@@ -59,6 +59,16 @@ function setLimitAndDefaultValue() {
                 element[mode][config].min = param[mode][config].min;
                 element[mode][config].value = param[mode][config].default;
             }
+            element[mode][config].oninput = setQuestionInfoLabel;
+            element[mode][config].onfocus = function () {
+                this.tmp = this.value;
+                this.value = "";
+            };
+            element[mode][config].onblur = function () {
+                if (this.value === "") {
+                    this.value = this.tmp;
+                }
+            };
         });
     });
     currentMode.innerText = modeNames.addition;
@@ -438,8 +448,10 @@ function flash(config = {}) {
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
 
     const start = new Date().getTime();
+
     function setFlashTimeOut(fn, delay) {
         const handle = {};
+
         function loop() {
             const current = new Date().getTime();
             const delta = current - start;
@@ -449,8 +461,9 @@ function flash(config = {}) {
                 handle.value = requestAnimationFrame(loop);
             }
         }
+
         handle.value = requestAnimationFrame(loop);
-        return handle
+        return handle;
     }
 
     // Register flash events
@@ -492,7 +505,8 @@ function isFullscreen() {
 (() => {
     loadAudioObj(audioAttr.extension.ogg);
     button.start.addEventListener('click', () => {
-        audioContext.resume().then(() => {});
+        audioContext.resume().then(() => {
+        });
     });
 
     (() => {
@@ -504,7 +518,7 @@ function isFullscreen() {
             () => questionNumberArea.innerText = "0",
             () => questionNumberArea.innerText = "",
             () => questionNumberArea.style.color = currentNumberColor,
-            setLimitAndDefaultValue,
+            setUpInputBox,
             () => button.start.disabled = false,
         ];
         prepareGameFunctions.map((func) => {
