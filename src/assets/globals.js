@@ -48,12 +48,12 @@ param = {
         flashRate: {
             max: 99,
             min: 1,
-            default: 60,
+            default: 55,
         },
         offset: {
             max: 500,
             min: -500,
-            default: 10,
+            default: 0,
         },
     },
 };
@@ -90,6 +90,7 @@ audioAttr = {
         wav: 'wav',
     },
 };
+defaultAudioExtension = audioAttr.extension.wav;
 audioObj = {
     beep: new Array(2),
     tick: new Array(30),
@@ -98,6 +99,7 @@ audioObj = {
     incorrect: new Array(1),
     silence: new Array(1),
 };
+audioContext = new AudioContext();
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
@@ -121,6 +123,8 @@ element = {
 };
 
 disableConfigTarget = [
+    button.start,
+    button.repeat,
     button.loadParams,
     button.saveParams,
     button.deleteParams

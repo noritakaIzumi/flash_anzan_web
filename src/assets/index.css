@@ -102,6 +102,7 @@ hr {
     background-color: black;
     border: solid 1px white;
     margin-top: 5px;
+    cursor: none !important;
 }
 
 @media screen and (min-width: 1025px) {
@@ -152,7 +153,7 @@ hr {
 /* 操作部分 */
 
 .operation-panel {
-    margin: 0 10px;
+    max-width: 540px;
 }
 
 @media screen and (min-width: 500px) {
@@ -332,14 +333,11 @@ input[type="number"] {
 }
 
 #question-info-label {
-    color: #67ceff;
     position: absolute;
     right: 0;
     bottom: 0;
-}
-
-.hide-cursor {
-    cursor: none !important;
+    text-align: right;
+    color: limegreen;
 }
 
 @keyframes show {
