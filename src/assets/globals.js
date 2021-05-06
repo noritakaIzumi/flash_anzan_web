@@ -61,7 +61,6 @@ param = {
 headerMessage = document.getElementById("header-message");
 questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
-inputAnswerArea = document.getElementById('input-answer-area');
 inputAnswerBox = document.getElementById('input-answer-box');
 questionInfoLabel = document.getElementById('question-info-label')
 
@@ -75,6 +74,8 @@ button = {
     addition: document.getElementById("addition-button"),
     subtraction: document.getElementById("subtraction-button"),
     multiplication: document.getElementById("multiplication-button"),
+    openInputAnswer: document.getElementById('openInputAnswerModal'),
+    closeInputAnswer: document.getElementById('closeInputAnswerModal'),
 };
 
 resultSaved = document.getElementById("result-saved");
@@ -138,3 +139,21 @@ numberHistoryString = document.getElementById("number-history-stringify");
 numberHistoryStringifyDelimiter = "|";
 
 savedParamsKeyName = "flash_anzan_params";
+
+modals = {
+    'params': {
+        'load': {
+            'confirm': document.getElementById('loadParamsConfirmModal'),
+            'complete': document.getElementById('loadParamsCompletedModal'),
+        },
+        'save': {
+            'confirm': document.getElementById('saveParamsConfirmModal'),
+            'complete': document.getElementById('saveParamsCompletedModal'),
+        },
+        'delete': {
+            'confirm': document.getElementById('deleteParamsConfirmModal'),
+            'complete': document.getElementById('deleteParamsCompletedModal'),
+        },
+    },
+    'input_answer': document.getElementById('inputAnswerModal'),
+}

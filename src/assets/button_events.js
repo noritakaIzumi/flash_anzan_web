@@ -1,13 +1,14 @@
 function loadParams() {
+    const modal = document.getElementById('loadParamsCompletedModal');
+    const modalMessage = modal.querySelector('.modal-body > p')
+
     const loadedParams = localStorage.getItem(savedParamsKeyName);
     if (!loadedParams) {
-        window.alert("設定がありません");
+        modalMessage.innerHTML = '設定がありません';
         return;
     }
-    const response = window.confirm("設定を読み込みますか？");
-    if (!response) {
-        return;
-    }
+    modalMessage.innerHTML = '設定を読み込みました';
+
     const parsedParams = JSON.parse(loadedParams);
     Object.keys(parsedParams).map(
         (mode) => {
@@ -22,10 +23,6 @@ function loadParams() {
 }
 
 function saveParams() {
-    const response = window.confirm("設定を保存しますか？");
-    if (!response) {
-        return;
-    }
     const params = {};
     Object.keys(element).map(
         (mode) => {
@@ -37,16 +34,10 @@ function saveParams() {
         }
     );
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
-    window.alert("設定を保存しました");
 }
 
 function deleteParams() {
-    const response = window.confirm("設定を削除しますか？");
-    if (!response) {
-        return;
-    }
     localStorage.clear();
-    window.alert("設定を削除しました");
 }
 
 function setSoundExtension(extension) {

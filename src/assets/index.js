@@ -304,11 +304,17 @@ function flash(config = {}) {
     }
 
     function unveilInputAnswerArea() {
-        inputAnswerArea.classList.add('show');
+        button.openInputAnswer.click();
         inputAnswerBox.focus();
     }
 
     function checkAnswer() {
+        modals.input_answer.addEventListener('hidden.bs.modal', () => {
+            enableButtons();
+            if (isFullscreen()) {
+                questionInfoLabel.classList.remove('display-none');
+            }
+        }, {once: true});
         inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
         inputAnswerBox.value = '';
         unveilInputAnswerArea();
@@ -317,16 +323,8 @@ function flash(config = {}) {
     function submitNumber() {
         return (event) => {
             if (event.key === "Enter") {
-                inputAnswerArea.classList.remove('show');
+                button.closeInputAnswer.click();
                 displayAnswer(inputAnswerBox.value.trim());
-                return;
-            }
-            if (event.key === "Escape" && window.confirm("回答をやめますか？")) {
-                inputAnswerArea.classList.remove('show');
-                enableButtons();
-                if (isFullscreen()) {
-                    questionInfoLabel.classList.remove('display-none');
-                }
                 return;
             }
             inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
@@ -540,5 +538,24 @@ function isFullscreen() {
         shortcut.add("n", () => button.numberHistory.click());
         shortcut.add("w", () => toggleFullscreenMode());
         shortcut.add("q", () => displayHelp());
+    })();
+
+    // Modal Focusing
+    (() => {
+        Object.keys(modals.params).forEach((op) => {
+            const confirm = modals.params[op]['confirm'];
+            const b = confirm.querySelector('.modal-footer > button:last-child');
+            confirm.addEventListener('shown.bs.modal', () => {
+                b.focus();
+            });
+
+            const completed = modals.params[op]['complete'];
+            completed.addEventListener('shown.bs.modal', () => {
+                console.log('hello');
+                setTimeout(() => {
+                    completed.querySelector('.modal-header > button').click();
+                }, 1000);
+            });
+        });
     })();
 })();
