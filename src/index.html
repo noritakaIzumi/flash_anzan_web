@@ -307,7 +307,8 @@
 <button type="button" id="openInputAnswerModal" class="btn btn-primary" data-bs-toggle="modal"
         data-bs-target="#inputAnswerModal"
         style="display: none;"></button>
-<div class="modal" id="inputAnswerModal" tabindex="-1" aria-labelledby="inputAnswerModalLabel">
+<div class="modal" id="inputAnswerModal" tabindex="-1" aria-labelledby="inputAnswerModalLabel"
+     data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -318,7 +319,6 @@
             </div>
             <div class="modal-body">
                 <p>Enter キーで送信します</p>
-                <p class="text-danger display-none">Enter キーを押してください</p>
                 <label for="input-answer-box" style="display: none;"></label>
                 <input type="text" id="input-answer-box" inputmode="numeric" class="form-control">
             </div>

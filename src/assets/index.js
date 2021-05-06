@@ -551,7 +551,6 @@ function isFullscreen() {
 
             const completed = modals.params[op]['complete'];
             completed.addEventListener('shown.bs.modal', () => {
-                console.log('hello');
                 setTimeout(() => {
                     completed.querySelector('.modal-header > button').click();
                 }, 1000);
