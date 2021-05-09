@@ -102,15 +102,6 @@ function changeShortcut(mode) {
 }
 
 function changeMode(mode) {
-    const buttonIdName = mode + '-button';
-    document.getElementById(buttonIdName).checked = true;
-
-    const configIdName = mode + '-mode-config';
-    const configTargetClassName = "display-none";
-    const configAreas = document.getElementById("mode-config-area").children;
-    Array.from(configAreas).map((element) => element.classList.add(configTargetClassName));
-    document.getElementById(configIdName).classList.remove(configTargetClassName);
-
     changeShortcut(mode);
 
     currentMode.innerText = mode;
@@ -290,13 +281,13 @@ function flash(config = {}) {
                 resultAudio = audioObj.silence[0];
                 headerMessage.innerText = "答え";
             }
-            questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
-            resultAudio.muted = isMuted.checked;
-            resultAudio.play();
+            questionNumberArea.innerText = answerNumberDisplay.innerText;
+            if (!isMuted.checked) {
+                resultAudio.play();
+            }
 
             enableButtons();
             button.numberHistory.disabled = false;
-            resultSaved.classList.remove('display-none');
             if (isFullscreen()) {
                 questionInfoLabel.classList.remove('display-none');
             }
@@ -416,24 +407,22 @@ function flash(config = {}) {
     }
 
     let playBeepFunctions = [];
-    if (!isMuted.checked) {
-        audioObj.beep.map((a) => {
+    audioObj.beep.map((a) => {
+        if (!isMuted.checked) {
             playBeepFunctions.push(() => {
                 a.play();
             });
-        });
-    } else {
-        playBeepFunctions.push(() => {
-        });
-    }
+        } else {
+            playBeepFunctions.push(() => {
+            });
+        }
+    });
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     questionInfoLabel.classList.add('display-none');
-    resultSaved.classList.add('display-none');
-    numberHistoryArea.classList.add('display-none');
-    previousMode.innerText = currentMode.innerText;
+    button.numberHistory.disabled = true;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
             answerNumber.innerText = numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]);
@@ -442,8 +431,9 @@ function flash(config = {}) {
         default:
             answerNumber.innerText = numbers.reduce((a, b) => a + b);
     }
-    numberHistoryDisplay.innerText = localeStringNumbers.join(numberHistoryDisplayDelimiter);
+    numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
+    answerNumberDisplay.innerText = Number(answerNumber.innerText).toLocaleString();
 
     const start = new Date().getTime();
 
@@ -537,7 +527,8 @@ function isFullscreen() {
         shortcut.add("c", () => button.multiplication.click());
         shortcut.add("n", () => button.numberHistory.click());
         shortcut.add("w", () => toggleFullscreenMode());
-        shortcut.add("q", () => displayHelp());
+        shortcut.add("q", () => button.help.click());
+        shortcut.add('ctrl+,', () => button.openCommonMoreConfig.click());
     })();
 
     // Modal Focusing

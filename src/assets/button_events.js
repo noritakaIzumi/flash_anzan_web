@@ -51,11 +51,6 @@ function setSoundExtension(extension) {
     }
 }
 
-function displayNumberHistoryArea() {
-    button.numberHistory.disabled = true;
-    numberHistoryArea.classList.remove('display-none');
-}
-
 function toggleFullscreenMode() {
     if (!isFullscreen()) {
         expandCalculateArea();
@@ -66,9 +61,10 @@ function toggleFullscreenMode() {
     }
 }
 
-function displayHelp() {
-    alert(
-        '「W」キーを押すとフルスクリーンモードを切り替えます\n' +
-        '「Ctrl」キーを押しながら「W」キー（または「Alt」キーを押しながら「F4」キー）を押すと終了します'
-    );
+function toggleMute() {
+    if (isMuted.checked) {
+        muteStatus.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">Audio Off</span>';
+    } else {
+        muteStatus.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>';
+    }
 }

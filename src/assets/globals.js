@@ -71,17 +71,17 @@ button = {
     start: document.getElementById("start-button"),
     repeat: document.getElementById("repeat-button"),
     numberHistory: document.getElementById("number-history-button"),
-    addition: document.getElementById("addition-button"),
-    subtraction: document.getElementById("subtraction-button"),
-    multiplication: document.getElementById("multiplication-button"),
+    addition: document.getElementById("pills-addition-tab"),
+    subtraction: document.getElementById("pills-subtraction-tab"),
+    multiplication: document.getElementById("pills-multiplication-tab"),
     openInputAnswer: document.getElementById('openInputAnswerModal'),
     closeInputAnswer: document.getElementById('closeInputAnswerModal'),
+    help: document.getElementById('help-button'),
+    openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
+    mute: document.getElementById('is-muted'),
 };
 
-resultSaved = document.getElementById("result-saved");
-previousMode = document.getElementById("previous-mode");
 answerNumber = document.getElementById("answer-number");
-numberHistoryArea = document.getElementById("number-history-area");
 
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
 audioAttr = {
@@ -104,6 +104,7 @@ audioContext = new AudioContext();
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
+muteStatus = document.getElementById('mute-status');
 
 element = {
     addition: {
@@ -134,9 +135,10 @@ disableConfigTarget = [
 multiplyFigure = "*";
 
 numberHistoryDisplay = document.getElementById("number-history-display");
-numberHistoryDisplayDelimiter = " → ";
+numberHistoryDisplayDelimiter = "<br>";
 numberHistoryString = document.getElementById("number-history-stringify");
 numberHistoryStringifyDelimiter = "|";
+answerNumberDisplay = document.getElementById('answer-number-display');
 
 savedParamsKeyName = "flash_anzan_params";
 
