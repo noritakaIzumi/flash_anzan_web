@@ -18,9 +18,9 @@
     <div id="question-number-area" class="number-area abacus-font"></div>
     <p id="question-info-label" class="display-none"></p>
 </div>
-<hr>
+<hr class="my-2">
 <div class="operation-panel">
-    <div class="container my-3">
+    <div class="container">
         <button type="button" id="help-button" class="btn btn-outline-info me-2"
                 data-bs-toggle="modal" data-bs-target="#helpModal">
             <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
@@ -30,8 +30,8 @@
             <i class="bi bi-gear-fill"></i><span class="ps-2">環境設定</span>
         </button>
     </div>
-    <hr>
-    <div class="container my-3">
+    <hr class="my-2">
+    <div class="container">
         <button type="button" id="load-params-button" class="btn btn-outline-warning me-2"
                 data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal">
             <i class="bi bi-folder2-open"></i><span class="ps-2">Load</span>
@@ -45,24 +45,24 @@
             <i class="bi bi-trash"></i><span class="ps-2">Delete</span>
         </button>
     </div>
-    <hr>
-    <div class="container my-3">
-        <button type="button" id="start-button" class="btn btn-lg btn-danger me-2" onclick="flash();" disabled>
+    <hr class="my-2">
+    <div class="container">
+        <button type="button" id="start-button" class="btn btn-danger me-2" onclick="flash();" disabled>
             <i class="bi bi-play-fill"></i><span class="ps-2">Start</span>
         </button>
-        <button type="button" id="repeat-button" class="btn btn-lg btn-danger me-2" onclick="flash({repeat: true});"
+        <button type="button" id="repeat-button" class="btn btn-danger me-2" onclick="flash({repeat: true});"
                 disabled>
             <i class="bi bi-arrow-repeat"></i><span class="ps-2">Repeat</span>
         </button>
-        <button type="button" id="number-history-button" class="btn btn-lg btn-info me-2"
+        <button type="button" id="number-history-button" class="btn btn-info me-2"
                 data-bs-toggle="modal" data-bs-target="#numberHistoryModal" disabled>
             <i class="bi bi-journal-text"></i><span class="ps-2">Numbers</span>
         </button>
     </div>
-    <hr>
-    <div class="container my-3">
+    <hr class="my-2">
+    <div class="container">
         <div id="current-mode" class="display-none"></div>
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <ul class="nav nav-pills mb-2" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="pills-addition-tab" data-bs-toggle="pill" href="#addition-mode-config"
                    role="tab" aria-controls="pills-addition" aria-selected="true"
@@ -87,38 +87,37 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active w-auto" id="addition-mode-config" role="tabpanel"
                  aria-labelledby="nav-home-tab">
-                <div class="row my-2">
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">桁数</span>
-                        </div>
-                        <label for="addition-digit"></label>
-                        <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end">
-                        <div class="input-group-append">
-                            <span class="input-group-text">桁</span>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label for="addition-digit" class="text-light">桁数</label>
+                        <div class="input-group">
+                            <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">桁</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group col"></div>
+                    <div class="col">
+                        <div class="input-group"></div>
+                    </div>
                 </div>
-                <div class="row my-2">
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">口数</span>
-                        </div>
-                        <label for="addition-length"></label>
-                        <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end">
-                        <div class="input-group-append">
-                            <span class="input-group-text">口</span>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label for="addition-length" class="text-light">口数</label>
+                        <div class="input-group">
+                            <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">口</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">秒数</span>
-                        </div>
-                        <label for="addition-time"></label>
-                        <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end">
-                        <div class="input-group-append">
-                            <span class="input-group-text">秒</span>
+                    <div class="col">
+                        <label for="addition-time" class="text-light">秒数</label>
+                        <div class="input-group col">
+                            <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">秒</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -126,50 +125,48 @@
             <div class="tab-pane fade w-auto" id="multiplication-mode-config" role="tabpanel"
                  aria-labelledby="nav-contact-tab">
                 <div class="row my-2">
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">桁数</span>
-                        </div>
-                        <label for="multiplication-digit-1"></label>
-                        <input type="text" inputmode="decimal" id="multiplication-digit-1"
-                               class="form-control text-end">
-                        <span class="input-group-text">桁</span>
-                        <span class="input-group-text">×</span>
-                        <label for="multiplication-digit-2"></label>
-                        <input type="text" inputmode="decimal" id="multiplication-digit-2"
-                               class="form-control text-end">
-                        <div class="input-group-append">
+                    <div class="col">
+                        <label for="multiplication-digit-1" class="text-light">桁数</label>
+                        <div class="input-group">
+                            <input type="text" inputmode="decimal" id="multiplication-digit-1"
+                                   class="form-control text-end">
                             <span class="input-group-text">桁</span>
+                            <span class="input-group-text">×</span>
+                            <label for="multiplication-digit-2"></label>
+                            <input type="text" inputmode="decimal" id="multiplication-digit-2"
+                                   class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">桁</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row my-2">
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">口数</span>
-                        </div>
-                        <label for="multiplication-length"></label>
-                        <input type="text" inputmode="decimal" id="multiplication-length" class="form-control text-end">
-                        <div class="input-group-append">
-                            <span class="input-group-text">口</span>
+                    <div class="col">
+                        <label for="multiplication-length" class="text-light">口数</label>
+                        <div class="input-group">
+                            <input type="text" inputmode="decimal" id="multiplication-length"
+                                   class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">口</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group col">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">秒数</span>
-                        </div>
-                        <label for="multiplication-time"></label>
-                        <input type="text" inputmode="numeric" id="multiplication-time" class="form-control text-end">
-                        <div class="input-group-append">
-                            <span class="input-group-text">秒</span>
+                    <div class="col">
+                        <label for="multiplication-time" class="text-light">秒数</label>
+                        <div class="input-group">
+                            <input type="text" inputmode="numeric" id="multiplication-time" class="form-control text-end">
+                            <div class="input-group-append">
+                                <span class="input-group-text">秒</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <hr>
-    <div class="container pt-1 w-auto display-none">
+    <hr class="my-2">
+    <div class="container display-none">
         <p id="answer-number"></p>
         <p id="number-history-stringify"></p>
     </div>
@@ -188,7 +185,14 @@
                 <div>
                     <h5 class="mb-3">Sound</h5>
                     <div class="container">
-                        <div class="input-group w-auto float-start me-2">
+                        <div class="btn-group w-auto mb-2" role="group">
+                            <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off"
+                                   onclick="toggleMute();">
+                            <label class="btn btn-outline-danger" for="is-muted" id="mute-status">
+                                <i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>
+                            </label>
+                        </div>
+                        <div class="input-group w-auto mb-2">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="sound-extension">Sound extension</label>
                             </div>
@@ -198,13 +202,6 @@
                                 <option value="wav" selected>wav</option>
                                 <option value="ogg">ogg</option>
                             </select>
-                        </div>
-                        <div class="btn-group" role="group">
-                            <input type="checkbox" class="btn-check me-2" id="is-muted" autocomplete="off"
-                                   onclick="toggleMute();">
-                            <label class="btn btn-outline-danger" for="is-muted" id="mute-status">
-                                <i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>
-                            </label>
                         </div>
                     </div>
                 </div>
