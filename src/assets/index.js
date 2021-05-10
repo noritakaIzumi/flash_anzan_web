@@ -202,7 +202,7 @@ function flash(config = {}) {
         function getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
-            return min + Math.floor((max - min) * Math.random());
+            return Math.floor(Math.random() * (max - min + 1) + min);
         }
 
         let numbers = [];
