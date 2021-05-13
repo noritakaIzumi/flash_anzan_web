@@ -68,3 +68,7 @@ function toggleMute() {
         muteStatus.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>';
     }
 }
+
+function changeAdditionDifficulty(val) {
+    additionDifficultyInput.value = val;
+}

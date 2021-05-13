@@ -159,3 +159,11 @@ modals = {
     },
     'input_answer': document.getElementById('inputAnswerModal'),
 }
+
+generateNumbersRetryLimit = 100000;
+additionDifficultyInput = document.getElementById('addition-difficulty');
+additionDifficultyMap = {
+    easy: 'easy',
+    normal: 'normal',
+    hard: 'hard',
+};

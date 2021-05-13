@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="image/favicon.ico">
     <link href="assets/bootstrap@5.0.0-beta1.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/index.css?ver=0.6.1">
+    <link rel="stylesheet" href="assets/index.css?ver=0.7.1">
     <script src="assets/bootstrap@5.0.0-beta1.bundle.min.js"></script>
     <script src="assets/howler_2_2_1.min.js"></script>
     <script type="text/javascript" src="lib/shortcut.js"></script>
@@ -119,6 +119,26 @@
                                 <span class="input-group-text">秒</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="addition-difficulty" class="text-light">難易度</label>
+                        <input type="hidden" id="addition-difficulty" value="normal">
+                        <ul class="nav nav-pills nav-fill">
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="pill" href="" role="tab"
+                                   onclick="changeAdditionDifficulty(additionDifficultyMap.easy)">かんたん</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="pill" href="" role="tab"
+                                   onclick="changeAdditionDifficulty(additionDifficultyMap.normal)">ふつう</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="pill" href="" role="tab"
+                                   onclick="changeAdditionDifficulty(additionDifficultyMap.hard)">むずかしい</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -566,8 +586,9 @@
     </div>
 </div>
 
-<script type="text/javascript" src="assets/globals.js?ver=0.6.1"></script>
-<script type="text/javascript" src="assets/button_events.js?ver=0.6.1"></script>
-<script type="text/javascript" src="assets/index.js?ver=0.6.1"></script>
+<script type="text/javascript" src="lib/complexity_map.js?ver=0.7.1"></script>
+<script type="text/javascript" src="assets/globals.js?ver=0.7.1"></script>
+<script type="text/javascript" src="assets/button_events.js?ver=0.7.1"></script>
+<script type="text/javascript" src="assets/index.js?ver=0.7.1"></script>
 </body>
 </html>

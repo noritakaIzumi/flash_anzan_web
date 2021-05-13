@@ -1,6 +1,6 @@
 {
   "name": "flash-anzan",
-  "version": "0.6.1",
+  "version": "0.7.1",
   "description": "フラッシュ暗算で脳を鍛えよう",
   "main": "main.js",
   "dependencies": {
@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://gitlab.com/technical-study/flash_anzan_web/issues"
   },
-  "homepage": "https://gitlab.com/technical-study/flash_anzan_web/blob/master/README.md"
+  "homepage": "https://gitlab.com/technical-study/flash_anzan_web/blob/master/README.md",
+  "devDependencies": {
+    "http-server": "^0.12.3"
+  }
 }

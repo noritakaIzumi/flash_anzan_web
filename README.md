@@ -24,3 +24,11 @@ $ npm install
 ```bash
 npm run release
 ```
+
+## その他
+
+- 難易度境界リストの作成
+
+```bash
+node ./tools/create_complexity_map.js
+```

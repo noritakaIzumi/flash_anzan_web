@@ -198,33 +198,62 @@ function flash(config = {}) {
         return {on: flashOnTime, off: flashOffTime};
     }
 
-    function generateNumbers(digit, length) {
+    function generateNumbers(digit, length, difficulty) {
         function getRandomInt(min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
 
+        let retry = 0;
         let numbers = [];
-        for (let i = 0; i < length; ++i) {
-            let min;
-            let max;
-            switch (currentMode.innerText) {
-                case modeNames.multiplication:
-                    min = [];
-                    max = [];
-                    min[0] = Math.pow(10, digit[0] - 1);
-                    max[0] = Math.pow(10, digit[0]) - 1;
-                    min[1] = Math.pow(10, digit[1] - 1);
-                    max[1] = Math.pow(10, digit[1]) - 1;
-                    numbers.push([getRandomInt(min[0], max[0]), getRandomInt(min[1], max[1])]);
-                    break;
-                case modeNames.addition:
-                default:
-                    min = Math.pow(10, digit - 1);
-                    max = Math.pow(10, digit) - 1;
-                    numbers.push(getRandomInt(min, max));
+        while (retry < generateNumbersRetryLimit) {
+            numbers = [];
+            for (let i = 0; i < length; ++i) {
+                let min;
+                let max;
+                switch (currentMode.innerText) {
+                    case modeNames.multiplication:
+                        min = [];
+                        max = [];
+                        min[0] = Math.pow(10, digit[0] - 1);
+                        max[0] = Math.pow(10, digit[0]) - 1;
+                        min[1] = Math.pow(10, digit[1] - 1);
+                        max[1] = Math.pow(10, digit[1]) - 1;
+                        numbers.push([getRandomInt(min[0], max[0]), getRandomInt(min[1], max[1])]);
+                        break;
+                    case modeNames.addition:
+                    default:
+                        min = Math.pow(10, digit - 1);
+                        max = Math.pow(10, digit) - 1;
+                        numbers.push(getRandomInt(min, max));
+                }
             }
+
+            // 現在、たし算のみ難易度分岐
+            if (currentMode.innerText === modeNames.multiplication) {
+                break;
+            }
+
+            const complexity = getCalculateComplexity(numbers);
+            let isValidComplexity = true;
+            switch (difficulty) {
+                case additionDifficultyMap.easy:
+                    isValidComplexity = complexity < complexityMap[`${digit}-${length}`].easy;
+                    break;
+                case additionDifficultyMap.hard:
+                    isValidComplexity = complexity >= complexityMap[`${digit}-${length}`].hard;
+                    break;
+                case additionDifficultyMap.normal:
+                default:
+                    isValidComplexity = complexity >= complexityMap[`${digit}-${length}`].easy
+                        && complexity < complexityMap[`${digit}-${length}`].hard;
+                    break;
+            }
+            if (isValidComplexity) {
+                break;
+            }
+            retry++;
         }
         return numbers;
     }
@@ -322,6 +351,66 @@ function flash(config = {}) {
         };
     }
 
+    function average(data) {
+        let sum = 0;
+        for (let i = 0; i < data.length; ++i) {
+            sum += data[i];
+        }
+        return sum / data.length;
+    }
+
+    function standard_deviation(data) {
+        function variance(data) {
+            const ave = average(data);
+            let variance = 0;
+            for (let i = 0; i < data.length; i++) {
+                variance += Math.pow(data[i] - ave, 2);
+            }
+            return variance / data.length;
+        }
+
+        return Math.sqrt(variance(data));
+    }
+
+    function getCalculateComplexity(numbers) {
+        let carries = [];
+        switch (currentMode.innerText) {
+            case modeNames.multiplication:
+                return [];
+            case modeNames.addition:
+                let digits = [];
+                for (let i = 0; i < requestParam.digit + 2; ++i) {
+                    digits.push({value: 0, five: 0, one: 0});
+                }
+                for (let i = 0; i < numbers.length; ++i) {
+                    let carry = 0;
+                    const n = String(numbers[i]);
+                    for (let j = 0; j < digits.length - 1; ++j) {
+                        const beforeDigit = Object.assign({}, digits[j]);
+                        digits[j].value += Number(n[j]) || 0;
+                        if (digits[j].value >= 10) {
+                            digits[j].value -= 10;
+                            carry++;
+                            digits[j + 1].value++;
+                            if (digits[j + 1].value % 5 === 0) {
+                                carry++;
+                            }
+                        }
+                        digits[j].five = Math.floor(digits[j].value / 5);
+                        digits[j].one = digits[j].value % 5;
+                        if ((digits[j].five - beforeDigit.five) * (digits[j].one - beforeDigit.one) < 0) {
+                            carry++;
+                        }
+                    }
+                    carries.push(carry / requestParam.digit);
+                }
+                carries = carries.slice(1);
+                return average(carries) + standard_deviation(carries) * 0.5;
+            default:
+                return [];
+        }
+    }
+
     // ここからフラッシュ出題の処理
     // 設定を取得する
     let requestParam = getCurrentParam();
@@ -364,10 +453,20 @@ function flash(config = {}) {
         } else if (requestParam.length < numberHistory.length) {
             numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length));
+            // 現在、たし算のみ難易度分岐
+            if (currentMode.innerText === modeNames.addition) {
+                numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, additionDifficultyInput.value));
+            } else {
+                numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length));
+            }
         }
     } else {
-        numbers = generateNumbers(requestParam.digit, requestParam.length);
+        // 現在、たし算のみ難易度分岐
+        if (currentMode.innerText === modeNames.addition) {
+            numbers = generateNumbers(requestParam.digit, requestParam.length, additionDifficultyInput.value);
+        } else {
+            numbers = generateNumbers(requestParam.digit, requestParam.length);
+        }
     }
     let localeStringNumbers;
     switch (currentMode.innerText) {
