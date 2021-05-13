@@ -330,7 +330,6 @@ function flash(config = {}) {
 
     function checkAnswer() {
         modals.input_answer.addEventListener('hidden.bs.modal', () => {
-            enableButtons();
             if (isFullscreen()) {
                 questionInfoLabel.classList.remove('display-none');
             }

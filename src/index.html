@@ -91,7 +91,8 @@
                     <div class="col">
                         <label for="addition-digit" class="text-light">桁数</label>
                         <div class="input-group">
-                            <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end">
+                            <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end"
+                                   autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">桁</span>
                             </div>
@@ -105,7 +106,8 @@
                     <div class="col">
                         <label for="addition-length" class="text-light">口数</label>
                         <div class="input-group">
-                            <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end">
+                            <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end"
+                                   autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">口</span>
                             </div>
@@ -114,7 +116,8 @@
                     <div class="col">
                         <label for="addition-time" class="text-light">秒数</label>
                         <div class="input-group col">
-                            <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end">
+                            <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end"
+                                   autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">秒</span>
                             </div>
@@ -149,12 +152,12 @@
                         <label for="multiplication-digit-1" class="text-light">桁数</label>
                         <div class="input-group">
                             <input type="text" inputmode="decimal" id="multiplication-digit-1"
-                                   class="form-control text-end">
+                                   class="form-control text-end" autocomplete="off">
                             <span class="input-group-text">桁</span>
                             <span class="input-group-text">×</span>
                             <label for="multiplication-digit-2"></label>
                             <input type="text" inputmode="decimal" id="multiplication-digit-2"
-                                   class="form-control text-end">
+                                   class="form-control text-end" autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">桁</span>
                             </div>
@@ -166,7 +169,7 @@
                         <label for="multiplication-length" class="text-light">口数</label>
                         <div class="input-group">
                             <input type="text" inputmode="decimal" id="multiplication-length"
-                                   class="form-control text-end">
+                                   class="form-control text-end" autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">口</span>
                             </div>
@@ -175,7 +178,8 @@
                     <div class="col">
                         <label for="multiplication-time" class="text-light">秒数</label>
                         <div class="input-group">
-                            <input type="text" inputmode="numeric" id="multiplication-time" class="form-control text-end">
+                            <input type="text" inputmode="numeric" id="multiplication-time"
+                                   class="form-control text-end" autocomplete="off">
                             <div class="input-group-append">
                                 <span class="input-group-text">秒</span>
                             </div>
@@ -185,7 +189,6 @@
             </div>
         </div>
     </div>
-    <hr class="my-2">
     <div class="container display-none">
         <p id="answer-number"></p>
         <p id="number-history-stringify"></p>
@@ -383,7 +386,7 @@
             <div class="modal-body">
                 <p>Enter キーで送信します</p>
                 <label for="input-answer-box" style="display: none;"></label>
-                <input type="text" id="input-answer-box" inputmode="numeric" class="form-control">
+                <input type="text" id="input-answer-box" inputmode="numeric" class="form-control" autocomplete="off">
             </div>
         </div>
     </div>
