@@ -233,18 +233,51 @@ function flash(config = {}) {
         let numbers = [];
         while (retry < generateNumbersRetryLimit) {
             numbers = [];
+            let sum = 0;
             for (let i = 0; i < length; ++i) {
                 switch (currentMode.innerText) {
                     case modeNames.multiplication:
-                        numbers.push([getRandomInt(digitCount[0], numbers.slice(-1)[0], true), getRandomInt(digitCount[1], numbers.slice(-1)[1], true)]);
+                        numbers.push([
+                            getRandomInt(digitCount[0], numbers.slice(-1)[0], true),
+                            getRandomInt(digitCount[1], numbers.slice(-1)[1], true)]
+                        );
                         break;
                     case modeNames.addition:
-                    default:
                         if (difficulty === additionDifficultyMap.hard) {
-                            numbers.push(getRandomInt(digitCount));
+                            while (true) {
+                                const number = getRandomInt(digitCount);
+                                if (number === numbers.slice(-1)[0]) {
+                                    continue;
+                                }
+
+                                const carry = new Abacus(sum).add(number);
+
+                                if (i >= 1 && carry < digitCount) {
+                                    continue;
+                                }
+
+                                numbers.push(number);
+                                sum += number;
+                                break;
+                            }
+                        } else if (difficulty === additionDifficultyMap.easy) {
+                            while (true) {
+                                const number = getRandomInt(digitCount, numbers.slice(-1), true);
+                                const carry = new Abacus(sum).add(number);
+
+                                if (carry > 2 + digitCount) {
+                                    continue;
+                                }
+
+                                numbers.push(number);
+                                sum += number;
+                                break;
+                            }
                         } else {
                             numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
                         }
+                        break;
+                    default:
                 }
             }
 
@@ -400,8 +433,9 @@ function flash(config = {}) {
     }
 
     class Abacus {
-        constructor() {
-            this.digits = [];
+        constructor(n = 0) {
+            this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
+            this.add(n);
         }
 
         add(num) {
@@ -424,7 +458,7 @@ function flash(config = {}) {
                 let newVal = this.digits[i].value + d;
                 if (newVal >= 10) {
                     newVal -= 10;
-                    this.add(Math.pow(10, i + 1));
+                    carry += this.add(Math.pow(10, i + 1));
                     carry++;
                 }
                 this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
