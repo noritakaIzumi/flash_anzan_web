@@ -387,37 +387,65 @@ function flash(config = {}) {
         return Math.sqrt(variance(data));
     }
 
+    class AbacusDigit {
+        constructor(value = 0, five = 0, one = 0) {
+            this.value = value;
+            this.five = five;
+            this.one = one;
+        }
+
+        static getInstance() {
+            return new AbacusDigit();
+        }
+    }
+
+    class Abacus {
+        constructor() {
+            this.digits = [];
+        }
+
+        add(num) {
+            let carry = 0;
+
+            const numArr = String(num).split('').map((d) => {
+                return Number(d);
+            });
+            for (let i = numArr.length - 1; i >= 0; i--) {
+                const d = numArr.shift();
+                if (d === 0) {
+                    continue;
+                }
+
+                if (this.digits[i] === undefined) {
+                    this.digits[i] = AbacusDigit.getInstance();
+                }
+
+                const beforeDigit = Object.assign({}, this.digits[i]);
+                let newVal = this.digits[i].value + d;
+                if (newVal >= 10) {
+                    newVal -= 10;
+                    this.add(Math.pow(10, i + 1));
+                    carry++;
+                }
+                this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
+                if ((this.digits[i].five - beforeDigit.five) * (this.digits[i].one - beforeDigit.one) < 0) {
+                    carry++;
+                }
+            }
+            return carry;
+        }
+    }
+
     function getCalculateComplexity(numbers) {
         let carries = [];
         switch (currentMode.innerText) {
             case modeNames.multiplication:
                 return [];
             case modeNames.addition:
-                let digits = [];
-                for (let i = 0; i < requestParam.digit + 2; ++i) {
-                    digits.push({value: 0, five: 0, one: 0});
-                }
+                let digits = new Abacus();
                 for (let i = 0; i < numbers.length; ++i) {
-                    let carry = 0;
-                    const n = String(numbers[i]);
-                    for (let j = 0; j < digits.length - 1; ++j) {
-                        const beforeDigit = Object.assign({}, digits[j]);
-                        digits[j].value += Number(n[j]) || 0;
-                        if (digits[j].value >= 10) {
-                            digits[j].value -= 10;
-                            carry++;
-                            digits[j + 1].value++;
-                            if (digits[j + 1].value % 5 === 0) {
-                                carry++;
-                            }
-                        }
-                        digits[j].five = Math.floor(digits[j].value / 5);
-                        digits[j].one = digits[j].value % 5;
-                        if ((digits[j].five - beforeDigit.five) * (digits[j].one - beforeDigit.one) < 0) {
-                            carry++;
-                        }
-                    }
-                    carries.push(carry / requestParam.digit);
+                    const carryCount = digits.add(numbers[i]);
+                    carries.push(carryCount / requestParam.digit);
                 }
                 carries = carries.slice(1);
                 return average(carries) + standard_deviation(carries) * 0.5;
