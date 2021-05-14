@@ -198,11 +198,35 @@ function flash(config = {}) {
         return {on: flashOnTime, off: flashOffTime};
     }
 
-    function generateNumbers(digit, length, difficulty) {
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1) + min);
+    function generateNumbers(digitCount, length, difficulty) {
+        function getRandomDigit(excepts = []) {
+            const d = [];
+            for (let i = 0; i < 10; i++) {
+                if (excepts.indexOf(i) >= 0) {
+                    continue;
+                }
+                d.push(i);
+            }
+            return d[Math.floor(Math.random() * d.length)];
+        }
+
+        function getRandomInt(digitCount, previousNum = null, digitAllDifferent = false) {
+            const previousNumDigits = String(previousNum).split('').reverse().map((n) => {
+                return Number(n);
+            });
+            let digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))];
+            let i = 0;
+            while (i < digitCount - 1) {
+                let digit = null;
+                if (digitCount <= 9 && digitAllDifferent) {
+                    digit = getRandomDigit(digits.concat(previousNumDigits[i]));
+                } else {
+                    digit = getRandomDigit();
+                }
+                digits.push(digit);
+                i++;
+            }
+            return Number(String(digits[0]) + digits.slice(1).reverse().join(''));
         }
 
         let retry = 0;
@@ -210,23 +234,17 @@ function flash(config = {}) {
         while (retry < generateNumbersRetryLimit) {
             numbers = [];
             for (let i = 0; i < length; ++i) {
-                let min;
-                let max;
                 switch (currentMode.innerText) {
                     case modeNames.multiplication:
-                        min = [];
-                        max = [];
-                        min[0] = Math.pow(10, digit[0] - 1);
-                        max[0] = Math.pow(10, digit[0]) - 1;
-                        min[1] = Math.pow(10, digit[1] - 1);
-                        max[1] = Math.pow(10, digit[1]) - 1;
-                        numbers.push([getRandomInt(min[0], max[0]), getRandomInt(min[1], max[1])]);
+                        numbers.push([getRandomInt(digitCount[0], numbers.slice(-1)[0], true), getRandomInt(digitCount[1], numbers.slice(-1)[1], true)]);
                         break;
                     case modeNames.addition:
                     default:
-                        min = Math.pow(10, digit - 1);
-                        max = Math.pow(10, digit) - 1;
-                        numbers.push(getRandomInt(min, max));
+                        if (difficulty === additionDifficultyMap.hard) {
+                            numbers.push(getRandomInt(digitCount));
+                        } else {
+                            numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
+                        }
                 }
             }
 
@@ -239,15 +257,13 @@ function flash(config = {}) {
             let isValidComplexity = true;
             switch (difficulty) {
                 case additionDifficultyMap.easy:
-                    isValidComplexity = complexity < complexityMap[`${digit}-${length}`].easy;
-                    break;
                 case additionDifficultyMap.hard:
-                    isValidComplexity = complexity >= complexityMap[`${digit}-${length}`].hard;
+                    isValidComplexity = complexity < complexityMap[`${digitCount}-${length}`][difficulty];
                     break;
                 case additionDifficultyMap.normal:
                 default:
-                    isValidComplexity = complexity >= complexityMap[`${digit}-${length}`].easy
-                        && complexity < complexityMap[`${digit}-${length}`].hard;
+                    isValidComplexity = complexity >= complexityMap[`${digitCount}-${length}`][additionDifficultyMap.easy]
+                        && complexity < complexityMap[`${digitCount}-${length}`][additionDifficultyMap.hard];
                     break;
             }
             if (isValidComplexity) {
