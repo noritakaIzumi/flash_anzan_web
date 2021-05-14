@@ -244,6 +244,7 @@ function flash(config = {}) {
                         break;
                     case modeNames.addition:
                         if (difficulty === additionDifficultyMap.hard) {
+                            let getIntRetry = 0;
                             while (true) {
                                 const number = getRandomInt(digitCount);
                                 if (number === numbers.slice(-1)[0]) {
@@ -252,7 +253,8 @@ function flash(config = {}) {
 
                                 const carry = new Abacus(sum).add(number);
 
-                                if (i >= 1 && carry < digitCount) {
+                                if (i >= 1 && carry < digitCount && getIntRetry < 10) {
+                                    getIntRetry++;
                                     continue;
                                 }
 
