@@ -192,7 +192,7 @@ function getCurrentParam() {
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
-        const averageFlashTime = time / (length * 2);
+        const averageFlashTime = time / (length * 2 - 1);
         const flashOnTime = Number(averageFlashTime) * (flashRate / 50);
         const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 50);
         return {on: flashOnTime, off: flashOffTime};
