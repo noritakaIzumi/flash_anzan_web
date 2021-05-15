@@ -241,9 +241,10 @@ function flash(config = {}) {
                             getRandomInt(digitCount[1], numbers.slice(-1)[1], true)
                         ]);
                     }
-                    break;
+                    return numbers;
                 }
                 case modeNames.addition:
+                    const complexityMapKey = `${digitCount}-${length}`;
                     switch (difficulty) {
                         case additionDifficultyMap.easy: {
                             numbers = [];
@@ -253,15 +254,19 @@ function flash(config = {}) {
                                     const number = getRandomInt(digitCount, numbers.slice(-1), true);
                                     const carry = new Abacus(sum).add(number);
 
-                                    if (carry > 2 + digitCount) {
-                                        continue;
+                                    if (carry <= digitCount) {
+                                        numbers.push(number);
+                                        sum += number;
+                                        break;
                                     }
-
-                                    numbers.push(number);
-                                    sum += number;
-                                    break;
                                 }
                             }
+
+                            if (getCalculateComplexity(numbers) < complexityMap[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+
+                            retry++;
                             break;
                         }
                         case additionDifficultyMap.normal: {
@@ -269,6 +274,14 @@ function flash(config = {}) {
                             for (let i = 0; i < length; i++) {
                                 numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
                             }
+
+                            const complexity = getCalculateComplexity(numbers);
+                            if (complexity >= complexityMap[complexityMapKey][additionDifficultyMap.easy]
+                                && complexity < complexityMap[`${digitCount}-${length}`][additionDifficultyMap.hard]) {
+                                return numbers;
+                            }
+
+                            retry++;
                             break;
                         }
                         case additionDifficultyMap.hard: {
@@ -294,6 +307,12 @@ function flash(config = {}) {
                                     break;
                                 }
                             }
+
+                            if (getCalculateComplexity(numbers) < complexityMap[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+
+                            retry++;
                             break;
                         }
                         default:
@@ -301,29 +320,6 @@ function flash(config = {}) {
                     break;
                 default:
             }
-
-            // 現在、たし算のみ難易度分岐
-            if (currentMode.innerText === modeNames.multiplication) {
-                break;
-            }
-
-            const complexity = getCalculateComplexity(numbers);
-            let isValidComplexity = true;
-            switch (difficulty) {
-                case additionDifficultyMap.easy:
-                case additionDifficultyMap.hard:
-                    isValidComplexity = complexity < complexityMap[`${digitCount}-${length}`][difficulty];
-                    break;
-                case additionDifficultyMap.normal:
-                default:
-                    isValidComplexity = complexity >= complexityMap[`${digitCount}-${length}`][additionDifficultyMap.easy]
-                        && complexity < complexityMap[`${digitCount}-${length}`][additionDifficultyMap.hard];
-                    break;
-            }
-            if (isValidComplexity) {
-                break;
-            }
-            retry++;
         }
         return numbers;
     }
