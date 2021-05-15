@@ -232,55 +232,74 @@ function flash(config = {}) {
         let retry = 0;
         let numbers = [];
         while (retry < generateNumbersRetryLimit) {
-            numbers = [];
-            let sum = 0;
-            for (let i = 0; i < length; ++i) {
-                switch (currentMode.innerText) {
-                    case modeNames.multiplication:
+            switch (currentMode.innerText) {
+                case modeNames.multiplication: {
+                    numbers = [];
+                    for (let i = 0; i < length; i++) {
                         numbers.push([
                             getRandomInt(digitCount[0], numbers.slice(-1)[0], true),
-                            getRandomInt(digitCount[1], numbers.slice(-1)[1], true)]
-                        );
-                        break;
-                    case modeNames.addition:
-                        if (difficulty === additionDifficultyMap.hard) {
-                            let getIntRetry = 0;
-                            while (true) {
-                                const number = getRandomInt(digitCount);
-                                if (number === numbers.slice(-1)[0]) {
-                                    continue;
-                                }
-
-                                const carry = new Abacus(sum).add(number);
-
-                                if (i >= 1 && carry < digitCount && getIntRetry < 10) {
-                                    getIntRetry++;
-                                    continue;
-                                }
-
-                                numbers.push(number);
-                                sum += number;
-                                break;
-                            }
-                        } else if (difficulty === additionDifficultyMap.easy) {
-                            while (true) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1), true);
-                                const carry = new Abacus(sum).add(number);
-
-                                if (carry > 2 + digitCount) {
-                                    continue;
-                                }
-
-                                numbers.push(number);
-                                sum += number;
-                                break;
-                            }
-                        } else {
-                            numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
-                        }
-                        break;
-                    default:
+                            getRandomInt(digitCount[1], numbers.slice(-1)[1], true)
+                        ]);
+                    }
+                    break;
                 }
+                case modeNames.addition:
+                    switch (difficulty) {
+                        case additionDifficultyMap.easy: {
+                            numbers = [];
+                            let sum = 0;
+                            for (let i = 0; i < length; i++) {
+                                while (true) {
+                                    const number = getRandomInt(digitCount, numbers.slice(-1), true);
+                                    const carry = new Abacus(sum).add(number);
+
+                                    if (carry > 2 + digitCount) {
+                                        continue;
+                                    }
+
+                                    numbers.push(number);
+                                    sum += number;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case additionDifficultyMap.normal: {
+                            numbers = [];
+                            for (let i = 0; i < length; i++) {
+                                numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
+                            }
+                            break;
+                        }
+                        case additionDifficultyMap.hard: {
+                            numbers = [];
+                            let sum = 0;
+                            for (let i = 0; i < length; i++) {
+                                let getIntRetry = 0;
+                                while (true) {
+                                    const number = getRandomInt(digitCount);
+                                    if (number === numbers.slice(-1)[0]) {
+                                        continue;
+                                    }
+
+                                    const carry = new Abacus(sum).add(number);
+
+                                    if (i >= 1 && carry < digitCount && getIntRetry < 10) {
+                                        getIntRetry++;
+                                        continue;
+                                    }
+
+                                    numbers.push(number);
+                                    sum += number;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        default:
+                    }
+                    break;
+                default:
             }
 
             // 現在、たし算のみ難易度分岐
