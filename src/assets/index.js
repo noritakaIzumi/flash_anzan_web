@@ -247,22 +247,24 @@ function flash(config = {}) {
                     const complexityMapKey = `${digitCount}-${length}`;
                     switch (difficulty) {
                         case additionDifficultyMap.easy: {
-                            numbers = [];
+                            let numbers = [];
                             let sum = 0;
+                            let carries = [];
                             for (let i = 0; i < length; i++) {
                                 while (true) {
                                     const number = getRandomInt(digitCount, numbers.slice(-1), true);
-                                    const carry = new Abacus(sum).add(number);
+                                    const carry = new Abacus(sum).add(number).carry - new Abacus(sum).carry;
 
                                     if (carry <= digitCount) {
                                         numbers.push(number);
                                         sum += number;
+                                        carries.push(carry);
                                         break;
                                     }
                                 }
                             }
 
-                            if (getCalculateComplexity(numbers) < complexityMap[complexityMapKey][difficulty]) {
+                            if (getCalculateComplexity(carries, requestParam.digit) < complexityMap[complexityMapKey][difficulty]) {
                                 return numbers;
                             }
 
@@ -270,12 +272,18 @@ function flash(config = {}) {
                             break;
                         }
                         case additionDifficultyMap.normal: {
-                            numbers = [];
+                            let numbers = [];
+                            let sum = 0;
+                            let carries = [];
                             for (let i = 0; i < length; i++) {
-                                numbers.push(getRandomInt(digitCount, numbers.slice(-1), true));
+                                const number = getRandomInt(digitCount, numbers.slice(-1), true);
+                                const carry = new Abacus(sum).add(number).carry - new Abacus(sum).carry;
+                                numbers.push(number);
+                                sum += number;
+                                carries.push(carry);
                             }
 
-                            const complexity = getCalculateComplexity(numbers);
+                            const complexity = getCalculateComplexity(carries, requestParam.digit);
                             if (complexity >= complexityMap[complexityMapKey][additionDifficultyMap.easy]
                                 && complexity < complexityMap[`${digitCount}-${length}`][additionDifficultyMap.hard]) {
                                 return numbers;
@@ -285,8 +293,9 @@ function flash(config = {}) {
                             break;
                         }
                         case additionDifficultyMap.hard: {
-                            numbers = [];
+                            let numbers = [];
                             let sum = 0;
+                            let carries = [];
                             for (let i = 0; i < length; i++) {
                                 let getIntRetry = 0;
                                 while (true) {
@@ -295,20 +304,21 @@ function flash(config = {}) {
                                         continue;
                                     }
 
-                                    const carry = new Abacus(sum).add(number);
+                                    const carry = new Abacus(sum).add(number).carry - new Abacus(sum).carry;
 
-                                    if (i >= 1 && carry < digitCount && getIntRetry < 10) {
+                                    if (i >= 1 && carry < digitCount && getIntRetry < 100) {
                                         getIntRetry++;
                                         continue;
                                     }
 
                                     numbers.push(number);
                                     sum += number;
+                                    carries.push(carry);
                                     break;
                                 }
                             }
 
-                            if (getCalculateComplexity(numbers) < complexityMap[complexityMapKey][difficulty]) {
+                            if (getCalculateComplexity(carries, requestParam.digit) < complexityMap[complexityMapKey][difficulty]) {
                                 return numbers;
                             }
 
@@ -452,12 +462,11 @@ function flash(config = {}) {
     class Abacus {
         constructor(n = 0) {
             this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
+            this.carry = 0;
             this.add(n);
         }
 
         add(num) {
-            let carry = 0;
-
             const numArr = String(num).split('').map((d) => {
                 return Number(d);
             });
@@ -475,33 +484,29 @@ function flash(config = {}) {
                 let newVal = this.digits[i].value + d;
                 if (newVal >= 10) {
                     newVal -= 10;
-                    carry += this.add(Math.pow(10, i + 1));
-                    carry++;
+                    this.add(Math.pow(10, i + 1));
+                    this.carry++;
                 }
                 this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
                 if ((this.digits[i].five - beforeDigit.five) * (this.digits[i].one - beforeDigit.one) < 0) {
-                    carry++;
+                    this.carry++;
                 }
             }
-            return carry;
+            return this;
         }
     }
 
-    function getCalculateComplexity(numbers) {
-        let carries = [];
+    function getCalculateComplexity(carries, digit) {
         switch (currentMode.innerText) {
             case modeNames.multiplication:
-                return [];
+                return 0;
             case modeNames.addition:
-                let digits = new Abacus();
-                for (let i = 0; i < numbers.length; ++i) {
-                    const carryCount = digits.add(numbers[i]);
-                    carries.push(carryCount / requestParam.digit);
-                }
-                carries = carries.slice(1);
+                carries = carries.slice(1).map((c) => {
+                    return c / digit;
+                });
                 return average(carries) + standard_deviation(carries) * 0.5;
             default:
-                return [];
+                return 0;
         }
     }
 
