@@ -230,16 +230,30 @@ function flash(config = {}) {
         }
 
         let retry = 0;
-        let numbers = [];
         while (retry < generateNumbersRetryLimit) {
             switch (currentMode.innerText) {
                 case modeNames.multiplication: {
-                    numbers = [];
+                    let numbers = [];
+                    let sum = 0;
+                    let carries = [];
                     for (let i = 0; i < length; i++) {
-                        numbers.push([
-                            getRandomInt(digitCount[0], numbers.slice(-1)[0], true),
-                            getRandomInt(digitCount[1], numbers.slice(-1)[1], true)
-                        ]);
+                        const number1 = getRandomInt(digitCount[0], numbers.slice(-1)[0], true);
+                        const number2 = getRandomInt(digitCount[1], numbers.slice(-1)[1], true);
+                        const digits1 = String(number1).split('').reverse().map((n) => {
+                            return Number(n);
+                        });
+                        const digits2 = String(number2).split('').reverse().map((n) => {
+                            return Number(n);
+                        });
+                        let abacus = new Abacus(sum);
+                        for (let p1 = 0; p1 < digits1.length; p1++) {
+                            for (let p2 = 0; p2 < digits2.length; p2++) {
+                                abacus.add(digits1 * digits2 * Math.pow(10, p1 + p2));
+                                sum += digits1 * digits2 * Math.pow(10, p1 + p2);
+                            }
+                        }
+                        numbers.push([number1, number2]);
+                        carries.push(abacus.carry);
                     }
                     return numbers;
                 }
