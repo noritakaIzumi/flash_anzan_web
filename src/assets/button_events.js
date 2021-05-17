@@ -70,5 +70,5 @@ function toggleMute() {
 }
 
 function changeAdditionDifficulty(val) {
-    additionDifficultyInput.value = val;
+    difficultyInput.value = val;
 }

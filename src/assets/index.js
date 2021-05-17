@@ -73,6 +73,8 @@ function setUpInputBox() {
     });
     currentMode.innerText = modeNames.addition;
     changeMode(currentMode.innerText);
+    difficultyInput.value = difficultyMap.normal;
+    difficultyButtons.normal.classList.add('active');
 }
 
 function changeShortcut(mode) {
@@ -254,15 +256,36 @@ function flash(config = {}) {
                         carries.push(abacus.carry);
                         abacus = new Abacus(abacus.value);
                     }
-                    console.log(carries.reduce((c1, c2) => {
-                        return c1 + c2;
-                    }, 0));
-                    return numbers;
+
+                    const complexityMapKey = `${digitCount[0]}-${digitCount[1]}-${length}`;
+                    const complexity = getCalculateComplexity(carries, digitCount[0] * digitCount[1]);
+                    switch (difficulty) {
+                        case difficultyMap.easy:
+                            if (complexity < complexityMap.multiplication[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+                            break;
+                        case difficultyMap.normal:
+                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficultyMap.easy]
+                                && complexity < complexityMap.multiplication[complexityMapKey][difficultyMap.hard]) {
+                                return numbers;
+                            }
+                            break;
+                        case difficultyMap.hard:
+                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+                            break;
+                        default:
+                            return [];
+                    }
+
+                    break;
                 }
                 case modeNames.addition:
                     const complexityMapKey = `${digitCount}-${length}`;
                     switch (difficulty) {
-                        case additionDifficultyMap.easy: {
+                        case difficultyMap.easy: {
                             let numbers = [];
                             let abacus = new Abacus();
                             let carries = [];
@@ -279,14 +302,13 @@ function flash(config = {}) {
                                 }
                             }
 
-                            if (getCalculateComplexity(carries.slice(1), requestParam.digit) < complexityMap[complexityMapKey][difficulty]) {
+                            if (getCalculateComplexity(carries.slice(1), digitCount) < complexityMap.addition[complexityMapKey][difficulty]) {
                                 return numbers;
                             }
 
-                            retry++;
                             break;
                         }
-                        case additionDifficultyMap.normal: {
+                        case difficultyMap.normal: {
                             let numbers = [];
                             let abacus = new Abacus();
                             let carries = [];
@@ -297,16 +319,15 @@ function flash(config = {}) {
                                 carries.push(abacus.carry);
                             }
 
-                            const complexity = getCalculateComplexity(carries.slice(1), requestParam.digit);
-                            if (complexity >= complexityMap[complexityMapKey][additionDifficultyMap.easy]
-                                && complexity < complexityMap[`${digitCount}-${length}`][additionDifficultyMap.hard]) {
+                            const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                            if (complexity >= complexityMap.addition[complexityMapKey][difficultyMap.easy]
+                                && complexity < complexityMap.addition[complexityMapKey][difficultyMap.hard]) {
                                 return numbers;
                             }
 
-                            retry++;
                             break;
                         }
-                        case additionDifficultyMap.hard: {
+                        case difficultyMap.hard: {
                             let numbers = [];
                             let abacus = new Abacus();
                             let carries = [];
@@ -331,18 +352,20 @@ function flash(config = {}) {
                                 }
                             }
 
-                            if (getCalculateComplexity(carries.slice(1), requestParam.digit) < complexityMap[complexityMapKey][difficulty]) {
+                            if (getCalculateComplexity(carries.slice(1), digitCount) >= complexityMap.addition[complexityMapKey][difficulty]) {
                                 return numbers;
                             }
 
-                            retry++;
                             break;
                         }
                         default:
+                            return [];
                     }
                     break;
                 default:
+                    return [];
             }
+            retry++;
         }
         return numbers;
     }
@@ -516,17 +539,10 @@ function flash(config = {}) {
     }
 
     function getCalculateComplexity(carries, digit) {
-        switch (currentMode.innerText) {
-            case modeNames.multiplication:
-                return 0;
-            case modeNames.addition:
-                carries = carries.map((c) => {
-                    return c / digit;
-                });
-                return average(carries) + standard_deviation(carries) * 0.25;
-            default:
-                return 0;
-        }
+        carries = carries.map((c) => {
+            return c / digit;
+        });
+        return average(carries) + standard_deviation(carries) * 0.25;
     }
 
     // ここからフラッシュ出題の処理
@@ -571,20 +587,10 @@ function flash(config = {}) {
         } else if (requestParam.length < numberHistory.length) {
             numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            // 現在、たし算のみ難易度分岐
-            if (currentMode.innerText === modeNames.addition) {
-                numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, additionDifficultyInput.value));
-            } else {
-                numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length));
-            }
+            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, difficultyInput.value));
         }
     } else {
-        // 現在、たし算のみ難易度分岐
-        if (currentMode.innerText === modeNames.addition) {
-            numbers = generateNumbers(requestParam.digit, requestParam.length, additionDifficultyInput.value);
-        } else {
-            numbers = generateNumbers(requestParam.digit, requestParam.length);
-        }
+        numbers = generateNumbers(requestParam.digit, requestParam.length, difficultyInput.value);
     }
     let localeStringNumbers;
     switch (currentMode.innerText) {
@@ -706,6 +712,41 @@ function isFullscreen() {
     return calculateArea.dataset.fullScreen === '1';
 }
 
+function registerShortcuts() {
+    shortcut.add("ctrl+o", () => button.loadParams.click());
+    shortcut.add("ctrl+s", () => button.saveParams.click());
+    shortcut.add("ctrl+r", () => button.deleteParams.click());
+    shortcut.add("s", () => button.start.click());
+    shortcut.add("r", () => button.repeat.click());
+    shortcut.add("z", () => button.addition.click());
+    shortcut.add("x", () => button.subtraction.click());
+    shortcut.add("c", () => button.multiplication.click());
+    shortcut.add("d", () => difficultyButtons.easy.click());
+    shortcut.add("f", () => difficultyButtons.normal.click());
+    shortcut.add("g", () => difficultyButtons.hard.click());
+    shortcut.add("n", () => button.numberHistory.click());
+    shortcut.add("w", () => toggleFullscreenMode());
+    shortcut.add("q", () => button.help.click());
+    shortcut.add('ctrl+,', () => button.openCommonMoreConfig.click());
+}
+
+function configureModalFocusing() {
+    Object.keys(modals.params).forEach((op) => {
+        const confirm = modals.params[op]['confirm'];
+        const b = confirm.querySelector('.modal-footer > button:last-child');
+        confirm.addEventListener('shown.bs.modal', () => {
+            b.focus();
+        });
+
+        const completed = modals.params[op]['complete'];
+        completed.addEventListener('shown.bs.modal', () => {
+            setTimeout(() => {
+                completed.querySelector('.modal-header > button').click();
+            }, 1000);
+        });
+    });
+}
+
 // ページ読み込み時処理
 (() => {
     loadAudioObj(defaultAudioExtension);
@@ -724,45 +765,13 @@ function isFullscreen() {
             () => questionNumberArea.innerText = "",
             () => questionNumberArea.style.color = currentNumberColor,
             setUpInputBox,
+            registerShortcuts,
+            configureModalFocusing,
             () => button.start.disabled = false,
         ];
         prepareGameFunctions.map((func) => {
             setTimeout(func, timeoutMs);
             timeoutMs += 50;
-        });
-    })();
-
-    // Register Shortcuts
-    (() => {
-        shortcut.add("ctrl+o", () => button.loadParams.click());
-        shortcut.add("ctrl+s", () => button.saveParams.click());
-        shortcut.add("ctrl+r", () => button.deleteParams.click());
-        shortcut.add("s", () => button.start.click());
-        shortcut.add("r", () => button.repeat.click());
-        shortcut.add("z", () => button.addition.click());
-        shortcut.add("x", () => button.subtraction.click());
-        shortcut.add("c", () => button.multiplication.click());
-        shortcut.add("n", () => button.numberHistory.click());
-        shortcut.add("w", () => toggleFullscreenMode());
-        shortcut.add("q", () => button.help.click());
-        shortcut.add('ctrl+,', () => button.openCommonMoreConfig.click());
-    })();
-
-    // Modal Focusing
-    (() => {
-        Object.keys(modals.params).forEach((op) => {
-            const confirm = modals.params[op]['confirm'];
-            const b = confirm.querySelector('.modal-footer > button:last-child');
-            confirm.addEventListener('shown.bs.modal', () => {
-                b.focus();
-            });
-
-            const completed = modals.params[op]['complete'];
-            completed.addEventListener('shown.bs.modal', () => {
-                setTimeout(() => {
-                    completed.querySelector('.modal-header > button').click();
-                }, 1000);
-            });
         });
     })();
 })();

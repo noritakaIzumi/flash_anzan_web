@@ -1,6 +1,6 @@
 {
   "name": "flash-anzan",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "フラッシュ暗算で脳を鍛えよう",
   "main": "main.js",
   "dependencies": {

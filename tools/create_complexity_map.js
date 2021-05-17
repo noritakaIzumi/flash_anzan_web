@@ -1,132 +1,175 @@
 (() => {
-    function generateComplexity(digit, length, sampleCount, threshold) {
-        const mode = 'addition';
+    class AbacusDigit {
+        constructor(value = 0, five = 0, one = 0) {
+            this.value = value;
+            this.five = five;
+            this.one = one;
+        }
 
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
+        static getInstance() {
+            return new AbacusDigit();
+        }
+    }
+
+    class Abacus {
+        constructor(n = 0) {
+            this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
+            this.value = 0;
+            this.carry = 0;
+            this.add(n);
+        }
+
+        updateBeads(num) {
+            const numArr = String(num).split('').map((d) => {
+                return Number(d);
+            });
+            for (let i = numArr.length - 1; i >= 0; i--) {
+                const d = numArr.shift();
+                if (d === 0) {
+                    continue;
+                }
+
+                if (this.digits[i] === undefined) {
+                    this.digits[i] = AbacusDigit.getInstance();
+                }
+
+                const beforeDigit = Object.assign({}, this.digits[i]);
+                let newVal = this.digits[i].value + d;
+                if (newVal >= 10) {
+                    newVal -= 10;
+                    this.updateBeads(Math.pow(10, i + 1));
+                    this.carry++;
+                }
+                this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
+                if ((this.digits[i].five - beforeDigit.five) * (this.digits[i].one - beforeDigit.one) < 0) {
+                    this.carry++;
+                }
+            }
+        }
+
+        add(num) {
+            this.updateBeads(num);
+            this.value += num;
+            return this;
+        }
+    }
+
+    function generateCarries(digitCount, length, mode) {
+        function getRandomInt(digitCount) {
+            const max = Math.pow(10, digitCount) - 1;
+            const min = Math.pow(10, digitCount - 1);
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
 
-        function median(arr, ratio) {
-            const half = (arr.length / 2) | 0;
-            const temp = arr.sort();
-
-            if (ratio > 0) {
-                return temp[Math.ceil(arr.length * ratio)];
-            }
-
-            if (temp.length % 2) {
-                return temp[half];
-            }
-            return (temp[half - 1] + temp[half]) / 2;
-        }
-
-        function getCalculateComplexity(numbers) {
-            function average(data) {
-                let sum = 0;
-                for (let i = 0; i < data.length; ++i) {
-                    sum += data[i];
-                }
-                return sum / data.length;
-            }
-
-            function standard_deviation(data) {
-                function variance(data) {
-                    const ave = average(data);
-                    let variance = 0;
-                    for (let i = 0; i < data.length; i++) {
-                        variance += Math.pow(data[i] - ave, 2);
-                    }
-                    return variance / data.length;
-                }
-
-                return Math.sqrt(variance(data));
-            }
-
-            let carries = [];
-            switch (mode) {
-                case 'multiplication':
-                    return [];
-                case 'addition':
-                    let digits = [];
-                    for (let i = 0; i < digit + 2; ++i) {
-                        digits.push({value: 0, five: 0, one: 0});
-                    }
-                    for (let i = 0; i < numbers.length; ++i) {
-                        let carry = 0;
-                        const n = String(numbers[i]);
-                        for (let j = 0; j < digits.length - 1; ++j) {
-                            const beforeDigit = Object.assign({}, digits[j]);
-                            digits[j].value += Number(n[j]) || 0;
-                            if (digits[j].value >= 10) {
-                                digits[j].value -= 10;
-                                carry++;
-                                digits[j + 1].value++;
-                                if (digits[j + 1].value % 5 === 0) {
-                                    carry++;
-                                }
-                            }
-                            digits[j].five = Math.floor(digits[j].value / 5);
-                            digits[j].one = digits[j].value % 5;
-                            if ((digits[j].five - beforeDigit.five) * (digits[j].one - beforeDigit.one) < 0) {
-                                carry++;
-                            }
+        switch (mode) {
+            case 'multiplication': {
+                let abacus = new Abacus();
+                let carries = [];
+                for (let i = 0; i < length; i++) {
+                    const digits1 = String(getRandomInt(digitCount[0])).split('').reverse().map((n) => {
+                        return Number(n);
+                    });
+                    const digits2 = String(getRandomInt(digitCount[1])).split('').reverse().map((n) => {
+                        return Number(n);
+                    });
+                    for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
+                        for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
+                            abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2));
                         }
-                        carries.push(carry / digit);
                     }
-                    carries = carries.slice(1);
-                    return average(carries) + standard_deviation(carries) * 0.25;
-                default:
-                    return [];
+                    carries.push(abacus.carry);
+                    abacus = new Abacus(abacus.value);
+                }
+                return carries;
             }
+            case 'addition':
+                let abacus = new Abacus();
+                let carries = [];
+                for (let i = 0; i < length; i++) {
+                    const number = getRandomInt(digitCount);
+                    abacus = new Abacus(abacus.value).add(number);
+                    carries.push(abacus.carry);
+                }
+                return carries;
+            default:
+        }
+    }
+
+    function getCalculateComplexity(carries, digit) {
+        function average(data) {
+            let sum = 0;
+            for (let i = 0; i < data.length; ++i) {
+                sum += data[i];
+            }
+            return sum / data.length;
         }
 
-        let retry = 0;
-        let numbers = [];
-        const c = [];
-        while (retry < sampleCount) {
-            numbers = [];
-            for (let i = 0; i < length; ++i) {
-                let min;
-                let max;
-                switch (mode) {
-                    case 'multiplication':
-                        min = [];
-                        max = [];
-                        min[0] = Math.pow(10, digit[0] - 1);
-                        max[0] = Math.pow(10, digit[0]) - 1;
-                        min[1] = Math.pow(10, digit[1] - 1);
-                        max[1] = Math.pow(10, digit[1]) - 1;
-                        numbers.push([getRandomInt(min[0], max[0]), getRandomInt(min[1], max[1])]);
-                        break;
-                    case 'addition':
-                    default:
-                        min = Math.pow(10, digit - 1);
-                        max = Math.pow(10, digit) - 1;
-                        numbers.push(getRandomInt(min, max));
+        function standard_deviation(data) {
+            function variance(data) {
+                const ave = average(data);
+                let variance = 0;
+                for (let i = 0; i < data.length; i++) {
+                    variance += Math.pow(data[i] - ave, 2);
                 }
+                return variance / data.length;
             }
-            const complexity = getCalculateComplexity(numbers);
-            c.push(complexity);
-            retry++;
+
+            return Math.sqrt(variance(data));
         }
+
+        if (typeof digit === 'object') {
+            digit = digit[0] * digit[1];
+        }
+
+        carries = carries.map((c) => {
+            return c / digit;
+        });
+        return average(carries) + standard_deviation(carries) * 0.25;
+    }
+
+    function getRank(arr, threshold) {
+        const half = (arr.length / 2) | 0;
+        const temp = arr.sort();
 
         return {
-            med: median(c),
-            hard: median(c, 1 - threshold.hard),
-            easy: median(c, 1 - threshold.easy)
+            med: (temp[half - 1] + temp[half]) / 2,
+            hard: temp[Math.ceil(arr.length * (1 - threshold.hard))],
+            easy: temp[Math.ceil(arr.length * (1 - threshold.easy))],
         };
     }
 
+    function generateComplexity(digitCount, length, mode, sampleCount, threshold) {
+        const c = [];
+        for (let _ = 0; _ < sampleCount; _++) {
+            const carries = generateCarries(digitCount, length, mode);
+            const complexity = getCalculateComplexity(carries, digitCount);
+            c.push(complexity);
+        }
+
+        return getRank(c, threshold);
+    }
+
     // main
-    const result = {};
-    const sampleCount = 100000;
+    const result = {addition: {}, multiplication: {}};
+    const sampleCount = 10000;
     const threshold = {hard: 0.1, easy: 0.9};
 
-    for (let digit = 1; digit <= 14; ++digit) {
+    let mode = 'addition';
+    for (let digitCount = 1; digitCount <= 14; ++digitCount) {
         for (let length = 2; length <= 30; ++length) {
-            result[`${digit}-${length}`] = generateComplexity(digit, length, sampleCount, threshold);
+            result.addition[`${digitCount}-${length}`] = generateComplexity(digitCount, length, mode, sampleCount, threshold);
+            console.log(`${mode} ${digitCount} 桁 ${length} 口: completed`);
+        }
+    }
+
+    mode = 'multiplication';
+    for (let digitCount1 = 1; digitCount1 <= 7; digitCount1++) {
+        for (let digitCount2 = 1; digitCount2 <= 7; digitCount2++) {
+            for (let length = 2; length <= 30; length++) {
+                const digitCount = [digitCount1, digitCount2];
+                result.multiplication[`${digitCount1}-${digitCount2}-${length}`] = generateComplexity(digitCount, length, mode, sampleCount, threshold);
+                console.log(`${mode} ${digitCount1} 桁× ${digitCount2} 桁 ${length} 口: completed`);
+            }
         }
     }
 

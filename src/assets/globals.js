@@ -62,7 +62,7 @@ headerMessage = document.getElementById("header-message");
 questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
 inputAnswerBox = document.getElementById('input-answer-box');
-questionInfoLabel = document.getElementById('question-info-label')
+questionInfoLabel = document.getElementById('question-info-label');
 
 button = {
     loadParams: document.getElementById("load-params-button"),
@@ -158,12 +158,17 @@ modals = {
         },
     },
     'input_answer': document.getElementById('inputAnswerModal'),
-}
+};
 
 generateNumbersRetryLimit = 100000;
-additionDifficultyInput = document.getElementById('addition-difficulty');
-additionDifficultyMap = {
+difficultyInput = document.getElementById('difficulty');
+difficultyMap = {
     easy: 'easy',
     normal: 'normal',
     hard: 'hard',
+};
+difficultyButtons = {
+    easy: document.getElementById('difficulty-easy'),
+    normal: document.getElementById('difficulty-normal'),
+    hard: document.getElementById('difficulty-hard'),
 };
