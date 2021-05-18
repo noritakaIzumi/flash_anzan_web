@@ -113,6 +113,7 @@ hr {
 }
 
 #header-message {
+    text-align: left;
     position: absolute;
     margin: 10px;
     z-index: 10;

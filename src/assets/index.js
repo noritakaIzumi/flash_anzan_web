@@ -194,9 +194,9 @@ function getCurrentParam() {
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
-        const averageFlashTime = time / (length * 2 - 1);
-        const flashOnTime = Number(averageFlashTime) * (flashRate / 50);
-        const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 50);
+        const averageFlashTime = time / ((length - 1) * 100 + flashRate) * 100;
+        const flashOnTime = Number(averageFlashTime) * (flashRate / 100);
+        const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 100);
         return {on: flashOnTime, off: flashOffTime};
     }
 
@@ -414,14 +414,15 @@ function flash(config = {}) {
             let resultAudio;
             if (number === answerNumber.innerText) {
                 resultAudio = audioObj.correct[0];
-                headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
+                headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
             } else if (number.length > 0) {
                 resultAudio = audioObj.incorrect[0];
-                headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
+                headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`;
             } else {
                 resultAudio = audioObj.silence[0];
-                headerMessage.innerText = "答え";
+                headerMessage.innerText = "答え\n";
             }
+            headerMessage.innerText += `実時間計測: ${(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
             questionNumberArea.innerText = answerNumberDisplay.innerText;
             if (!isMuted.checked) {
                 resultAudio.play();
@@ -606,12 +607,21 @@ function flash(config = {}) {
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
 
+    let measuredTime = {start: 0, end: 0};
     let toggleNumberFunctions = [];
-    for (let i = 0; i < toggleNumberSuite.length; i++) {
+    toggleNumberFunctions.push(() => {
+        measuredTime.start = new Date().getTime();
+        questionNumberArea.innerText = toggleNumberSuite[0];
+    });
+    for (let i = 1; i < toggleNumberSuite.length - 1; i++) {
         toggleNumberFunctions.push(() => {
             questionNumberArea.innerText = toggleNumberSuite[i];
         });
     }
+    toggleNumberFunctions.push(() => {
+        questionNumberArea.innerText = toggleNumberSuite.slice(-1)[0];
+        measuredTime.end = new Date().getTime();
+    });
 
     const playTickFunctions = [];
     for (let i = 0; i < soundSuite.length; i++) {
@@ -690,7 +700,7 @@ function flash(config = {}) {
         setFlashTimeOut(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setFlashTimeOut(checkAnswer, toggleTiming);
+    setFlashTimeOut(checkAnswer, toggleTiming - flashTimes.slice(-1)[0] + 1000);
 }
 
 function loadAudioObj(extension) {
@@ -765,9 +775,9 @@ function configureModalFocusing() {
             () => questionNumberArea.innerText = "",
             () => questionNumberArea.style.color = currentNumberColor,
             setUpInputBox,
-            registerShortcuts,
             configureModalFocusing,
             () => button.start.disabled = false,
+            registerShortcuts,
         ];
         prepareGameFunctions.map((func) => {
             setTimeout(func, timeoutMs);
