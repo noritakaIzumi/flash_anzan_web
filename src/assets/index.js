@@ -239,8 +239,8 @@ function flash(config = {}) {
                     let abacus = new Abacus();
                     let carries = [];
                     for (let i = 0; i < length; i++) {
-                        const number1 = getRandomInt(digitCount[0], numbers.slice(-1)[0], true);
-                        const number2 = getRandomInt(digitCount[1], numbers.slice(-1)[1], true);
+                        const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
+                        const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
                         const digits1 = String(number1).split('').reverse().map((n) => {
                             return Number(n);
                         });
@@ -291,7 +291,7 @@ function flash(config = {}) {
                             let carries = [];
                             for (let i = 0; i < length; i++) {
                                 while (true) {
-                                    const number = getRandomInt(digitCount, numbers.slice(-1), true);
+                                    const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
                                     abacus = new Abacus(abacus.value).add(number);
 
                                     if (abacus.carry <= digitCount) {
@@ -313,7 +313,7 @@ function flash(config = {}) {
                             let abacus = new Abacus();
                             let carries = [];
                             for (let i = 0; i < length; i++) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1), true);
+                                const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
                                 abacus = new Abacus(abacus.value).add(number);
                                 numbers.push(number);
                                 carries.push(abacus.carry);
