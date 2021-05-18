@@ -4,6 +4,52 @@ modeNames = {
     addition: "addition",
     multiplication: "multiplication",
 };
+
+difficultyMap = {
+    easy: 'easy',
+    normal: 'normal',
+    hard: 'hard',
+};
+
+audioStatusInnerHtmlMap = {
+    on: '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>',
+    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">Audio Off</span>',
+};
+
+isMutedMap = {
+    on: 'on',
+    off: 'off',
+};
+
+audioAttr = {
+    directory: "./sound",
+    extension: {
+        ogg: 'ogg',
+        wav: 'wav',
+    },
+};
+
+element = {
+    addition: {
+        digit: document.getElementById("addition-digit"),
+        length: document.getElementById("addition-length"),
+        time: document.getElementById("addition-time"),
+    },
+    multiplication: {
+        digit1: document.getElementById("multiplication-digit-1"),
+        digit2: document.getElementById("multiplication-digit-2"),
+        length: document.getElementById("multiplication-length"),
+        time: document.getElementById("multiplication-time"),
+    },
+    common: {
+        difficulty: document.getElementById('difficulty'),
+        flashRate: document.getElementById("common-flashRate"),
+        offset: document.getElementById("common-offset"),
+        isMuted: document.getElementById("is-muted"),
+        soundExtension: document.getElementById("sound-extension"),
+    },
+};
+
 param = {
     addition: {
         digit: {
@@ -45,6 +91,9 @@ param = {
         },
     },
     common: {
+        difficulty: {
+            default: difficultyMap.easy,
+        },
         flashRate: {
             max: 99,
             min: 1,
@@ -54,6 +103,12 @@ param = {
             max: 500,
             min: -500,
             default: 0,
+        },
+        isMuted: {
+            default: false,
+        },
+        soundExtension: {
+            default: audioAttr.extension.wav,
         },
     },
 };
@@ -78,20 +133,11 @@ button = {
     closeInputAnswer: document.getElementById('closeInputAnswerModal'),
     help: document.getElementById('help-button'),
     openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
-    mute: document.getElementById('is-muted'),
 };
 
 answerNumber = document.getElementById("answer-number");
 
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
-audioAttr = {
-    directory: "./sound",
-    extension: {
-        ogg: 'ogg',
-        wav: 'wav',
-    },
-};
-defaultAudioExtension = audioAttr.extension.wav;
 audioObj = {
     beep: new Array(2),
     tick: new Array(30),
@@ -104,25 +150,7 @@ audioContext = new AudioContext();
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
-muteStatus = document.getElementById('mute-status');
-
-element = {
-    addition: {
-        digit: document.getElementById("addition-digit"),
-        length: document.getElementById("addition-length"),
-        time: document.getElementById("addition-time"),
-    },
-    multiplication: {
-        digit1: document.getElementById("multiplication-digit-1"),
-        digit2: document.getElementById("multiplication-digit-2"),
-        length: document.getElementById("multiplication-length"),
-        time: document.getElementById("multiplication-time"),
-    },
-    common: {
-        flashRate: document.getElementById("common-flashRate"),
-        offset: document.getElementById("common-offset"),
-    },
-};
+audioStatus = document.getElementById('audio-status');
 
 disableConfigTarget = [
     button.start,
@@ -161,14 +189,3 @@ modals = {
 };
 
 generateNumbersRetryLimit = 100000;
-difficultyInput = document.getElementById('difficulty');
-difficultyMap = {
-    easy: 'easy',
-    normal: 'normal',
-    hard: 'hard',
-};
-difficultyButtons = {
-    easy: document.getElementById('difficulty-easy'),
-    normal: document.getElementById('difficulty-normal'),
-    hard: document.getElementById('difficulty-hard'),
-};

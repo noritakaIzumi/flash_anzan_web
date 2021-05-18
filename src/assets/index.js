@@ -49,7 +49,13 @@ function increaseParam(id, amount) {
 function setUpInputBox() {
     Object.keys(element).map((mode) => {
         Object.keys(element[mode]).map((config) => {
-            if (config === "time") {
+            if (config === "isMuted") {
+                element[mode][config].checked = param[mode][config].default;
+                element[mode][config].value = element[mode][config].checked ? isMutedMap.on : isMutedMap.off;
+                toggleMute();
+            } else if (config === "difficulty" || config === "soundExtension") {
+                element[mode][config].value = param[mode][config].default;
+            } else if (config === "time") {
                 element[mode][config].max = param[mode][config].max / 1000;
                 element[mode][config].min = param[mode][config].min / 1000;
                 element[mode][config].value = param[mode][config].default / 1000;
@@ -73,8 +79,6 @@ function setUpInputBox() {
     });
     currentMode.innerText = modeNames.addition;
     changeMode(currentMode.innerText);
-    difficultyInput.value = difficultyMap.normal;
-    difficultyButtons.normal.classList.add('active');
 }
 
 function changeShortcut(mode) {
@@ -145,6 +149,7 @@ function getCurrentParam() {
         digit: 0,
         length: 0,
         time: 0,
+        difficulty: "",
         flashRate: 0,
         offset: 0,
     };
@@ -179,6 +184,7 @@ function getCurrentParam() {
         param[currentMode.innerText].time,
         Number(element[currentMode.innerText].time.value) * 1000
     );
+    requestParam.difficulty = element.common.difficulty.value;
     requestParam.flashRate = fixValue(
         param.common.flashRate,
         Number(element.common.flashRate.value)
@@ -189,6 +195,10 @@ function getCurrentParam() {
     );
 
     return requestParam;
+}
+
+function muteIsOn() {
+    return isMuted.checked;
 }
 
 function flash(config = {}) {
@@ -382,7 +392,7 @@ function flash(config = {}) {
     function generateSounds() {
         let sounds = [];
         for (let i = 0; i < requestParam.length; ++i) {
-            if (!isMuted.checked) {
+            if (!muteIsOn()) {
                 sounds.push(audioObj.tick[i]);
             } else {
                 sounds.push(audioObj.silence[0]);
@@ -406,7 +416,7 @@ function flash(config = {}) {
         }
 
         button.repeat.disabled = true;
-        if (!isMuted.checked) {
+        if (!muteIsOn()) {
             audioObj.answer[0].play();
         }
 
@@ -424,7 +434,7 @@ function flash(config = {}) {
             }
             headerMessage.innerText += `実時間計測: ${(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
             questionNumberArea.innerText = answerNumberDisplay.innerText;
-            if (!isMuted.checked) {
+            if (!muteIsOn()) {
                 resultAudio.play();
             }
 
@@ -588,10 +598,10 @@ function flash(config = {}) {
         } else if (requestParam.length < numberHistory.length) {
             numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, difficultyInput.value));
+            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
         }
     } else {
-        numbers = generateNumbers(requestParam.digit, requestParam.length, difficultyInput.value);
+        numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty);
     }
     let localeStringNumbers;
     switch (currentMode.innerText) {
@@ -641,7 +651,7 @@ function flash(config = {}) {
 
     let playBeepFunctions = [];
     audioObj.beep.map((a) => {
-        if (!isMuted.checked) {
+        if (!muteIsOn()) {
             playBeepFunctions.push(() => {
                 a.play();
             });
@@ -731,9 +741,9 @@ function registerShortcuts() {
     shortcut.add("z", () => button.addition.click());
     shortcut.add("x", () => button.subtraction.click());
     shortcut.add("c", () => button.multiplication.click());
-    shortcut.add("d", () => difficultyButtons.easy.click());
-    shortcut.add("f", () => difficultyButtons.normal.click());
-    shortcut.add("g", () => difficultyButtons.hard.click());
+    shortcut.add("d", () => element.common.difficulty.value = difficultyMap.easy);
+    shortcut.add("f", () => element.common.difficulty.value = difficultyMap.normal);
+    shortcut.add("g", () => element.common.difficulty.value = difficultyMap.hard);
     shortcut.add("n", () => button.numberHistory.click());
     shortcut.add("w", () => toggleFullscreenMode());
     shortcut.add("q", () => button.help.click());
@@ -759,7 +769,7 @@ function configureModalFocusing() {
 
 // ページ読み込み時処理
 (() => {
-    loadAudioObj(defaultAudioExtension);
+    loadAudioObj(param.common.soundExtension.default);
     button.start.addEventListener('click', () => {
         audioContext.resume().then(() => {
         });

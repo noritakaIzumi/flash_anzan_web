@@ -1,6 +1,6 @@
 function loadParams() {
     const modal = document.getElementById('loadParamsCompletedModal');
-    const modalMessage = modal.querySelector('.modal-body > p')
+    const modalMessage = modal.querySelector('.modal-body > p');
 
     const loadedParams = localStorage.getItem(savedParamsKeyName);
     if (!loadedParams) {
@@ -19,6 +19,9 @@ function loadParams() {
         }
     );
 
+    element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
+    toggleMute();
+    loadAudioObj(element.common.soundExtension.value);
     setQuestionInfoLabel();
 }
 
@@ -62,13 +65,13 @@ function toggleFullscreenMode() {
 }
 
 function toggleMute() {
-    if (isMuted.checked) {
-        muteStatus.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">Audio Off</span>';
+    if (isMuted.checked || isMuted.value === isMutedMap.on) {
+        isMuted.checked = true;
+        isMuted.value = isMutedMap.on;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
     } else {
-        muteStatus.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>';
+        isMuted.checked = false;
+        isMuted.value = isMutedMap.off;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
     }
-}
-
-function changeAdditionDifficulty(val) {
-    difficultyInput.value = val;
 }
