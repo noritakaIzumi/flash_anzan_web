@@ -49,7 +49,13 @@ function increaseParam(id, amount) {
 function setUpInputBox() {
     Object.keys(element).map((mode) => {
         Object.keys(element[mode]).map((config) => {
-            if (config === "time") {
+            if (config === "isMuted") {
+                element[mode][config].checked = param[mode][config].default;
+                element[mode][config].value = element[mode][config].checked ? isMutedMap.on : isMutedMap.off;
+                toggleMute();
+            } else if (config === "difficulty" || config === "soundExtension") {
+                element[mode][config].value = param[mode][config].default;
+            } else if (config === "time") {
                 element[mode][config].max = param[mode][config].max / 1000;
                 element[mode][config].min = param[mode][config].min / 1000;
                 element[mode][config].value = param[mode][config].default / 1000;
@@ -102,15 +108,6 @@ function changeShortcut(mode) {
 }
 
 function changeMode(mode) {
-    const buttonIdName = mode + '-button';
-    document.getElementById(buttonIdName).checked = true;
-
-    const configIdName = mode + '-mode-config';
-    const configTargetClassName = "display-none";
-    const configAreas = document.getElementById("mode-config-area").children;
-    Array.from(configAreas).map((element) => element.classList.add(configTargetClassName));
-    document.getElementById(configIdName).classList.remove(configTargetClassName);
-
     changeShortcut(mode);
 
     currentMode.innerText = mode;
@@ -152,6 +149,7 @@ function getCurrentParam() {
         digit: 0,
         length: 0,
         time: 0,
+        difficulty: "",
         flashRate: 0,
         offset: 0,
     };
@@ -186,6 +184,7 @@ function getCurrentParam() {
         param[currentMode.innerText].time,
         Number(element[currentMode.innerText].time.value) * 1000
     );
+    requestParam.difficulty = element.common.difficulty.value;
     requestParam.flashRate = fixValue(
         param.common.flashRate,
         Number(element.common.flashRate.value)
@@ -198,42 +197,185 @@ function getCurrentParam() {
     return requestParam;
 }
 
+function muteIsOn() {
+    return isMuted.checked;
+}
+
 function flash(config = {}) {
     // Functions
     function getFlashTime(length, time, flashRate) {
-        const averageFlashTime = time / (length * 2);
-        const flashOnTime = Number(averageFlashTime) * (flashRate / 50);
-        const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 50);
+        const averageFlashTime = time / ((length - 1) * 100 + flashRate) * 100;
+        const flashOnTime = Number(averageFlashTime) * (flashRate / 100);
+        const flashOffTime = Number(averageFlashTime) * ((100 - flashRate) / 100);
         return {on: flashOnTime, off: flashOffTime};
     }
 
-    function generateNumbers(digit, length) {
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return min + Math.floor((max - min) * Math.random());
+    function generateNumbers(digitCount, length, difficulty) {
+        function getRandomDigit(excepts = []) {
+            const d = [];
+            for (let i = 0; i < 10; i++) {
+                if (excepts.indexOf(i) >= 0) {
+                    continue;
+                }
+                d.push(i);
+            }
+            return d[Math.floor(Math.random() * d.length)];
         }
 
-        let numbers = [];
-        for (let i = 0; i < length; ++i) {
-            let min;
-            let max;
-            switch (currentMode.innerText) {
-                case modeNames.multiplication:
-                    min = [];
-                    max = [];
-                    min[0] = Math.pow(10, digit[0] - 1);
-                    max[0] = Math.pow(10, digit[0]) - 1;
-                    min[1] = Math.pow(10, digit[1] - 1);
-                    max[1] = Math.pow(10, digit[1]) - 1;
-                    numbers.push([getRandomInt(min[0], max[0]), getRandomInt(min[1], max[1])]);
-                    break;
-                case modeNames.addition:
-                default:
-                    min = Math.pow(10, digit - 1);
-                    max = Math.pow(10, digit) - 1;
-                    numbers.push(getRandomInt(min, max));
+        function getRandomInt(digitCount, previousNum = null, digitAllDifferent = false) {
+            const previousNumDigits = String(previousNum).split('').reverse().map((n) => {
+                return Number(n);
+            });
+            let digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))];
+            let i = 0;
+            while (i < digitCount - 1) {
+                let digit = null;
+                if (digitCount <= 9 && digitAllDifferent) {
+                    digit = getRandomDigit(digits.concat(previousNumDigits[i]));
+                } else {
+                    digit = getRandomDigit();
+                }
+                digits.push(digit);
+                i++;
             }
+            return Number(String(digits[0]) + digits.slice(1).reverse().join(''));
+        }
+
+        let retry = 0;
+        while (retry < generateNumbersRetryLimit) {
+            switch (currentMode.innerText) {
+                case modeNames.multiplication: {
+                    let numbers = [];
+                    let abacus = new Abacus();
+                    let carries = [];
+                    for (let i = 0; i < length; i++) {
+                        const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
+                        const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
+                        const digits1 = String(number1).split('').reverse().map((n) => {
+                            return Number(n);
+                        });
+                        const digits2 = String(number2).split('').reverse().map((n) => {
+                            return Number(n);
+                        });
+                        for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
+                            for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
+                                abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2));
+                            }
+                        }
+                        numbers.push([number1, number2]);
+                        carries.push(abacus.carry);
+                        abacus = new Abacus(abacus.value);
+                    }
+
+                    const complexityMapKey = `${digitCount[0]}-${digitCount[1]}-${length}`;
+                    const complexity = getCalculateComplexity(carries, digitCount[0] * digitCount[1]);
+                    switch (difficulty) {
+                        case difficultyMap.easy:
+                            if (complexity < complexityMap.multiplication[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+                            break;
+                        case difficultyMap.normal:
+                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficultyMap.easy]
+                                && complexity < complexityMap.multiplication[complexityMapKey][difficultyMap.hard]) {
+                                return numbers;
+                            }
+                            break;
+                        case difficultyMap.hard:
+                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+                            break;
+                        default:
+                            return [];
+                    }
+
+                    break;
+                }
+                case modeNames.addition:
+                    const complexityMapKey = `${digitCount}-${length}`;
+                    switch (difficulty) {
+                        case difficultyMap.easy: {
+                            let numbers = [];
+                            let abacus = new Abacus();
+                            let carries = [];
+                            for (let i = 0; i < length; i++) {
+                                while (true) {
+                                    const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
+                                    abacus = new Abacus(abacus.value).add(number);
+
+                                    if (abacus.carry <= digitCount) {
+                                        numbers.push(number);
+                                        carries.push(abacus.carry);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (getCalculateComplexity(carries.slice(1), digitCount) < complexityMap.addition[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+
+                            break;
+                        }
+                        case difficultyMap.normal: {
+                            let numbers = [];
+                            let abacus = new Abacus();
+                            let carries = [];
+                            for (let i = 0; i < length; i++) {
+                                const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
+                                abacus = new Abacus(abacus.value).add(number);
+                                numbers.push(number);
+                                carries.push(abacus.carry);
+                            }
+
+                            const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                            if (complexity >= complexityMap.addition[complexityMapKey][difficultyMap.easy]
+                                && complexity < complexityMap.addition[complexityMapKey][difficultyMap.hard]) {
+                                return numbers;
+                            }
+
+                            break;
+                        }
+                        case difficultyMap.hard: {
+                            let numbers = [];
+                            let abacus = new Abacus();
+                            let carries = [];
+                            for (let i = 0; i < length; i++) {
+                                let getIntRetry = 0;
+                                while (true) {
+                                    const number = getRandomInt(digitCount);
+                                    if (number === numbers.slice(-1)[0]) {
+                                        continue;
+                                    }
+
+                                    abacus = new Abacus(abacus.value).add(number);
+
+                                    if (i >= 1 && abacus.carry < digitCount && getIntRetry < 100) {
+                                        getIntRetry++;
+                                        continue;
+                                    }
+
+                                    numbers.push(number);
+                                    carries.push(abacus.carry);
+                                    break;
+                                }
+                            }
+
+                            if (getCalculateComplexity(carries.slice(1), digitCount) >= complexityMap.addition[complexityMapKey][difficulty]) {
+                                return numbers;
+                            }
+
+                            break;
+                        }
+                        default:
+                            return [];
+                    }
+                    break;
+                default:
+                    return [];
+            }
+            retry++;
         }
         return numbers;
     }
@@ -250,7 +392,7 @@ function flash(config = {}) {
     function generateSounds() {
         let sounds = [];
         for (let i = 0; i < requestParam.length; ++i) {
-            if (!isMuted.checked) {
+            if (!muteIsOn()) {
                 sounds.push(audioObj.tick[i]);
             } else {
                 sounds.push(audioObj.silence[0]);
@@ -274,7 +416,7 @@ function flash(config = {}) {
         }
 
         button.repeat.disabled = true;
-        if (!isMuted.checked) {
+        if (!muteIsOn()) {
             audioObj.answer[0].play();
         }
 
@@ -282,21 +424,22 @@ function flash(config = {}) {
             let resultAudio;
             if (number === answerNumber.innerText) {
                 resultAudio = audioObj.correct[0];
-                headerMessage.innerText = "正解！（" + headerMessage.innerText + "）";
+                headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
             } else if (number.length > 0) {
                 resultAudio = audioObj.incorrect[0];
-                headerMessage.innerText = "不正解...（" + headerMessage.innerText + "）";
+                headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`;
             } else {
                 resultAudio = audioObj.silence[0];
-                headerMessage.innerText = "答え";
+                headerMessage.innerText = "答え\n";
             }
-            questionNumberArea.innerText = Number(answerNumber.innerText).toLocaleString();
-            resultAudio.muted = isMuted.checked;
-            resultAudio.play();
+            headerMessage.innerText += `実時間計測: ${(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
+            questionNumberArea.innerText = answerNumberDisplay.innerText;
+            if (!muteIsOn()) {
+                resultAudio.play();
+            }
 
             enableButtons();
             button.numberHistory.disabled = false;
-            resultSaved.classList.remove('display-none');
             if (isFullscreen()) {
                 questionInfoLabel.classList.remove('display-none');
             }
@@ -304,11 +447,16 @@ function flash(config = {}) {
     }
 
     function unveilInputAnswerArea() {
-        inputAnswerArea.classList.add('show');
+        button.openInputAnswer.click();
         inputAnswerBox.focus();
     }
 
     function checkAnswer() {
+        modals.input_answer.addEventListener('hidden.bs.modal', () => {
+            if (isFullscreen()) {
+                questionInfoLabel.classList.remove('display-none');
+            }
+        }, {once: true});
         inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
         inputAnswerBox.value = '';
         unveilInputAnswerArea();
@@ -317,20 +465,95 @@ function flash(config = {}) {
     function submitNumber() {
         return (event) => {
             if (event.key === "Enter") {
-                inputAnswerArea.classList.remove('show');
+                button.closeInputAnswer.click();
                 displayAnswer(inputAnswerBox.value.trim());
-                return;
-            }
-            if (event.key === "Escape" && window.confirm("回答をやめますか？")) {
-                inputAnswerArea.classList.remove('show');
-                enableButtons();
-                if (isFullscreen()) {
-                    questionInfoLabel.classList.remove('display-none');
-                }
                 return;
             }
             inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
         };
+    }
+
+    function average(data) {
+        let sum = 0;
+        for (let i = 0; i < data.length; ++i) {
+            sum += data[i];
+        }
+        return sum / data.length;
+    }
+
+    function standard_deviation(data) {
+        function variance(data) {
+            const ave = average(data);
+            let variance = 0;
+            for (let i = 0; i < data.length; i++) {
+                variance += Math.pow(data[i] - ave, 2);
+            }
+            return variance / data.length;
+        }
+
+        return Math.sqrt(variance(data));
+    }
+
+    class AbacusDigit {
+        constructor(value = 0, five = 0, one = 0) {
+            this.value = value;
+            this.five = five;
+            this.one = one;
+        }
+
+        static getInstance() {
+            return new AbacusDigit();
+        }
+    }
+
+    class Abacus {
+        constructor(n = 0) {
+            this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
+            this.value = 0;
+            this.carry = 0;
+            this.add(n);
+        }
+
+        updateBeads(num) {
+            const numArr = String(num).split('').map((d) => {
+                return Number(d);
+            });
+            for (let i = numArr.length - 1; i >= 0; i--) {
+                const d = numArr.shift();
+                if (d === 0) {
+                    continue;
+                }
+
+                if (this.digits[i] === undefined) {
+                    this.digits[i] = AbacusDigit.getInstance();
+                }
+
+                const beforeDigit = Object.assign({}, this.digits[i]);
+                let newVal = this.digits[i].value + d;
+                if (newVal >= 10) {
+                    newVal -= 10;
+                    this.updateBeads(Math.pow(10, i + 1));
+                    this.carry++;
+                }
+                this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
+                if ((this.digits[i].five - beforeDigit.five) * (this.digits[i].one - beforeDigit.one) < 0) {
+                    this.carry++;
+                }
+            }
+        }
+
+        add(num) {
+            this.updateBeads(num);
+            this.value += num;
+            return this;
+        }
+    }
+
+    function getCalculateComplexity(carries, digit) {
+        carries = carries.map((c) => {
+            return c / digit;
+        });
+        return average(carries) + standard_deviation(carries) * 0.25;
     }
 
     // ここからフラッシュ出題の処理
@@ -375,10 +598,10 @@ function flash(config = {}) {
         } else if (requestParam.length < numberHistory.length) {
             numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length));
+            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
         }
     } else {
-        numbers = generateNumbers(requestParam.digit, requestParam.length);
+        numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty);
     }
     let localeStringNumbers;
     switch (currentMode.innerText) {
@@ -394,12 +617,21 @@ function flash(config = {}) {
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
 
+    let measuredTime = {start: 0, end: 0};
     let toggleNumberFunctions = [];
-    for (let i = 0; i < toggleNumberSuite.length; i++) {
+    toggleNumberFunctions.push(() => {
+        measuredTime.start = new Date().getTime();
+        questionNumberArea.innerText = toggleNumberSuite[0];
+    });
+    for (let i = 1; i < toggleNumberSuite.length - 1; i++) {
         toggleNumberFunctions.push(() => {
             questionNumberArea.innerText = toggleNumberSuite[i];
         });
     }
+    toggleNumberFunctions.push(() => {
+        questionNumberArea.innerText = toggleNumberSuite.slice(-1)[0];
+        measuredTime.end = new Date().getTime();
+    });
 
     const playTickFunctions = [];
     for (let i = 0; i < soundSuite.length; i++) {
@@ -418,24 +650,22 @@ function flash(config = {}) {
     }
 
     let playBeepFunctions = [];
-    if (!isMuted.checked) {
-        audioObj.beep.map((a) => {
+    audioObj.beep.map((a) => {
+        if (!muteIsOn()) {
             playBeepFunctions.push(() => {
                 a.play();
             });
-        });
-    } else {
-        playBeepFunctions.push(() => {
-        });
-    }
+        } else {
+            playBeepFunctions.push(() => {
+            });
+        }
+    });
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     questionInfoLabel.classList.add('display-none');
-    resultSaved.classList.add('display-none');
-    numberHistoryArea.classList.add('display-none');
-    previousMode.innerText = currentMode.innerText;
+    button.numberHistory.disabled = true;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
             answerNumber.innerText = numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]);
@@ -444,8 +674,9 @@ function flash(config = {}) {
         default:
             answerNumber.innerText = numbers.reduce((a, b) => a + b);
     }
-    numberHistoryDisplay.innerText = localeStringNumbers.join(numberHistoryDisplayDelimiter);
+    numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
+    answerNumberDisplay.innerText = Number(answerNumber.innerText).toLocaleString();
 
     const start = new Date().getTime();
 
@@ -479,7 +710,7 @@ function flash(config = {}) {
         setFlashTimeOut(toggleNumberFunctions[i], toggleTiming);
         toggleTiming += flashTimes[i];
     }
-    setFlashTimeOut(checkAnswer, toggleTiming);
+    setFlashTimeOut(checkAnswer, toggleTiming - flashTimes.slice(-1)[0] + 1000);
 }
 
 function loadAudioObj(extension) {
@@ -501,9 +732,44 @@ function isFullscreen() {
     return calculateArea.dataset.fullScreen === '1';
 }
 
+function registerShortcuts() {
+    shortcut.add("ctrl+o", () => button.loadParams.click());
+    shortcut.add("ctrl+s", () => button.saveParams.click());
+    shortcut.add("ctrl+r", () => button.deleteParams.click());
+    shortcut.add("s", () => button.start.click());
+    shortcut.add("r", () => button.repeat.click());
+    shortcut.add("z", () => button.addition.click());
+    shortcut.add("x", () => button.subtraction.click());
+    shortcut.add("c", () => button.multiplication.click());
+    shortcut.add("d", () => element.common.difficulty.value = difficultyMap.easy);
+    shortcut.add("f", () => element.common.difficulty.value = difficultyMap.normal);
+    shortcut.add("g", () => element.common.difficulty.value = difficultyMap.hard);
+    shortcut.add("n", () => button.numberHistory.click());
+    shortcut.add("w", () => toggleFullscreenMode());
+    shortcut.add("q", () => button.help.click());
+    shortcut.add('ctrl+,', () => button.openCommonMoreConfig.click());
+}
+
+function configureModalFocusing() {
+    Object.keys(modals.params).forEach((op) => {
+        const confirm = modals.params[op]['confirm'];
+        const b = confirm.querySelector('.modal-footer > button:last-child');
+        confirm.addEventListener('shown.bs.modal', () => {
+            b.focus();
+        });
+
+        const completed = modals.params[op]['complete'];
+        completed.addEventListener('shown.bs.modal', () => {
+            setTimeout(() => {
+                completed.querySelector('.modal-header > button').click();
+            }, 1000);
+        });
+    });
+}
+
 // ページ読み込み時処理
 (() => {
-    loadAudioObj(defaultAudioExtension);
+    loadAudioObj(param.common.soundExtension.default);
     button.start.addEventListener('click', () => {
         audioContext.resume().then(() => {
         });
@@ -519,26 +785,13 @@ function isFullscreen() {
             () => questionNumberArea.innerText = "",
             () => questionNumberArea.style.color = currentNumberColor,
             setUpInputBox,
+            configureModalFocusing,
             () => button.start.disabled = false,
+            registerShortcuts,
         ];
         prepareGameFunctions.map((func) => {
             setTimeout(func, timeoutMs);
             timeoutMs += 50;
         });
-    })();
-
-    // Register Shortcuts
-    (() => {
-        shortcut.add("ctrl+o", () => button.loadParams.click());
-        shortcut.add("ctrl+s", () => button.saveParams.click());
-        shortcut.add("ctrl+r", () => button.deleteParams.click());
-        shortcut.add("s", () => button.start.click());
-        shortcut.add("r", () => button.repeat.click());
-        shortcut.add("z", () => button.addition.click());
-        shortcut.add("x", () => button.subtraction.click());
-        shortcut.add("c", () => button.multiplication.click());
-        shortcut.add("n", () => button.numberHistory.click());
-        shortcut.add("w", () => toggleFullscreenMode());
-        shortcut.add("q", () => displayHelp());
     })();
 })();
