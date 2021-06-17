@@ -1,14 +1,15 @@
 # Editor config
-.idea
+/.idea
 
 # Node modules
-node_modules
+/node_modules
+/package-lock.json
 
 # Compiled app directory
-flash-anzan*
+/flash-anzan*
 
 # desktop.ini
 **/desktop.ini
 
 # Other files
-src/debug.log
+/src/debug.log
