@@ -432,7 +432,7 @@ function flash(config = {}) {
                 resultAudio = audioObj.silence[0];
                 headerMessage.innerText = "答え\n";
             }
-            headerMessage.innerText += `実時間計測: ${(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
+            headerMessage.innerText += `実時間計測: ${Math.floor(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
             questionNumberArea.innerText = answerNumberDisplay.innerText;
             if (!muteIsOn()) {
                 resultAudio.play();
@@ -613,6 +613,19 @@ function flash(config = {}) {
             localeStringNumbers = numbers.map((n) => n.toLocaleString());
     }
 
+    // Ref: http://yomotsu.net/blog/2013/01/05/fps.html
+    // noinspection JSUnresolvedVariable
+    const now = window.performance && (
+        performance.now ||
+        performance.mozNow ||
+        performance.msNow ||
+        performance.oNow ||
+        performance.webkitNow
+    );
+    const getTime = function () {
+        return (now && now.call(performance)) || (new Date().getTime());
+    };
+
     // setFlashTimeOut に設定する関数を作成する
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
     const soundSuite = generateSounds();
@@ -620,7 +633,7 @@ function flash(config = {}) {
     let measuredTime = {start: 0, end: 0};
     let toggleNumberFunctions = [];
     toggleNumberFunctions.push(() => {
-        measuredTime.start = new Date().getTime();
+        measuredTime.start = getTime();
         questionNumberArea.innerText = toggleNumberSuite[0];
     });
     for (let i = 1; i < toggleNumberSuite.length - 1; i++) {
@@ -630,7 +643,7 @@ function flash(config = {}) {
     }
     toggleNumberFunctions.push(() => {
         questionNumberArea.innerText = toggleNumberSuite.slice(-1)[0];
-        measuredTime.end = new Date().getTime();
+        measuredTime.end = getTime();
     });
 
     const playTickFunctions = [];
@@ -678,13 +691,13 @@ function flash(config = {}) {
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
     answerNumberDisplay.innerText = Number(answerNumber.innerText).toLocaleString();
 
-    const start = new Date().getTime();
+    const start = getTime();
 
     function setFlashTimeOut(fn, delay) {
         const handle = {};
 
         function loop() {
-            const current = new Date().getTime();
+            const current = getTime();
             const delta = current - start;
             if (delta >= delay) {
                 fn.call();
@@ -702,6 +715,9 @@ function flash(config = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
+    setTimeout(() => {
+        audioObj.silence[0].play();
+    }, 0);
     setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
     setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
     let toggleTiming = flashStartTiming;
