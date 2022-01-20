@@ -1,4 +1,4 @@
-const version = 'v0.11.3';
+const version = 'v0.12.0';
 var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
     '/assets/bootstrap@5.0.0-beta1.css',
