@@ -3,7 +3,7 @@
     "background_color": "black",
     "display": "standalone",
     "scope": "/",
-    "start_url": "/",
+    "start_url": "/flash_anzan_web/",
     "name": "flash-anzan",
     "short_name": "fa",
     "description": "Flash Anzan",
