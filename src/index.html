@@ -11,6 +11,20 @@
     <script src="assets/bootstrap@5.0.0-beta1.bundle.min.js"></script>
     <script src="assets/howler_2_2_1.min.js"></script>
     <script type="text/javascript" src="lib/shortcut.js"></script>
+    <link rel="manifest" href="manifest.webmanifest">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/sw.js').then(function (registration) {
+                    // Registration was successful
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function (err) {
+                    // registration failed :(
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 </head>
 <body class="hide-cursor">
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
