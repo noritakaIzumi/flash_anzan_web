@@ -4,10 +4,16 @@
     "display": "standalone",
     "scope": ".",
     "start_url": ".",
-    "name": "flash-anzan",
-    "short_name": "fa",
-    "description": "Flash Anzan",
+    "name": "Flash Anzan",
+    "short_name": "flash-anzan",
+    "description": "\u30d5\u30e9\u30c3\u30b7\u30e5\u6697\u7b97",
     "icons": [
+        {
+            "src": "./maskable_icon.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
         {
             "src": "./icon-192x192.png",
             "sizes": "192x192",
