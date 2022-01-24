@@ -15,7 +15,6 @@ var urlsToCache = [
     './sound/incorrect.wav',
     './sound/silence.wav',
     './sound/tick.wav',
-    './index.html',
 ];
 
 self.addEventListener('install', function (event) {
