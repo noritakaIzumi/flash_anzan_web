@@ -29,6 +29,9 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('fetch', function(event) {
+    if (event.request.url.indexOf('http') !== 0) {
+        return;
+    }
     event.respondWith(
         caches.match(event.request)
             .then(function(response) {
