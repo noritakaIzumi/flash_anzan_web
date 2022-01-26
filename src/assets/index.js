@@ -203,6 +203,13 @@ function muteIsOn() {
 
 function flash(config = {}) {
     // Functions
+    /**
+     * 出題数字を作成する。
+     * @param {number} digitCount 桁数
+     * @param {number} length 口数
+     * @param {string} difficulty 難易度
+     * @returns {*[]|*}
+     */
     function generateNumbers(digitCount, length, difficulty) {
         function getRandomDigit(excepts = []) {
             const d = [];
@@ -373,16 +380,25 @@ function flash(config = {}) {
         return numbers;
     }
 
-    function generateToggleNumberSuite(numbers) {
+    /**
+     * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
+     * @param {string[]} fmtNumbers 整形された数字の配列
+     * @returns {string[]} 点滅も含めた数字の表示順の配列
+     */
+    function generateToggleNumberSuite(fmtNumbers) {
         let toggleNumberSuite = [];
-        for (let i = 0; i < numbers.length; i++) {
-            toggleNumberSuite.push(numbers[i]);
+        for (let i = 0; i < fmtNumbers.length; i++) {
+            toggleNumberSuite.push(fmtNumbers[i]);
             toggleNumberSuite.push("");
         }
         return toggleNumberSuite;
     }
 
-    function generateSounds() {
+    /**
+     * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
+     * @returns {*[]}
+     */
+    function generateSoundSuite() {
         let sounds = [];
         for (let i = 0; i < requestParam.length; ++i) {
             if (!muteIsOn()) {
@@ -395,17 +411,27 @@ function flash(config = {}) {
         return sounds;
     }
 
-    function disableButtons() {
+    /**
+     * ボタンを無効化する。
+     */
+    function disableHtmlButtons() {
         disableConfigTarget.map((element) => element.disabled = true);
     }
 
-    function enableButtons() {
+    /**
+     * ボタンを有効化する。
+     */
+    function enableHtmlButtons() {
         disableConfigTarget.map((element) => element.disabled = false);
     }
 
-    function displayAnswer(number) {
-        if (number) {
-            headerMessage.innerText = "あなたの答え：" + Number(number).toLocaleString();
+    /**
+     * 答えを表示する
+     * @param {string} numberStr 答えの数字
+     */
+    function displayAnswer(numberStr) {
+        if (numberStr) {
+            headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
         }
 
         button.repeat.disabled = true;
@@ -415,10 +441,10 @@ function flash(config = {}) {
 
         setTimeout(() => {
             let resultAudio;
-            if (number === answerNumber.innerText) {
+            if (numberStr === answerNumber.innerText) {
                 resultAudio = audioObj.correct[0];
                 headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
-            } else if (number.length > 0) {
+            } else if (numberStr.length > 0) {
                 resultAudio = audioObj.incorrect[0];
                 headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`;
             } else {
@@ -431,7 +457,7 @@ function flash(config = {}) {
                 resultAudio.play();
             }
 
-            enableButtons();
+            enableHtmlButtons();
             button.numberHistory.disabled = false;
             if (isFullscreen()) {
                 questionInfoLabel.classList.remove('display-none');
@@ -439,33 +465,43 @@ function flash(config = {}) {
         }, 1200);
     }
 
-    function unveilInputAnswerArea() {
-        button.openInputAnswer.click();
-        inputAnswerBox.focus();
-    }
-
-    function checkAnswer() {
+    /**
+     * 答え入力のための準備的な。
+     */
+    function prepareAnswerInput() {
         modals.input_answer.addEventListener('hidden.bs.modal', () => {
             if (isFullscreen()) {
                 questionInfoLabel.classList.remove('display-none');
             }
         }, {once: true});
-        inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
+        inputAnswerBox.addEventListener('keydown', getFuncSubmitNumber(), {once: true});
         inputAnswerBox.value = '';
-        unveilInputAnswerArea();
+        (function unveilInputAnswerArea() {
+            button.openInputAnswer.click();
+            inputAnswerBox.focus();
+        })();
     }
 
-    function submitNumber() {
+    /**
+     * 答えを判定する関数を取得する。
+     * @returns {(function(*): void)|*}
+     */
+    function getFuncSubmitNumber() {
         return (event) => {
             if (event.key === "Enter") {
                 button.closeInputAnswer.click();
                 displayAnswer(inputAnswerBox.value.trim());
                 return;
             }
-            inputAnswerBox.addEventListener('keydown', submitNumber(), {once: true});
+            inputAnswerBox.addEventListener('keydown', getFuncSubmitNumber(), {once: true});
         };
     }
 
+    /**
+     * 平均を求める。
+     * @param {number[]} data
+     * @returns {number}
+     */
     function average(data) {
         let sum = 0;
         for (let i = 0; i < data.length; ++i) {
@@ -474,6 +510,11 @@ function flash(config = {}) {
         return sum / data.length;
     }
 
+    /**
+     * 標準偏差を求める。
+     * @param {number[]} data
+     * @returns {number}
+     */
     function standard_deviation(data) {
         function variance(data) {
             const ave = average(data);
@@ -499,6 +540,9 @@ function flash(config = {}) {
         }
     }
 
+    /**
+     * そろばんの珠を管理するクラス。
+     */
     class Abacus {
         constructor(n = 0) {
             this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
@@ -542,6 +586,12 @@ function flash(config = {}) {
         }
     }
 
+    /**
+     * 計算の複雑度を求める（繰り上がり回数などから算出）。
+     * @param carries
+     * @param digit
+     * @returns {number}
+     */
     function getCalculateComplexity(carries, digit) {
         carries = carries.map((c) => {
             return c / digit;
@@ -591,6 +641,11 @@ function flash(config = {}) {
     } else {
         numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty);
     }
+
+    /**
+     * 表示用に整形した数字の配列
+     * @type {string[]}
+     */
     let localeStringNumbers;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
@@ -616,7 +671,7 @@ function flash(config = {}) {
 
     // setFlashTimeOut に設定する関数を作成する
     const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
-    const soundSuite = generateSounds();
+    const soundSuite = generateSoundSuite();
 
     let measuredTime = {start: 0, end: 0};
     let toggleNumberFunctions = [];
@@ -699,7 +754,7 @@ function flash(config = {}) {
     }
 
     // Register flash events
-    disableButtons();
+    disableHtmlButtons();
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
@@ -712,7 +767,7 @@ function flash(config = {}) {
         setFlashTimeOut(playTickFunctions[i], flashStartTiming + _toggleTimings[i] - requestParam.offset);
         setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + _toggleTimings[i]);
     }
-    setFlashTimeOut(checkAnswer, flashStartTiming + requestParam.time + 1000);
+    setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 1000);
 }
 
 function loadAudioObj(extension) {
