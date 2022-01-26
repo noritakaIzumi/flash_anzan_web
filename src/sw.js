@@ -1,15 +1,11 @@
-const version = 'v0.12.0';
+const version = 'v0.12.2';
 var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
-    './assets/bootstrap@5.0.0-beta1.css',
-    './assets/index.css',
-    './assets/bootstrap@5.0.0-beta1.bundle.min.js',
+    './assets/bootstrap.bundle.min.js',
+    './assets/bootstrap.min.css',
     './assets/howler_2_2_1.min.js',
     './lib/shortcut.js',
     './lib/complexity_map.js',
-    './assets/globals.js',
-    './assets/button_events.js',
-    './assets/index.js',
     './font/ABACUS2.woff',
     './sound/answer.wav',
     './sound/beep.wav',
@@ -17,7 +13,6 @@ var urlsToCache = [
     './sound/incorrect.wav',
     './sound/silence.wav',
     './sound/tick.wav',
-    './index.html',
 ];
 
 self.addEventListener('install', function (event) {
@@ -32,6 +27,9 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('fetch', function(event) {
+    if (event.request.url.indexOf('http') !== 0) {
+        return;
+    }
     event.respondWith(
         caches.match(event.request)
             .then(function(response) {
