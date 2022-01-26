@@ -451,7 +451,12 @@ function flash(config = {}) {
                 resultAudio = audioObj.silence[0];
                 headerMessage.innerText = "答え\n";
             }
-            headerMessage.innerText += `実時間計測: ${Math.floor(measuredTime.end - measuredTime.start) / 1000} 秒（1 口目表示～最終口消画）`;
+            {
+                const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start);
+                const afterDecimalPointStr = ('00' + String(flashElapsedTimeMs % 1000)).slice(-3);
+                const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000));
+                headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
+            }
             questionNumberArea.innerText = answerNumberDisplay.innerText;
             if (!muteIsOn()) {
                 resultAudio.play();
