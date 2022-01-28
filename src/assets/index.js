@@ -772,7 +772,7 @@ function flash(config = {}) {
         setFlashTimeOut(playTickFunctions[i], flashStartTiming + _toggleTimings[i] - requestParam.offset);
         setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + _toggleTimings[i]);
     }
-    setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 1000);
+    setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
 }
 
 function loadAudioObj(extension) {
