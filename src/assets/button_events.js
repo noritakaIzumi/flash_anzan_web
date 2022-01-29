@@ -22,7 +22,6 @@ function loadParams() {
     element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
     toggleMute();
     loadAudioObj(element.common.soundExtension.value);
-    setQuestionInfoLabel();
 }
 
 function saveParams() {
