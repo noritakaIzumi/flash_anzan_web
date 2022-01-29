@@ -117,7 +117,7 @@ headerMessage = document.getElementById("header-message");
 questionNumberArea = document.getElementById("question-number-area");
 calculateArea = document.getElementById('calculate-area');
 inputAnswerBox = document.getElementById('input-answer-box');
-questionInfoLabel = document.getElementById('question-info-label');
+noticeArea = document.getElementById('notice-area');
 
 button = {
     loadParams: document.getElementById("load-params-button"),

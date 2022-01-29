@@ -22,7 +22,8 @@ function loadParams() {
     element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
     toggleMute();
     loadAudioObj(element.common.soundExtension.value);
-    setQuestionInfoLabel();
+    // 難易度選択
+    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
 }
 
 function saveParams() {
@@ -54,8 +55,14 @@ function setSoundExtension(extension) {
     }
 }
 
-function toggleFullscreenMode() {
-    if (!isFullscreen()) {
+function toggleFullscreenMode(full) {
+    if (full === true) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else if (full === false) {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    } else if (!isFullscreen()) {
         expandCalculateArea();
         calculateArea.dataset.fullScreen = "1";
     } else {

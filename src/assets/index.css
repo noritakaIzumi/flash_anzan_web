@@ -53,20 +53,12 @@ hr {
 }
 
 @media screen and (min-width: 500px) {
-    .calculate-area, .number-area {
-        height: 400px;
-    }
-
     .number-area, #input-answer-box {
         font-size: 90px;
     }
 }
 
 @media screen and (max-width: 499px) {
-    .calculate-area, .number-area {
-        height: 270px;
-    }
-
     .number-area, #input-answer-box {
         font-size: 60px;
     }
@@ -74,7 +66,7 @@ hr {
 
 .calculate-area {
     text-align: center;
-    display: table;
+    display: none;
     background-color: black;
     border: solid 1px white;
     margin-top: 5px;
@@ -101,6 +93,7 @@ hr {
 
 .full-screen {
     position: fixed;
+    display: table;
     height: 100%;
     width: 100%;
     left: 0;
@@ -131,10 +124,6 @@ hr {
 }
 
 /* 操作部分 */
-
-.operation-panel {
-    max-width: 540px;
-}
 
 @media screen and (min-width: 500px) {
     .label-area {
@@ -175,7 +164,7 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-#question-info-label {
+#notice-area {
     position: absolute;
     right: 0;
     bottom: 0;

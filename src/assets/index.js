@@ -42,8 +42,6 @@ function increaseParam(id, amount) {
             ).toString();
             break;
     }
-
-    setQuestionInfoLabel();
 }
 
 function setUpInputBox() {
@@ -65,7 +63,6 @@ function setUpInputBox() {
                 element[mode][config].min = param[mode][config].min;
                 element[mode][config].value = param[mode][config].default;
             }
-            element[mode][config].oninput = setQuestionInfoLabel;
             element[mode][config].onfocus = function () {
                 this.tmp = this.value;
                 this.value = "";
@@ -109,37 +106,15 @@ function changeShortcut(mode) {
 
 function changeMode(mode) {
     changeShortcut(mode);
-
     currentMode.innerText = mode;
-
-    setQuestionInfoLabel();
-}
-
-function setQuestionInfoLabel() {
-    const currentParam = getCurrentParam();
-    let labelText = '[現在の問題]\n';
-    switch (currentMode.innerText) {
-        case modeNames.addition:
-            labelText += `たし算 ${currentParam.digit} 桁 `;
-            break;
-        case modeNames.multiplication:
-            labelText += `かけ算 ${currentParam.digit[0]} 桁 × ${currentParam.digit[1]} 桁 `;
-            break;
-    }
-    labelText += `${currentParam.length} 口 ${currentParam.time / 1000} 秒 \n`;
-    labelText += `(flash rate: ${currentParam.flashRate} %, offset: ${currentParam.offset} ms)`;
-
-    questionInfoLabel.innerText = labelText;
 }
 
 function expandCalculateArea() {
     calculateArea.classList.add('full-screen');
     questionNumberArea.classList.add('big-size-number');
-    questionInfoLabel.classList.remove('display-none');
 }
 
 function contractCalculateArea() {
-    questionInfoLabel.classList.add('display-none');
     questionNumberArea.classList.remove('big-size-number');
     calculateArea.classList.remove('full-screen');
 }
@@ -465,7 +440,14 @@ function flash(config = {}) {
             enableHtmlButtons();
             button.numberHistory.disabled = false;
             if (isFullscreen()) {
-                questionInfoLabel.classList.remove('display-none');
+                if (isTouchDevice()) { // タッチデバイス
+                    calculateArea.addEventListener("touchend", () => {
+                        toggleFullscreenMode(false);
+                    }, {once: true});
+                    noticeArea.innerText = '画面をタッチすると戻ります。';
+                } else { // 非タッチデバイス
+                    noticeArea.innerText = 'W キーを押すと戻ります。';
+                }
             }
         }, 1200);
     }
@@ -474,11 +456,6 @@ function flash(config = {}) {
      * 答え入力のための準備的な。
      */
     function prepareAnswerInput() {
-        modals.input_answer.addEventListener('hidden.bs.modal', () => {
-            if (isFullscreen()) {
-                questionInfoLabel.classList.remove('display-none');
-            }
-        }, {once: true});
         inputAnswerBox.addEventListener('keydown', getFuncSubmitNumber(), {once: true});
         inputAnswerBox.value = '';
         (function unveilInputAnswerArea() {
@@ -725,7 +702,6 @@ function flash(config = {}) {
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
-    questionInfoLabel.classList.add('display-none');
     button.numberHistory.disabled = true;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
@@ -760,6 +736,9 @@ function flash(config = {}) {
 
     // Register flash events
     disableHtmlButtons();
+    toggleFullscreenMode(true);
+    noticeArea.innerText = '';
+    warmUpDisplayArea(0);
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
@@ -773,6 +752,10 @@ function flash(config = {}) {
         setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + _toggleTimings[i]);
     }
     setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
+}
+
+function isTouchDevice() {
+    return window.ontouchstart === null;
 }
 
 function loadAudioObj(extension) {
@@ -794,6 +777,15 @@ function isFullscreen() {
     return calculateArea.dataset.fullScreen === '1';
 }
 
+/**
+ * 難易度切り替え
+ * @param {string} value
+ */
+function switchDifficulty(value) {
+    document.querySelector('#difficulty-' + value).checked = true;
+    element.common.difficulty.value = difficultyMap[value];
+}
+
 function registerShortcuts() {
     shortcut.add("ctrl+o", () => button.loadParams.click());
     shortcut.add("ctrl+s", () => button.saveParams.click());
@@ -803,9 +795,9 @@ function registerShortcuts() {
     shortcut.add("z", () => button.addition.click());
     shortcut.add("x", () => button.subtraction.click());
     shortcut.add("c", () => button.multiplication.click());
-    shortcut.add("d", () => element.common.difficulty.value = difficultyMap.easy);
-    shortcut.add("f", () => element.common.difficulty.value = difficultyMap.normal);
-    shortcut.add("g", () => element.common.difficulty.value = difficultyMap.hard);
+    shortcut.add("d", () => switchDifficulty('easy'));
+    shortcut.add("f", () => switchDifficulty('normal'));
+    shortcut.add("g", () => switchDifficulty('hard'));
     shortcut.add("n", () => button.numberHistory.click());
     shortcut.add("w", () => toggleFullscreenMode());
     shortcut.add("q", () => button.help.click());
@@ -829,6 +821,27 @@ function configureModalFocusing() {
     });
 }
 
+/**
+ * 表示エリアのウォーミングアップ。
+ * フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく。
+ * @param {number} timeoutMs
+ * @returns {number}
+ */
+function warmUpDisplayArea(timeoutMs) {
+    const currentNumberColor = questionNumberArea.style.color;
+    const prepareGameFunctions = [
+        () => questionNumberArea.style.color = "black",
+        () => questionNumberArea.innerText = "0",
+        () => questionNumberArea.innerText = "",
+        () => questionNumberArea.style.color = currentNumberColor,
+    ];
+    prepareGameFunctions.map((func) => {
+        setTimeout(func, timeoutMs);
+        timeoutMs += 50;
+    });
+    return timeoutMs;
+}
+
 // ページ読み込み時処理
 (() => {
     loadAudioObj(param.common.soundExtension.default);
@@ -838,14 +851,8 @@ function configureModalFocusing() {
     });
 
     (() => {
-        let timeoutMs = 2000;
-        // フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく
-        const currentNumberColor = questionNumberArea.style.color;
+        let timeoutMs = warmUpDisplayArea(2000);
         const prepareGameFunctions = [
-            () => questionNumberArea.style.color = "black",
-            () => questionNumberArea.innerText = "0",
-            () => questionNumberArea.innerText = "",
-            () => questionNumberArea.style.color = currentNumberColor,
             setUpInputBox,
             configureModalFocusing,
             () => button.start.disabled = false,
@@ -855,5 +862,9 @@ function configureModalFocusing() {
             setTimeout(func, timeoutMs);
             timeoutMs += 50;
         });
+
+        if (isTouchDevice()) {
+            document.getElementById('help-button').style.display = 'none';
+        }
     })();
 })();
