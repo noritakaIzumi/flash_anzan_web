@@ -444,7 +444,16 @@ function flash(config = {}) {
                     calculateArea.addEventListener("touchend", toggleFullscreenMode, {once: true});
                     noticeArea.innerText = '画面をタッチすると戻ります。';
                 } else { // 非タッチデバイス
-                    shortcut.add("enter", toggleFullscreenMode);
+                    const listener = function () {
+                        return (event) => {
+                            if (event.key === "enter") {
+                                toggleFullscreenMode();
+                                return;
+                            }
+                            calculateArea.addEventListener("keydown", listener(), {once: true});
+                        };
+                    };
+                    calculateArea.addEventListener("keydown", listener(), {once: true});
                     noticeArea.innerText = 'Enter キーを押すと戻ります。';
                 }
             }
@@ -780,8 +789,7 @@ function isFullscreen() {
  * 難易度切り替え
  * @param {string} value
  */
-function switchDifficulty(value)
-{
+function switchDifficulty(value) {
     document.querySelector('#difficulty-' + value).checked = true;
     element.common.difficulty.value = difficultyMap[value];
 }
