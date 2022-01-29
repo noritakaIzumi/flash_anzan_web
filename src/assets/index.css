@@ -125,10 +125,6 @@ hr {
 
 /* 操作部分 */
 
-.operation-panel {
-    max-width: 540px;
-}
-
 @media screen and (min-width: 500px) {
     .label-area {
         width: 100%;

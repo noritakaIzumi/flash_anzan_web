@@ -440,12 +440,12 @@ function flash(config = {}) {
             enableHtmlButtons();
             button.numberHistory.disabled = false;
             if (isFullscreen()) {
-                if (window.ontouchstart !== null) { // 非タッチデバイス
-                    shortcut.add("enter", toggleFullscreenMode);
-                    noticeArea.innerText = 'Enter キーを押すと戻ります。';
-                } else { // タッチデバイス
+                if (isTouchDevice()) { // タッチデバイス
                     calculateArea.addEventListener("touchend", toggleFullscreenMode, {once: true});
                     noticeArea.innerText = '画面をタッチすると戻ります。';
+                } else { // 非タッチデバイス
+                    shortcut.add("enter", toggleFullscreenMode);
+                    noticeArea.innerText = 'Enter キーを押すと戻ります。';
                 }
             }
         }, 1200);
@@ -753,6 +753,10 @@ function flash(config = {}) {
     setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
 }
 
+function isTouchDevice() {
+    return window.ontouchstart === null;
+}
+
 function loadAudioObj(extension) {
     let timeoutMs = 100;
     let audioPath = '';
@@ -772,6 +776,16 @@ function isFullscreen() {
     return calculateArea.dataset.fullScreen === '1';
 }
 
+/**
+ * 難易度切り替え
+ * @param {string} value
+ */
+function switchDifficulty(value)
+{
+    document.querySelector('#difficulty-' + value).checked = true;
+    element.common.difficulty.value = difficultyMap[value];
+}
+
 function registerShortcuts() {
     shortcut.add("ctrl+o", () => button.loadParams.click());
     shortcut.add("ctrl+s", () => button.saveParams.click());
@@ -781,9 +795,9 @@ function registerShortcuts() {
     shortcut.add("z", () => button.addition.click());
     shortcut.add("x", () => button.subtraction.click());
     shortcut.add("c", () => button.multiplication.click());
-    shortcut.add("d", () => element.common.difficulty.value = difficultyMap.easy);
-    shortcut.add("f", () => element.common.difficulty.value = difficultyMap.normal);
-    shortcut.add("g", () => element.common.difficulty.value = difficultyMap.hard);
+    shortcut.add("d", () => switchDifficulty('easy'));
+    shortcut.add("f", () => switchDifficulty('normal'));
+    shortcut.add("g", () => switchDifficulty('hard'));
     shortcut.add("n", () => button.numberHistory.click());
     shortcut.add("w", () => toggleFullscreenMode());
     shortcut.add("q", () => button.help.click());
@@ -848,5 +862,9 @@ function warmUpDisplayArea(timeoutMs) {
             setTimeout(func, timeoutMs);
             timeoutMs += 50;
         });
+
+        if (isTouchDevice()) {
+            document.getElementById('help-button').style.display = 'none';
+        }
     })();
 })();

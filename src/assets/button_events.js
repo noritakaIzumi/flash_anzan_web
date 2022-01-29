@@ -22,6 +22,8 @@ function loadParams() {
     element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
     toggleMute();
     loadAudioObj(element.common.soundExtension.value);
+    // 難易度選択
+    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
 }
 
 function saveParams() {
