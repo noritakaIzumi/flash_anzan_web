@@ -55,8 +55,14 @@ function setSoundExtension(extension) {
     }
 }
 
-function toggleFullscreenMode() {
-    if (!isFullscreen()) {
+function toggleFullscreenMode(full) {
+    if (full === true) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else if (full === false) {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    } else if (!isFullscreen()) {
         expandCalculateArea();
         calculateArea.dataset.fullScreen = "1";
     } else {

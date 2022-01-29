@@ -441,20 +441,12 @@ function flash(config = {}) {
             button.numberHistory.disabled = false;
             if (isFullscreen()) {
                 if (isTouchDevice()) { // タッチデバイス
-                    calculateArea.addEventListener("touchend", toggleFullscreenMode, {once: true});
+                    calculateArea.addEventListener("touchend", () => {
+                        toggleFullscreenMode(false);
+                    }, {once: true});
                     noticeArea.innerText = '画面をタッチすると戻ります。';
                 } else { // 非タッチデバイス
-                    const listener = function () {
-                        return (event) => {
-                            if (event.key === "enter") {
-                                toggleFullscreenMode();
-                                return;
-                            }
-                            calculateArea.addEventListener("keydown", listener(), {once: true});
-                        };
-                    };
-                    calculateArea.addEventListener("keydown", listener(), {once: true});
-                    noticeArea.innerText = 'Enter キーを押すと戻ります。';
+                    noticeArea.innerText = 'W キーを押すと戻ります。';
                 }
             }
         }, 1200);
@@ -744,7 +736,7 @@ function flash(config = {}) {
 
     // Register flash events
     disableHtmlButtons();
-    toggleFullscreenMode();
+    toggleFullscreenMode(true);
     noticeArea.innerText = '';
     warmUpDisplayArea(0);
     const beforeBeepTime = 500;
