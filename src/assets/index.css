@@ -56,11 +56,19 @@ hr {
     .number-area, #input-answer-box {
         font-size: 90px;
     }
+
+    #input-answer-box-touch-display {
+        font-size: 45px;
+    }
 }
 
 @media screen and (max-width: 499px) {
     .number-area, #input-answer-box {
         font-size: 60px;
+    }
+
+    #input-answer-box-touch-display {
+        font-size: 30px;
     }
 }
 
@@ -148,7 +156,7 @@ hr {
     display: none;
 }
 
-#input-answer-box {
+.input-answer-box {
     background-color: white;
     z-index: 2;
     text-align: center;

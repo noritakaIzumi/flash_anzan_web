@@ -12,8 +12,8 @@ difficultyMap = {
 };
 
 audioStatusInnerHtmlMap = {
-    on: '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>',
-    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">Audio Off</span>',
+    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
+    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
 };
 
 isMutedMap = {
@@ -129,7 +129,7 @@ button = {
     addition: document.getElementById("pills-addition-tab"),
     subtraction: document.getElementById("pills-subtraction-tab"),
     multiplication: document.getElementById("pills-multiplication-tab"),
-    openInputAnswer: document.getElementById('openInputAnswerModal'),
+    // openInputAnswer: document.getElementById('openInputAnswerModal'),
     closeInputAnswer: document.getElementById('closeInputAnswerModal'),
     help: document.getElementById('help-button'),
     openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
