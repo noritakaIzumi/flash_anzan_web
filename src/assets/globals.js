@@ -12,8 +12,8 @@ difficultyMap = {
 };
 
 audioStatusInnerHtmlMap = {
-    on: '<i class="bi bi-volume-up"></i><span class="ps-2">Audio On</span>',
-    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">Audio Off</span>',
+    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
+    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
 };
 
 isMutedMap = {

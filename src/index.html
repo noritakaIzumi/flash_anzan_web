@@ -96,28 +96,28 @@
         <div class="p-2">
             <button type="button" id="load-params-button" class="btn btn-outline-warning me-2"
                     data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal">
-                <i class="bi bi-folder2-open"></i><span class="ps-2">Load</span>
+                <i class="bi bi-folder2-open"></i><span class="ps-2">読込</span>
             </button>
             <button type="button" id="save-params-button" class="btn btn-outline-warning me-2"
                     data-bs-toggle="modal" data-bs-target="#saveParamsConfirmModal">
-                <i class="bi bi-save"></i><span class="ps-2">Save</span>
+                <i class="bi bi-save"></i><span class="ps-2">保存</span>
             </button>
             <button type="button" id="delete-params-button" class="btn btn-outline-warning me-2"
                     data-bs-toggle="modal" data-bs-target="#deleteParamsConfirmModal">
-                <i class="bi bi-trash"></i><span class="ps-2">Delete</span>
+                <i class="bi bi-trash"></i><span class="ps-2">削除</span>
             </button>
         </div>
         <div class="p-2">
             <button type="button" id="start-button" class="btn btn-danger me-2" onclick="flash();" disabled>
-                <i class="bi bi-play-fill"></i><span class="ps-2">Start</span>
+                <i class="bi bi-play-fill"></i><span class="ps-2">スタート</span>
             </button>
             <button type="button" id="repeat-button" class="btn btn-danger me-2" onclick="flash({repeat: true});"
                     disabled>
-                <i class="bi bi-arrow-repeat"></i><span class="ps-2">Repeat</span>
+                <i class="bi bi-arrow-repeat"></i><span class="ps-2">リトライ</span>
             </button>
             <button type="button" id="number-history-button" class="btn btn-info me-2"
                     data-bs-toggle="modal" data-bs-target="#numberHistoryModal" disabled>
-                <i class="bi bi-journal-text"></i><span class="ps-2">Numbers</span>
+                <i class="bi bi-journal-text"></i>
             </button>
         </div>
     </div>
@@ -261,12 +261,12 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commonMoreConfigModalLabel">Config</h5>
+                <h5 class="modal-title" id="commonMoreConfigModalLabel">環境設定</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div>
-                    <h5 class="mb-3">Sound</h5>
+                    <h5 class="mb-3">効果音</h5>
                     <div class="container">
                         <div class="btn-group w-auto mb-2" role="group">
                             <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off"
@@ -275,7 +275,7 @@
                         </div>
                         <div class="input-group w-auto mb-2">
                             <div class="input-group-prepend">
-                                <label class="input-group-text" for="sound-extension">Sound extension</label>
+                                <label class="input-group-text" for="sound-extension">拡張子</label>
                             </div>
                             <select name="sound-extension" id="sound-extension"
                                     onchange="setSoundExtension(this.value);"
@@ -288,14 +288,11 @@
                 </div>
                 <hr class="my-3">
                 <div>
-                    <h5 class="mb-3">Timing</h5>
+                    <h5 class="mb-3">タイミング</h5>
                     <div id="common-more-config" class="container w-auto">
                         <div class="row">
+                            <label for="common-flashRate" class="form-label">フラッシュレート<br>（数字が出ている時間の比率）</label>
                             <div class="input-group mb-2 col">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Flash rate</span>
-                                </div>
-                                <label for="common-flashRate"></label>
                                 <input type="number" inputmode="numeric" id="common-flashRate"
                                        class="form-control text-end">
                                 <div class="input-group-append">
@@ -304,11 +301,8 @@
                             </div>
                         </div>
                         <div class="row">
+                            <label for="common-offset" class="form-label">オフセット<br>（音が遅れているときは + 、数字の表示が遅れているときは - にしてください）</label>
                             <div class="input-group mb-2 col">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Offset</span>
-                                </div>
-                                <label for="common-offset"></label>
                                 <input type="number" inputmode="numeric" id="common-offset"
                                        class="form-control text-end">
                                 <div class="input-group-append">
@@ -539,7 +533,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="helpModalLabel">Shortcut</h5>
+                <h5 class="modal-title" id="helpModalLabel">ショートカット</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -550,7 +544,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th scope="col" colspan="2">General</th>
+                                    <th scope="col" colspan="2">一般</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -591,7 +585,7 @@
                             <table class="table">
                                 <thead>
                                 <tr>
-                                    <th scope="col" colspan="2">Playing</th>
+                                    <th scope="col" colspan="2">プレイ</th>
                                 </tr>
                                 </thead>
                                 <tbody>
