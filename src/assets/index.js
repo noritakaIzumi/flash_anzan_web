@@ -859,7 +859,14 @@ function warmUpDisplayArea(timeoutMs) {
         const prepareGameFunctions = [
             setUpInputBox,
             configureModalFocusing,
-            () => button.start.disabled = false,
+            () => {
+                button.help.disabled = false;
+                button.openCommonMoreConfig.disabled = false;
+                button.loadParams.disabled = false;
+                button.saveParams.disabled = false;
+                button.deleteParams.disabled = false;
+                button.start.disabled = false;
+            },
             registerShortcuts,
         ];
         prepareGameFunctions.map((func) => {
