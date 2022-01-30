@@ -456,29 +456,33 @@ function flash(config = {}) {
      * 答え入力のための準備的な。
      */
     function prepareAnswerInput() {
-        inputAnswerBox.addEventListener('keydown', getFuncSubmitNumber(), {once: true});
         inputAnswerBox.value = '';
         (function unveilInputAnswerArea() {
-            button.openInputAnswer.click();
-            inputAnswerBox.focus();
+            const listener = isTouchDevice()
+                ? () => {
+                    modals.input_answer.querySelector('.modal-footer').style.display = 'none';
+                    clearInputAnswerBox();
+                    document.getElementById('switchInputAnswerBoxTab-touch-tab').click();
+                }
+                : () => {
+                    clearInputAnswerBox();
+                    document.getElementById('switchInputAnswerBoxTab-keyboard-tab').click();
+                    document.getElementById('input-answer-box').focus();
+                };
+            modals.input_answer.addEventListener('shown.bs.modal', listener);
+            const modal = new bootstrap.Modal(modals.input_answer, {backdrop: false, keyboard: false, focus: true});
+            modal.show();
+            Array.from(document.getElementsByClassName('btn-send-answer')).forEach(element => {
+                element.addEventListener('click', () => {
+                    const sendValue = isTouchDevice()
+                        ? document.getElementById('input-answer-box-touch-actual').value
+                        : inputAnswerBox.value;
+                    displayAnswer(sendValue);
+                    modal.hide();
+                }, {once: true});
+            });
         })();
     }
-
-    /**
-     * 答えを判定する関数を取得する。
-     * @returns {(function(*): void)|*}
-     */
-    function getFuncSubmitNumber() {
-        return (event) => {
-            if (event.key === "Enter") {
-                button.closeInputAnswer.click();
-                displayAnswer(inputAnswerBox.value.trim());
-                return;
-            }
-            inputAnswerBox.addEventListener('keydown', getFuncSubmitNumber(), {once: true});
-        };
-    }
-
     /**
      * 平均を求める。
      * @param {number[]} data
@@ -867,4 +871,77 @@ function warmUpDisplayArea(timeoutMs) {
             document.getElementById('help-button').style.display = 'none';
         }
     })();
+})();
+
+function clearInputAnswerBox() {
+    document.getElementById('input-answer-box').value = '';
+    document.getElementById('input-answer-box-touch-display').value = '';
+    document.getElementById('input-answer-box-touch-actual').value = '';
+}
+
+// タッチデバイスの回答入力
+(() => {
+    let inputs = [];
+
+    function onKeyPress(button) {
+        if (!button) {
+            return;
+        }
+        console.log(button);
+        const matched = button.match(/\d/g)[0];
+        if (!matched) {
+            return;
+        }
+        inputs.push(matched);
+        let value = '';
+        {
+            const reversedInputs = [...inputs].reverse();
+            let n = 0;
+            for (let i = 0; i < inputs.length; i++) {
+                if (n === 3) {
+                    value = `,${value}`;
+                    n = 0;
+                }
+                value = reversedInputs[i] + value;
+                n++;
+            }
+        }
+        value = value.replace(/^[0,]+/g, '');
+        document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
+        document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
+    }
+
+    const clearInput = () => {
+        clearInputAnswerBox();
+        inputs = [];
+    };
+    Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
+        element.addEventListener('click', clearInput);
+    });
+    modals.input_answer.addEventListener('show.bs.modal', clearInput);
+
+    const Keyboard = window.SimpleKeyboard.default;
+    new Keyboard({
+        onKeyPress: button => onKeyPress(button),
+        layout: {
+            default: [
+                "{numpad7} {numpad8} {numpad9}",
+                "{numpad4} {numpad5} {numpad6}",
+                "{numpad1} {numpad2} {numpad3}",
+                " 0 ",
+            ],
+        },
+    });
+})();
+
+// 回答入力タブ切り替え動作イベントを登録
+(() => {
+    const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
+    triggerTabs.forEach(element => {
+        const tabTrigger = new bootstrap.Tab(element);
+        element.addEventListener('click', (event) => {
+            event.preventDefault();
+            tabTrigger.show();
+        });
+    });
 })();

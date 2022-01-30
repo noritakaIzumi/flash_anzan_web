@@ -54,6 +54,7 @@
     <!--css-->
     <link href="assets/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/simple-keyboard.css">
     <link rel="stylesheet" href="assets/index.css?ver=v0.13.0">
     <!--js-->
     <script src="assets/bootstrap.bundle.min.js"></script>
@@ -427,23 +428,82 @@
     </div>
 </div>
 <!-- Input Answer Params -->
-<button type="button" id="openInputAnswerModal" class="btn btn-primary" data-bs-toggle="modal"
-        data-bs-target="#inputAnswerModal"
-        style="display: none;"></button>
-<div class="modal" id="inputAnswerModal" tabindex="-1" aria-labelledby="inputAnswerModalLabel"
-     data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+<div class="modal" id="inputAnswerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header d-sm-none d-lg-block">
                 <h5 class="modal-title" id="inputAnswerModalLabel">答えを入力してください</h5>
                 <button type="button" id="closeInputAnswerModal" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"
                         style="display: none;"></button>
             </div>
             <div class="modal-body">
-                <p>Enter キーで送信します</p>
-                <label for="input-answer-box" style="display: none;"></label>
-                <input type="text" id="input-answer-box" inputmode="numeric" class="form-control" autocomplete="off">
+                <ul class="nav nav-tabs d-none" id="switchInputAnswerBoxTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button
+                                class="nav-link active"
+                                id="switchInputAnswerBoxTab-keyboard-tab"
+                                data-bs-target="#input-answer-box-area"
+                                type="button"
+                                role="tab"
+                                aria-controls="keyboard"
+                                aria-selected="true"
+                        >
+                            Home
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button
+                                class="nav-link"
+                                id="switchInputAnswerBoxTab-touch-tab"
+                                data-bs-target="#input-answer-box-area-touch"
+                                type="button"
+                                role="tab"
+                                aria-controls="touch"
+                                aria-selected="false"
+                        >
+                            Profile
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="switchInputAnswerBoxTabContent">
+                    <div
+                            class="tab-pane show active"
+                            id="input-answer-box-area"
+                            role="tabpanel"
+                            aria-labelledby="switchInputAnswerBoxTab-keyboard-tab"
+                    >
+                        <label for="input-answer-box" style="display: none;"></label>
+                        <input type="text" id="input-answer-box" inputmode="numeric" class="form-control input-answer-box" autocomplete="off">
+                    </div>
+                    <div
+                            class="tab-pane"
+                            id="input-answer-box-area-touch"
+                            role="tabpanel"
+                            aria-labelledby="switchInputAnswerBoxTab-touch-tab"
+                    >
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <label for="input-answer-box-touch-display" style="display: none;"></label>
+                                <input type="text" id="input-answer-box-touch-display" inputmode="numeric" class="form-control input-answer-box" autocomplete="off" readonly>
+                                <div class="simple-keyboard"></div>
+                                <input type="hidden" id="input-answer-box-touch-actual">
+                            </div>
+                            <div class="col-sm-3 d-flex flex-sm-column justify-content-end align-bottom">
+                                <div class="p-2">
+                                    <button type="button" class="btn btn-secondary btn-clear-input-answer-box">消す</button>
+                                </div>
+                                <div class="p-2">
+                                    <button type="button" class="btn btn-primary btn-send-answer">送信</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-clear-input-answer-box">消す</button>
+                <button type="button" class="btn btn-primary btn-send-answer">送信</button>
             </div>
         </div>
     </div>
@@ -667,6 +727,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="assets/simple-keyboard.js"></script>
 <script type="text/javascript" src="lib/complexity_map.js?ver=v0.13.0"></script>
 <script type="text/javascript" src="assets/globals.js?ver=v0.13.0"></script>
 <script type="text/javascript" src="assets/button_events.js?ver=v0.13.0"></script>

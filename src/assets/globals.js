@@ -129,7 +129,7 @@ button = {
     addition: document.getElementById("pills-addition-tab"),
     subtraction: document.getElementById("pills-subtraction-tab"),
     multiplication: document.getElementById("pills-multiplication-tab"),
-    openInputAnswer: document.getElementById('openInputAnswerModal'),
+    // openInputAnswer: document.getElementById('openInputAnswerModal'),
     closeInputAnswer: document.getElementById('closeInputAnswerModal'),
     help: document.getElementById('help-button'),
     openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
