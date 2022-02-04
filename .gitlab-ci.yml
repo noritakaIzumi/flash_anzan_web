@@ -14,3 +14,4 @@ pages:
 include:
 - template: Security/SAST-IaC.latest.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
+- template: Security/Dependency-Scanning.gitlab-ci.yml
