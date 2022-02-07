@@ -458,31 +458,49 @@ function flash(config = {}) {
     function prepareAnswerInput() {
         inputAnswerBox.value = '';
         (function unveilInputAnswerArea() {
+            // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
                     modals.input_answer.querySelector('.modal-footer').style.display = 'none';
                     clearInputAnswerBox();
                     document.getElementById('switchInputAnswerBoxTab-touch-tab').click();
+                    document.getElementById('notice-input-answer-non-touch-device').style.display = 'none';
                 }
                 : () => {
                     clearInputAnswerBox();
                     document.getElementById('switchInputAnswerBoxTab-keyboard-tab').click();
                     document.getElementById('input-answer-box').focus();
+                    document.getElementById('notice-input-answer-non-touch-device').style.display = 'block';
                 };
             modals.input_answer.addEventListener('shown.bs.modal', listener);
             const modal = new bootstrap.Modal(modals.input_answer, {backdrop: false, keyboard: false, focus: true});
             modal.show();
-            Array.from(document.getElementsByClassName('btn-send-answer')).forEach(element => {
-                element.addEventListener('click', () => {
-                    const sendValue = isTouchDevice()
-                        ? document.getElementById('input-answer-box-touch-actual').value
-                        : inputAnswerBox.value;
-                    displayAnswer(sendValue);
-                    modal.hide();
-                }, {once: true});
-            });
+            // 回答送信時のイベント設定
+            if (isTouchDevice()) {
+                document.querySelector('#input-answer-box-area-touch .btn-send-answer')
+                    .addEventListener('click', () => {
+                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value);
+                        modal.hide();
+                    }, {once: true});
+            } else {
+                const listener = () => {
+                    return (event) => {
+                        if (
+                            document.activeElement.id === 'input-answer-box'
+                            && String(event.key).toLowerCase() === 'enter'
+                        ) {
+                            displayAnswer(inputAnswerBox.value);
+                            modal.hide();
+                            return;
+                        }
+                        document.addEventListener('keydown', listener(), {once: true});
+                    };
+                };
+                document.addEventListener('keydown', listener(), {once: true});
+            }
         })();
     }
+
     /**
      * 平均を求める。
      * @param {number[]} data
