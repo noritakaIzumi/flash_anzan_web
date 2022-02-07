@@ -912,7 +912,6 @@ function clearInputAnswerBox() {
         if (!button) {
             return;
         }
-        console.log(button);
         const matched = button.match(/\d/g)[0];
         if (!matched) {
             return;
