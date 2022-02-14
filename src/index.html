@@ -426,7 +426,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-sm-none d-lg-block">
-                <h5 class="modal-title" id="inputAnswerModalLabel">答えを入力してください</h5>
+                <h5 class="modal-title" id="inputAnswerModalLabel">答えを入力してください<span id="notice-input-answer-non-touch-device">（Enter キーで送信します）</span></h5>
                 <button type="button" id="closeInputAnswerModal" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"
                         style="display: none;"></button>
@@ -495,10 +495,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-clear-input-answer-box">消す</button>
-                <button type="button" class="btn btn-primary btn-send-answer">送信</button>
-            </div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
