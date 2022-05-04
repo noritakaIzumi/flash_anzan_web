@@ -441,7 +441,8 @@ function flash(config = {}) {
             button.numberHistory.disabled = false;
             if (isFullscreen()) {
                 if (isTouchDevice()) { // タッチデバイス
-                    calculateArea.addEventListener("touchend", () => {
+                    calculateArea.addEventListener("touchend", (event) => {
+                        event.preventDefault();
                         toggleFullscreenMode(false);
                     }, {once: true});
                     noticeArea.innerText = '画面をタッチすると戻ります。';
