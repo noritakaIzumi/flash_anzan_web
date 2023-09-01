@@ -70,6 +70,25 @@
                     // registration failed :(
                     console.log('ServiceWorker registration failed: ', err);
                 });
+                document.getElementById('refresh-sw').addEventListener('click', function () {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        for (let registration of registrations) {
+                            registration.unregister()
+                        }
+                        console.log('ServiceWorker unregistered')
+                    })
+                    // delete all ServiceWorker caches
+                    caches.keys().then(keys => keys.map((key) => {
+                        caches.delete(key).then((boolean) => {
+                            if (boolean) {
+                                console.log('ServiceWorker cache deleted: ' + key)
+                            } else {
+                                console.log('Failed to delete ServiceWorker cache: ' + key)
+                            }
+                        })
+                    }))
+                    window.location.reload()
+                })
             });
         }
     </script>
@@ -84,6 +103,7 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
+            <button type="button" id="refresh-sw" class="btn btn-light me-2">アプリを更新</button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
                     data-bs-toggle="modal" data-bs-target="#helpModal" disabled>
                 <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
