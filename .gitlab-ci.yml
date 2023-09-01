@@ -15,7 +15,7 @@ pages:
     paths:
       - public
   only:
-    - master
+    - main
 include:
   - template: Security/SAST-IaC.latest.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
