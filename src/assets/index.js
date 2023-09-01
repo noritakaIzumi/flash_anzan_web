@@ -1144,6 +1144,12 @@ function warmUpDisplayArea(timeoutMs) {
     return timeoutMs;
 }
 
+function clearInputAnswerBox() {
+    document.getElementById('input-answer-box').value = '';
+    document.getElementById('input-answer-box-touch-display').value = '';
+    document.getElementById('input-answer-box-touch-actual').value = '';
+}
+
 // ページ読み込み時処理
 (() => {
     loadAudioObj(param.common.soundExtension.default);
@@ -1177,12 +1183,6 @@ function warmUpDisplayArea(timeoutMs) {
         }
     })();
 })();
-
-function clearInputAnswerBox() {
-    document.getElementById('input-answer-box').value = '';
-    document.getElementById('input-answer-box-touch-display').value = '';
-    document.getElementById('input-answer-box-touch-actual').value = '';
-}
 
 // タッチデバイスの回答入力
 (() => {
