@@ -1,3 +1,282 @@
+/* Global variables */
+
+modeNames = {
+    addition: "addition",
+    multiplication: "multiplication",
+};
+
+difficultyMap = {
+    easy: 'easy',
+    normal: 'normal',
+    hard: 'hard',
+};
+
+audioStatusInnerHtmlMap = {
+    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
+    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
+};
+
+isMutedMap = {
+    on: 'on',
+    off: 'off',
+};
+
+audioAttr = {
+    directory: "./sound",
+    extension: {
+        ogg: 'ogg',
+        wav: 'wav',
+    },
+};
+
+element = {
+    addition: {
+        digit: document.getElementById("addition-digit"),
+        length: document.getElementById("addition-length"),
+        time: document.getElementById("addition-time"),
+    },
+    multiplication: {
+        digit1: document.getElementById("multiplication-digit-1"),
+        digit2: document.getElementById("multiplication-digit-2"),
+        length: document.getElementById("multiplication-length"),
+        time: document.getElementById("multiplication-time"),
+    },
+    common: {
+        difficulty: document.getElementById('difficulty'),
+        flashRate: document.getElementById("common-flashRate"),
+        offset: document.getElementById("common-offset"),
+        isMuted: document.getElementById("is-muted"),
+        soundExtension: document.getElementById("sound-extension"),
+    },
+};
+
+param = {
+    addition: {
+        digit: {
+            max: 14,
+            min: 1,
+            default: 1,
+        },
+        length: {
+            max: 30,
+            min: 2,
+            default: 3,
+        },
+        time: {
+            max: 30000,
+            min: 1000,
+            default: 5000,
+        },
+    },
+    multiplication: {
+        digit1: {
+            max: 7,
+            min: 1,
+            default: 1,
+        },
+        digit2: {
+            max: 7,
+            min: 1,
+            default: 1,
+        },
+        length: {
+            max: 30,
+            min: 2,
+            default: 2,
+        },
+        time: {
+            max: 30000,
+            min: 1000,
+            default: 5000,
+        },
+    },
+    common: {
+        difficulty: {
+            default: difficultyMap.easy,
+        },
+        flashRate: {
+            max: 99,
+            min: 1,
+            default: 55,
+        },
+        offset: {
+            max: 500,
+            min: -500,
+            default: 0,
+        },
+        isMuted: {
+            default: false,
+        },
+        soundExtension: {
+            default: audioAttr.extension.wav,
+        },
+    },
+};
+
+headerMessage = document.getElementById("header-message");
+questionNumberArea = document.getElementById("question-number-area");
+calculateArea = document.getElementById('calculate-area');
+inputAnswerBox = document.getElementById('input-answer-box');
+noticeArea = document.getElementById('notice-area');
+
+button = {
+    loadParams: document.getElementById("load-params-button"),
+    saveParams: document.getElementById("save-params-button"),
+    deleteParams: document.getElementById("delete-params-button"),
+    start: document.getElementById("start-button"),
+    repeat: document.getElementById("repeat-button"),
+    numberHistory: document.getElementById("number-history-button"),
+    addition: document.getElementById("pills-addition-tab"),
+    subtraction: document.getElementById("pills-subtraction-tab"),
+    multiplication: document.getElementById("pills-multiplication-tab"),
+    // openInputAnswer: document.getElementById('openInputAnswerModal'),
+    closeInputAnswer: document.getElementById('closeInputAnswerModal'),
+    help: document.getElementById('help-button'),
+    openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
+};
+
+answerNumber = document.getElementById("answer-number");
+
+// RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
+audioObj = {
+    beep: new Array(2),
+    tick: new Array(30),
+    answer: new Array(1),
+    correct: new Array(1),
+    incorrect: new Array(1),
+    silence: new Array(1),
+};
+audioContext = new AudioContext();
+
+currentMode = document.getElementById("current-mode");
+isMuted = document.getElementById("is-muted");
+audioStatus = document.getElementById('audio-status');
+
+disableConfigTarget = [
+    button.start,
+    button.repeat,
+    button.loadParams,
+    button.saveParams,
+    button.deleteParams
+];
+
+multiplyFigure = "*";
+
+numberHistoryDisplay = document.getElementById("number-history-display");
+numberHistoryDisplayDelimiter = "<br>";
+numberHistoryString = document.getElementById("number-history-stringify");
+numberHistoryStringifyDelimiter = "|";
+answerNumberDisplay = document.getElementById('answer-number-display');
+
+savedParamsKeyName = "flash_anzan_params";
+
+modals = {
+    'params': {
+        'load': {
+            'confirm': document.getElementById('loadParamsConfirmModal'),
+            'complete': document.getElementById('loadParamsCompletedModal'),
+        },
+        'save': {
+            'confirm': document.getElementById('saveParamsConfirmModal'),
+            'complete': document.getElementById('saveParamsCompletedModal'),
+        },
+        'delete': {
+            'confirm': document.getElementById('deleteParamsConfirmModal'),
+            'complete': document.getElementById('deleteParamsCompletedModal'),
+        },
+    },
+    'input_answer': document.getElementById('inputAnswerModal'),
+};
+
+generateNumbersRetryLimit = 100000;
+
+/* button events */
+
+function loadParams() {
+    const modal = document.getElementById('loadParamsCompletedModal');
+    const modalMessage = modal.querySelector('.modal-body > p');
+
+    const loadedParams = localStorage.getItem(savedParamsKeyName);
+    if (!loadedParams) {
+        modalMessage.innerHTML = '設定がありません';
+        return;
+    }
+    modalMessage.innerHTML = '設定を読み込みました';
+
+    const parsedParams = JSON.parse(loadedParams);
+    Object.keys(parsedParams).map(
+        (mode) => {
+            Object.keys(parsedParams[mode]).map(
+                (paramName) => {
+                    element[mode][paramName].value = parsedParams[mode][paramName];
+                });
+        }
+    );
+
+    element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
+    toggleMute();
+    loadAudioObj(element.common.soundExtension.value);
+    // 難易度選択
+    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
+}
+
+function saveParams() {
+    const params = {};
+    Object.keys(element).map(
+        (mode) => {
+            params[mode] = {};
+            Object.keys(element[mode]).map(
+                (paramName) => {
+                    params[mode][paramName] = element[mode][paramName].value;
+                });
+        }
+    );
+    localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
+}
+
+function deleteParams() {
+    localStorage.clear();
+}
+
+function setSoundExtension(extension) {
+    switch (extension) {
+        case 'ogg':
+            loadAudioObj(audioAttr.extension.ogg);
+            break;
+        case 'wav':
+            loadAudioObj(audioAttr.extension.wav);
+            break;
+    }
+}
+
+function toggleFullscreenMode(full) {
+    if (full === true) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else if (full === false) {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    } else if (!isFullscreen()) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    }
+}
+
+function toggleMute() {
+    if (isMuted.checked || isMuted.value === isMutedMap.on) {
+        isMuted.checked = true;
+        isMuted.value = isMutedMap.on;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
+    } else {
+        isMuted.checked = false;
+        isMuted.value = isMutedMap.off;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
+    }
+}
+
 // TODO: このファイルをクラス化して共通部分をまとめる
 //  switch 文もまとめる
 
