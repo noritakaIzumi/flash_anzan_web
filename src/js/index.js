@@ -28,7 +28,7 @@ const isMutedMap = {
 };
 
 const audioAttr = {
-    directory: "./sound",
+    directory: "./sounds",
     extension: {
         ogg: 'ogg',
         wav: 'wav',

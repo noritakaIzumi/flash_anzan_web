@@ -3,13 +3,13 @@ var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
     './js/shortcut.js',
     './js/complexity_map.js',
-    './font/ABACUS2.woff',
-    './sound/answer.wav',
-    './sound/beep.wav',
-    './sound/correct.wav',
-    './sound/incorrect.wav',
-    './sound/silence.wav',
-    './sound/tick.wav',
+    './fonts/ABACUS2.woff',
+    './sounds/answer.wav',
+    './sounds/beep.wav',
+    './sounds/correct.wav',
+    './sounds/incorrect.wav',
+    './sounds/silence.wav',
+    './sounds/tick.wav',
 ];
 
 self.addEventListener('install', function (event) {
