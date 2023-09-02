@@ -52,7 +52,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/icon-32x32.png">
     <link rel="manifest" href="manifest.json">
     <!-- service worker -->
-    <script type="module" src="js/load_sw.js"></script>
+    <script type="module" src="js/delete_sw.js"></script>
 </head>
 <body class="hide-cursor">
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
@@ -64,7 +64,6 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
-            <button type="button" id="refresh-sw" class="btn btn-light me-2">アプリを更新</button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
                     data-bs-toggle="modal" data-bs-target="#helpModal" disabled>
                 <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
