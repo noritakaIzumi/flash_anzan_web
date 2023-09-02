@@ -1,11 +1,8 @@
 const version = 'v0.16.0';
 var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
-    './assets/bootstrap.bundle.min.js',
     './assets/bootstrap.min.css',
-    './assets/howler_2_2_1.min.js',
     './assets/simple-keyboard.css',
-    './assets/simple-keyboard.js',
     './lib/shortcut.js',
     './lib/complexity_map.js',
     './font/ABACUS2.woff',

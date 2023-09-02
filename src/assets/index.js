@@ -1,27 +1,32 @@
+import * as bootstrap from 'bootstrap'
+import {Howl} from 'howler';
+import {SimpleKeyboard} from "simple-keyboard";
+import {complexityMap} from "../lib/complexity_map"
+
 /* Global variables */
 
-modeNames = {
+const modeNames = {
     addition: "addition",
     multiplication: "multiplication",
 };
 
-difficultyMap = {
+const difficultyMap = {
     easy: 'easy',
     normal: 'normal',
     hard: 'hard',
 };
 
-audioStatusInnerHtmlMap = {
+const audioStatusInnerHtmlMap = {
     on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
     off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
 };
 
-isMutedMap = {
+const isMutedMap = {
     on: 'on',
     off: 'off',
 };
 
-audioAttr = {
+const audioAttr = {
     directory: "./sound",
     extension: {
         ogg: 'ogg',
@@ -29,7 +34,7 @@ audioAttr = {
     },
 };
 
-element = {
+const element = {
     addition: {
         digit: document.getElementById("addition-digit"),
         length: document.getElementById("addition-length"),
@@ -50,7 +55,7 @@ element = {
     },
 };
 
-param = {
+const param = {
     addition: {
         digit: {
             max: 14,
@@ -113,16 +118,19 @@ param = {
     },
 };
 
-headerMessage = document.getElementById("header-message");
-questionNumberArea = document.getElementById("question-number-area");
-calculateArea = document.getElementById('calculate-area');
-inputAnswerBox = document.getElementById('input-answer-box');
-noticeArea = document.getElementById('notice-area');
+const headerMessage = document.getElementById("header-message");
+const questionNumberArea = document.getElementById("question-number-area");
+const calculateArea = document.getElementById('calculate-area');
+const inputAnswerBox = document.getElementById('input-answer-box');
+const noticeArea = document.getElementById('notice-area');
 
-button = {
+const button = {
     loadParams: document.getElementById("load-params-button"),
+    doLoadParams: document.getElementById("do-load-params"),
     saveParams: document.getElementById("save-params-button"),
+    doSaveParams: document.getElementById("do-save-params"),
     deleteParams: document.getElementById("delete-params-button"),
+    doDeleteParams: document.getElementById("do-delete-params"),
     start: document.getElementById("start-button"),
     repeat: document.getElementById("repeat-button"),
     numberHistory: document.getElementById("number-history-button"),
@@ -133,12 +141,17 @@ button = {
     closeInputAnswer: document.getElementById('closeInputAnswerModal'),
     help: document.getElementById('help-button'),
     openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
+    difficulty: {
+        easy: document.getElementById('difficulty-easy'),
+        normal: document.getElementById('difficulty-normal'),
+        hard: document.getElementById('difficulty-hard'),
+    }
 };
 
-answerNumber = document.getElementById("answer-number");
+const answerNumber = document.getElementById("answer-number");
 
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
-audioObj = {
+const audioObj = {
     beep: new Array(2),
     tick: new Array(30),
     answer: new Array(1),
@@ -147,11 +160,11 @@ audioObj = {
     silence: new Array(1),
 };
 
-currentMode = document.getElementById("current-mode");
-isMuted = document.getElementById("is-muted");
-audioStatus = document.getElementById('audio-status');
+const currentMode = document.getElementById("current-mode");
+const isMuted = document.getElementById("is-muted");
+const audioStatus = document.getElementById('audio-status');
 
-disableConfigTarget = [
+const disableConfigTarget = [
     button.start,
     button.repeat,
     button.loadParams,
@@ -159,17 +172,17 @@ disableConfigTarget = [
     button.deleteParams
 ];
 
-multiplyFigure = "*";
+const multiplyFigure = "*";
 
-numberHistoryDisplay = document.getElementById("number-history-display");
-numberHistoryDisplayDelimiter = "<br>";
-numberHistoryString = document.getElementById("number-history-stringify");
-numberHistoryStringifyDelimiter = "|";
-answerNumberDisplay = document.getElementById('answer-number-display');
+const numberHistoryDisplay = document.getElementById("number-history-display");
+const numberHistoryDisplayDelimiter = "<br>";
+const numberHistoryString = document.getElementById("number-history-stringify");
+const numberHistoryStringifyDelimiter = "|";
+const answerNumberDisplay = document.getElementById('answer-number-display');
 
-savedParamsKeyName = "flash_anzan_params";
+const savedParamsKeyName = "flash_anzan_params";
 
-modals = {
+const modals = {
     welcome: document.getElementById('welcomeModal'),
     'params': {
         'load': {
@@ -188,11 +201,11 @@ modals = {
     'input_answer': document.getElementById('inputAnswerModal'),
 };
 
-generateNumbersRetryLimit = 100000;
+const generateNumbersRetryLimit = 100000;
 
 /* button events */
 
-function loadParams() {
+function doLoadParams() {
     const modal = document.getElementById('loadParamsCompletedModal');
     const modalMessage = modal.querySelector('.modal-body > p');
 
@@ -220,7 +233,7 @@ function loadParams() {
     document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
 }
 
-function saveParams() {
+function doSaveParams() {
     const params = {};
     Object.keys(element).map(
         (mode) => {
@@ -234,7 +247,7 @@ function saveParams() {
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
 }
 
-function deleteParams() {
+function doDeleteParams() {
     localStorage.clear();
 }
 
@@ -1056,6 +1069,10 @@ function flash(config = {}) {
     setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
 }
 
+function repeatFlash() {
+    flash({repeat: true});
+}
+
 function isTouchDevice() {
     return window.ontouchstart === null;
 }
@@ -1232,8 +1249,7 @@ function clearInputAnswerBox() {
             });
             modals.input_answer.addEventListener('show.bs.modal', clearInput);
 
-            const Keyboard = window.SimpleKeyboard.default;
-            new Keyboard({
+            new SimpleKeyboard({
                 onKeyPress: button => onKeyPress(button),
                 layout: {
                     default: [
@@ -1261,6 +1277,38 @@ function clearInputAnswerBox() {
         // バージョン番号の表示
         (() => {
             document.getElementById('version-number').innerText = version;
+        })();
+
+        // set onclick events in index.html
+        (() => {
+            // フラッシュ操作
+            button.start.addEventListener('click', flash)
+            button.repeat.addEventListener('click', repeatFlash)
+
+            // モード切り替え
+            button.addition.addEventListener('click', () => changeMode(modeNames.addition))
+            // button.subtraction.addEventListener('click', () => changeMode(modeNames.subtraction))
+            button.multiplication.addEventListener('click', () => changeMode(modeNames.multiplication))
+
+            // 難易度切り替え
+            button.difficulty.easy.addEventListener('click', () => {
+                element.common.difficulty.value = 'easy';
+            })
+            button.difficulty.normal.addEventListener('click', () => {
+                element.common.difficulty.value = 'normal';
+            })
+            button.difficulty.hard.addEventListener('click', () => {
+                element.common.difficulty.value = 'hard';
+            })
+
+            // サウンド
+            element.common.isMuted.addEventListener('click', toggleMute)
+            element.common.soundExtension.addEventListener('change', event => setSoundExtension(event.target.value))
+
+            // 出題設定読み込み
+            button.doLoadParams.addEventListener('click', doLoadParams)
+            button.doSaveParams.addEventListener('click', doSaveParams)
+            button.doDeleteParams.addEventListener('click', doDeleteParams)
         })();
     };
 
