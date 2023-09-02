@@ -146,7 +146,6 @@ audioObj = {
     incorrect: new Array(1),
     silence: new Array(1),
 };
-audioContext = new AudioContext();
 
 currentMode = document.getElementById("current-mode");
 isMuted = document.getElementById("is-muted");
@@ -1154,8 +1153,11 @@ function clearInputAnswerBox() {
 (() => {
     // バージョン番号
     const version = 'v0.16.0';
+    const warmupDelay = 1000;
 
     const setup = () => {
+        const audioContext = new AudioContext();
+
         // ページ読み込み時処理
         (() => {
             loadAudioObj(param.common.soundExtension.default);
@@ -1165,7 +1167,7 @@ function clearInputAnswerBox() {
             });
 
             (() => {
-                let timeoutMs = warmUpDisplayArea(2000);
+                let timeoutMs = warmUpDisplayArea(warmupDelay);
                 const prepareGameFunctions = [
                     setUpInputBox,
                     configureModalFocusing,
