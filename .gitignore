@@ -5,7 +5,7 @@
 /node_modules
 
 # Compiled app directory
-/flash-anzan*
+/dist
 
 # desktop.ini
 **/desktop.ini

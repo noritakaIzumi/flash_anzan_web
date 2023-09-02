@@ -2,8 +2,6 @@ const version = 'v0.16.0';
 var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
     './js/shortcut.js',
-    './js/complexity_map.js',
-    './fonts/ABACUS2.woff',
     './sounds/answer.wav',
     './sounds/beep.wav',
     './sounds/correct.wav',
