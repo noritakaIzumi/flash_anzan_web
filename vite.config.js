@@ -5,6 +5,7 @@ const path = require('path')
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
     root: path.resolve(__dirname, 'src'),
+    base: '',
     build: {
         outDir: '../dist',
         rollupOptions: {
