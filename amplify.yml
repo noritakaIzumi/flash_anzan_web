@@ -1,0 +1,15 @@
+version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - npm ci
+        - npm run build
+    postBuild:
+      commands:
+        - test -d dist
+        - ls -la dist
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'

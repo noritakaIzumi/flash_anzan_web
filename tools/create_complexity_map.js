@@ -178,8 +178,8 @@
 
     try {
         fs.writeFileSync(
-            path.dirname(path.dirname(__filename)) + '/src/lib/complexity_map.js',
-            `complexityMap = ${JSON.stringify(result)};\n`);
+            path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.js',
+            `export const complexityMap = ${JSON.stringify(result)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);

@@ -1,20 +1,13 @@
-const version = 'v0.15.0';
+const version = 'v0.17.1';
 var CACHE_NAME = `fa-cache-${version}`;
 var urlsToCache = [
-    './assets/bootstrap.bundle.min.js',
-    './assets/bootstrap.min.css',
-    './assets/howler_2_2_1.min.js',
-    './assets/simple-keyboard.css',
-    './assets/simple-keyboard.js',
-    './lib/shortcut.js',
-    './lib/complexity_map.js',
-    './font/ABACUS2.woff',
-    './sound/answer.wav',
-    './sound/beep.wav',
-    './sound/correct.wav',
-    './sound/incorrect.wav',
-    './sound/silence.wav',
-    './sound/tick.wav',
+    './js/shortcut.js',
+    './sounds/answer.wav',
+    './sounds/beep.wav',
+    './sounds/correct.wav',
+    './sounds/incorrect.wav',
+    './sounds/silence.wav',
+    './sounds/tick.wav',
 ];
 
 self.addEventListener('install', function (event) {
@@ -22,7 +15,7 @@ self.addEventListener('install', function (event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(function (cache) {
-                console.log('Opened cache');
+                console.log('Opened cache: ' + CACHE_NAME);
                 return cache.addAll(urlsToCache);
             })
     );

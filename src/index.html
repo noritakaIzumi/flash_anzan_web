@@ -51,28 +51,8 @@
     <link rel="icon" type="image/png" sizes="24x24" href="favicons/icon-24x24.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/icon-32x32.png">
     <link rel="manifest" href="manifest.json">
-    <!--css-->
-    <link href="assets/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="assets/simple-keyboard.css">
-    <link rel="stylesheet" href="assets/index.css?ver=v0.15.0">
-    <!--js-->
-    <script src="assets/bootstrap.bundle.min.js"></script>
-    <script src="assets/howler_2_2_1.min.js"></script>
-    <script type="text/javascript" src="lib/shortcut.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('./sw.js').then(function (registration) {
-                    // Registration was successful
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }, function (err) {
-                    // registration failed :(
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
-    </script>
+    <!-- service worker -->
+    <script type="module" src="js/load_sw.js"></script>
 </head>
 <body class="hide-cursor">
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
@@ -84,6 +64,7 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
+            <button type="button" id="refresh-sw" class="btn btn-light me-2">アプリを更新</button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
                     data-bs-toggle="modal" data-bs-target="#helpModal" disabled>
                 <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
@@ -108,11 +89,10 @@
             </button>
         </div>
         <div class="p-2">
-            <button type="button" id="start-button" class="btn btn-danger me-2" onclick="flash();" disabled>
+            <button type="button" id="start-button" class="btn btn-danger me-2" disabled>
                 <i class="bi bi-play-fill"></i><span class="ps-2">スタート</span>
             </button>
-            <button type="button" id="repeat-button" class="btn btn-danger me-2" onclick="flash({repeat: true});"
-                    disabled>
+            <button type="button" id="repeat-button" class="btn btn-danger me-2" disabled>
                 <i class="bi bi-arrow-repeat"></i><span class="ps-2">リトライ</span>
             </button>
             <button type="button" id="number-history-button" class="btn btn-info me-2"
@@ -129,21 +109,19 @@
                 <ul class="nav nav-pills" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="pills-addition-tab" data-bs-toggle="pill" href="#addition-mode-config"
-                           role="tab" aria-selected="true"
-                           onclick="changeMode('addition');">
+                           role="tab" aria-selected="true">
                             <i class="bi bi-plus"></i><span class="ps-2">たし算</span>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link disabled" id="pills-subtraction-tab" data-bs-toggle="pill" href="" role="tab"
-                           aria-selected="false" onclick="changeMode('subtraction');">
+                           aria-selected="false">
                             <i class="bi bi-dash"></i><span class="ps-2">ひき算</span>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="pills-multiplication-tab" data-bs-toggle="pill"
-                           href="#multiplication-mode-config" role="tab" aria-selected="false"
-                           onclick="changeMode('multiplication');">
+                           href="#multiplication-mode-config" role="tab" aria-selected="false">
                             <i class="bi bi-x"></i><span class="ps-2">かけ算</span>
                         </a>
                     </li>
@@ -152,11 +130,11 @@
             <div class="my-2">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                     <input type="radio" class="btn-check" name="btnradio" id="difficulty-easy" autocomplete="off" checked>
-                    <label class="btn btn-outline-success" for="difficulty-easy" onclick="document.getElementById('difficulty').value='easy';">かんたん</label>
+                    <label class="btn btn-outline-success" for="difficulty-easy">かんたん</label>
                     <input type="radio" class="btn-check" name="btnradio" id="difficulty-normal" autocomplete="off">
-                    <label class="btn btn-outline-warning" for="difficulty-normal" onclick="document.getElementById('difficulty').value='normal';">ふつう</label>
+                    <label class="btn btn-outline-warning" for="difficulty-normal">ふつう</label>
                     <input type="radio" class="btn-check" name="btnradio" id="difficulty-hard" autocomplete="off">
-                    <label class="btn btn-outline-danger" for="difficulty-hard" onclick="document.getElementById('difficulty').value='hard';">むずかしい</label>
+                    <label class="btn btn-outline-danger" for="difficulty-hard">むずかしい</label>
                 </div>
             </div>
             <div class="row d-none">
@@ -249,6 +227,9 @@
             </div>
         </div>
     </div>
+    <div class="container-fluid">
+        <span id="version-number" class="text-muted"></span>
+    </div>
     <div class="container display-none">
         <p id="answer-number"></p>
         <p id="number-history-stringify"></p>
@@ -256,6 +237,22 @@
 </div>
 
 <!-- Modal -->
+<!-- Load Params -->
+<div class="modal" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="welcomeModalLabel">Flash Anzan</h5>
+            </div>
+            <div class="modal-body">
+                <p>ようこそ！準備ができたら「はじめる」をクリックしてください。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">はじめる</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Common More Config -->
 <div class="modal" id="commonMoreConfigModal" tabindex="-1" aria-labelledby="commonMoreConfigModalLabel">
     <div class="modal-dialog modal-dialog-centered">
@@ -269,17 +266,14 @@
                     <h5 class="mb-3">効果音</h5>
                     <div class="container">
                         <div class="btn-group w-auto mb-2" role="group">
-                            <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off"
-                                   onclick="toggleMute();">
+                            <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off">
                             <label class="btn btn-outline-danger" for="is-muted" id="audio-status"></label>
                         </div>
                         <div class="input-group w-auto mb-2">
                             <div class="input-group-prepend">
                                 <label class="input-group-text" for="sound-extension">拡張子</label>
                             </div>
-                            <select name="sound-extension" id="sound-extension"
-                                    onchange="setSoundExtension(this.value);"
-                                    class="form-select">
+                            <select name="sound-extension" id="sound-extension" class="form-select">
                                 <option value="wav">wav</option>
                                 <option value="ogg">ogg</option>
                             </select>
@@ -332,8 +326,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary"
-                        onclick="loadParams();" data-bs-toggle="modal" data-bs-target="#loadParamsCompletedModal">
+                <button type="button" id="do-load-params" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#loadParamsCompletedModal">
                     読み込む
                 </button>
             </div>
@@ -366,8 +360,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary"
-                        onclick="saveParams();" data-bs-toggle="modal" data-bs-target="#saveParamsCompletedModal">
+                <button type="button" id="do-save-params" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#saveParamsCompletedModal">
                     保存する
                 </button>
             </div>
@@ -400,8 +394,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" class="btn btn-primary"
-                        onclick="deleteParams();" data-bs-toggle="modal" data-bs-target="#deleteParamsCompletedModal">
+                <button type="button" id="do-delete-params" class="btn btn-primary"
+                        data-bs-toggle="modal" data-bs-target="#deleteParamsCompletedModal">
                     削除する
                 </button>
             </div>
@@ -718,10 +712,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="assets/simple-keyboard.js"></script>
-<script type="text/javascript" src="lib/complexity_map.js?ver=v0.15.0"></script>
-<script type="text/javascript" src="assets/globals.js?ver=v0.15.0"></script>
-<script type="text/javascript" src="assets/button_events.js?ver=v0.15.0"></script>
-<script type="text/javascript" src="assets/index.js?ver=v0.15.0"></script>
+<script type="text/javascript" src="js/shortcut.js"></script>
+<script type="module" src="js/index.js?ver=v0.17.1"></script>
 </body>
 </html>

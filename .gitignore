@@ -3,10 +3,9 @@
 
 # Node modules
 /node_modules
-/package-lock.json
 
 # Compiled app directory
-/flash-anzan*
+/dist
 
 # desktop.ini
 **/desktop.ini

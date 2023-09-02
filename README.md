@@ -6,24 +6,7 @@ https://technical-study.gitlab.io/flash_anzan_web/
 
 - リポジトリをクローンした方
 
-`index.html` をブラウザで開いても遊ぶことができます．
-
-## Electron アプリのビルド方法
-
-- ターミナルを管理者権限で開く。
-
-- ライブラリをインストールする。
-
-```bash
-$ cd /path/to/flash_anzan_web
-$ npm install
-```
-
-- 次のコマンドを実行する。
-
-```bash
-npm run release
-```
+`index.html` をブラウザで開いて遊べます．
 
 ## その他
 

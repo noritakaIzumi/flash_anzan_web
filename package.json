@@ -1,27 +1,22 @@
 {
   "name": "flash-anzan",
-  "version": "0.15.0",
+  "version": "0.17.1",
   "description": "フラッシュ暗算で脳を鍛えよう",
-  "main": "main.js",
   "dependencies": {
     "bootstrap": "^5.1.3",
-    "electron": "^19.0.7",
-    "electron-icon-builder": "^2.0.1",
-    "electron-packager": "^15.2.0",
+    "bootstrap-icons": "^1.10.5",
+    "howler": "^2.2.3",
     "simple-keyboard": "^3.4.38"
   },
+  "devDependencies": {
+    "sass": "^1.66.1",
+    "vite": "^4.4.9"
+  },
   "scripts": {
-    "start": "electron ./src",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release-mac": "electron-packager ./src flash-anzan --platform=darwin --arch=x64 --icon=./src/image/appicons/icons/mac/icon.icns --overwrite",
-    "release-win": "electron-packager ./src flash-anzan --platform=win32 --arch=x64 --icon=./src/image/appicons/icons/win/icon.ico --overwrite",
-    "import-bootstrap-css": "find node_modules/bootstrap/dist/css -type f -name 'bootstrap.min.css*' | xargs -IXXX cp XXX src/assets/",
-    "import-bootstrap-js": "find node_modules/bootstrap/dist/js -type f -name 'bootstrap.bundle.min.js*' | xargs -IXXX cp XXX src/assets/",
-    "import-bootstrap": "npm run import-bootstrap-css && npm run import-bootstrap-js",
-    "import-simple-keyboard-css": "find node_modules/simple-keyboard/build -type f -name 'index.css' | xargs -IXXX cp XXX src/assets/simple-keyboard.css",
-    "import-simple-keyboard-js": "find node_modules/simple-keyboard/build -type f -name 'index.js' | xargs -IXXX cp XXX src/assets/simple-keyboard.js",
-    "import-simple-keyboard": "npm run import-simple-keyboard-css && npm run import-simple-keyboard-js",
-    "serve": "http-server src"
+    "start": "vite",
+    "build": "vite build --emptyOutDir",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -33,7 +28,7 @@
     "url": "https://gitlab.com/technical-study/flash_anzan_web/issues"
   },
   "homepage": "https://gitlab.com/technical-study/flash_anzan_web/blob/master/README.md",
-  "devDependencies": {
-    "http-server": "^0.12.3"
+  "volta": {
+    "node": "18.17.1"
   }
 }

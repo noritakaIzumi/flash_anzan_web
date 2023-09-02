@@ -5,24 +5,36 @@
 # Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+
+stages:
+  - build
+  - test
+  - deploy
+
+include:
+  - template: Security/SAST-IaC.latest.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+vite:
+  stage: build
+  image: node:latest
+  script:
+    - npm ci
+    - npm run build
+    - test -d dist
+    - ls -la dist
+sast:
+  stage: deploy
 pages:
   stage: deploy
   script:
-  - mkdir .public
-  - cp -r src/* .public
-  - mv .public public
+    - mkdir .public
+    - cp -r src/* .public
+    - mv .public public
   artifacts:
     paths:
-    - public
+      - public
   only:
-  - master
-include:
-- template: Security/SAST-IaC.latest.gitlab-ci.yml
-- template: Security/Secret-Detection.gitlab-ci.yml
-- template: Security/Dependency-Scanning.gitlab-ci.yml
-- template: Security/SAST.gitlab-ci.yml
-stages:
-- test
-- deploy
-sast:
-  stage: deploy
+    - main

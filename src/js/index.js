@@ -1,3 +1,296 @@
+import '../scss/styles.scss'
+import * as bootstrap from 'bootstrap'
+import {Howl} from 'howler';
+import {SimpleKeyboard} from "simple-keyboard";
+import {complexityMap} from "./complexity_map"
+
+/* Global variables */
+
+const modeNames = {
+    addition: "addition",
+    multiplication: "multiplication",
+};
+
+const difficultyMap = {
+    easy: 'easy',
+    normal: 'normal',
+    hard: 'hard',
+};
+
+const audioStatusInnerHtmlMap = {
+    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
+    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
+};
+
+const isMutedMap = {
+    on: 'on',
+    off: 'off',
+};
+
+const audioAttr = {
+    directory: "./sounds",
+    extension: {
+        ogg: 'ogg',
+        wav: 'wav',
+    },
+};
+
+const element = {
+    addition: {
+        digit: document.getElementById("addition-digit"),
+        length: document.getElementById("addition-length"),
+        time: document.getElementById("addition-time"),
+    },
+    multiplication: {
+        digit1: document.getElementById("multiplication-digit-1"),
+        digit2: document.getElementById("multiplication-digit-2"),
+        length: document.getElementById("multiplication-length"),
+        time: document.getElementById("multiplication-time"),
+    },
+    common: {
+        difficulty: document.getElementById('difficulty'),
+        flashRate: document.getElementById("common-flashRate"),
+        offset: document.getElementById("common-offset"),
+        isMuted: document.getElementById("is-muted"),
+        soundExtension: document.getElementById("sound-extension"),
+    },
+};
+
+const param = {
+    addition: {
+        digit: {
+            max: 14,
+            min: 1,
+            default: 1,
+        },
+        length: {
+            max: 30,
+            min: 2,
+            default: 3,
+        },
+        time: {
+            max: 30000,
+            min: 1000,
+            default: 5000,
+        },
+    },
+    multiplication: {
+        digit1: {
+            max: 7,
+            min: 1,
+            default: 1,
+        },
+        digit2: {
+            max: 7,
+            min: 1,
+            default: 1,
+        },
+        length: {
+            max: 30,
+            min: 2,
+            default: 2,
+        },
+        time: {
+            max: 30000,
+            min: 1000,
+            default: 5000,
+        },
+    },
+    common: {
+        difficulty: {
+            default: difficultyMap.easy,
+        },
+        flashRate: {
+            max: 99,
+            min: 1,
+            default: 55,
+        },
+        offset: {
+            max: 500,
+            min: -500,
+            default: 0,
+        },
+        isMuted: {
+            default: false,
+        },
+        soundExtension: {
+            default: audioAttr.extension.wav,
+        },
+    },
+};
+
+const headerMessage = document.getElementById("header-message");
+const questionNumberArea = document.getElementById("question-number-area");
+const calculateArea = document.getElementById('calculate-area');
+const inputAnswerBox = document.getElementById('input-answer-box');
+const noticeArea = document.getElementById('notice-area');
+
+const button = {
+    loadParams: document.getElementById("load-params-button"),
+    doLoadParams: document.getElementById("do-load-params"),
+    saveParams: document.getElementById("save-params-button"),
+    doSaveParams: document.getElementById("do-save-params"),
+    deleteParams: document.getElementById("delete-params-button"),
+    doDeleteParams: document.getElementById("do-delete-params"),
+    start: document.getElementById("start-button"),
+    repeat: document.getElementById("repeat-button"),
+    numberHistory: document.getElementById("number-history-button"),
+    addition: document.getElementById("pills-addition-tab"),
+    subtraction: document.getElementById("pills-subtraction-tab"),
+    multiplication: document.getElementById("pills-multiplication-tab"),
+    // openInputAnswer: document.getElementById('openInputAnswerModal'),
+    closeInputAnswer: document.getElementById('closeInputAnswerModal'),
+    help: document.getElementById('help-button'),
+    openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
+    difficulty: {
+        easy: document.getElementById('difficulty-easy'),
+        normal: document.getElementById('difficulty-normal'),
+        hard: document.getElementById('difficulty-hard'),
+    }
+};
+
+const answerNumber = document.getElementById("answer-number");
+
+// RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
+const audioObj = {
+    beep: new Array(2),
+    tick: new Array(30),
+    answer: new Array(1),
+    correct: new Array(1),
+    incorrect: new Array(1),
+    silence: new Array(1),
+};
+
+const currentMode = document.getElementById("current-mode");
+const isMuted = document.getElementById("is-muted");
+const audioStatus = document.getElementById('audio-status');
+
+const disableConfigTarget = [
+    button.start,
+    button.repeat,
+    button.loadParams,
+    button.saveParams,
+    button.deleteParams
+];
+
+const multiplyFigure = "*";
+
+const numberHistoryDisplay = document.getElementById("number-history-display");
+const numberHistoryDisplayDelimiter = "<br>";
+const numberHistoryString = document.getElementById("number-history-stringify");
+const numberHistoryStringifyDelimiter = "|";
+const answerNumberDisplay = document.getElementById('answer-number-display');
+
+const savedParamsKeyName = "flash_anzan_params";
+
+const modals = {
+    welcome: document.getElementById('welcomeModal'),
+    'params': {
+        'load': {
+            'confirm': document.getElementById('loadParamsConfirmModal'),
+            'complete': document.getElementById('loadParamsCompletedModal'),
+        },
+        'save': {
+            'confirm': document.getElementById('saveParamsConfirmModal'),
+            'complete': document.getElementById('saveParamsCompletedModal'),
+        },
+        'delete': {
+            'confirm': document.getElementById('deleteParamsConfirmModal'),
+            'complete': document.getElementById('deleteParamsCompletedModal'),
+        },
+    },
+    'input_answer': document.getElementById('inputAnswerModal'),
+};
+
+const generateNumbersRetryLimit = 100000;
+
+/* button events */
+
+function doLoadParams() {
+    const modal = document.getElementById('loadParamsCompletedModal');
+    const modalMessage = modal.querySelector('.modal-body > p');
+
+    const loadedParams = localStorage.getItem(savedParamsKeyName);
+    if (!loadedParams) {
+        modalMessage.innerHTML = '設定がありません';
+        return;
+    }
+    modalMessage.innerHTML = '設定を読み込みました';
+
+    const parsedParams = JSON.parse(loadedParams);
+    Object.keys(parsedParams).map(
+        (mode) => {
+            Object.keys(parsedParams[mode]).map(
+                (paramName) => {
+                    element[mode][paramName].value = parsedParams[mode][paramName];
+                });
+        }
+    );
+
+    element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
+    toggleMute();
+    loadAudioObj(element.common.soundExtension.value);
+    // 難易度選択
+    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
+}
+
+function doSaveParams() {
+    const params = {};
+    Object.keys(element).map(
+        (mode) => {
+            params[mode] = {};
+            Object.keys(element[mode]).map(
+                (paramName) => {
+                    params[mode][paramName] = element[mode][paramName].value;
+                });
+        }
+    );
+    localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
+}
+
+function doDeleteParams() {
+    localStorage.clear();
+}
+
+function setSoundExtension(extension) {
+    switch (extension) {
+        case 'ogg':
+            loadAudioObj(audioAttr.extension.ogg);
+            break;
+        case 'wav':
+            loadAudioObj(audioAttr.extension.wav);
+            break;
+    }
+}
+
+function toggleFullscreenMode(full) {
+    if (full === true) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else if (full === false) {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    } else if (!isFullscreen()) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    }
+}
+
+function toggleMute() {
+    if (isMuted.checked || isMuted.value === isMutedMap.on) {
+        isMuted.checked = true;
+        isMuted.value = isMutedMap.on;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
+    } else {
+        isMuted.checked = false;
+        isMuted.value = isMutedMap.off;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
+    }
+}
+
 // TODO: このファイルをクラス化して共通部分をまとめる
 //  switch 文もまとめる
 
@@ -777,6 +1070,10 @@ function flash(config = {}) {
     setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
 }
 
+function repeatFlash() {
+    flash({repeat: true});
+}
+
 function isTouchDevice() {
     return window.ontouchstart === null;
 }
@@ -865,108 +1162,160 @@ function warmUpDisplayArea(timeoutMs) {
     return timeoutMs;
 }
 
-// ページ読み込み時処理
-(() => {
-    loadAudioObj(param.common.soundExtension.default);
-    button.start.addEventListener('click', () => {
-        audioContext.resume().then(() => {
-        });
-    });
-
-    (() => {
-        let timeoutMs = warmUpDisplayArea(2000);
-        const prepareGameFunctions = [
-            setUpInputBox,
-            configureModalFocusing,
-            () => {
-                button.help.disabled = false;
-                button.openCommonMoreConfig.disabled = false;
-                button.loadParams.disabled = false;
-                button.saveParams.disabled = false;
-                button.deleteParams.disabled = false;
-                button.start.disabled = false;
-            },
-            registerShortcuts,
-        ];
-        prepareGameFunctions.map((func) => {
-            setTimeout(func, timeoutMs);
-            timeoutMs += 50;
-        });
-
-        if (isTouchDevice()) {
-            document.getElementById('help-button').style.display = 'none';
-        }
-    })();
-})();
-
 function clearInputAnswerBox() {
     document.getElementById('input-answer-box').value = '';
     document.getElementById('input-answer-box-touch-display').value = '';
     document.getElementById('input-answer-box-touch-actual').value = '';
 }
 
-// タッチデバイスの回答入力
 (() => {
-    let inputs = [];
+    // バージョン番号
+    const version = 'v0.17.1';
+    const warmupDelay = 1000;
 
-    function onKeyPress(button) {
-        if (!button) {
-            return;
-        }
-        const matched = button.match(/\d/g)[0];
-        if (!matched) {
-            return;
-        }
-        inputs.push(matched);
-        let value = '';
-        {
-            const reversedInputs = [...inputs].reverse();
-            let n = 0;
-            for (let i = 0; i < inputs.length; i++) {
-                if (n === 3) {
-                    value = `,${value}`;
-                    n = 0;
+    const setup = () => {
+        const audioContext = new AudioContext();
+
+        // ページ読み込み時処理
+        (() => {
+            loadAudioObj(param.common.soundExtension.default);
+            button.start.addEventListener('click', () => {
+                audioContext.resume().then(() => {
+                });
+            });
+
+            (() => {
+                let timeoutMs = warmUpDisplayArea(warmupDelay);
+                const prepareGameFunctions = [
+                    setUpInputBox,
+                    configureModalFocusing,
+                    () => {
+                        button.help.disabled = false;
+                        button.openCommonMoreConfig.disabled = false;
+                        button.loadParams.disabled = false;
+                        button.saveParams.disabled = false;
+                        button.deleteParams.disabled = false;
+                        button.start.disabled = false;
+                    },
+                    registerShortcuts,
+                ];
+                prepareGameFunctions.map((func) => {
+                    setTimeout(func, timeoutMs);
+                    timeoutMs += 50;
+                });
+
+                if (isTouchDevice()) {
+                    document.getElementById('help-button').style.display = 'none';
                 }
-                value = reversedInputs[i] + value;
-                n++;
+            })();
+        })();
+
+        // タッチデバイスの回答入力
+        (() => {
+            let inputs = [];
+
+            function onKeyPress(button) {
+                if (!button) {
+                    return;
+                }
+                const matched = button.match(/\d/g)[0];
+                if (!matched) {
+                    return;
+                }
+                inputs.push(matched);
+                let value = '';
+                {
+                    const reversedInputs = [...inputs].reverse();
+                    let n = 0;
+                    for (let i = 0; i < inputs.length; i++) {
+                        if (n === 3) {
+                            value = `,${value}`;
+                            n = 0;
+                        }
+                        value = reversedInputs[i] + value;
+                        n++;
+                    }
+                }
+                value = value.replace(/^[0,]+/g, '');
+                document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
+                document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
             }
-        }
-        value = value.replace(/^[0,]+/g, '');
-        document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
-        document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
-    }
 
-    const clearInput = () => {
-        clearInputAnswerBox();
-        inputs = [];
+            const clearInput = () => {
+                clearInputAnswerBox();
+                inputs = [];
+            };
+            Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
+                element.addEventListener('click', clearInput);
+            });
+            modals.input_answer.addEventListener('show.bs.modal', clearInput);
+
+            new SimpleKeyboard({
+                onKeyPress: button => onKeyPress(button),
+                layout: {
+                    default: [
+                        "{numpad7} {numpad8} {numpad9}",
+                        "{numpad4} {numpad5} {numpad6}",
+                        "{numpad1} {numpad2} {numpad3}",
+                        " 0 ",
+                    ],
+                },
+            });
+        })();
+
+        // 回答入力タブ切り替え動作イベントを登録
+        (() => {
+            const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
+            triggerTabs.forEach(element => {
+                const tabTrigger = new bootstrap.Tab(element);
+                element.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    tabTrigger.show();
+                });
+            });
+        })();
+
+        // バージョン番号の表示
+        (() => {
+            document.getElementById('version-number').innerText = version;
+        })();
+
+        // set onclick events in index.html
+        (() => {
+            // フラッシュ操作
+            button.start.addEventListener('click', flash)
+            button.repeat.addEventListener('click', repeatFlash)
+
+            // モード切り替え
+            button.addition.addEventListener('click', () => changeMode(modeNames.addition))
+            // button.subtraction.addEventListener('click', () => changeMode(modeNames.subtraction))
+            button.multiplication.addEventListener('click', () => changeMode(modeNames.multiplication))
+
+            // 難易度切り替え
+            button.difficulty.easy.addEventListener('click', () => {
+                element.common.difficulty.value = 'easy';
+            })
+            button.difficulty.normal.addEventListener('click', () => {
+                element.common.difficulty.value = 'normal';
+            })
+            button.difficulty.hard.addEventListener('click', () => {
+                element.common.difficulty.value = 'hard';
+            })
+
+            // サウンド
+            element.common.isMuted.addEventListener('click', toggleMute)
+            element.common.soundExtension.addEventListener('change', event => setSoundExtension(event.target.value))
+
+            // 出題設定読み込み
+            button.doLoadParams.addEventListener('click', doLoadParams)
+            button.doSaveParams.addEventListener('click', doSaveParams)
+            button.doDeleteParams.addEventListener('click', doDeleteParams)
+        })();
     };
-    Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
-        element.addEventListener('click', clearInput);
-    });
-    modals.input_answer.addEventListener('show.bs.modal', clearInput);
 
-    const Keyboard = window.SimpleKeyboard.default;
-    new Keyboard({
-        onKeyPress: button => onKeyPress(button),
-        layout: {
-            default: [
-                "{numpad7} {numpad8} {numpad9}",
-                "{numpad4} {numpad5} {numpad6}",
-                "{numpad1} {numpad2} {numpad3}",
-                " 0 ",
-            ],
-        },
-    });
-})();
-
-// 回答入力タブ切り替え動作イベントを登録
-(() => {
-    const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
-    triggerTabs.forEach(element => {
-        const tabTrigger = new bootstrap.Tab(element);
-        element.addEventListener('click', (event) => {
-            event.preventDefault();
-            tabTrigger.show();
-        });
-    });
+    (() => {
+        document.querySelector('#welcomeModal .modal-footer > button').addEventListener('click', setup);
+        const welcomeModal = new bootstrap.Modal(modals.welcome, {backdrop: 'static', keyboard: false, focus: true});
+        welcomeModal.show();
+    })();
 })();
