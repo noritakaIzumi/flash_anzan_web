@@ -1,10 +1,14 @@
 version: 1
 frontend:
   phases:
-    commands:
-      build:
+    build:
+      commands:
         - npm install
         - npm run build
+    postBuild:
+      commands:
+        - test -d dist
+        - find dist
   artifacts:
     baseDirectory: dist
     files:
