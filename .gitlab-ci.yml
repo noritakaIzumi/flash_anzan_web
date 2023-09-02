@@ -25,14 +25,17 @@ vite:
     - npm run build
     - test -d dist
     - ls -la dist
+  artifacts:
+    paths:
+      - dist
 sast:
   stage: deploy
 pages:
   stage: deploy
   script:
-    - mkdir .public
-    - cp -r src/* .public
-    - mv .public public
+    - test -d dist
+    - mv -v dist public
+    - test -d public
   artifacts:
     paths:
       - public
