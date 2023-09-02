@@ -24,6 +24,7 @@ vite:
     - npm install
     - npm run build
     - test -d dist
+    - ls -la dist
 sast:
   stage: deploy
 pages:

@@ -8,7 +8,7 @@ frontend:
     postBuild:
       commands:
         - test -d dist
-        - find dist
+        - ls -la dist
   artifacts:
     baseDirectory: dist
     files:
