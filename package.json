@@ -8,17 +8,12 @@
     "simple-keyboard": "^3.4.38"
   },
   "devDependencies": {
+    "sass": "^1.66.1",
     "vite": "^4.4.9"
   },
   "scripts": {
     "start": "vite",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "import-bootstrap-css": "find node_modules/bootstrap/dist/css -type f -name 'bootstrap.min.css*' | xargs -IXXX cp XXX src/assets/",
-    "import-bootstrap-js": "find node_modules/bootstrap/dist/js -type f -name 'bootstrap.bundle.min.js*' | xargs -IXXX cp XXX src/assets/",
-    "import-bootstrap": "npm run import-bootstrap-css && npm run import-bootstrap-js",
-    "import-simple-keyboard-css": "find node_modules/simple-keyboard/build -type f -name 'index.css' | xargs -IXXX cp XXX src/assets/simple-keyboard.css",
-    "import-simple-keyboard-js": "find node_modules/simple-keyboard/build -type f -name 'index.js' | xargs -IXXX cp XXX src/assets/simple-keyboard.js",
-    "import-simple-keyboard": "npm run import-simple-keyboard-css && npm run import-simple-keyboard-js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

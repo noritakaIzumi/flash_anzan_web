@@ -8,6 +8,9 @@ export default defineConfig({
     build: {
         outDir: '../dist'
     },
+    css: {
+        devSourcemap: true,
+    },
     server: {
         port: 8080,
         watch: {

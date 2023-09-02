@@ -1,3 +1,4 @@
+import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {Howl} from 'howler';
 import {SimpleKeyboard} from "simple-keyboard";
