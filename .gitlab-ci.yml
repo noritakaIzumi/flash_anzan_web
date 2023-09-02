@@ -21,7 +21,7 @@ vite:
   stage: build
   image: node:latest
   script:
-    - npm install
+    - npm ci
     - npm run build
     - test -d dist
     - ls -la dist

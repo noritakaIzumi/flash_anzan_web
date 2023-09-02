@@ -3,7 +3,7 @@ frontend:
   phases:
     build:
       commands:
-        - npm install
+        - npm ci
         - npm run build
     postBuild:
       commands:
