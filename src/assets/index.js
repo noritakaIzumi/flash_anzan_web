@@ -1152,6 +1152,9 @@ function clearInputAnswerBox() {
 }
 
 (() => {
+    // バージョン番号
+    const version = 'v0.16.0';
+
     const setup = () => {
         // ページ読み込み時処理
         (() => {
@@ -1251,6 +1254,11 @@ function clearInputAnswerBox() {
                     tabTrigger.show();
                 });
             });
+        })();
+
+        // バージョン番号の表示
+        (() => {
+            document.getElementById('version-number').innerText = version;
         })();
     };
 
