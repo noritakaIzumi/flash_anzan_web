@@ -171,6 +171,7 @@ answerNumberDisplay = document.getElementById('answer-number-display');
 savedParamsKeyName = "flash_anzan_params";
 
 modals = {
+    welcome: document.getElementById('welcomeModal'),
     'params': {
         'load': {
             'confirm': document.getElementById('loadParamsConfirmModal'),
@@ -1150,102 +1151,112 @@ function clearInputAnswerBox() {
     document.getElementById('input-answer-box-touch-actual').value = '';
 }
 
-// ページ読み込み時処理
 (() => {
-    loadAudioObj(param.common.soundExtension.default);
-    button.start.addEventListener('click', () => {
-        audioContext.resume().then(() => {
-        });
-    });
+    const setup = () => {
+        // ページ読み込み時処理
+        (() => {
+            loadAudioObj(param.common.soundExtension.default);
+            button.start.addEventListener('click', () => {
+                audioContext.resume().then(() => {
+                });
+            });
+
+            (() => {
+                let timeoutMs = warmUpDisplayArea(2000);
+                const prepareGameFunctions = [
+                    setUpInputBox,
+                    configureModalFocusing,
+                    () => {
+                        button.help.disabled = false;
+                        button.openCommonMoreConfig.disabled = false;
+                        button.loadParams.disabled = false;
+                        button.saveParams.disabled = false;
+                        button.deleteParams.disabled = false;
+                        button.start.disabled = false;
+                    },
+                    registerShortcuts,
+                ];
+                prepareGameFunctions.map((func) => {
+                    setTimeout(func, timeoutMs);
+                    timeoutMs += 50;
+                });
+
+                if (isTouchDevice()) {
+                    document.getElementById('help-button').style.display = 'none';
+                }
+            })();
+        })();
+
+        // タッチデバイスの回答入力
+        (() => {
+            let inputs = [];
+
+            function onKeyPress(button) {
+                if (!button) {
+                    return;
+                }
+                const matched = button.match(/\d/g)[0];
+                if (!matched) {
+                    return;
+                }
+                inputs.push(matched);
+                let value = '';
+                {
+                    const reversedInputs = [...inputs].reverse();
+                    let n = 0;
+                    for (let i = 0; i < inputs.length; i++) {
+                        if (n === 3) {
+                            value = `,${value}`;
+                            n = 0;
+                        }
+                        value = reversedInputs[i] + value;
+                        n++;
+                    }
+                }
+                value = value.replace(/^[0,]+/g, '');
+                document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
+                document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
+            }
+
+            const clearInput = () => {
+                clearInputAnswerBox();
+                inputs = [];
+            };
+            Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
+                element.addEventListener('click', clearInput);
+            });
+            modals.input_answer.addEventListener('show.bs.modal', clearInput);
+
+            const Keyboard = window.SimpleKeyboard.default;
+            new Keyboard({
+                onKeyPress: button => onKeyPress(button),
+                layout: {
+                    default: [
+                        "{numpad7} {numpad8} {numpad9}",
+                        "{numpad4} {numpad5} {numpad6}",
+                        "{numpad1} {numpad2} {numpad3}",
+                        " 0 ",
+                    ],
+                },
+            });
+        })();
+
+        // 回答入力タブ切り替え動作イベントを登録
+        (() => {
+            const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
+            triggerTabs.forEach(element => {
+                const tabTrigger = new bootstrap.Tab(element);
+                element.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    tabTrigger.show();
+                });
+            });
+        })();
+    };
 
     (() => {
-        let timeoutMs = warmUpDisplayArea(2000);
-        const prepareGameFunctions = [
-            setUpInputBox,
-            configureModalFocusing,
-            () => {
-                button.help.disabled = false;
-                button.openCommonMoreConfig.disabled = false;
-                button.loadParams.disabled = false;
-                button.saveParams.disabled = false;
-                button.deleteParams.disabled = false;
-                button.start.disabled = false;
-            },
-            registerShortcuts,
-        ];
-        prepareGameFunctions.map((func) => {
-            setTimeout(func, timeoutMs);
-            timeoutMs += 50;
-        });
-
-        if (isTouchDevice()) {
-            document.getElementById('help-button').style.display = 'none';
-        }
+        document.querySelector('#welcomeModal .modal-footer > button').addEventListener('click', setup);
+        const welcomeModal = new bootstrap.Modal(modals.welcome, {backdrop: 'static', keyboard: false, focus: true});
+        welcomeModal.show();
     })();
-})();
-
-// タッチデバイスの回答入力
-(() => {
-    let inputs = [];
-
-    function onKeyPress(button) {
-        if (!button) {
-            return;
-        }
-        const matched = button.match(/\d/g)[0];
-        if (!matched) {
-            return;
-        }
-        inputs.push(matched);
-        let value = '';
-        {
-            const reversedInputs = [...inputs].reverse();
-            let n = 0;
-            for (let i = 0; i < inputs.length; i++) {
-                if (n === 3) {
-                    value = `,${value}`;
-                    n = 0;
-                }
-                value = reversedInputs[i] + value;
-                n++;
-            }
-        }
-        value = value.replace(/^[0,]+/g, '');
-        document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
-        document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
-    }
-
-    const clearInput = () => {
-        clearInputAnswerBox();
-        inputs = [];
-    };
-    Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
-        element.addEventListener('click', clearInput);
-    });
-    modals.input_answer.addEventListener('show.bs.modal', clearInput);
-
-    const Keyboard = window.SimpleKeyboard.default;
-    new Keyboard({
-        onKeyPress: button => onKeyPress(button),
-        layout: {
-            default: [
-                "{numpad7} {numpad8} {numpad9}",
-                "{numpad4} {numpad5} {numpad6}",
-                "{numpad1} {numpad2} {numpad3}",
-                " 0 ",
-            ],
-        },
-    });
-})();
-
-// 回答入力タブ切り替え動作イベントを登録
-(() => {
-    const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
-    triggerTabs.forEach(element => {
-        const tabTrigger = new bootstrap.Tab(element);
-        element.addEventListener('click', (event) => {
-            event.preventDefault();
-            tabTrigger.show();
-        });
-    });
 })();
