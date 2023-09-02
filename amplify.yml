@@ -1,6 +1,11 @@
 version: 1
 frontend:
+  phases:
+    commands:
+      build:
+        - npm install
+        - npm run build
   artifacts:
-    baseDirectory: src
+    baseDirectory: dist
     files:
       - '**/*'
