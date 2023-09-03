@@ -5,7 +5,7 @@ import {difficultyMap, generateNumbersRetryLimit, modeNames} from "./globals";
 
 /**
  * 出題数字を作成する。
- * @param {number} digitCount 桁数
+ * @param {number|number[]} digitCount 桁数
  * @param {number} length 口数
  * @param {string} difficulty 難易度
  * @param {string} mode モード
@@ -78,6 +78,13 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 const complexity = getCalculateComplexity(carries, digitCount[0] * digitCount[1]);
                 switch (difficulty) {
                     case difficultyMap.easy:
+                        // 1 桁 × 1 桁 2 口 easy の閾値が 0 のため
+                        if (
+                            complexityMapKey === '1-1-2' &&
+                            complexity <= complexityMap.multiplication[complexityMapKey][difficulty]
+                        ) {
+                            return numbers;
+                        }
                         if (complexity < complexityMap.multiplication[complexityMapKey][difficulty]) {
                             return numbers;
                         }
