@@ -24,9 +24,11 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
     }
 
     function getRandomInt(digitCount, previousNum = null, digitAllDifferent = false) {
-        const previousNumDigits = String(previousNum).split('').reverse().map((n) => {
-            return Number(n);
-        });
+        const previousNumDigits = previousNum === null
+            ? Array.from({length: digitCount}, () => null)
+            : String(previousNum).split('').reverse().map((n) => {
+                return Number(n);
+            });
         let digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))];
         let i = 0;
         while (i < digitCount - 1) {
@@ -34,7 +36,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
             if (digitCount <= 9 && digitAllDifferent) {
                 digit = getRandomDigit(digits.concat(previousNumDigits[i]));
             } else {
-                digit = getRandomDigit();
+                digit = getRandomDigit([previousNumDigits[i]]);
             }
             digits.push(digit);
             i++;
@@ -103,7 +105,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                     case difficultyMap.easy: {
                         for (let i = 0; i < length; i++) {
                             while (true) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
+                                const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
                                 abacus = new Abacus(abacus.value).add(number);
 
                                 if (abacus.carry <= digitCount) {
@@ -123,7 +125,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                     }
                     case difficultyMap.normal: {
                         for (let i = 0; i < length; i++) {
-                            const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
+                            const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
                             abacus = new Abacus(abacus.value).add(number);
                             numbers.push(number);
                             carries.push(abacus.carry);
@@ -144,10 +146,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                             let bestNumber;
                             let bestCarry = -1;
                             while (true) {
-                                let number = getRandomInt(digitCount);
-                                if (number === numbers.slice(-1)[0]) {
-                                    continue;
-                                }
+                                const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, false);
 
                                 tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
@@ -162,10 +161,11 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                                         getIntRetry++;
                                         continue;
                                     }
-                                    number = bestNumber;
                                     abacus = abacus.add(bestNumber);
+                                    numbers.push(bestNumber);
+                                    carries.push(abacus.carry);
+                                    break;
                                 }
-
                                 numbers.push(number);
                                 carries.push(abacus.carry);
                                 break;
