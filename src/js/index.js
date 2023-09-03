@@ -12,7 +12,8 @@ import {
     audioStatusInnerHtmlMap,
     button,
     calculateArea,
-    currentMode, difficultyMap,
+    currentMode,
+    difficultyMap,
     disableConfigTarget,
     element,
     headerMessage,
@@ -20,14 +21,18 @@ import {
     isMuted,
     isMutedMap,
     modals,
-    modeNames, multiplyFigure,
-    noticeArea, numberHistoryDisplay, numberHistoryDisplayDelimiter,
+    modeNames,
+    multiplyFigure,
+    noticeArea,
+    numberHistoryDisplay,
+    numberHistoryDisplayDelimiter,
     numberHistoryString,
     numberHistoryStringifyDelimiter,
     param,
     questionNumberArea,
     savedParamsKeyName
 } from "./globals";
+import {getTime} from "./time";
 
 /* button events */
 
@@ -295,7 +300,8 @@ function muteIsOn() {
 }
 
 function flash(config = {}) {
-    // Functions
+    const measuredTime = {start: 0, end: 0};
+
     /**
      * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
      * @param {string[]} fmtNumbers 整形された数字の配列
@@ -317,12 +323,8 @@ function flash(config = {}) {
     function generateSoundSuite() {
         let sounds = [];
         for (let i = 0; i < requestParam.length; ++i) {
-            if (!muteIsOn()) {
-                sounds.push(audioObj.tick[i]);
-            } else {
-                sounds.push(audioObj.silence[0]);
-            }
-            sounds.push(audioObj.silence[0]);
+            sounds.push(muteIsOn() ? null : audioObj.tick[i]);
+            sounds.push(null);
         }
         return sounds;
     }
@@ -491,76 +493,84 @@ function flash(config = {}) {
      * 表示用に整形した数字の配列
      * @type {string[]}
      */
-    let localeStringNumbers;
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            localeStringNumbers = numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
-            break;
-        case modeNames.addition:
-        default:
-            localeStringNumbers = numbers.map((n) => n.toLocaleString());
-    }
+    const localeStringNumbers = (() => {
+        switch (currentMode.innerText) {
+            case modeNames.multiplication:
+                return numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
+            case modeNames.addition:
+                return numbers.map((n) => n.toLocaleString());
+            default:
+                throw new RangeError('invalid mode')
+        }
+    })();
 
-    // Ref: http://yomotsu.net/blog/2013/01/05/fps.html
-    // noinspection JSUnresolvedVariable
-    const now = window.performance && (
-        performance.now ||
-        performance.mozNow ||
-        performance.msNow ||
-        performance.oNow ||
-        performance.webkitNow
-    );
-    const getTime = function () {
-        return (now && now.call(performance)) || (new Date().getTime());
+    const getFlashSuite = () => {
+        const result = Array.from({length: requestParam.length * 2}, () => {
+            return {
+                toggleNumberFunction: () => {
+                },
+                playTickFunction: () => {
+                },
+                _toggleTiming: 0,
+            };
+        })
+
+        const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
+        for (const [i, toggleNumber] of toggleNumberSuite.entries()) {
+            if (i === 0) {
+                result[i].toggleNumberFunction = () => {
+                    measuredTime.start = getTime();
+                    questionNumberArea.innerText = toggleNumber;
+                }
+            } else if (i === toggleNumberSuite.length - 1) {
+                result[i].toggleNumberFunction = () => {
+                    questionNumberArea.innerText = toggleNumber;
+                    measuredTime.end = getTime();
+                }
+            } else {
+                result[i].toggleNumberFunction = () => {
+                    questionNumberArea.innerText = toggleNumber;
+                };
+            }
+        }
+
+        const soundSuite = generateSoundSuite();
+        for (const [i, sound] of soundSuite.entries()) {
+            result[i].playTickFunction = sound === null
+                ? () => {
+                }
+                : () => {
+                    sound.play();
+                };
+        }
+
+        for (let i = 0; i < result.length; i++) {
+            result[i]._toggleTiming =
+                requestParam.time
+                * (Math.floor(i / 2) * 100 + requestParam.flashRate * (i % 2))
+                / ((requestParam.length - 1) * 100 + requestParam.flashRate)
+            ;
+        }
+
+        return result;
     };
 
-    // setFlashTimeOut に設定する関数を作成する
-    const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
-    const soundSuite = generateSoundSuite();
+    let playBeepFunctions = (() => {
+        const result = [];
 
-    let measuredTime = {start: 0, end: 0};
-    let toggleNumberFunctions = [];
-    toggleNumberFunctions.push(() => {
-        measuredTime.start = getTime();
-        questionNumberArea.innerText = toggleNumberSuite[0];
-    });
-    for (let i = 1; i < toggleNumberSuite.length - 1; i++) {
-        toggleNumberFunctions.push(() => {
-            questionNumberArea.innerText = toggleNumberSuite[i];
+        audioObj.beep.map((a) => {
+            if (!muteIsOn()) {
+                result.push(() => {
+                    a.play();
+                });
+            } else {
+                result.push(() => {
+                });
+            }
         });
-    }
-    toggleNumberFunctions.push(() => {
-        questionNumberArea.innerText = toggleNumberSuite.slice(-1)[0];
-        measuredTime.end = getTime();
-    });
 
-    const playTickFunctions = [];
-    for (let i = 0; i < soundSuite.length; i++) {
-        playTickFunctions.push(() => {
-            soundSuite[i].play();
-        });
-    }
-
-    const _toggleTimings = [];
-    for (let i = 0; i < soundSuite.length; i++) {
-        _toggleTimings.push(
-            requestParam.time
-            * (Math.floor(i / 2) * 100 + requestParam.flashRate * (i % 2))
-            / ((requestParam.length - 1) * 100 + requestParam.flashRate)
-        );
-    }
-
-    let playBeepFunctions = [];
-    audioObj.beep.map((a) => {
-        if (!muteIsOn()) {
-            playBeepFunctions.push(() => {
-                a.play();
-            });
-        } else {
-            playBeepFunctions.push(() => {
-            });
-        }
-    });
+        return result;
+    })();
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
@@ -605,14 +615,15 @@ function flash(config = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
+    const flashSuite = getFlashSuite();
     setTimeout(() => {
         audioObj.silence[0].play();
     }, 0);
     setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset);
     setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset);
-    for (let i = 0; i < toggleNumberSuite.length; i++) {
-        setFlashTimeOut(playTickFunctions[i], flashStartTiming + _toggleTimings[i] - requestParam.offset);
-        setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + _toggleTimings[i]);
+    for (let i = 0; i < flashSuite.length; i++) {
+        setFlashTimeOut(flashSuite[i].playTickFunction, flashStartTiming + flashSuite[i]._toggleTiming - requestParam.offset);
+        setFlashTimeOut(flashSuite[i].toggleNumberFunction, flashStartTiming + flashSuite[i]._toggleTiming);
     }
     setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
 }
