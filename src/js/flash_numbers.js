@@ -44,12 +44,15 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
 
     let retry = 0;
     while (retry < generateNumbersRetryLimit) {
+        // そろばん
+        let abacus = new Abacus();
+        // 出題数字
         let numbers = [];
+        // 繰り上がり回数
+        let carries = [];
 
         switch (mode) {
             case modeNames.multiplication: {
-                let abacus = new Abacus();
-                let carries = [];
                 for (let i = 0; i < length; i++) {
                     const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
                     const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
@@ -98,8 +101,6 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 const complexityMapKey = `${digitCount}-${length}`;
                 switch (difficulty) {
                     case difficultyMap.easy: {
-                        let abacus = new Abacus();
-                        let carries = [];
                         for (let i = 0; i < length; i++) {
                             while (true) {
                                 const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
@@ -113,15 +114,14 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                             }
                         }
 
-                        if (getCalculateComplexity(carries.slice(1), digitCount) < complexityMap.addition[complexityMapKey][difficulty]) {
+                        const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        if (complexity < complexityMap.addition[complexityMapKey][difficulty]) {
                             return numbers;
                         }
 
                         break;
                     }
                     case difficultyMap.normal: {
-                        let abacus = new Abacus();
-                        let carries = [];
                         for (let i = 0; i < length; i++) {
                             const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
                             abacus = new Abacus(abacus.value).add(number);
@@ -138,8 +138,6 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     case difficultyMap.hard: {
-                        let abacus = new Abacus();
-                        let carries = [];
                         for (let i = 0; i < length; i++) {
                             let getIntRetry = 0;
                             while (true) {
@@ -161,7 +159,8 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                             }
                         }
 
-                        if (getCalculateComplexity(carries.slice(1), digitCount) >= complexityMap.addition[complexityMapKey][difficulty]) {
+                        const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        if (complexity >= complexityMap.addition[complexityMapKey][difficulty]) {
                             return numbers;
                         }
 
