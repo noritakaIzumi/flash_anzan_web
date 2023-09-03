@@ -9,7 +9,7 @@ import {difficultyMap, generateNumbersRetryLimit, modeNames} from "./globals";
  * @param {number} length 口数
  * @param {string} difficulty 難易度
  * @param {string} mode モード
- * @returns {*[]|*}
+ * @returns {number[]}
  */
 export function generateNumbers(digitCount, length, difficulty, mode) {
     function getRandomDigit(excepts = []) {
@@ -44,9 +44,10 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
 
     let retry = 0;
     while (retry < generateNumbersRetryLimit) {
+        let numbers = [];
+
         switch (mode) {
             case modeNames.multiplication: {
-                let numbers = [];
                 let abacus = new Abacus();
                 let carries = [];
                 for (let i = 0; i < length; i++) {
@@ -88,7 +89,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         }
                         break;
                     default:
-                        return [];
+                        throw new RangeError('invalid difficulty');
                 }
 
                 break;
@@ -97,7 +98,6 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 const complexityMapKey = `${digitCount}-${length}`;
                 switch (difficulty) {
                     case difficultyMap.easy: {
-                        let numbers = [];
                         let abacus = new Abacus();
                         let carries = [];
                         for (let i = 0; i < length; i++) {
@@ -120,7 +120,6 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     case difficultyMap.normal: {
-                        let numbers = [];
                         let abacus = new Abacus();
                         let carries = [];
                         for (let i = 0; i < length; i++) {
@@ -139,7 +138,6 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     case difficultyMap.hard: {
-                        let numbers = [];
                         let abacus = new Abacus();
                         let carries = [];
                         for (let i = 0; i < length; i++) {
@@ -170,13 +168,14 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     default:
-                        return [];
+                        throw new RangeError('invalid difficulty');
                 }
                 break;
             default:
-                return [];
+                throw new RangeError('invalid mode');
         }
         retry++;
     }
-    return numbers;
+
+    throw new Error('failed to generate numbers');
 }
