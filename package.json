@@ -9,7 +9,10 @@
     "simple-keyboard": "^3.4.38"
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.6",
+    "@types/howler": "^2.2.8",
     "sass": "^1.66.1",
+    "typescript": "^5.2.2",
     "vite": "^4.4.9"
   },
   "scripts": {
