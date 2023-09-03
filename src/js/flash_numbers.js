@@ -47,7 +47,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
     let retry = 0;
     while (retry < generateNumbersRetryLimit) {
         // そろばん
-        let abacus = new Abacus();
+        let abacus = new Abacus(0);
         // 出題数字
         let numbers = [];
         // 繰り上がり回数
@@ -103,9 +103,12 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 const complexityMapKey = `${digitCount}-${length}`;
                 switch (difficulty) {
                     case difficultyMap.easy: {
+                        let tempAbacusValue;
                         for (let i = 0; i < length; i++) {
                             while (true) {
                                 const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
+
+                                tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
                                 if (abacus.carry <= digitCount) {
@@ -113,6 +116,8 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                                     carries.push(abacus.carry);
                                     break;
                                 }
+
+                                abacus = new Abacus(tempAbacusValue);
                             }
                         }
 
@@ -156,16 +161,20 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                                         bestNumber = number;
                                         bestCarry = abacus.carry;
                                     }
+
                                     abacus = new Abacus(tempAbacusValue);
+
                                     if (getIntRetry < 100) {
                                         getIntRetry++;
                                         continue;
                                     }
+
                                     abacus = abacus.add(bestNumber);
                                     numbers.push(bestNumber);
                                     carries.push(abacus.carry);
                                     break;
                                 }
+
                                 numbers.push(number);
                                 carries.push(abacus.carry);
                                 break;
