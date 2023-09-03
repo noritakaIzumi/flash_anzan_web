@@ -138,6 +138,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     case difficultyMap.hard: {
+                        let tempAbacusValue;
                         for (let i = 0; i < length; i++) {
                             let getIntRetry = 0;
                             while (true) {
@@ -146,9 +147,11 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                                     continue;
                                 }
 
+                                tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
                                 if (i >= 1 && abacus.carry < digitCount && getIntRetry < 100) {
+                                    abacus = new Abacus(tempAbacusValue);
                                     getIntRetry++;
                                     continue;
                                 }
