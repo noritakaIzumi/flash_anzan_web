@@ -2,207 +2,32 @@ import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {Howl} from 'howler';
 import {SimpleKeyboard} from "simple-keyboard";
-import {complexityMap} from "./complexity_map"
-
-/* Global variables */
-
-const modeNames = {
-    addition: "addition",
-    multiplication: "multiplication",
-};
-
-const difficultyMap = {
-    easy: 'easy',
-    normal: 'normal',
-    hard: 'hard',
-};
-
-const audioStatusInnerHtmlMap = {
-    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
-    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
-};
-
-const isMutedMap = {
-    on: 'on',
-    off: 'off',
-};
-
-const audioAttr = {
-    directory: "./sounds",
-    extension: {
-        ogg: 'ogg',
-        wav: 'wav',
-    },
-};
-
-const element = {
-    addition: {
-        digit: document.getElementById("addition-digit"),
-        length: document.getElementById("addition-length"),
-        time: document.getElementById("addition-time"),
-    },
-    multiplication: {
-        digit1: document.getElementById("multiplication-digit-1"),
-        digit2: document.getElementById("multiplication-digit-2"),
-        length: document.getElementById("multiplication-length"),
-        time: document.getElementById("multiplication-time"),
-    },
-    common: {
-        difficulty: document.getElementById('difficulty'),
-        flashRate: document.getElementById("common-flashRate"),
-        offset: document.getElementById("common-offset"),
-        isMuted: document.getElementById("is-muted"),
-        soundExtension: document.getElementById("sound-extension"),
-    },
-};
-
-const param = {
-    addition: {
-        digit: {
-            max: 14,
-            min: 1,
-            default: 1,
-        },
-        length: {
-            max: 30,
-            min: 2,
-            default: 3,
-        },
-        time: {
-            max: 30000,
-            min: 1000,
-            default: 5000,
-        },
-    },
-    multiplication: {
-        digit1: {
-            max: 7,
-            min: 1,
-            default: 1,
-        },
-        digit2: {
-            max: 7,
-            min: 1,
-            default: 1,
-        },
-        length: {
-            max: 30,
-            min: 2,
-            default: 2,
-        },
-        time: {
-            max: 30000,
-            min: 1000,
-            default: 5000,
-        },
-    },
-    common: {
-        difficulty: {
-            default: difficultyMap.easy,
-        },
-        flashRate: {
-            max: 99,
-            min: 1,
-            default: 55,
-        },
-        offset: {
-            max: 500,
-            min: -500,
-            default: 0,
-        },
-        isMuted: {
-            default: false,
-        },
-        soundExtension: {
-            default: audioAttr.extension.wav,
-        },
-    },
-};
-
-const headerMessage = document.getElementById("header-message");
-const questionNumberArea = document.getElementById("question-number-area");
-const calculateArea = document.getElementById('calculate-area');
-const inputAnswerBox = document.getElementById('input-answer-box');
-const noticeArea = document.getElementById('notice-area');
-
-const button = {
-    loadParams: document.getElementById("load-params-button"),
-    doLoadParams: document.getElementById("do-load-params"),
-    saveParams: document.getElementById("save-params-button"),
-    doSaveParams: document.getElementById("do-save-params"),
-    deleteParams: document.getElementById("delete-params-button"),
-    doDeleteParams: document.getElementById("do-delete-params"),
-    start: document.getElementById("start-button"),
-    repeat: document.getElementById("repeat-button"),
-    numberHistory: document.getElementById("number-history-button"),
-    addition: document.getElementById("pills-addition-tab"),
-    subtraction: document.getElementById("pills-subtraction-tab"),
-    multiplication: document.getElementById("pills-multiplication-tab"),
-    // openInputAnswer: document.getElementById('openInputAnswerModal'),
-    closeInputAnswer: document.getElementById('closeInputAnswerModal'),
-    help: document.getElementById('help-button'),
-    openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
-    difficulty: {
-        easy: document.getElementById('difficulty-easy'),
-        normal: document.getElementById('difficulty-normal'),
-        hard: document.getElementById('difficulty-hard'),
-    }
-};
-
-const answerNumber = document.getElementById("answer-number");
-
-// RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
-const audioObj = {
-    beep: new Array(2),
-    tick: new Array(30),
-    answer: new Array(1),
-    correct: new Array(1),
-    incorrect: new Array(1),
-    silence: new Array(1),
-};
-
-const currentMode = document.getElementById("current-mode");
-const isMuted = document.getElementById("is-muted");
-const audioStatus = document.getElementById('audio-status');
-
-const disableConfigTarget = [
-    button.start,
-    button.repeat,
-    button.loadParams,
-    button.saveParams,
-    button.deleteParams
-];
-
-const multiplyFigure = "*";
-
-const numberHistoryDisplay = document.getElementById("number-history-display");
-const numberHistoryDisplayDelimiter = "<br>";
-const numberHistoryString = document.getElementById("number-history-stringify");
-const numberHistoryStringifyDelimiter = "|";
-const answerNumberDisplay = document.getElementById('answer-number-display');
-
-const savedParamsKeyName = "flash_anzan_params";
-
-const modals = {
-    welcome: document.getElementById('welcomeModal'),
-    'params': {
-        'load': {
-            'confirm': document.getElementById('loadParamsConfirmModal'),
-            'complete': document.getElementById('loadParamsCompletedModal'),
-        },
-        'save': {
-            'confirm': document.getElementById('saveParamsConfirmModal'),
-            'complete': document.getElementById('saveParamsCompletedModal'),
-        },
-        'delete': {
-            'confirm': document.getElementById('deleteParamsConfirmModal'),
-            'complete': document.getElementById('deleteParamsCompletedModal'),
-        },
-    },
-    'input_answer': document.getElementById('inputAnswerModal'),
-};
-
-const generateNumbersRetryLimit = 100000;
+import {generateNumbers} from "./flash_numbers";
+import {
+    answerNumber,
+    answerNumberDisplay,
+    audioAttr,
+    audioObj,
+    audioStatus,
+    audioStatusInnerHtmlMap,
+    button,
+    calculateArea,
+    currentMode, difficultyMap,
+    disableConfigTarget,
+    element,
+    headerMessage,
+    inputAnswerBox,
+    isMuted,
+    isMutedMap,
+    modals,
+    modeNames, multiplyFigure,
+    noticeArea, numberHistoryDisplay, numberHistoryDisplayDelimiter,
+    numberHistoryString,
+    numberHistoryStringifyDelimiter,
+    param,
+    questionNumberArea,
+    savedParamsKeyName
+} from "./globals";
 
 /* button events */
 
@@ -472,183 +297,6 @@ function muteIsOn() {
 function flash(config = {}) {
     // Functions
     /**
-     * 出題数字を作成する。
-     * @param {number} digitCount 桁数
-     * @param {number} length 口数
-     * @param {string} difficulty 難易度
-     * @returns {*[]|*}
-     */
-    function generateNumbers(digitCount, length, difficulty) {
-        function getRandomDigit(excepts = []) {
-            const d = [];
-            for (let i = 0; i < 10; i++) {
-                if (excepts.indexOf(i) >= 0) {
-                    continue;
-                }
-                d.push(i);
-            }
-            return d[Math.floor(Math.random() * d.length)];
-        }
-
-        function getRandomInt(digitCount, previousNum = null, digitAllDifferent = false) {
-            const previousNumDigits = String(previousNum).split('').reverse().map((n) => {
-                return Number(n);
-            });
-            let digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))];
-            let i = 0;
-            while (i < digitCount - 1) {
-                let digit = null;
-                if (digitCount <= 9 && digitAllDifferent) {
-                    digit = getRandomDigit(digits.concat(previousNumDigits[i]));
-                } else {
-                    digit = getRandomDigit();
-                }
-                digits.push(digit);
-                i++;
-            }
-            return Number(String(digits[0]) + digits.slice(1).reverse().join(''));
-        }
-
-        let retry = 0;
-        while (retry < generateNumbersRetryLimit) {
-            switch (currentMode.innerText) {
-                case modeNames.multiplication: {
-                    let numbers = [];
-                    let abacus = new Abacus();
-                    let carries = [];
-                    for (let i = 0; i < length; i++) {
-                        const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
-                        const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
-                        const digits1 = String(number1).split('').reverse().map((n) => {
-                            return Number(n);
-                        });
-                        const digits2 = String(number2).split('').reverse().map((n) => {
-                            return Number(n);
-                        });
-                        for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
-                            for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
-                                abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2));
-                            }
-                        }
-                        numbers.push([number1, number2]);
-                        carries.push(abacus.carry);
-                        abacus = new Abacus(abacus.value);
-                    }
-
-                    const complexityMapKey = `${digitCount[0]}-${digitCount[1]}-${length}`;
-                    const complexity = getCalculateComplexity(carries, digitCount[0] * digitCount[1]);
-                    switch (difficulty) {
-                        case difficultyMap.easy:
-                            if (complexity < complexityMap.multiplication[complexityMapKey][difficulty]) {
-                                return numbers;
-                            }
-                            break;
-                        case difficultyMap.normal:
-                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficultyMap.easy]
-                                && complexity < complexityMap.multiplication[complexityMapKey][difficultyMap.hard]) {
-                                return numbers;
-                            }
-                            break;
-                        case difficultyMap.hard:
-                            if (complexity >= complexityMap.multiplication[complexityMapKey][difficulty]) {
-                                return numbers;
-                            }
-                            break;
-                        default:
-                            return [];
-                    }
-
-                    break;
-                }
-                case modeNames.addition:
-                    const complexityMapKey = `${digitCount}-${length}`;
-                    switch (difficulty) {
-                        case difficultyMap.easy: {
-                            let numbers = [];
-                            let abacus = new Abacus();
-                            let carries = [];
-                            for (let i = 0; i < length; i++) {
-                                while (true) {
-                                    const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
-                                    abacus = new Abacus(abacus.value).add(number);
-
-                                    if (abacus.carry <= digitCount) {
-                                        numbers.push(number);
-                                        carries.push(abacus.carry);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (getCalculateComplexity(carries.slice(1), digitCount) < complexityMap.addition[complexityMapKey][difficulty]) {
-                                return numbers;
-                            }
-
-                            break;
-                        }
-                        case difficultyMap.normal: {
-                            let numbers = [];
-                            let abacus = new Abacus();
-                            let carries = [];
-                            for (let i = 0; i < length; i++) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1)[0], true);
-                                abacus = new Abacus(abacus.value).add(number);
-                                numbers.push(number);
-                                carries.push(abacus.carry);
-                            }
-
-                            const complexity = getCalculateComplexity(carries.slice(1), digitCount);
-                            if (complexity >= complexityMap.addition[complexityMapKey][difficultyMap.easy]
-                                && complexity < complexityMap.addition[complexityMapKey][difficultyMap.hard]) {
-                                return numbers;
-                            }
-
-                            break;
-                        }
-                        case difficultyMap.hard: {
-                            let numbers = [];
-                            let abacus = new Abacus();
-                            let carries = [];
-                            for (let i = 0; i < length; i++) {
-                                let getIntRetry = 0;
-                                while (true) {
-                                    const number = getRandomInt(digitCount);
-                                    if (number === numbers.slice(-1)[0]) {
-                                        continue;
-                                    }
-
-                                    abacus = new Abacus(abacus.value).add(number);
-
-                                    if (i >= 1 && abacus.carry < digitCount && getIntRetry < 100) {
-                                        getIntRetry++;
-                                        continue;
-                                    }
-
-                                    numbers.push(number);
-                                    carries.push(abacus.carry);
-                                    break;
-                                }
-                            }
-
-                            if (getCalculateComplexity(carries.slice(1), digitCount) >= complexityMap.addition[complexityMapKey][difficulty]) {
-                                return numbers;
-                            }
-
-                            break;
-                        }
-                        default:
-                            return [];
-                    }
-                    break;
-                default:
-                    return [];
-            }
-            retry++;
-        }
-        return numbers;
-    }
-
-    /**
      * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
      * @param {string[]} fmtNumbers 整形された数字の配列
      * @returns {string[]} 点滅も含めた数字の表示順の配列
@@ -795,108 +443,6 @@ function flash(config = {}) {
         })();
     }
 
-    /**
-     * 平均を求める。
-     * @param {number[]} data
-     * @returns {number}
-     */
-    function average(data) {
-        let sum = 0;
-        for (let i = 0; i < data.length; ++i) {
-            sum += data[i];
-        }
-        return sum / data.length;
-    }
-
-    /**
-     * 標準偏差を求める。
-     * @param {number[]} data
-     * @returns {number}
-     */
-    function standard_deviation(data) {
-        function variance(data) {
-            const ave = average(data);
-            let variance = 0;
-            for (let i = 0; i < data.length; i++) {
-                variance += Math.pow(data[i] - ave, 2);
-            }
-            return variance / data.length;
-        }
-
-        return Math.sqrt(variance(data));
-    }
-
-    class AbacusDigit {
-        constructor(value = 0, five = 0, one = 0) {
-            this.value = value;
-            this.five = five;
-            this.one = one;
-        }
-
-        static getInstance() {
-            return new AbacusDigit();
-        }
-    }
-
-    /**
-     * そろばんの珠を管理するクラス。
-     */
-    class Abacus {
-        constructor(n = 0) {
-            this.digits = Array(String(n).length).fill(AbacusDigit.getInstance());
-            this.value = 0;
-            this.carry = 0;
-            this.add(n);
-        }
-
-        updateBeads(num) {
-            const numArr = String(num).split('').map((d) => {
-                return Number(d);
-            });
-            for (let i = numArr.length - 1; i >= 0; i--) {
-                const d = numArr.shift();
-                if (d === 0) {
-                    continue;
-                }
-
-                if (this.digits[i] === undefined) {
-                    this.digits[i] = AbacusDigit.getInstance();
-                }
-
-                const beforeDigit = Object.assign({}, this.digits[i]);
-                let newVal = this.digits[i].value + d;
-                if (newVal >= 10) {
-                    newVal -= 10;
-                    this.updateBeads(Math.pow(10, i + 1));
-                    this.carry++;
-                }
-                this.digits[i] = new AbacusDigit(newVal, Math.floor(newVal / 5), newVal % 5);
-                if ((this.digits[i].five - beforeDigit.five) * (this.digits[i].one - beforeDigit.one) < 0) {
-                    this.carry++;
-                }
-            }
-        }
-
-        add(num) {
-            this.updateBeads(num);
-            this.value += num;
-            return this;
-        }
-    }
-
-    /**
-     * 計算の複雑度を求める（繰り上がり回数などから算出）。
-     * @param carries
-     * @param digit
-     * @returns {number}
-     */
-    function getCalculateComplexity(carries, digit) {
-        carries = carries.map((c) => {
-            return c / digit;
-        });
-        return average(carries) + standard_deviation(carries) * 0.25;
-    }
-
     // ここからフラッシュ出題の処理
     // 設定を取得する
     let requestParam = getCurrentParam();
@@ -906,6 +452,7 @@ function flash(config = {}) {
     element.common.offset.value = requestParam.offset;
 
     // 出題数字を生成、または前回の出題から読み込む
+    const mode = currentMode.innerText;
     let numbers;
     let numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter);
     let digitIsSame;
@@ -934,10 +481,10 @@ function flash(config = {}) {
         } else if (requestParam.length < numberHistory.length) {
             numbers = numberHistory.slice(0, requestParam.length);
         } else {
-            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
+            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, mode));
         }
     } else {
-        numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty);
+        numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, mode);
     }
 
     /**
