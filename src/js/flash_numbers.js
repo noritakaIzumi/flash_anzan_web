@@ -141,8 +141,10 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         let tempAbacusValue;
                         for (let i = 0; i < length; i++) {
                             let getIntRetry = 0;
+                            let bestNumber;
+                            let bestCarry = -1;
                             while (true) {
-                                const number = getRandomInt(digitCount);
+                                let number = getRandomInt(digitCount);
                                 if (number === numbers.slice(-1)[0]) {
                                     continue;
                                 }
@@ -150,10 +152,18 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                                 tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
-                                if (i >= 1 && abacus.carry < digitCount && getIntRetry < 100) {
+                                if (i >= 1 && abacus.carry < digitCount) {
+                                    if (abacus.carry > bestCarry) {
+                                        bestNumber = number;
+                                        bestCarry = abacus.carry;
+                                    }
                                     abacus = new Abacus(tempAbacusValue);
-                                    getIntRetry++;
-                                    continue;
+                                    if (getIntRetry < 100) {
+                                        getIntRetry++;
+                                        continue;
+                                    }
+                                    number = bestNumber;
+                                    abacus = abacus.add(bestNumber);
                                 }
 
                                 numbers.push(number);
