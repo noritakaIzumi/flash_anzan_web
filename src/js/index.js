@@ -300,110 +300,83 @@ function muteIsOn() {
     return isMuted.checked;
 }
 
+/**
+ * ボタンを無効化する。
+ */
+function disableHtmlButtons() {
+    disableConfigTarget.map((element) => element.disabled = true);
+}
+
+/**
+ * ボタンを有効化する。
+ */
+function enableHtmlButtons() {
+    disableConfigTarget.map((element) => element.disabled = false);
+}
+
 function flash(config = {}) {
     const measuredTime = {start: 0, end: 0};
-
-    /**
-     * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
-     * @param {string[]} fmtNumbers 整形された数字の配列
-     * @returns {string[]} 点滅も含めた数字の表示順の配列
-     */
-    function generateToggleNumberSuite(fmtNumbers) {
-        let toggleNumberSuite = [];
-        for (let i = 0; i < fmtNumbers.length; i++) {
-            toggleNumberSuite.push(fmtNumbers[i]);
-            toggleNumberSuite.push("");
-        }
-        return toggleNumberSuite;
-    }
-
-    /**
-     * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
-     * @returns {*[]}
-     */
-    function generateSoundSuite() {
-        let sounds = [];
-        for (let i = 0; i < requestParam.length; ++i) {
-            sounds.push(muteIsOn() ? null : audioObj.tick[i]);
-            sounds.push(null);
-        }
-        return sounds;
-    }
-
-    /**
-     * ボタンを無効化する。
-     */
-    function disableHtmlButtons() {
-        disableConfigTarget.map((element) => element.disabled = true);
-    }
-
-    /**
-     * ボタンを有効化する。
-     */
-    function enableHtmlButtons() {
-        disableConfigTarget.map((element) => element.disabled = false);
-    }
-
-    /**
-     * 答えを表示する
-     * @param {string} numberStr 答えの数字
-     * @param {FlashAnswer} answer
-     */
-    function displayAnswer(numberStr, answer) {
-        if (numberStr) {
-            headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
-        }
-
-        button.repeat.disabled = true;
-        if (!muteIsOn()) {
-            audioObj.answer[0].play();
-        }
-
-        setTimeout(() => {
-            let resultAudio;
-            if (numberStr === String(answer.toNumber())) {
-                resultAudio = audioObj.correct[0];
-                headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
-            } else if (numberStr.length > 0) {
-                resultAudio = audioObj.incorrect[0];
-                headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`;
-            } else {
-                resultAudio = audioObj.silence[0];
-                headerMessage.innerText = "答え\n";
-            }
-            {
-                const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start);
-                const afterDecimalPointStr = ('00' + String(flashElapsedTimeMs % 1000)).slice(-3);
-                const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000));
-                headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
-            }
-            questionNumberArea.innerText = answer.toDisplay();
-            if (!muteIsOn()) {
-                resultAudio.play();
-            }
-
-            enableHtmlButtons();
-            button.numberHistory.disabled = false;
-            if (isFullscreen()) {
-                if (isTouchDevice()) { // タッチデバイス
-                    calculateArea.addEventListener("touchend", (event) => {
-                        event.preventDefault();
-                        toggleFullscreenMode(false);
-                    }, {once: true});
-                    noticeArea.innerText = '画面をタッチすると戻ります。';
-                } else { // 非タッチデバイス
-                    noticeArea.innerText = 'W キーを押すと戻ります。';
-                }
-            }
-        }, 1200);
-    }
 
     /**
      * 答え入力のための準備的な。
      * @param {FlashAnswer} answer
      */
-    const getPrepareAnswerInputFunc = (answer) =>
-        () => {
+    const getPrepareAnswerInputFunc = (answer) => {
+        /**
+         * 答えを表示する
+         * @param {string} numberStr 答えの数字
+         * @param {FlashAnswer} answer
+         */
+        function displayAnswer(numberStr, answer) {
+            if (numberStr) {
+                headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
+            }
+
+            button.repeat.disabled = true;
+            if (!muteIsOn()) {
+                audioObj.answer[0].play();
+            }
+
+            setTimeout(() => {
+                let resultAudio;
+                if (numberStr === String(answer.toNumber())) {
+                    resultAudio = audioObj.correct[0];
+                    headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
+                } else if (numberStr.length > 0) {
+                    resultAudio = audioObj.incorrect[0];
+                    headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`;
+                } else {
+                    resultAudio = audioObj.silence[0];
+                    headerMessage.innerText = "答え\n";
+                }
+                {
+                    const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start);
+                    const afterDecimalPointStr = ('00' + String(flashElapsedTimeMs % 1000)).slice(-3);
+                    const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000));
+                    headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
+                }
+                questionNumberArea.innerText = answer.toDisplay();
+                if (!muteIsOn()) {
+                    resultAudio.play();
+                }
+
+                enableHtmlButtons();
+                button.numberHistory.disabled = false;
+                if (isFullscreen()) {
+                    if (isTouchDevice()) { // タッチデバイス
+                        calculateArea.addEventListener("touchend", (event) => {
+                            event.preventDefault();
+                            toggleFullscreenMode(false);
+                        }, {once: true});
+                        noticeArea.innerText = '画面をタッチすると戻ります。';
+                    } else { // 非タッチデバイス
+                        noticeArea.innerText = 'W キーを押すと戻ります。';
+                    }
+                }
+            }, 1200);
+        }
+
+        return () => {
             inputAnswerBox.value = '';
 
             // モーダル表示時のイベント設定
@@ -447,17 +420,18 @@ function flash(config = {}) {
                 document.addEventListener('keydown', listener(), {once: true});
             }
         }
+    }
 
     // ここからフラッシュ出題の処理
+    const mode = currentMode.innerText;
     // 設定を取得する
     let requestParam = getCurrentParam();
-    element[currentMode.innerText].length.value = requestParam.length;
-    element[currentMode.innerText].time.value = requestParam.time / 1000;
+    element[mode].length.value = requestParam.length;
+    element[mode].time.value = requestParam.time / 1000;
     element.common.flashRate.value = requestParam.flashRate;
     element.common.offset.value = requestParam.offset;
 
     // 出題数字を生成、または前回の出題から読み込む
-    const mode = currentMode.innerText;
     let digitIsSame = false;
     let numberHistory = [];
     if (mode === modeNames.multiplication) {
@@ -500,6 +474,33 @@ function flash(config = {}) {
     })();
 
     const getFlashSuite = () => {
+        /**
+         * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
+         * @param {string[]} fmtNumbers 整形された数字の配列
+         * @returns {string[]} 点滅も含めた数字の表示順の配列
+         */
+        function generateToggleNumberSuite(fmtNumbers) {
+            let toggleNumberSuite = [];
+            for (let i = 0; i < fmtNumbers.length; i++) {
+                toggleNumberSuite.push(fmtNumbers[i]);
+                toggleNumberSuite.push("");
+            }
+            return toggleNumberSuite;
+        }
+
+        /**
+         * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
+         * @returns {*[]}
+         */
+        function generateSoundSuite() {
+            let sounds = [];
+            for (let i = 0; i < requestParam.length; ++i) {
+                sounds.push(muteIsOn() ? null : audioObj.tick[i]);
+                sounds.push(null);
+            }
+            return sounds;
+        }
+
         const result = Array.from({length: requestParam.length * 2}, () => {
             return {
                 toggleNumberFunction: () => {
