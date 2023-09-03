@@ -346,11 +346,9 @@ function flash(config = {}) {
     /**
      * 答えを表示する
      * @param {string} numberStr 答えの数字
-     * @param {number} answer
-     * @param {string} answerDisplay
-     * @param {FlashAnswer} _answer
+     * @param {FlashAnswer} answer
      */
-    function displayAnswer(numberStr, answer, answerDisplay, _answer) {
+    function displayAnswer(numberStr, answer) {
         if (numberStr) {
             headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
         }
@@ -362,7 +360,7 @@ function flash(config = {}) {
 
         setTimeout(() => {
             let resultAudio;
-            if (numberStr === String(answer)) {
+            if (numberStr === String(answer.toNumber())) {
                 resultAudio = audioObj.correct[0];
                 headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
             } else if (numberStr.length > 0) {
@@ -378,7 +376,7 @@ function flash(config = {}) {
                 const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000));
                 headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
             }
-            questionNumberArea.innerText = answerDisplay;
+            questionNumberArea.innerText = answer.toDisplay();
             if (!muteIsOn()) {
                 resultAudio.play();
             }
@@ -401,11 +399,9 @@ function flash(config = {}) {
 
     /**
      * 答え入力のための準備的な。
-     * @param {number} answer
-     * @param {string} answerDisplay
-     * @param {FlashAnswer} _answer
+     * @param {FlashAnswer} answer
      */
-    const getPrepareAnswerInputFunc = (answer, answerDisplay, _answer) =>
+    const getPrepareAnswerInputFunc = (answer) =>
         () => {
             inputAnswerBox.value = '';
 
@@ -430,7 +426,7 @@ function flash(config = {}) {
             if (isTouchDevice()) {
                 document.querySelector('#input-answer-box-area-touch .btn-send-answer')
                     .addEventListener('click', () => {
-                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer, answerDisplay, _answer);
+                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer);
                         modal.hide();
                     }, {once: true});
             } else {
@@ -440,7 +436,7 @@ function flash(config = {}) {
                             document.activeElement.id === 'input-answer-box'
                             && String(event.key).toLowerCase() === 'enter'
                         ) {
-                            displayAnswer(inputAnswerBox.value, answer, answerDisplay, _answer);
+                            displayAnswer(inputAnswerBox.value, answer);
                             modal.hide();
                             return;
                         }
@@ -461,28 +457,23 @@ function flash(config = {}) {
 
     // 出題数字を生成、または前回の出題から読み込む
     const mode = currentMode.innerText;
-    let numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter).map(n => Number(n));
-    let digitIsSame;
+    let digitIsSame = false;
+    let numberHistory = [];
     const arrayDelimiter = ",";
-    const firstNumberHistory = numberHistory[0];
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            const splitFirstNumberHistory = firstNumberHistory.split(arrayDelimiter);
-            if (!splitFirstNumberHistory[1]) {
-                digitIsSame = false;
-                break;
-            }
-            digitIsSame =
-                requestParam.digit[0] === splitFirstNumberHistory[0].length
-                && requestParam.digit[1] === splitFirstNumberHistory[1].length;
-            numberHistory = numberHistory.map((p) => p.split(arrayDelimiter).map((n) => Number(n)));
-            break;
-        case modeNames.addition:
-            digitIsSame = requestParam.digit === firstNumberHistory.length;
-            numberHistory = numberHistory.map((n) => Number(n));
-            break;
-        default:
-            throw new RangeError('invalid mode')
+    if (mode === modeNames.multiplication) {
+        const _numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter).map(number => number.split(arrayDelimiter));
+
+        if (_numberHistory[0][1]) {
+            digitIsSame = requestParam.digit[0] === _numberHistory[0][0].length && requestParam.digit[1] === _numberHistory[0][1].length;
+            numberHistory = _numberHistory.map(p => p.map(n => Number(n)))
+        }
+    } else if (mode === modeNames.addition) {
+        const _numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter);
+
+        digitIsSame = requestParam.digit === _numberHistory[0].length;
+        numberHistory = _numberHistory.map((n) => Number(n));
+    } else {
+        throw new RangeError('invalid mode')
     }
     const numbers = (() => {
         if (config.repeat && digitIsSame) {
@@ -576,22 +567,20 @@ function flash(config = {}) {
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     button.numberHistory.disabled = true;
-    let answer;
-    switch (currentMode.innerText) {
-        case modeNames.multiplication:
-            answer = numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]);
-            break;
-        case modeNames.addition:
-            answer = numbers.reduce((a, b) => a + b);
-            break;
-        default:
-            throw new RangeError('invalid mode')
-    }
-    answerNumber.innerText = answer;
-    const _answer = new FlashAnswer(answer)
+    const flashAnswer = (() => {
+        switch (currentMode.innerText) {
+            case modeNames.multiplication:
+                return new FlashAnswer(numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]));
+            case modeNames.addition:
+                return new FlashAnswer(numbers.reduce((a, b) => a + b));
+            default:
+                throw new RangeError('invalid mode')
+        }
+    })();
+    answerNumber.innerText = flashAnswer.toNumber();
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
-    answerNumberDisplay.innerText = answer.toLocaleString();
+    answerNumberDisplay.innerText = flashAnswer.toDisplay();
 
     const start = getTime();
 
@@ -621,7 +610,7 @@ function flash(config = {}) {
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
     const flashSuite = getFlashSuite();
-    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(answer, answerNumberDisplay.innerText, _answer);
+    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer);
     setTimeout(() => {
         audioObj.silence[0].play();
     }, 0);
