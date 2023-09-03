@@ -200,3 +200,20 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
 
     throw new Error('failed to generate numbers');
 }
+
+export class FlashAnswer {
+    /**
+     * @param {number} answer
+     */
+    constructor(answer) {
+        this._value = answer
+    }
+
+    toNumber() {
+        return this._value
+    }
+
+    toDisplay() {
+        return this._value.toLocaleString()
+    }
+}

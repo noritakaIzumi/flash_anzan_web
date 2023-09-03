@@ -2,7 +2,7 @@ import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {Howl} from 'howler';
 import {SimpleKeyboard} from "simple-keyboard";
-import {generateNumbers} from "./flash_numbers";
+import {FlashAnswer, generateNumbers} from "./flash_numbers";
 import {
     answerNumber,
     answerNumberDisplay,
@@ -346,10 +346,11 @@ function flash(config = {}) {
     /**
      * 答えを表示する
      * @param {string} numberStr 答えの数字
-     * @param answer
-     * @param answerDisplay
+     * @param {number} answer
+     * @param {string} answerDisplay
+     * @param {FlashAnswer} _answer
      */
-    function displayAnswer(numberStr, answer, answerDisplay) {
+    function displayAnswer(numberStr, answer, answerDisplay, _answer) {
         if (numberStr) {
             headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
         }
@@ -361,7 +362,7 @@ function flash(config = {}) {
 
         setTimeout(() => {
             let resultAudio;
-            if (numberStr === answer) {
+            if (numberStr === String(answer)) {
                 resultAudio = audioObj.correct[0];
                 headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
             } else if (numberStr.length > 0) {
@@ -400,9 +401,12 @@ function flash(config = {}) {
 
     /**
      * 答え入力のための準備的な。
+     * @param {number} answer
+     * @param {string} answerDisplay
+     * @param {FlashAnswer} _answer
      */
-    const getPrepareAnswerInputFunc = (answer, answerDisplay) => {
-        return () => {
+    const getPrepareAnswerInputFunc = (answer, answerDisplay, _answer) =>
+        () => {
             inputAnswerBox.value = '';
 
             // モーダル表示時のイベント設定
@@ -426,7 +430,7 @@ function flash(config = {}) {
             if (isTouchDevice()) {
                 document.querySelector('#input-answer-box-area-touch .btn-send-answer')
                     .addEventListener('click', () => {
-                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer, answerDisplay);
+                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer, answerDisplay, _answer);
                         modal.hide();
                     }, {once: true});
             } else {
@@ -436,7 +440,7 @@ function flash(config = {}) {
                             document.activeElement.id === 'input-answer-box'
                             && String(event.key).toLowerCase() === 'enter'
                         ) {
-                            displayAnswer(inputAnswerBox.value, answer, answerDisplay);
+                            displayAnswer(inputAnswerBox.value, answer, answerDisplay, _answer);
                             modal.hide();
                             return;
                         }
@@ -445,8 +449,7 @@ function flash(config = {}) {
                 };
                 document.addEventListener('keydown', listener(), {once: true});
             }
-        };
-    }
+        }
 
     // ここからフラッシュ出題の処理
     // 設定を取得する
@@ -481,18 +484,18 @@ function flash(config = {}) {
         default:
             throw new RangeError('invalid mode')
     }
-    let numbers;
-    if (config.repeat && digitIsSame) {
-        if (requestParam.length === numberHistory.length) {
-            numbers = numberHistory;
-        } else if (requestParam.length < numberHistory.length) {
-            numbers = numberHistory.slice(0, requestParam.length);
-        } else {
-            numbers = numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, mode));
+    const numbers = (() => {
+        if (config.repeat && digitIsSame) {
+            if (requestParam.length === numberHistory.length) {
+                return numberHistory;
+            }
+            if (requestParam.length < numberHistory.length) {
+                return numberHistory.slice(0, requestParam.length);
+            }
+            return numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, mode));
         }
-    } else {
-        numbers = generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, mode);
-    }
+        return generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, mode);
+    })();
 
     /**
      * 表示用に整形した数字の配列
@@ -585,6 +588,7 @@ function flash(config = {}) {
             throw new RangeError('invalid mode')
     }
     answerNumber.innerText = answer;
+    const _answer = new FlashAnswer(answer)
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
     answerNumberDisplay.innerText = answer.toLocaleString();
@@ -617,7 +621,7 @@ function flash(config = {}) {
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
     const flashSuite = getFlashSuite();
-    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(answerNumber.innerText, answerNumberDisplay.innerText);
+    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(answer, answerNumberDisplay.innerText, _answer);
     setTimeout(() => {
         audioObj.silence[0].play();
     }, 0);
