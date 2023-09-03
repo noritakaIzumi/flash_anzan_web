@@ -33,6 +33,7 @@ import {
     savedParamsKeyName
 } from "./globals";
 import {getTime} from "./time";
+import {AdditionModeFlashNumberHistory, MultiplicationModeFlashNumberHistory} from "./FlashNumberHistory";
 
 /* button events */
 
@@ -459,19 +460,14 @@ function flash(config = {}) {
     const mode = currentMode.innerText;
     let digitIsSame = false;
     let numberHistory = [];
-    const arrayDelimiter = ",";
     if (mode === modeNames.multiplication) {
-        const _numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter).map(number => number.split(arrayDelimiter));
-
-        if (_numberHistory[0][1]) {
-            digitIsSame = requestParam.digit[0] === _numberHistory[0][0].length && requestParam.digit[1] === _numberHistory[0][1].length;
-            numberHistory = _numberHistory.map(p => p.map(n => Number(n)))
-        }
+        const _numberHistory = new MultiplicationModeFlashNumberHistory(numberHistoryString.innerText);
+        digitIsSame = _numberHistory.digitIs(requestParam.digit);
+        numberHistory = _numberHistory.numberHistory;
     } else if (mode === modeNames.addition) {
-        const _numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter);
-
-        digitIsSame = requestParam.digit === _numberHistory[0].length;
-        numberHistory = _numberHistory.map((n) => Number(n));
+        const _numberHistory = new AdditionModeFlashNumberHistory(numberHistoryString.innerText);
+        digitIsSame = _numberHistory.digitIs(requestParam.digit);
+        numberHistory = _numberHistory.numberHistory;
     } else {
         throw new RangeError('invalid mode')
     }
