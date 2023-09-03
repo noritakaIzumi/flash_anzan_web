@@ -555,22 +555,14 @@ function flash(config = {}) {
         return result;
     };
 
-    let playBeepFunctions = (() => {
-        const result = [];
-
-        audioObj.beep.map((a) => {
-            if (!muteIsOn()) {
-                result.push(() => {
-                    a.play();
-                });
-            } else {
-                result.push(() => {
-                });
+    const playBeepFunctions = audioObj.beep.map(
+        a => muteIsOn()
+            ? () => {
             }
-        });
-
-        return result;
-    })();
+            : () => {
+                a.play();
+            }
+    );
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
