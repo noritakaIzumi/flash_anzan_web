@@ -346,8 +346,10 @@ function flash(config = {}) {
     /**
      * 答えを表示する
      * @param {string} numberStr 答えの数字
+     * @param answer
+     * @param answerDisplay
      */
-    function displayAnswer(numberStr) {
+    function displayAnswer(numberStr, answer, answerDisplay) {
         if (numberStr) {
             headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
         }
@@ -359,7 +361,7 @@ function flash(config = {}) {
 
         setTimeout(() => {
             let resultAudio;
-            if (numberStr === answerNumber.innerText) {
+            if (numberStr === answer) {
                 resultAudio = audioObj.correct[0];
                 headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
             } else if (numberStr.length > 0) {
@@ -375,7 +377,7 @@ function flash(config = {}) {
                 const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000));
                 headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
             }
-            questionNumberArea.innerText = answerNumberDisplay.innerText;
+            questionNumberArea.innerText = answerDisplay;
             if (!muteIsOn()) {
                 resultAudio.play();
             }
@@ -399,9 +401,10 @@ function flash(config = {}) {
     /**
      * 答え入力のための準備的な。
      */
-    function prepareAnswerInput() {
-        inputAnswerBox.value = '';
-        (function unveilInputAnswerArea() {
+    const getPrepareAnswerInputFunc = (answer, answerDisplay) => {
+        return () => {
+            inputAnswerBox.value = '';
+
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
@@ -423,7 +426,7 @@ function flash(config = {}) {
             if (isTouchDevice()) {
                 document.querySelector('#input-answer-box-area-touch .btn-send-answer')
                     .addEventListener('click', () => {
-                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value);
+                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer, answerDisplay);
                         modal.hide();
                     }, {once: true});
             } else {
@@ -433,7 +436,7 @@ function flash(config = {}) {
                             document.activeElement.id === 'input-answer-box'
                             && String(event.key).toLowerCase() === 'enter'
                         ) {
-                            displayAnswer(inputAnswerBox.value);
+                            displayAnswer(inputAnswerBox.value, answer, answerDisplay);
                             modal.hide();
                             return;
                         }
@@ -442,7 +445,7 @@ function flash(config = {}) {
                 };
                 document.addEventListener('keydown', listener(), {once: true});
             }
-        })();
+        };
     }
 
     // ここからフラッシュ出題の処理
@@ -455,8 +458,7 @@ function flash(config = {}) {
 
     // 出題数字を生成、または前回の出題から読み込む
     const mode = currentMode.innerText;
-    let numbers;
-    let numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter);
+    let numberHistory = numberHistoryString.innerText.split(numberHistoryStringifyDelimiter).map(n => Number(n));
     let digitIsSame;
     const arrayDelimiter = ",";
     const firstNumberHistory = numberHistory[0];
@@ -473,10 +475,13 @@ function flash(config = {}) {
             numberHistory = numberHistory.map((p) => p.split(arrayDelimiter).map((n) => Number(n)));
             break;
         case modeNames.addition:
-        default:
             digitIsSame = requestParam.digit === firstNumberHistory.length;
             numberHistory = numberHistory.map((n) => Number(n));
+            break;
+        default:
+            throw new RangeError('invalid mode')
     }
+    let numbers;
     if (config.repeat && digitIsSame) {
         if (requestParam.length === numberHistory.length) {
             numbers = numberHistory;
@@ -568,17 +573,21 @@ function flash(config = {}) {
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     button.numberHistory.disabled = true;
+    let answer;
     switch (currentMode.innerText) {
         case modeNames.multiplication:
-            answerNumber.innerText = numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]);
+            answer = numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]);
             break;
         case modeNames.addition:
+            answer = numbers.reduce((a, b) => a + b);
+            break;
         default:
-            answerNumber.innerText = numbers.reduce((a, b) => a + b);
+            throw new RangeError('invalid mode')
     }
+    answerNumber.innerText = answer;
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
     numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
-    answerNumberDisplay.innerText = Number(answerNumber.innerText).toLocaleString();
+    answerNumberDisplay.innerText = answer.toLocaleString();
 
     const start = getTime();
 
@@ -608,6 +617,7 @@ function flash(config = {}) {
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
     const flashSuite = getFlashSuite();
+    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(answerNumber.innerText, answerNumberDisplay.innerText);
     setTimeout(() => {
         audioObj.silence[0].play();
     }, 0);
@@ -617,7 +627,7 @@ function flash(config = {}) {
         setFlashTimeOut(flashSuite[i].playTickFunction, flashStartTiming + flashSuite[i]._toggleTiming - requestParam.offset);
         setFlashTimeOut(flashSuite[i].toggleNumberFunction, flashStartTiming + flashSuite[i]._toggleTiming);
     }
-    setFlashTimeOut(prepareAnswerInput, flashStartTiming + requestParam.time + 300);
+    setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300);
 }
 
 function repeatFlash() {
