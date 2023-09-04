@@ -437,11 +437,11 @@ function flash(config = {}) {
     let numberHistory = [];
     if (mode === modeNames.multiplication) {
         const _numberHistory = new MultiplicationModeFlashNumberHistory(numberHistoryString.innerText);
-        digitIsSame = _numberHistory.digitIs(requestParam.digit);
+        digitIsSame = _numberHistory.digitEquals(requestParam.digit);
         numberHistory = _numberHistory.numberHistory;
     } else if (mode === modeNames.addition) {
         const _numberHistory = new AdditionModeFlashNumberHistory(numberHistoryString.innerText);
-        digitIsSame = _numberHistory.digitIs(requestParam.digit);
+        digitIsSame = _numberHistory.digitEquals(requestParam.digit);
         numberHistory = _numberHistory.numberHistory;
     } else {
         throw new RangeError('invalid mode')
@@ -577,7 +577,7 @@ function flash(config = {}) {
     })();
     answerNumber.innerText = flashAnswer.toNumber();
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
-    numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter);
+    numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter); // TODO: これを廃止したい
     answerNumberDisplay.innerText = flashAnswer.toDisplay();
 
     const start = getTime();

@@ -28,7 +28,7 @@ abstract class FlashNumberHistory<T> {
 
     protected abstract parse(history: string): { digit: T, numberHistory: T[] };
 
-    public abstract digitIs(digit: T): boolean;
+    public abstract digitEquals(digit: T): boolean;
 }
 
 export class AdditionModeFlashNumberHistory extends FlashNumberHistory<number> {
@@ -40,7 +40,7 @@ export class AdditionModeFlashNumberHistory extends FlashNumberHistory<number> {
         }
     }
 
-    digitIs(digit: number): boolean {
+    digitEquals(digit: number): boolean {
         return digit === this.digit
     }
 }
@@ -67,7 +67,7 @@ export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<[nu
         }
     }
 
-    digitIs(digit: [number, number]): boolean {
+    digitEquals(digit: [number, number]): boolean {
         return digit[0] === this.digit[0] && digit[1] === this.digit[1]
     }
 }
