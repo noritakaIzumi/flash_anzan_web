@@ -252,36 +252,37 @@ function getCurrentParam() {
         flashRate: 0,
         offset: 0,
     };
-    switch (currentMode.innerText) {
+    const mode = currentMode.innerText;
+    switch (mode) {
         case modeNames.multiplication:
             requestParam.digit = [
                 fixValue(
-                    param[currentMode.innerText].digit1,
-                    Math.floor(Number(element[currentMode.innerText].digit1.value))
+                    param[mode].digit1,
+                    Math.floor(Number(element[mode].digit1.value))
                 ),
                 fixValue(
-                    param[currentMode.innerText].digit2,
-                    Math.floor(Number(element[currentMode.innerText].digit2.value))
+                    param[mode].digit2,
+                    Math.floor(Number(element[mode].digit2.value))
                 )
             ];
-            element[currentMode.innerText].digit1.value = requestParam.digit[0];
-            element[currentMode.innerText].digit2.value = requestParam.digit[1];
+            element[mode].digit1.value = requestParam.digit[0];
+            element[mode].digit2.value = requestParam.digit[1];
             break;
         case modeNames.addition:
         default:
             requestParam.digit = fixValue(
-                param[currentMode.innerText].digit,
-                Math.floor(Number(element[currentMode.innerText].digit.value))
+                param[mode].digit,
+                Math.floor(Number(element[mode].digit.value))
             );
-            element[currentMode.innerText].digit.value = requestParam.digit;
+            element[mode].digit.value = requestParam.digit;
     }
     requestParam.length = fixValue(
-        param[currentMode.innerText].length,
-        Math.floor(Number(element[currentMode.innerText].length.value))
+        param[mode].length,
+        Math.floor(Number(element[mode].length.value))
     );
     requestParam.time = fixValue(
-        param[currentMode.innerText].time,
-        Number(element[currentMode.innerText].time.value) * 1000
+        param[mode].time,
+        Number(element[mode].time.value) * 1000
     );
     requestParam.difficulty = element.common.difficulty.value;
     requestParam.flashRate = fixValue(
