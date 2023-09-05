@@ -59,7 +59,7 @@ export class FlashNumberHistoryRegistry {
     }
 
     protected validateMode(_mode: string) {
-        if (flashModes.indexOf(_mode as unknown as FlashMode)) {
+        if (flashModes.indexOf(_mode as unknown as FlashMode) === -1) {
             throw new RangeError('invalid mode')
         }
     }
