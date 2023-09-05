@@ -1,3 +1,5 @@
+import {FlashMode, flashModes} from "./globals";
+
 abstract class FlashNumberHistory<T> {
     private set digit(value: T) {
         this._digit = value;
@@ -38,17 +40,14 @@ export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<[nu
     }
 }
 
-const modes = ['addition', 'multiplication'] as const;
-type mode = typeof modes[number];
-
 export class FlashNumberHistoryRegistry {
-    protected history: { [key in mode]: FlashNumberHistory<unknown> | null } = {
+    protected history: { [key in FlashMode]: FlashNumberHistory<unknown> | null } = {
         addition: null,
         multiplication: null,
     };
 
     protected validateMode(_mode: string) {
-        if (modes.indexOf(_mode as unknown as mode)) {
+        if (flashModes.indexOf(_mode as unknown as FlashMode)) {
             throw new RangeError('invalid mode')
         }
     }
@@ -57,7 +56,7 @@ export class FlashNumberHistoryRegistry {
         this.validateMode(_mode)
 
         const mapping: {
-            [key in mode]: { new(digit: unknown, history: unknown[]): FlashNumberHistory<unknown> }
+            [key in FlashMode]: { new(digit: unknown, history: unknown[]): FlashNumberHistory<unknown> }
         } = {
             addition: AdditionModeFlashNumberHistory,
             multiplication: MultiplicationModeFlashNumberHistory,

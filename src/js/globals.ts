@@ -1,5 +1,8 @@
 /* Global variables */
 
+export const flashModes = ['addition', 'multiplication'] as const;
+export type FlashMode = typeof flashModes[number];
+
 export const modeNames = {
     addition: "addition",
     multiplication: "multiplication",
