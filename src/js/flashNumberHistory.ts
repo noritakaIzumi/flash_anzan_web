@@ -41,10 +41,22 @@ export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<[nu
 }
 
 export class FlashNumberHistoryRegistry {
+    private static instance: FlashNumberHistoryRegistry
+
     protected history: { [key in FlashMode]: FlashNumberHistory<unknown> | null } = {
         addition: null,
         multiplication: null,
     };
+
+    public static getInstance() {
+        if (!FlashNumberHistoryRegistry.instance) {
+            FlashNumberHistoryRegistry.instance = new FlashNumberHistoryRegistry()
+        }
+        return FlashNumberHistoryRegistry.instance
+    }
+
+    private constructor() {
+    }
 
     protected validateMode(_mode: string) {
         if (flashModes.indexOf(_mode as unknown as FlashMode)) {

@@ -314,7 +314,7 @@ function enableHtmlButtons() {
 
 function flash(config = {}) {
     const measuredTime = {start: 0, end: 0};
-    const flashNumberHistoryRegistry = new FlashNumberHistoryRegistry()
+    const flashNumberHistoryRegistry = FlashNumberHistoryRegistry.getInstance()
 
     /**
      * 答え入力のための準備的な。
