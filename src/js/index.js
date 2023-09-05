@@ -12,7 +12,6 @@ import {
     button,
     calculateArea,
     difficultyMap,
-    disableConfigTarget,
     element,
     headerMessage,
     inputAnswerBox,
@@ -31,6 +30,14 @@ import {
 import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
+import {
+    contractCalculateArea,
+    disableHtmlButtons,
+    enableHtmlButtons,
+    expandCalculateArea,
+    isFullscreen,
+    isTouchDevice
+} from "./screen";
 
 /* button events */
 
@@ -231,16 +238,6 @@ function changeMode(mode) {
     CurrentFlashMode.getInstance().value = mode;
 }
 
-function expandCalculateArea() {
-    calculateArea.classList.add('full-screen');
-    questionNumberArea.classList.add('big-size-number');
-}
-
-function contractCalculateArea() {
-    questionNumberArea.classList.remove('big-size-number');
-    calculateArea.classList.remove('full-screen');
-}
-
 function getCurrentParam() {
     let requestParam = {
         digit: 0,
@@ -297,20 +294,6 @@ function getCurrentParam() {
 
 function muteIsOn() {
     return isMuted.checked;
-}
-
-/**
- * ボタンを無効化する。
- */
-function disableHtmlButtons() {
-    disableConfigTarget.map((element) => element.disabled = true);
-}
-
-/**
- * ボタンを有効化する。
- */
-function enableHtmlButtons() {
-    disableConfigTarget.map((element) => element.disabled = false);
 }
 
 function flash(config = {}) {
@@ -627,10 +610,6 @@ function repeatFlash() {
     flash({repeat: true});
 }
 
-function isTouchDevice() {
-    return window.ontouchstart === null;
-}
-
 function loadAudioObj(extension) {
     let timeoutMs = 100;
     let audioPath = '';
@@ -644,10 +623,6 @@ function loadAudioObj(extension) {
             timeoutMs += 50;
         }
     });
-}
-
-function isFullscreen() {
-    return calculateArea.dataset.fullScreen === '1';
 }
 
 /**

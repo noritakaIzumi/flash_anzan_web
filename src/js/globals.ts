@@ -122,15 +122,16 @@ export const calculateArea = document.getElementById('calculate-area');
 export const inputAnswerBox = document.getElementById('input-answer-box');
 export const noticeArea = document.getElementById('notice-area');
 
+const buttonElements = document.getElementsByTagName("button");
 export const button = {
-    loadParams: document.getElementById("load-params-button"),
+    loadParams: buttonElements.namedItem("load-params-button"),
     doLoadParams: document.getElementById("do-load-params"),
-    saveParams: document.getElementById("save-params-button"),
+    saveParams: buttonElements.namedItem("save-params-button"),
     doSaveParams: document.getElementById("do-save-params"),
-    deleteParams: document.getElementById("delete-params-button"),
+    deleteParams: buttonElements.namedItem("delete-params-button"),
     doDeleteParams: document.getElementById("do-delete-params"),
-    start: document.getElementById("start-button"),
-    repeat: document.getElementById("repeat-button"),
+    start: buttonElements.namedItem("start-button"),
+    repeat: buttonElements.namedItem("repeat-button"),
     numberHistory: document.getElementById("number-history-button"),
     addition: document.getElementById("pills-addition-tab"),
     subtraction: document.getElementById("pills-subtraction-tab"),
@@ -164,7 +165,7 @@ export const disableConfigTarget = [
     button.repeat,
     button.loadParams,
     button.saveParams,
-    button.deleteParams
+    button.deleteParams,
 ];
 
 export const multiplyFigure = "*";
