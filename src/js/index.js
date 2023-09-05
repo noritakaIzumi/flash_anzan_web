@@ -723,7 +723,7 @@ function clearInputAnswerBox() {
 
 (() => {
     // バージョン番号
-    const version = 'v0.19.0';
+    const version = 'v0.20.0';
     const warmupDelay = 1000;
 
     const setup = () => {
