@@ -78,10 +78,10 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 const complexity = getCalculateComplexity(carries, digitCount[0] * digitCount[1]);
                 switch (difficulty) {
                     case difficultyMap.easy:
-                        // 1 桁 × 1 桁 2 口 easy の閾値が 0 のため
+                        // 1 桁 × 1 桁 2 口 easy の閾値が 0 であることへの対応
                         if (
-                            complexityMapKey === '1-1-2' &&
-                            complexity <= complexityMap.multiplication[complexityMapKey][difficulty]
+                            complexityMap.multiplication[complexityMapKey][difficulty] <= 0
+                            && complexity <= 0
                         ) {
                             return numbers;
                         }
@@ -129,6 +129,13 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         }
 
                         const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        // 1 桁 2 口 easy の閾値が 0 であることへの対応
+                        if (
+                            complexityMap.addition[complexityMapKey][difficulty] <= 0
+                            && complexity <= 0
+                        ) {
+                            return numbers;
+                        }
                         if (complexity < complexityMap.addition[complexityMapKey][difficulty]) {
                             return numbers;
                         }
