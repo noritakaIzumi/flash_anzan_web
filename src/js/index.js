@@ -4,7 +4,6 @@ import {Howl} from 'howler';
 import {SimpleKeyboard} from "simple-keyboard";
 import {FlashAnswer, generateNumbers} from "./flash_numbers";
 import {
-    answerNumber,
     answerNumberDisplay,
     audioAttr,
     audioObj,
@@ -26,14 +25,12 @@ import {
     noticeArea,
     numberHistoryDisplay,
     numberHistoryDisplayDelimiter,
-    numberHistoryString,
-    numberHistoryStringifyDelimiter,
     param,
     questionNumberArea,
     savedParamsKeyName
 } from "./globals";
 import {getTime} from "./time";
-import {AdditionModeFlashNumberHistory, MultiplicationModeFlashNumberHistory} from "./FlashNumberHistory";
+import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 
 /* button events */
 
@@ -317,6 +314,7 @@ function enableHtmlButtons() {
 
 function flash(config = {}) {
     const measuredTime = {start: 0, end: 0};
+    const flashNumberHistoryRegistry = new FlashNumberHistoryRegistry()
 
     /**
      * 答え入力のための準備的な。
@@ -436,13 +434,17 @@ function flash(config = {}) {
     let digitIsSame = false;
     let numberHistory = [];
     if (mode === modeNames.multiplication) {
-        const _numberHistory = new MultiplicationModeFlashNumberHistory(numberHistoryString.innerText);
-        digitIsSame = _numberHistory.digitEquals(requestParam.digit);
-        numberHistory = _numberHistory.numberHistory;
+        const _numberHistory = flashNumberHistoryRegistry.getHistory(mode);
+        if (_numberHistory !== null) {
+            digitIsSame = _numberHistory.digitEquals(requestParam.digit);
+            numberHistory = _numberHistory.numberHistory;
+        }
     } else if (mode === modeNames.addition) {
-        const _numberHistory = new AdditionModeFlashNumberHistory(numberHistoryString.innerText);
-        digitIsSame = _numberHistory.digitEquals(requestParam.digit);
-        numberHistory = _numberHistory.numberHistory;
+        const _numberHistory = flashNumberHistoryRegistry.getHistory(mode);
+        if (_numberHistory !== null) {
+            digitIsSame = _numberHistory.digitEquals(requestParam.digit);
+            numberHistory = _numberHistory.numberHistory;
+        }
     } else {
         throw new RangeError('invalid mode')
     }
@@ -575,9 +577,8 @@ function flash(config = {}) {
                 throw new RangeError('invalid mode')
         }
     })();
-    answerNumber.innerText = flashAnswer.toNumber();
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
-    numberHistoryString.innerText = numbers.join(numberHistoryStringifyDelimiter); // TODO: これを廃止したい
+    flashNumberHistoryRegistry.register(mode, requestParam.digit, numbers)
     answerNumberDisplay.innerText = flashAnswer.toDisplay();
 
     const start = getTime();

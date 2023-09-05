@@ -143,8 +143,6 @@ export const button = {
     }
 };
 
-export const answerNumber = document.getElementById("answer-number");
-
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
 export const audioObj = {
     beep: new Array(2),
@@ -171,8 +169,6 @@ export const multiplyFigure = "*";
 
 export const numberHistoryDisplay = document.getElementById("number-history-display");
 export const numberHistoryDisplayDelimiter = "<br>";
-export const numberHistoryString = document.getElementById("number-history-stringify");
-export const numberHistoryStringifyDelimiter = "|";
 export const answerNumberDisplay = document.getElementById('answer-number-display');
 
 export const savedParamsKeyName = "flash_anzan_params";
