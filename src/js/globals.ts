@@ -156,7 +156,6 @@ export const audioObj = {
     silence: new Array(1),
 };
 
-export const currentMode = document.getElementById("current-mode");
 export const isMuted = document.getElementById("is-muted");
 export const audioStatus = document.getElementById('audio-status');
 

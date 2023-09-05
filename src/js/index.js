@@ -11,7 +11,6 @@ import {
     audioStatusInnerHtmlMap,
     button,
     calculateArea,
-    currentMode,
     difficultyMap,
     disableConfigTarget,
     element,
@@ -31,6 +30,7 @@ import {
 } from "./globals";
 import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
+import {CurrentFlashMode} from "./currentFlashMode";
 
 /* button events */
 
@@ -127,6 +127,8 @@ function fixValue(limit, targetValue) {
 }
 
 function increaseParam(id, amount) {
+    const currentFlashMode = CurrentFlashMode.getInstance().value;
+
     const element = document.getElementById(id);
     if (element.disabled) {
         return;
@@ -136,28 +138,28 @@ function increaseParam(id, amount) {
     const paramName = id.split("-")[1];
     switch (paramName) {
         case "digit":
-            if (currentMode.innerText === modeNames.multiplication) {
+            if (currentFlashMode === modeNames.multiplication) {
                 element.value = fixValue(
-                    param[currentMode.innerText][paramName + id.split("-")[2]],
+                    param[currentFlashMode][paramName + id.split("-")[2]],
                     Math.floor(currentValue) + amount
                 ).toString();
-            } else if (currentMode.innerText === modeNames.addition) {
+            } else if (currentFlashMode === modeNames.addition) {
                 element.value = fixValue(
-                    param[currentMode.innerText][paramName],
+                    param[currentFlashMode][paramName],
                     Math.floor(currentValue) + amount
                 ).toString();
             }
             break;
         case "length":
             element.value = fixValue(
-                param[currentMode.innerText][paramName],
+                param[currentFlashMode][paramName],
                 Math.floor(currentValue) + amount
             ).toString();
             break;
         case "time":
             element.value = (
                 fixValue(
-                    param[currentMode.innerText][paramName],
+                    param[currentFlashMode][paramName],
                     Math.round(currentValue * 1000) + amount
                 ) / 1000
             ).toString();
@@ -195,8 +197,7 @@ function setUpInputBox() {
             };
         });
     });
-    currentMode.innerText = modeNames.addition;
-    changeMode(currentMode.innerText);
+    changeMode(modeNames.addition);
 }
 
 function changeShortcut(mode) {
@@ -227,7 +228,7 @@ function changeShortcut(mode) {
 
 function changeMode(mode) {
     changeShortcut(mode);
-    currentMode.innerText = mode;
+    CurrentFlashMode.getInstance().value = mode;
 }
 
 function expandCalculateArea() {
@@ -249,37 +250,37 @@ function getCurrentParam() {
         flashRate: 0,
         offset: 0,
     };
-    const mode = currentMode.innerText;
-    switch (mode) {
+    const currentFlashMode = CurrentFlashMode.getInstance().value;
+    switch (currentFlashMode) {
         case modeNames.multiplication:
             requestParam.digit = [
                 fixValue(
-                    param[mode].digit1,
-                    Math.floor(Number(element[mode].digit1.value))
+                    param[currentFlashMode].digit1,
+                    Math.floor(Number(element[currentFlashMode].digit1.value))
                 ),
                 fixValue(
-                    param[mode].digit2,
-                    Math.floor(Number(element[mode].digit2.value))
+                    param[currentFlashMode].digit2,
+                    Math.floor(Number(element[currentFlashMode].digit2.value))
                 )
             ];
-            element[mode].digit1.value = requestParam.digit[0];
-            element[mode].digit2.value = requestParam.digit[1];
+            element[currentFlashMode].digit1.value = requestParam.digit[0];
+            element[currentFlashMode].digit2.value = requestParam.digit[1];
             break;
         case modeNames.addition:
         default:
             requestParam.digit = fixValue(
-                param[mode].digit,
-                Math.floor(Number(element[mode].digit.value))
+                param[currentFlashMode].digit,
+                Math.floor(Number(element[currentFlashMode].digit.value))
             );
-            element[mode].digit.value = requestParam.digit;
+            element[currentFlashMode].digit.value = requestParam.digit;
     }
     requestParam.length = fixValue(
-        param[mode].length,
-        Math.floor(Number(element[mode].length.value))
+        param[currentFlashMode].length,
+        Math.floor(Number(element[currentFlashMode].length.value))
     );
     requestParam.time = fixValue(
-        param[mode].time,
-        Number(element[mode].time.value) * 1000
+        param[currentFlashMode].time,
+        Number(element[currentFlashMode].time.value) * 1000
     );
     requestParam.difficulty = element.common.difficulty.value;
     requestParam.flashRate = fixValue(
@@ -422,25 +423,25 @@ function flash(config = {}) {
     }
 
     // ここからフラッシュ出題の処理
-    const mode = currentMode.innerText;
+    const currentFlashMode = CurrentFlashMode.getInstance().value;
     // 設定を取得する
     let requestParam = getCurrentParam();
-    element[mode].length.value = requestParam.length;
-    element[mode].time.value = requestParam.time / 1000;
+    element[currentFlashMode].length.value = requestParam.length;
+    element[currentFlashMode].time.value = requestParam.time / 1000;
     element.common.flashRate.value = requestParam.flashRate;
     element.common.offset.value = requestParam.offset;
 
     // 出題数字を生成、または前回の出題から読み込む
     let digitIsSame = false;
     let numberHistory = [];
-    if (mode === modeNames.multiplication) {
-        const _numberHistory = flashNumberHistoryRegistry.getHistory(mode);
+    if (currentFlashMode === modeNames.multiplication) {
+        const _numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
         if (_numberHistory !== null) {
             digitIsSame = _numberHistory.digitEquals(requestParam.digit);
             numberHistory = _numberHistory.numberHistory;
         }
-    } else if (mode === modeNames.addition) {
-        const _numberHistory = flashNumberHistoryRegistry.getHistory(mode);
+    } else if (currentFlashMode === modeNames.addition) {
+        const _numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
         if (_numberHistory !== null) {
             digitIsSame = _numberHistory.digitEquals(requestParam.digit);
             numberHistory = _numberHistory.numberHistory;
@@ -456,9 +457,9 @@ function flash(config = {}) {
             if (requestParam.length < numberHistory.length) {
                 return numberHistory.slice(0, requestParam.length);
             }
-            return numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, mode));
+            return numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, currentFlashMode));
         }
-        return generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, mode);
+        return generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, currentFlashMode);
     })();
 
     /**
@@ -466,7 +467,7 @@ function flash(config = {}) {
      * @type {string[]}
      */
     const localeStringNumbers = (() => {
-        switch (currentMode.innerText) {
+        switch (currentFlashMode) {
             case modeNames.multiplication:
                 return numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
             case modeNames.addition:
@@ -568,7 +569,7 @@ function flash(config = {}) {
     questionNumberArea.innerText = "";
     button.numberHistory.disabled = true;
     const flashAnswer = (() => {
-        switch (currentMode.innerText) {
+        switch (currentFlashMode) {
             case modeNames.multiplication:
                 return new FlashAnswer(numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]));
             case modeNames.addition:
@@ -578,7 +579,7 @@ function flash(config = {}) {
         }
     })();
     numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
-    flashNumberHistoryRegistry.register(mode, requestParam.digit, numbers)
+    flashNumberHistoryRegistry.register(currentFlashMode, requestParam.digit, numbers)
     answerNumberDisplay.innerText = flashAnswer.toDisplay();
 
     const start = getTime();
