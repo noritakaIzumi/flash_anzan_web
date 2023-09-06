@@ -38,17 +38,6 @@ export function loadAudioObj(extension: SoundExtension) {
     });
 }
 
-export function setSoundExtension(extension: SoundExtension) {
-    switch (extension) {
-        case 'ogg':
-            loadAudioObj('ogg');
-            break;
-        case 'wav':
-            loadAudioObj('wav');
-            break;
-    }
-}
-
 export function toggleMute() {
     if (isMuted.checked || isMuted.value === isMutedMap.on) {
         isMuted.checked = true;

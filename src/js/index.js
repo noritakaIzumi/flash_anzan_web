@@ -39,7 +39,7 @@ import {
     isTouchDevice
 } from "./screen";
 import {getHtmlElement} from "./htmlElement";
-import {loadAudioObj, muteIsOn, setSoundExtension, toggleMute} from "./sound";
+import {loadAudioObj, muteIsOn, toggleMute} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 
 /* button events */
@@ -747,7 +747,7 @@ function clearInputAnswerBox() {
 
             // サウンド
             element.common.isMuted.addEventListener('click', toggleMute)
-            element.common.soundExtension.addEventListener('change', event => setSoundExtension(event.target.value))
+            element.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
 
             // 出題設定読み込み
             button.doLoadParams.addEventListener('click', doLoadParams)
