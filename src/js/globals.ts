@@ -186,21 +186,21 @@ export const savedParamsKeyName = "flash_anzan_params";
 
 export const modals = {
     welcome: getHtmlElement("div", "welcomeModal"),
-    'params': {
-        'load': {
-            'confirm': getHtmlElement("div", "loadParamsConfirmModal"),
-            'complete': getHtmlElement("div", "loadParamsCompletedModal"),
+    params: {
+        load: {
+            confirm: getHtmlElement("div", "loadParamsConfirmModal"),
+            complete: getHtmlElement("div", "loadParamsCompletedModal"),
         },
-        'save': {
-            'confirm': getHtmlElement("div", "saveParamsConfirmModal"),
-            'complete': getHtmlElement("div", "saveParamsCompletedModal"),
+        save: {
+            confirm: getHtmlElement("div", "saveParamsConfirmModal"),
+            complete: getHtmlElement("div", "saveParamsCompletedModal"),
         },
-        'delete': {
-            'confirm': getHtmlElement("div", "deleteParamsConfirmModal"),
-            'complete': getHtmlElement("div", "deleteParamsCompletedModal"),
+        delete: {
+            confirm: getHtmlElement("div", "deleteParamsConfirmModal"),
+            complete: getHtmlElement("div", "deleteParamsCompletedModal"),
         },
     },
-    'input_answer': getHtmlElement("div", "inputAnswerModal"),
+    input_answer: getHtmlElement("div", "inputAnswerModal"),
 };
 
 export const generateNumbersRetryLimit = 100000;
