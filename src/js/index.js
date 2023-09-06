@@ -15,17 +15,22 @@ import {
     element,
     headerMessage,
     inputAnswerBox,
+    inputAnswerBoxTouchActual,
+    inputAnswerBoxTouchDisplay,
     isMuted,
     isMutedMap,
     modals,
     modeNames,
     multiplyFigure,
     noticeArea,
+    noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
     numberHistoryDisplayDelimiter,
     param,
     questionNumberArea,
-    savedParamsKeyName
+    savedParamsKeyName,
+    switchInputAnswerBoxTab,
+    versionNumber
 } from "./globals";
 import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
@@ -38,11 +43,12 @@ import {
     isFullscreen,
     isTouchDevice
 } from "./screen";
+import {getHtmlElement} from "./htmlElement";
 
 /* button events */
 
 function doLoadParams() {
-    const modal = document.getElementById('loadParamsCompletedModal');
+    const modal = modals.params.load.complete;
     const modalMessage = modal.querySelector('.modal-body > p');
 
     const loadedParams = localStorage.getItem(savedParamsKeyName);
@@ -136,7 +142,7 @@ function fixValue(limit, targetValue) {
 function increaseParam(id, amount) {
     const currentFlashMode = CurrentFlashMode.getInstance().value;
 
-    const element = document.getElementById(id);
+    const element = getHtmlElement("input", id);
     if (element.disabled) {
         return;
     }
@@ -367,14 +373,14 @@ function flash(config = {}) {
                 ? () => {
                     modals.input_answer.querySelector('.modal-footer').style.display = 'none';
                     clearInputAnswerBox();
-                    document.getElementById('switchInputAnswerBoxTab-touch-tab').click();
-                    document.getElementById('notice-input-answer-non-touch-device').style.display = 'none';
+                    switchInputAnswerBoxTab.touchTab.click();
+                    noticeInputAnswerNonTouchDevice.style.display = 'none';
                 }
                 : () => {
                     clearInputAnswerBox();
-                    document.getElementById('switchInputAnswerBoxTab-keyboard-tab').click();
-                    document.getElementById('input-answer-box').focus();
-                    document.getElementById('notice-input-answer-non-touch-device').style.display = 'block';
+                    switchInputAnswerBoxTab.keyboardTab.click();
+                    inputAnswerBox.focus();
+                    noticeInputAnswerNonTouchDevice.style.display = 'block';
                 };
             modals.input_answer.addEventListener('shown.bs.modal', listener);
             const modal = new bootstrap.Modal(modals.input_answer, {backdrop: false, keyboard: false, focus: true});
@@ -383,7 +389,7 @@ function flash(config = {}) {
             if (isTouchDevice()) {
                 document.querySelector('#input-answer-box-area-touch .btn-send-answer')
                     .addEventListener('click', () => {
-                        displayAnswer(document.getElementById('input-answer-box-touch-actual').value, answer);
+                        displayAnswer(inputAnswerBoxTouchActual.value, answer);
                         modal.hide();
                     }, {once: true});
             } else {
@@ -691,9 +697,9 @@ function warmUpDisplayArea(timeoutMs) {
 }
 
 function clearInputAnswerBox() {
-    document.getElementById('input-answer-box').value = '';
-    document.getElementById('input-answer-box-touch-display').value = '';
-    document.getElementById('input-answer-box-touch-actual').value = '';
+    inputAnswerBox.value = '';
+    inputAnswerBoxTouchDisplay.value = '';
+    inputAnswerBoxTouchActual.value = '';
 }
 
 (() => {
@@ -733,7 +739,7 @@ function clearInputAnswerBox() {
                 });
 
                 if (isTouchDevice()) {
-                    document.getElementById('help-button').style.display = 'none';
+                    button.help.style.display = 'none';
                 }
             })();
         })();
@@ -765,15 +771,15 @@ function clearInputAnswerBox() {
                     }
                 }
                 value = value.replace(/^[0,]+/g, '');
-                document.getElementById('input-answer-box-touch-display').value = value === '' ? '0' : value;
-                document.getElementById('input-answer-box-touch-actual').value = value === '' ? '0' : value.replace(',', '');
+                inputAnswerBoxTouchDisplay.value = value === '' ? '0' : value;
+                inputAnswerBoxTouchActual.value = value === '' ? '0' : value.replace(',', '');
             }
 
             const clearInput = () => {
                 clearInputAnswerBox();
                 inputs = [];
             };
-            Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
+            Array.from(document.getElementsByClassName("btn-clear-input-answer-box")).forEach(element => {
                 element.addEventListener('click', clearInput);
             });
             modals.input_answer.addEventListener('show.bs.modal', clearInput);
@@ -805,7 +811,7 @@ function clearInputAnswerBox() {
 
         // バージョン番号の表示
         (() => {
-            document.getElementById('version-number').innerText = version;
+            versionNumber.innerText = version;
         })();
 
         // set onclick events in index.html

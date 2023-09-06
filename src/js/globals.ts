@@ -1,5 +1,7 @@
 /* Global variables */
 
+import {getHtmlElement} from "./htmlElement";
+
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
 
@@ -34,22 +36,22 @@ export const audioAttr = {
 
 export const element = {
     addition: {
-        digit: document.getElementById("addition-digit"),
-        length: document.getElementById("addition-length"),
-        time: document.getElementById("addition-time"),
+        digit: getHtmlElement("input", "addition-digit"),
+        length: getHtmlElement("input", "addition-length"),
+        time: getHtmlElement("input", "addition-time"),
     },
     multiplication: {
-        digit1: document.getElementById("multiplication-digit-1"),
-        digit2: document.getElementById("multiplication-digit-2"),
-        length: document.getElementById("multiplication-length"),
-        time: document.getElementById("multiplication-time"),
+        digit1: getHtmlElement("input", "multiplication-digit-1"),
+        digit2: getHtmlElement("input", "multiplication-digit-2"),
+        length: getHtmlElement("input", "multiplication-length"),
+        time: getHtmlElement("input", "multiplication-time"),
     },
     common: {
-        difficulty: document.getElementById('difficulty'),
-        flashRate: document.getElementById("common-flashRate"),
-        offset: document.getElementById("common-offset"),
-        isMuted: document.getElementById("is-muted"),
-        soundExtension: document.getElementById("sound-extension"),
+        difficulty: getHtmlElement("select", "difficulty"),
+        flashRate: getHtmlElement("input", "common-flashRate"),
+        offset: getHtmlElement("input", "common-offset"),
+        isMuted: getHtmlElement("input", "is-muted"),
+        soundExtension: getHtmlElement("select", "sound-extension"),
     },
 };
 
@@ -116,34 +118,35 @@ export const param = {
     },
 };
 
-export const headerMessage = document.getElementById("header-message");
-export const questionNumberArea = document.getElementById("question-number-area");
-export const calculateArea = document.getElementById('calculate-area');
-export const inputAnswerBox = document.getElementById('input-answer-box');
-export const noticeArea = document.getElementById('notice-area');
+export const headerMessage = getHtmlElement("div", "header-message");
+export const questionNumberArea = getHtmlElement("div", "question-number-area");
+export const calculateArea = getHtmlElement("div", "calculate-area");
+export const inputAnswerBox = getHtmlElement("input", "input-answer-box");
+export const inputAnswerBoxTouchDisplay = getHtmlElement("input", "input-answer-box-touch-display");
+export const inputAnswerBoxTouchActual = getHtmlElement("input", "input-answer-box-touch-actual");
+export const noticeArea = getHtmlElement("p", "notice-area");
+export const versionNumber = getHtmlElement("span", "version-number")
 
-const buttonElements = document.getElementsByTagName("button");
 export const button = {
-    loadParams: buttonElements.namedItem("load-params-button"),
-    doLoadParams: document.getElementById("do-load-params"),
-    saveParams: buttonElements.namedItem("save-params-button"),
-    doSaveParams: document.getElementById("do-save-params"),
-    deleteParams: buttonElements.namedItem("delete-params-button"),
-    doDeleteParams: document.getElementById("do-delete-params"),
-    start: buttonElements.namedItem("start-button"),
-    repeat: buttonElements.namedItem("repeat-button"),
-    numberHistory: document.getElementById("number-history-button"),
-    addition: document.getElementById("pills-addition-tab"),
-    subtraction: document.getElementById("pills-subtraction-tab"),
-    multiplication: document.getElementById("pills-multiplication-tab"),
-    // openInputAnswer: document.getElementById('openInputAnswerModal'),
-    closeInputAnswer: document.getElementById('closeInputAnswerModal'),
-    help: document.getElementById('help-button'),
-    openCommonMoreConfig: document.getElementById('open-common-more-config-button'),
+    loadParams: getHtmlElement("button", "load-params-button"),
+    doLoadParams: getHtmlElement("button", "do-load-params"),
+    saveParams: getHtmlElement("button", "save-params-button"),
+    doSaveParams: getHtmlElement("button", "do-save-params"),
+    deleteParams: getHtmlElement("button", "delete-params-button"),
+    doDeleteParams: getHtmlElement("button", "do-delete-params"),
+    start: getHtmlElement("button", "start-button"),
+    repeat: getHtmlElement("button", "repeat-button"),
+    numberHistory: getHtmlElement("button", "number-history-button"),
+    addition: getHtmlElement("a", "pills-addition-tab"),
+    subtraction: getHtmlElement("a", "pills-subtraction-tab"),
+    multiplication: getHtmlElement("a", "pills-multiplication-tab"),
+    closeInputAnswer: getHtmlElement("button", 'closeInputAnswerModal'),
+    help: getHtmlElement("button", 'help-button'),
+    openCommonMoreConfig: getHtmlElement("button", 'open-common-more-config-button'),
     difficulty: {
-        easy: document.getElementById('difficulty-easy'),
-        normal: document.getElementById('difficulty-normal'),
-        hard: document.getElementById('difficulty-hard'),
+        easy: getHtmlElement("input", 'difficulty-easy'),
+        normal: getHtmlElement("input", 'difficulty-normal'),
+        hard: getHtmlElement("input", 'difficulty-hard'),
     }
 };
 
@@ -157,8 +160,8 @@ export const audioObj = {
     silence: new Array(1),
 };
 
-export const isMuted = document.getElementById("is-muted");
-export const audioStatus = document.getElementById('audio-status');
+export const isMuted = element.common.isMuted;
+export const audioStatus = getHtmlElement("label", "audio-status");
 
 export const disableConfigTarget = [
     button.start,
@@ -170,29 +173,34 @@ export const disableConfigTarget = [
 
 export const multiplyFigure = "*";
 
-export const numberHistoryDisplay = document.getElementById("number-history-display");
+export const switchInputAnswerBoxTab = {
+    touchTab: getHtmlElement("button", "switchInputAnswerBoxTab-touch-tab"),
+    keyboardTab: getHtmlElement("button", "switchInputAnswerBoxTab-keyboard-tab"),
+}
+export const noticeInputAnswerNonTouchDevice = getHtmlElement("span", "notice-input-answer-non-touch-device")
+export const numberHistoryDisplay = getHtmlElement("td", "number-history-display");
 export const numberHistoryDisplayDelimiter = "<br>";
-export const answerNumberDisplay = document.getElementById('answer-number-display');
+export const answerNumberDisplay = getHtmlElement("td", "answer-number-display");
 
 export const savedParamsKeyName = "flash_anzan_params";
 
 export const modals = {
-    welcome: document.getElementById('welcomeModal'),
+    welcome: getHtmlElement("div", "welcomeModal"),
     'params': {
         'load': {
-            'confirm': document.getElementById('loadParamsConfirmModal'),
-            'complete': document.getElementById('loadParamsCompletedModal'),
+            'confirm': getHtmlElement("div", "loadParamsConfirmModal"),
+            'complete': getHtmlElement("div", "loadParamsCompletedModal"),
         },
         'save': {
-            'confirm': document.getElementById('saveParamsConfirmModal'),
-            'complete': document.getElementById('saveParamsCompletedModal'),
+            'confirm': getHtmlElement("div", "saveParamsConfirmModal"),
+            'complete': getHtmlElement("div", "saveParamsCompletedModal"),
         },
         'delete': {
-            'confirm': document.getElementById('deleteParamsConfirmModal'),
-            'complete': document.getElementById('deleteParamsCompletedModal'),
+            'confirm': getHtmlElement("div", "deleteParamsConfirmModal"),
+            'complete': getHtmlElement("div", "deleteParamsCompletedModal"),
         },
     },
-    'input_answer': document.getElementById('inputAnswerModal'),
+    'input_answer': getHtmlElement("div", "inputAnswerModal"),
 };
 
 export const generateNumbersRetryLimit = 100000;
