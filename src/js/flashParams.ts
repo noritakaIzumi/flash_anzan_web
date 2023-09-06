@@ -1,5 +1,6 @@
 import {element, isMutedMap, modals, savedParamsKeyName} from "./globals";
 import {loadAudioObj, toggleMute} from "./sound";
+import {getHtmlElement} from "./htmlElement";
 
 export function doLoadParams() {
     const modal = modals.params.load.complete;
@@ -26,7 +27,7 @@ export function doLoadParams() {
     toggleMute();
     loadAudioObj(element.common.soundExtension.value);
     // 難易度選択
-    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
+    getHtmlElement("input", `difficulty-${element.common.difficulty.value}`).checked = true;
 }
 
 export function doSaveParams() {

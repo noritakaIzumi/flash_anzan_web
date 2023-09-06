@@ -2,28 +2,12 @@ import {audioAttr, audioObj, audioStatus, audioStatusInnerHtmlMap, isMuted, isMu
 import {Howl} from "howler";
 
 const soundExtension = ['ogg', 'wav'] as const;
-type SoundExtension = typeof soundExtension[number];
 
-// class SoundExtension {
-//     get value(): string {
-//         return this._value;
-//     }
-//
-//     set value(value: string) {
-//         if ((soundExtension as unknown as string[]).indexOf(value) !== 1) {
-//             throw new RangeError('invalid extension')
-//         }
-//         this._value = value;
-//     }
-//
-//     private _value: string;
-//
-//     constructor(value: string) {
-//         this.value = value
-//     }
-// }
+export function loadAudioObj(extension: string) {
+    if ((soundExtension as unknown as string[]).indexOf(extension) === -1) {
+        throw new RangeError('invalid extension')
+    }
 
-export function loadAudioObj(extension: SoundExtension) {
     let timeoutMs = 100;
     let audioPath = '';
     Object.keys(audioObj).forEach((name) => {

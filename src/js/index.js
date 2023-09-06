@@ -115,8 +115,10 @@ function setUpInputBox() {
                 element[mode][config].checked = param[mode][config].default;
                 element[mode][config].value = element[mode][config].checked ? isMutedMap.on : isMutedMap.off;
                 toggleMute();
-            } else if (config === "difficulty" || config === "soundExtension") {
+            } else if (config === "difficulty") {
                 element[mode][config].value = param[mode][config].default;
+            } else if (config === "soundExtension") {
+                element.common.soundExtension.value = param.common.soundExtension.default;
             } else if (config === "time") {
                 element[mode][config].max = param[mode][config].max / 1000;
                 element[mode][config].min = param[mode][config].min / 1000;
