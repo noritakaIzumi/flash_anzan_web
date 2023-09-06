@@ -23,7 +23,7 @@ export function loadAudioObj(extension: string) {
 }
 
 export function toggleMute() {
-    if (isMuted.checked || isMuted.value === isMutedMap.on) {
+    if (isMuted.checked) {
         isMuted.checked = true;
         isMuted.value = isMutedMap.on;
         audioStatus.innerHTML = audioStatusInnerHtmlMap.off;

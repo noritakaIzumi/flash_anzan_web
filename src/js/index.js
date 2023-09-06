@@ -110,16 +110,27 @@ function increaseParam(id, amount) {
 
 function setUpInputBox() {
     Object.keys(element).map((mode) => {
+        if (mode === 'common') {
+            // difficulty
+            element.common.difficulty.value = param.common.difficulty.default;
+            // flashRate
+            element.common.flashRate.max = String(param.common.flashRate.max);
+            element.common.flashRate.min = String(param.common.flashRate.min);
+            element.common.flashRate.value = String(param.common.flashRate.default);
+            // offset
+            element.common.offset.max = String(param.common.offset.max);
+            element.common.offset.min = String(param.common.offset.min);
+            element.common.offset.value = String(param.common.offset.default);
+            // isMuted
+            element.common.isMuted.checked = param.common.isMuted.default;
+            element.common.isMuted.value = element.common.isMuted.checked ? isMutedMap.on : isMutedMap.off;
+            toggleMute();
+            // soundExtension
+            element.common.soundExtension.value = param.common.soundExtension.default;
+            return;
+        }
         Object.keys(element[mode]).map((config) => {
-            if (config === "isMuted") {
-                element[mode][config].checked = param[mode][config].default;
-                element[mode][config].value = element[mode][config].checked ? isMutedMap.on : isMutedMap.off;
-                toggleMute();
-            } else if (config === "difficulty") {
-                element[mode][config].value = param[mode][config].default;
-            } else if (config === "soundExtension") {
-                element.common.soundExtension.value = param.common.soundExtension.default;
-            } else if (config === "time") {
+            if (config === "time") {
                 element[mode][config].max = param[mode][config].max / 1000;
                 element[mode][config].min = param[mode][config].min / 1000;
                 element[mode][config].value = param[mode][config].default / 1000;
