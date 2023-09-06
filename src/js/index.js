@@ -121,9 +121,9 @@ function setUpInputBox() {
             flashParamElements.common.offset.min = String(flashParamConfig.common.offset.min);
             flashParamElements.common.offset.value = String(flashParamConfig.common.offset.default);
             // isMuted
-            flashParamElements.common.isMuted.checked = flashParamConfig.common.isMuted.default;
-            flashParamElements.common.isMuted.value = flashParamElements.common.isMuted.checked ? isMutedMap.on : isMutedMap.off;
-            setMute(flashParamElements.common.isMuted.checked);
+            button.isMuted.checked = flashParamConfig.common.isMuted.default;
+            flashParamElements.common.isMuted.value = button.isMuted.checked ? isMutedMap.on : isMutedMap.off;
+            setMute(button.isMuted.checked);
             // soundExtension
             flashParamElements.common.soundExtension.value = flashParamConfig.common.soundExtension.default;
             return;
@@ -758,7 +758,7 @@ function clearInputAnswerBox() {
             })
 
             // サウンド
-            flashParamElements.common.isMuted.addEventListener('change', event => setMute(event.target.checked))
+            button.isMuted.addEventListener('change', event => setMute(event.target.checked))
             flashParamElements.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
 
             // 出題設定読み込み

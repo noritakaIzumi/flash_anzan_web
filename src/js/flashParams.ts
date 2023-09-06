@@ -1,4 +1,4 @@
-import {flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
+import {button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
 import {loadAudioObj, setMute} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 
@@ -23,8 +23,8 @@ export function doLoadParams() {
         }
     );
 
-    flashParamElements.common.isMuted.checked = flashParamElements.common.isMuted.value === isMutedMap.on;
-    setMute(flashParamElements.common.isMuted.checked);
+    button.isMuted.checked = flashParamElements.common.isMuted.value === isMutedMap.on;
+    setMute(button.isMuted.checked);
     loadAudioObj(flashParamElements.common.soundExtension.value);
     // 難易度選択
     getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.value}`).checked = true;

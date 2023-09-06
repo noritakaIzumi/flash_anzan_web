@@ -16,11 +16,6 @@ export const difficultyMap = {
     hard: 'hard',
 };
 
-export const audioStatusInnerHtmlMap = {
-    on: '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>',
-    off: '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>',
-};
-
 export const isMutedMap = {
     on: 'on',
     off: 'off',
@@ -146,7 +141,8 @@ export const button = {
         easy: getHtmlElement("input", 'difficulty-easy'),
         normal: getHtmlElement("input", 'difficulty-normal'),
         hard: getHtmlElement("input", 'difficulty-hard'),
-    }
+    },
+    isMuted: getHtmlElement("input", "is-muted-button"),
 };
 
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
@@ -159,7 +155,6 @@ export const audioObj = {
     silence: new Array(1),
 };
 
-export const isMuted = flashParamElements.common.isMuted;
 export const audioStatus = getHtmlElement("label", "audio-status");
 
 export const disableConfigTarget = [
