@@ -34,16 +34,6 @@ export function setMute(on: boolean): void {
     }
 }
 
-export function toggleMute() {
-    if (isMuted.checked) {
-        isMuted.value = isMutedMap.on;
-        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
-    } else {
-        isMuted.value = isMutedMap.off;
-        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
-    }
-}
-
 export function muteIsOn() {
     return isMuted.checked;
 }

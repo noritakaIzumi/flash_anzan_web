@@ -8,12 +8,12 @@ import {
     button,
     calculateArea,
     difficultyMap,
+    flashParamConfig,
     flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
-    isMuted,
     isMutedMap,
     modals,
     modeNames,
@@ -22,7 +22,6 @@ import {
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
     numberHistoryDisplayDelimiter,
-    flashParamConfig,
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
@@ -39,7 +38,7 @@ import {
     isTouchDevice
 } from "./screen";
 import {getHtmlElement} from "./htmlElement";
-import {loadAudioObj, muteIsOn, setMute, toggleMute} from "./sound";
+import {loadAudioObj, muteIsOn, setMute} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 
 /* button events */
@@ -759,7 +758,7 @@ function clearInputAnswerBox() {
             })
 
             // サウンド
-            flashParamElements.common.isMuted.addEventListener('click', toggleMute)
+            flashParamElements.common.isMuted.addEventListener('change', event => setMute(event.target.checked))
             flashParamElements.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
 
             // 出題設定読み込み
