@@ -1,14 +1,10 @@
 import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
-import {Howl} from 'howler';
 import {SimpleKeyboard} from "simple-keyboard";
 import {FlashAnswer, generateNumbers} from "./flash_numbers";
 import {
     answerNumberDisplay,
-    audioAttr,
     audioObj,
-    audioStatus,
-    audioStatusInnerHtmlMap,
     button,
     calculateArea,
     difficultyMap,
@@ -28,7 +24,6 @@ import {
     numberHistoryDisplayDelimiter,
     param,
     questionNumberArea,
-    savedParamsKeyName,
     switchInputAnswerBoxTab,
     versionNumber
 } from "./globals";
@@ -44,65 +39,10 @@ import {
     isTouchDevice
 } from "./screen";
 import {getHtmlElement} from "./htmlElement";
+import {loadAudioObj, muteIsOn, setSoundExtension, toggleMute} from "./sound";
+import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 
 /* button events */
-
-function doLoadParams() {
-    const modal = modals.params.load.complete;
-    const modalMessage = modal.querySelector('.modal-body > p');
-
-    const loadedParams = localStorage.getItem(savedParamsKeyName);
-    if (!loadedParams) {
-        modalMessage.innerHTML = '設定がありません';
-        return;
-    }
-    modalMessage.innerHTML = '設定を読み込みました';
-
-    const parsedParams = JSON.parse(loadedParams);
-    Object.keys(parsedParams).map(
-        (mode) => {
-            Object.keys(parsedParams[mode]).map(
-                (paramName) => {
-                    element[mode][paramName].value = parsedParams[mode][paramName];
-                });
-        }
-    );
-
-    element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
-    toggleMute();
-    loadAudioObj(element.common.soundExtension.value);
-    // 難易度選択
-    document.querySelector('#difficulty-' + element.common.difficulty.value).checked = true;
-}
-
-function doSaveParams() {
-    const params = {};
-    Object.keys(element).map(
-        (mode) => {
-            params[mode] = {};
-            Object.keys(element[mode]).map(
-                (paramName) => {
-                    params[mode][paramName] = element[mode][paramName].value;
-                });
-        }
-    );
-    localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
-}
-
-function doDeleteParams() {
-    localStorage.clear();
-}
-
-function setSoundExtension(extension) {
-    switch (extension) {
-        case 'ogg':
-            loadAudioObj(audioAttr.extension.ogg);
-            break;
-        case 'wav':
-            loadAudioObj(audioAttr.extension.wav);
-            break;
-    }
-}
 
 function toggleFullscreenMode(full) {
     if (full === true) {
@@ -117,18 +57,6 @@ function toggleFullscreenMode(full) {
     } else {
         contractCalculateArea();
         calculateArea.dataset.fullScreen = "0";
-    }
-}
-
-function toggleMute() {
-    if (isMuted.checked || isMuted.value === isMutedMap.on) {
-        isMuted.checked = true;
-        isMuted.value = isMutedMap.on;
-        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
-    } else {
-        isMuted.checked = false;
-        isMuted.value = isMutedMap.off;
-        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
     }
 }
 
@@ -296,10 +224,6 @@ function getCurrentParam() {
     );
 
     return requestParam;
-}
-
-function muteIsOn() {
-    return isMuted.checked;
 }
 
 function flash(config = {}) {
@@ -614,21 +538,6 @@ function flash(config = {}) {
 
 function repeatFlash() {
     flash({repeat: true});
-}
-
-function loadAudioObj(extension) {
-    let timeoutMs = 100;
-    let audioPath = '';
-    Object.keys(audioObj).forEach((name) => {
-        audioPath = `${audioAttr.directory}/${name}.${extension}`;
-        for (let i = 0; i < audioObj[name].length; i++) {
-            audioObj[name][i] = new Howl({src: [audioPath]});
-            setTimeout(() => {
-                audioObj[name][i].load();
-            }, timeoutMs);
-            timeoutMs += 50;
-        }
-    });
 }
 
 /**
