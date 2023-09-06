@@ -34,7 +34,7 @@ export const audioAttr = {
     },
 };
 
-export const element = {
+export const flashParamElements = {
     addition: {
         digit: getHtmlElement("input", "addition-digit"),
         length: getHtmlElement("input", "addition-length"),
@@ -54,8 +54,7 @@ export const element = {
         soundExtension: getHtmlElement("select", "sound-extension"),
     },
 };
-
-export const param = {
+export const flashParamConfig = {
     addition: {
         digit: {
             max: 14,
@@ -160,7 +159,7 @@ export const audioObj = {
     silence: new Array(1),
 };
 
-export const isMuted = element.common.isMuted;
+export const isMuted = flashParamElements.common.isMuted;
 export const audioStatus = getHtmlElement("label", "audio-status");
 
 export const disableConfigTarget = [

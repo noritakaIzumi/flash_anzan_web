@@ -8,7 +8,7 @@ import {
     button,
     calculateArea,
     difficultyMap,
-    element,
+    flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
@@ -22,7 +22,7 @@ import {
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
     numberHistoryDisplayDelimiter,
-    param,
+    flashParamConfig,
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
@@ -39,7 +39,7 @@ import {
     isTouchDevice
 } from "./screen";
 import {getHtmlElement} from "./htmlElement";
-import {loadAudioObj, muteIsOn, toggleMute} from "./sound";
+import {loadAudioObj, muteIsOn, setMute, toggleMute} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 
 /* button events */
@@ -81,26 +81,26 @@ function increaseParam(id, amount) {
         case "digit":
             if (currentFlashMode === modeNames.multiplication) {
                 element.value = fixValue(
-                    param[currentFlashMode][paramName + id.split("-")[2]],
+                    flashParamConfig[currentFlashMode][paramName + id.split("-")[2]],
                     Math.floor(currentValue) + amount
                 ).toString();
             } else if (currentFlashMode === modeNames.addition) {
                 element.value = fixValue(
-                    param[currentFlashMode][paramName],
+                    flashParamConfig[currentFlashMode][paramName],
                     Math.floor(currentValue) + amount
                 ).toString();
             }
             break;
         case "length":
             element.value = fixValue(
-                param[currentFlashMode][paramName],
+                flashParamConfig[currentFlashMode][paramName],
                 Math.floor(currentValue) + amount
             ).toString();
             break;
         case "time":
             element.value = (
                 fixValue(
-                    param[currentFlashMode][paramName],
+                    flashParamConfig[currentFlashMode][paramName],
                     Math.round(currentValue * 1000) + amount
                 ) / 1000
             ).toString();
@@ -109,42 +109,42 @@ function increaseParam(id, amount) {
 }
 
 function setUpInputBox() {
-    Object.keys(element).map((mode) => {
+    Object.keys(flashParamElements).map((mode) => {
         if (mode === 'common') {
             // difficulty
-            element.common.difficulty.value = param.common.difficulty.default;
+            flashParamElements.common.difficulty.value = flashParamConfig.common.difficulty.default;
             // flashRate
-            element.common.flashRate.max = String(param.common.flashRate.max);
-            element.common.flashRate.min = String(param.common.flashRate.min);
-            element.common.flashRate.value = String(param.common.flashRate.default);
+            flashParamElements.common.flashRate.max = String(flashParamConfig.common.flashRate.max);
+            flashParamElements.common.flashRate.min = String(flashParamConfig.common.flashRate.min);
+            flashParamElements.common.flashRate.value = String(flashParamConfig.common.flashRate.default);
             // offset
-            element.common.offset.max = String(param.common.offset.max);
-            element.common.offset.min = String(param.common.offset.min);
-            element.common.offset.value = String(param.common.offset.default);
+            flashParamElements.common.offset.max = String(flashParamConfig.common.offset.max);
+            flashParamElements.common.offset.min = String(flashParamConfig.common.offset.min);
+            flashParamElements.common.offset.value = String(flashParamConfig.common.offset.default);
             // isMuted
-            element.common.isMuted.checked = param.common.isMuted.default;
-            element.common.isMuted.value = element.common.isMuted.checked ? isMutedMap.on : isMutedMap.off;
-            toggleMute();
+            flashParamElements.common.isMuted.checked = flashParamConfig.common.isMuted.default;
+            flashParamElements.common.isMuted.value = flashParamElements.common.isMuted.checked ? isMutedMap.on : isMutedMap.off;
+            setMute(flashParamElements.common.isMuted.checked);
             // soundExtension
-            element.common.soundExtension.value = param.common.soundExtension.default;
+            flashParamElements.common.soundExtension.value = flashParamConfig.common.soundExtension.default;
             return;
         }
-        Object.keys(element[mode]).map((config) => {
+        Object.keys(flashParamElements[mode]).map((config) => {
             if (config === "time") {
-                element[mode][config].max = param[mode][config].max / 1000;
-                element[mode][config].min = param[mode][config].min / 1000;
-                element[mode][config].value = param[mode][config].default / 1000;
-                element[mode][config].step = param[mode][config].step / 1000;
+                flashParamElements[mode][config].max = flashParamConfig[mode][config].max / 1000;
+                flashParamElements[mode][config].min = flashParamConfig[mode][config].min / 1000;
+                flashParamElements[mode][config].value = flashParamConfig[mode][config].default / 1000;
+                flashParamElements[mode][config].step = flashParamConfig[mode][config].step / 1000;
             } else {
-                element[mode][config].max = param[mode][config].max;
-                element[mode][config].min = param[mode][config].min;
-                element[mode][config].value = param[mode][config].default;
+                flashParamElements[mode][config].max = flashParamConfig[mode][config].max;
+                flashParamElements[mode][config].min = flashParamConfig[mode][config].min;
+                flashParamElements[mode][config].value = flashParamConfig[mode][config].default;
             }
-            element[mode][config].onfocus = function () {
+            flashParamElements[mode][config].onfocus = function () {
                 this.tmp = this.value;
                 this.value = "";
             };
-            element[mode][config].onblur = function () {
+            flashParamElements[mode][config].onblur = function () {
                 if (this.value === "") {
                     this.value = this.tmp;
                 }
@@ -199,41 +199,41 @@ function getCurrentParam() {
         case modeNames.multiplication:
             requestParam.digit = [
                 fixValue(
-                    param[currentFlashMode].digit1,
-                    Math.floor(Number(element[currentFlashMode].digit1.value))
+                    flashParamConfig[currentFlashMode].digit1,
+                    Math.floor(Number(flashParamElements[currentFlashMode].digit1.value))
                 ),
                 fixValue(
-                    param[currentFlashMode].digit2,
-                    Math.floor(Number(element[currentFlashMode].digit2.value))
+                    flashParamConfig[currentFlashMode].digit2,
+                    Math.floor(Number(flashParamElements[currentFlashMode].digit2.value))
                 )
             ];
-            element[currentFlashMode].digit1.value = requestParam.digit[0];
-            element[currentFlashMode].digit2.value = requestParam.digit[1];
+            flashParamElements[currentFlashMode].digit1.value = requestParam.digit[0];
+            flashParamElements[currentFlashMode].digit2.value = requestParam.digit[1];
             break;
         case modeNames.addition:
         default:
             requestParam.digit = fixValue(
-                param[currentFlashMode].digit,
-                Math.floor(Number(element[currentFlashMode].digit.value))
+                flashParamConfig[currentFlashMode].digit,
+                Math.floor(Number(flashParamElements[currentFlashMode].digit.value))
             );
-            element[currentFlashMode].digit.value = requestParam.digit;
+            flashParamElements[currentFlashMode].digit.value = requestParam.digit;
     }
     requestParam.length = fixValue(
-        param[currentFlashMode].length,
-        Math.floor(Number(element[currentFlashMode].length.value))
+        flashParamConfig[currentFlashMode].length,
+        Math.floor(Number(flashParamElements[currentFlashMode].length.value))
     );
     requestParam.time = fixValue(
-        param[currentFlashMode].time,
-        Number(element[currentFlashMode].time.value) * 1000
+        flashParamConfig[currentFlashMode].time,
+        Number(flashParamElements[currentFlashMode].time.value) * 1000
     );
-    requestParam.difficulty = element.common.difficulty.value;
+    requestParam.difficulty = flashParamElements.common.difficulty.value;
     requestParam.flashRate = fixValue(
-        param.common.flashRate,
-        Number(element.common.flashRate.value)
+        flashParamConfig.common.flashRate,
+        Number(flashParamElements.common.flashRate.value)
     );
     requestParam.offset = fixValue(
-        param.common.offset,
-        Number(element.common.offset.value)
+        flashParamConfig.common.offset,
+        Number(flashParamElements.common.offset.value)
     );
 
     return requestParam;
@@ -352,10 +352,10 @@ function flash(config = {}) {
     const currentFlashMode = CurrentFlashMode.getInstance().value;
     // 設定を取得する
     let requestParam = getCurrentParam();
-    element[currentFlashMode].length.value = requestParam.length;
-    element[currentFlashMode].time.value = requestParam.time / 1000;
-    element.common.flashRate.value = requestParam.flashRate;
-    element.common.offset.value = requestParam.offset;
+    flashParamElements[currentFlashMode].length.value = requestParam.length;
+    flashParamElements[currentFlashMode].time.value = requestParam.time / 1000;
+    flashParamElements.common.flashRate.value = requestParam.flashRate;
+    flashParamElements.common.offset.value = requestParam.offset;
 
     // 出題数字を生成、または前回の出題から読み込む
     let digitIsSame = false;
@@ -559,7 +559,7 @@ function repeatFlash() {
  */
 function switchDifficulty(value) {
     document.querySelector('#difficulty-' + value).checked = true;
-    element.common.difficulty.value = difficultyMap[value];
+    flashParamElements.common.difficulty.value = difficultyMap[value];
 }
 
 function registerShortcuts() {
@@ -634,7 +634,7 @@ function clearInputAnswerBox() {
 
         // ページ読み込み時処理
         (() => {
-            loadAudioObj(param.common.soundExtension.default);
+            loadAudioObj(flashParamConfig.common.soundExtension.default);
             button.start.addEventListener('click', () => {
                 audioContext.resume().then(() => {
                 });
@@ -749,18 +749,18 @@ function clearInputAnswerBox() {
 
             // 難易度切り替え
             button.difficulty.easy.addEventListener('click', () => {
-                element.common.difficulty.value = 'easy';
+                flashParamElements.common.difficulty.value = 'easy';
             })
             button.difficulty.normal.addEventListener('click', () => {
-                element.common.difficulty.value = 'normal';
+                flashParamElements.common.difficulty.value = 'normal';
             })
             button.difficulty.hard.addEventListener('click', () => {
-                element.common.difficulty.value = 'hard';
+                flashParamElements.common.difficulty.value = 'hard';
             })
 
             // サウンド
-            element.common.isMuted.addEventListener('click', toggleMute)
-            element.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
+            flashParamElements.common.isMuted.addEventListener('click', toggleMute)
+            flashParamElements.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
 
             // 出題設定読み込み
             button.doLoadParams.addEventListener('click', doLoadParams)

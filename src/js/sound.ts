@@ -22,13 +22,23 @@ export function loadAudioObj(extension: string) {
     });
 }
 
-export function toggleMute() {
-    if (isMuted.checked) {
+export function setMute(on: boolean): void {
+    if (on) {
         isMuted.checked = true;
         isMuted.value = isMutedMap.on;
         audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
     } else {
         isMuted.checked = false;
+        isMuted.value = isMutedMap.off;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
+    }
+}
+
+export function toggleMute() {
+    if (isMuted.checked) {
+        isMuted.value = isMutedMap.on;
+        audioStatus.innerHTML = audioStatusInnerHtmlMap.off;
+    } else {
         isMuted.value = isMutedMap.off;
         audioStatus.innerHTML = audioStatusInnerHtmlMap.on;
     }

@@ -1,5 +1,5 @@
-import {element, isMutedMap, modals, savedParamsKeyName} from "./globals";
-import {loadAudioObj, toggleMute} from "./sound";
+import {flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
+import {loadAudioObj, setMute} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 
 export function doLoadParams() {
@@ -18,26 +18,26 @@ export function doLoadParams() {
         (mode) => {
             Object.keys(parsedParams[mode]).map(
                 (paramName) => {
-                    element[mode][paramName].value = parsedParams[mode][paramName];
+                    flashParamElements[mode][paramName].value = parsedParams[mode][paramName];
                 });
         }
     );
 
-    element.common.isMuted.checked = element.common.isMuted.value === isMutedMap.on;
-    toggleMute();
-    loadAudioObj(element.common.soundExtension.value);
+    flashParamElements.common.isMuted.checked = flashParamElements.common.isMuted.value === isMutedMap.on;
+    setMute(flashParamElements.common.isMuted.checked);
+    loadAudioObj(flashParamElements.common.soundExtension.value);
     // 難易度選択
-    getHtmlElement("input", `difficulty-${element.common.difficulty.value}`).checked = true;
+    getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.value}`).checked = true;
 }
 
 export function doSaveParams() {
     const params = {};
-    Object.keys(element).map(
+    Object.keys(flashParamElements).map(
         (mode) => {
             params[mode] = {};
-            Object.keys(element[mode]).map(
+            Object.keys(flashParamElements[mode]).map(
                 (paramName) => {
-                    params[mode][paramName] = element[mode][paramName].value;
+                    params[mode][paramName] = flashParamElements[mode][paramName].value;
                 });
         }
     );
