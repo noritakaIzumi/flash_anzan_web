@@ -2,6 +2,30 @@ import {button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from
 import {loadAudioObj, setMute} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 
+abstract class FlashParam<K extends HTMLElement & { value: string }, T, U = number> {
+    public abstract get value(): U;
+
+    protected htmlElement: K;
+    protected schema: T;
+
+    protected constructor(props: { htmlElement: K, schema: T }) {
+        this.htmlElement = props.htmlElement
+        this.schema = props.schema
+    }
+}
+
+type FlashParamNumberSchema = {
+    max: number,
+    min: number,
+    default: number,
+}
+
+class AdditionDigitParam extends FlashParam<HTMLInputElement, FlashParamNumberSchema> {
+    get value(): number {
+        return Number(this.htmlElement.value);
+    }
+}
+
 export function doLoadParams() {
     const modal = modals.params.load.complete;
     const modalMessage = modal.querySelector('.modal-body > p');
