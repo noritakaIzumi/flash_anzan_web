@@ -2,6 +2,7 @@ import {audioAttr, audioObj, flashParamElements} from "./globals";
 import {Howl} from "howler";
 
 const soundExtension = ['ogg', 'wav'] as const;
+export type SoundExtension = typeof soundExtension[number];
 
 export function loadAudioObj(extension: string) {
     if ((soundExtension as unknown as string[]).indexOf(extension) === -1) {

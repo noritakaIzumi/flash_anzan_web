@@ -1,5 +1,5 @@
 import {flashParamElements, modals, savedParamsKeyName} from "./globals";
-import {loadAudioObj} from "./sound";
+import {loadAudioObj, SoundExtension} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 import {fixValue} from "./util_should_categorize";
 
@@ -144,6 +144,27 @@ export class FlashIsMutedParam extends FlashParam<
     }
 }
 
+export class FlashSoundExtensionParam extends FlashParam<
+    HTMLSelectElement,
+    { default: SoundExtension },
+    SoundExtension
+> {
+    get value(): SoundExtension {
+        return this.htmlElement.value as SoundExtension;
+    }
+
+    set value(value: SoundExtension) {
+        this.htmlElement.value = value;
+        this.htmlElement.dispatchEvent(new Event("change"))
+    }
+
+    constructor(props: { htmlElement: HTMLSelectElement; schema: { default: SoundExtension }; options?: never }) {
+        super(props);
+        this.htmlElement.addEventListener("change", (evt) => loadAudioObj((evt.target as HTMLSelectElement).value))
+        this.value = props.schema.default
+    }
+}
+
 export function doLoadParams() {
     const modal = modals.params.load.complete;
     const modalMessage = modal.querySelector('.modal-body > p');
@@ -165,7 +186,6 @@ export function doLoadParams() {
         }
     );
 
-    loadAudioObj(flashParamElements.common.soundExtension.value);
     // 難易度選択
     getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.value}`).checked = true;
 }

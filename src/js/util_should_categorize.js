@@ -1,7 +1,7 @@
 /* button events */
 
 import {contractCalculateArea, expandCalculateArea, isFullscreen} from "./screen";
-import {calculateArea, difficultyMap, flashParamConfig, flashParamElements, modeNames} from "./globals";
+import {calculateArea, difficultyMap, flashParamElements, modeNames} from "./globals";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {changeShortcut} from "./shortcut";
 
@@ -31,8 +31,6 @@ export function fixValue(limit, targetValue) {
 export function setUpInputBox() {
     Object.keys(flashParamElements).map((mode) => {
         if (mode === 'common') {
-            // soundExtension
-            flashParamElements.common.soundExtension.value = flashParamConfig.common.soundExtension.default;
             return;
         }
         Object.keys(flashParamElements[mode]).map((config) => {
