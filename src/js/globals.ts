@@ -25,10 +25,6 @@ export const difficultyMap = {
 
 export const audioAttr = {
     directory: "./sounds",
-    extension: {
-        ogg: 'ogg',
-        wav: 'wav',
-    },
 };
 
 export const headerMessage = getHtmlElement("div", "header-message");
