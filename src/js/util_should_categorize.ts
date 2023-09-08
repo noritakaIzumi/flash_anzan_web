@@ -1,6 +1,6 @@
 import {FlashMode, flashParamElements} from "./globals";
 import {CurrentFlashMode} from "./currentFlashMode";
-import {changeShortcut} from "./shortcut";
+import {changeShortcut} from "./_shortcut";
 
 export function changeMode(mode: FlashMode) {
     changeShortcut(mode);
