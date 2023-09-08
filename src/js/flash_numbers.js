@@ -112,19 +112,37 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                     case difficultyMap.easy: {
                         let tempAbacusValue;
                         for (let i = 0; i < length; i++) {
+                            let getIntRetry = 0;
+                            let bestNumber;
+                            let bestCarry = -1;
                             while (true) {
                                 const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
 
                                 tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
-                                if (abacus.carry <= digitCount) {
-                                    numbers.push(number);
+                                if (abacus.carry > digitCount) {
+                                    if (abacus.carry > bestCarry) {
+                                        bestNumber = number;
+                                        bestCarry = abacus.carry;
+                                    }
+
+                                    abacus = new Abacus(tempAbacusValue);
+
+                                    if (getIntRetry < 100) {
+                                        getIntRetry++;
+                                        continue;
+                                    }
+
+                                    abacus = abacus.add(bestNumber);
+                                    numbers.push(bestNumber);
                                     carries.push(abacus.carry);
                                     break;
                                 }
 
-                                abacus = new Abacus(tempAbacusValue);
+                                numbers.push(number);
+                                carries.push(abacus.carry);
+                                break;
                             }
                         }
 
