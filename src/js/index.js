@@ -26,10 +26,10 @@ import {
 import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
-import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice} from "./screen";
+import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
 import {isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode, getCurrentParam, setUpInputBox, toggleFullscreenMode} from "./util_should_categorize";
+import {changeMode, getCurrentParam} from "./util_should_categorize";
 import {registerShortcuts} from "./shortcut";
 
 function flash(config = {}) {
@@ -85,7 +85,7 @@ function flash(config = {}) {
                     if (isTouchDevice()) { // タッチデバイス
                         calculateArea.addEventListener("touchend", (event) => {
                             event.preventDefault();
-                            toggleFullscreenMode(false);
+                            setFullscreenMode(false);
                         }, {once: true});
                         noticeArea.innerText = '画面をタッチすると戻ります。';
                     } else { // 非タッチデバイス
@@ -318,7 +318,7 @@ function flash(config = {}) {
 
     // Register flash events
     disableHtmlButtons();
-    toggleFullscreenMode(true);
+    setFullscreenMode(true);
     noticeArea.innerText = '';
     warmUpDisplayArea(0);
     const beforeBeepTime = 500;
@@ -404,7 +404,7 @@ function clearInputAnswerBox() {
             (() => {
                 let timeoutMs = warmUpDisplayArea(warmupDelay);
                 const prepareGameFunctions = [
-                    setUpInputBox,
+                    () => changeMode('addition'),
                     configureModalFocusing,
                     () => {
                         button.help.disabled = false;

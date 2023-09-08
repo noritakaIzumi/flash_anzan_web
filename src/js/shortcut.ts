@@ -1,5 +1,5 @@
 import {button, flashParamElements, modeNames} from "./globals";
-import {switchDifficulty, toggleFullscreenMode} from "./util_should_categorize";
+import {toggleFullscreenMode} from "./screen";
 
 export function registerShortcuts() {
     shortcut.add("ctrl+o", () => button.loadParams.click());
@@ -10,9 +10,15 @@ export function registerShortcuts() {
     shortcut.add("z", () => button.addition.click());
     shortcut.add("x", () => button.subtraction.click());
     shortcut.add("c", () => button.multiplication.click());
-    shortcut.add("d", () => switchDifficulty('easy'));
-    shortcut.add("f", () => switchDifficulty('normal'));
-    shortcut.add("g", () => switchDifficulty('hard'));
+    shortcut.add("d", () => {
+        flashParamElements.common.difficulty.valueV1 = 'easy'
+    });
+    shortcut.add("f", () => {
+        flashParamElements.common.difficulty.valueV1 = 'normal'
+    });
+    shortcut.add("g", () => {
+        flashParamElements.common.difficulty.valueV1 = 'hard'
+    });
     shortcut.add("n", () => button.numberHistory.click());
     shortcut.add("w", () => toggleFullscreenMode());
     shortcut.add("q", () => button.help.click());

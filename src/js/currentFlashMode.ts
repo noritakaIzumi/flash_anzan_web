@@ -1,15 +1,12 @@
-import {FlashMode, flashModes} from "./globals";
+import {FlashMode} from "./globals";
 
 export class CurrentFlashMode {
     get value(): FlashMode {
         return this._value;
     }
 
-    set value(value: string) {
-        if (flashModes.indexOf(value as unknown as FlashMode) === -1) {
-            throw new RangeError('invalid mode')
-        }
-        this._value = value as FlashMode;
+    set value(value: FlashMode) {
+        this._value = value;
     }
 
     private static instance: CurrentFlashMode;

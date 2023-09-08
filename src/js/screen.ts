@@ -4,6 +4,24 @@ export function isTouchDevice() {
     return window.ontouchstart === null;
 }
 
+export function setFullscreenMode(on: boolean) {
+    if (on) {
+        expandCalculateArea();
+        calculateArea.dataset.fullScreen = "1";
+    } else {
+        contractCalculateArea();
+        calculateArea.dataset.fullScreen = "0";
+    }
+}
+
+export function toggleFullscreenMode() {
+    if (isFullscreen()) {
+        setFullscreenMode(false)
+    } else {
+        setFullscreenMode(true)
+    }
+}
+
 export function isFullscreen() {
     return calculateArea.dataset.fullScreen === '1';
 }

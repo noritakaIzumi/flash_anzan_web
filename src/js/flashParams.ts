@@ -1,7 +1,10 @@
-import {flashParamElements, modals, savedParamsKeyName} from "./globals";
+import {flashDifficulty, FlashDifficulty, flashParamElements, modals, savedParamsKeyName} from "./globals";
 import {loadAudioObj, soundExtension, SoundExtension} from "./sound";
 import {getHtmlElement} from "./htmlElement";
-import {fixValue} from "./util_should_categorize";
+
+export function fixValue(limit: { max: number, min: number }, targetValue: number): number {
+    return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
+}
 
 abstract class FlashParam<K extends HTMLElement & { value: string }, T, U, VOptions = never> {
     abstract get valueV1(): U;
@@ -100,8 +103,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
 }
 
 type FlashDifficultyParamSchema = {
-    in_list: readonly string[],
-    default: string,
+    default: FlashDifficulty,
 }
 
 export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
@@ -109,8 +111,7 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
         return this.htmlElement.value;
     }
 
-    set valueV1(value: string) {
-        this.validateValue(value)
+    set valueV1(value: FlashDifficulty) {
         getHtmlElement("input", `difficulty-${value}`).checked = true;
         this.htmlElement.value = value
     }
@@ -120,11 +121,12 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
     }
 
     set valueV0(value: string) {
-        this.valueV1 = value
+        this.validateValue(value)
+        this.valueV1 = value as FlashDifficulty
     }
 
     protected validateValue(value: string) {
-        if (this.schema.in_list.indexOf(value) === -1) {
+        if ((flashDifficulty as unknown as string[]).indexOf(value) === -1) {
             throw new RangeError(`invalid difficulty: ${value}`)
         }
     }

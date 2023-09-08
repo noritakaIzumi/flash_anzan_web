@@ -17,6 +17,9 @@ export const modeNames = {
     multiplication: "multiplication",
 };
 
+export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
+export type FlashDifficulty = typeof flashDifficulty[number]
+
 export const difficultyMap = {
     easy: 'easy',
     normal: 'normal',
@@ -106,7 +109,7 @@ export const flashParamElements = {
     common: {
         difficulty: new FlashDifficultyParam({
             htmlElement: getHtmlElement("select", "difficulty"),
-            schema: {in_list: ['easy', 'normal', 'hard'] as const, default: 'easy'},
+            schema: {default: 'easy'},
         }),
         flashRate: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "common-flashRate"),
