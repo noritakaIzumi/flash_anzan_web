@@ -7,14 +7,12 @@ import {
     audioObj,
     button,
     calculateArea,
-    difficultyMap,
     flashParamConfig,
     flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
-    isMutedMap,
     modals,
     modeNames,
     multiplyFigure,
@@ -29,214 +27,11 @@ import {
 import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
-import {
-    contractCalculateArea,
-    disableHtmlButtons,
-    enableHtmlButtons,
-    expandCalculateArea,
-    isFullscreen,
-    isTouchDevice
-} from "./screen";
-import {getHtmlElement} from "./htmlElement";
+import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice} from "./screen";
 import {loadAudioObj, muteIsOn, setMute} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-
-/* button events */
-
-function toggleFullscreenMode(full) {
-    if (full === true) {
-        expandCalculateArea();
-        calculateArea.dataset.fullScreen = "1";
-    } else if (full === false) {
-        contractCalculateArea();
-        calculateArea.dataset.fullScreen = "0";
-    } else if (!isFullscreen()) {
-        expandCalculateArea();
-        calculateArea.dataset.fullScreen = "1";
-    } else {
-        contractCalculateArea();
-        calculateArea.dataset.fullScreen = "0";
-    }
-}
-
-// TODO: このファイルをクラス化して共通部分をまとめる
-//  switch 文もまとめる
-
-function fixValue(limit, targetValue) {
-    return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
-}
-
-function increaseParam(id, amount) {
-    const currentFlashMode = CurrentFlashMode.getInstance().value;
-
-    const element = getHtmlElement("input", id);
-    if (element.disabled) {
-        return;
-    }
-
-    const currentValue = Number(element.value);
-    const paramName = id.split("-")[1];
-    switch (paramName) {
-        case "digit":
-            if (currentFlashMode === modeNames.multiplication) {
-                element.value = fixValue(
-                    flashParamConfig[currentFlashMode][paramName + id.split("-")[2]],
-                    Math.floor(currentValue) + amount
-                ).toString();
-            } else if (currentFlashMode === modeNames.addition) {
-                element.value = fixValue(
-                    flashParamConfig[currentFlashMode][paramName],
-                    Math.floor(currentValue) + amount
-                ).toString();
-            }
-            break;
-        case "length":
-            element.value = fixValue(
-                flashParamConfig[currentFlashMode][paramName],
-                Math.floor(currentValue) + amount
-            ).toString();
-            break;
-        case "time":
-            element.value = (
-                fixValue(
-                    flashParamConfig[currentFlashMode][paramName],
-                    Math.round(currentValue * 1000) + amount
-                ) / 1000
-            ).toString();
-            break;
-    }
-}
-
-function setUpInputBox() {
-    Object.keys(flashParamElements).map((mode) => {
-        if (mode === 'common') {
-            // difficulty
-            flashParamElements.common.difficulty.value = flashParamConfig.common.difficulty.default;
-            // flashRate
-            flashParamElements.common.flashRate.max = String(flashParamConfig.common.flashRate.max);
-            flashParamElements.common.flashRate.min = String(flashParamConfig.common.flashRate.min);
-            flashParamElements.common.flashRate.value = String(flashParamConfig.common.flashRate.default);
-            // offset
-            flashParamElements.common.offset.max = String(flashParamConfig.common.offset.max);
-            flashParamElements.common.offset.min = String(flashParamConfig.common.offset.min);
-            flashParamElements.common.offset.value = String(flashParamConfig.common.offset.default);
-            // isMuted
-            button.isMuted.checked = flashParamConfig.common.isMuted.default;
-            flashParamElements.common.isMuted.value = button.isMuted.checked ? isMutedMap.on : isMutedMap.off;
-            setMute(button.isMuted.checked);
-            // soundExtension
-            flashParamElements.common.soundExtension.value = flashParamConfig.common.soundExtension.default;
-            return;
-        }
-        Object.keys(flashParamElements[mode]).map((config) => {
-            if (config === "time") {
-                flashParamElements[mode][config].max = flashParamConfig[mode][config].max / 1000;
-                flashParamElements[mode][config].min = flashParamConfig[mode][config].min / 1000;
-                flashParamElements[mode][config].value = flashParamConfig[mode][config].default / 1000;
-                flashParamElements[mode][config].step = flashParamConfig[mode][config].step / 1000;
-            } else {
-                flashParamElements[mode][config].max = flashParamConfig[mode][config].max;
-                flashParamElements[mode][config].min = flashParamConfig[mode][config].min;
-                flashParamElements[mode][config].value = flashParamConfig[mode][config].default;
-            }
-            flashParamElements[mode][config].onfocus = function () {
-                this.tmp = this.value;
-                this.value = "";
-            };
-            flashParamElements[mode][config].onblur = function () {
-                if (this.value === "") {
-                    this.value = this.tmp;
-                }
-            };
-        });
-    });
-    changeMode(modeNames.addition);
-}
-
-function changeShortcut(mode) {
-    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l"].map((key) => {
-        shortcut.remove(key);
-    });
-    switch (mode) {
-        case modeNames.multiplication:
-            shortcut.add("y", () => increaseParam(mode + "-digit-1", 1));
-            shortcut.add("h", () => increaseParam(mode + "-digit-1", -1));
-            shortcut.add("u", () => increaseParam(mode + "-digit-2", 1));
-            shortcut.add("j", () => increaseParam(mode + "-digit-2", -1));
-            break;
-        case modeNames.addition:
-        default:
-            shortcut.add("u", () => increaseParam(mode + "-digit", 1));
-            shortcut.add("j", () => increaseParam(mode + "-digit", -1));
-    }
-    shortcut.add("i", () => increaseParam(mode + "-length", 1));
-    shortcut.add("k", () => increaseParam(mode + "-length", -1));
-    shortcut.add("o", () => increaseParam(mode + "-time", 1000));
-    shortcut.add("l", () => increaseParam(mode + "-time", -1000));
-    shortcut.add("shift+o", () => increaseParam(mode + "-time", 100));
-    shortcut.add("shift+l", () => increaseParam(mode + "-time", -100));
-    shortcut.add("ctrl+shift+o", () => increaseParam(mode + "-time", 10));
-    shortcut.add("ctrl+shift+l", () => increaseParam(mode + "-time", -10));
-}
-
-function changeMode(mode) {
-    changeShortcut(mode);
-    CurrentFlashMode.getInstance().value = mode;
-}
-
-function getCurrentParam() {
-    let requestParam = {
-        digit: 0,
-        length: 0,
-        time: 0,
-        difficulty: "",
-        flashRate: 0,
-        offset: 0,
-    };
-    const currentFlashMode = CurrentFlashMode.getInstance().value;
-    switch (currentFlashMode) {
-        case modeNames.multiplication:
-            requestParam.digit = [
-                fixValue(
-                    flashParamConfig[currentFlashMode].digit1,
-                    Math.floor(Number(flashParamElements[currentFlashMode].digit1.value))
-                ),
-                fixValue(
-                    flashParamConfig[currentFlashMode].digit2,
-                    Math.floor(Number(flashParamElements[currentFlashMode].digit2.value))
-                )
-            ];
-            flashParamElements[currentFlashMode].digit1.value = requestParam.digit[0];
-            flashParamElements[currentFlashMode].digit2.value = requestParam.digit[1];
-            break;
-        case modeNames.addition:
-        default:
-            requestParam.digit = fixValue(
-                flashParamConfig[currentFlashMode].digit,
-                Math.floor(Number(flashParamElements[currentFlashMode].digit.value))
-            );
-            flashParamElements[currentFlashMode].digit.value = requestParam.digit;
-    }
-    requestParam.length = fixValue(
-        flashParamConfig[currentFlashMode].length,
-        Math.floor(Number(flashParamElements[currentFlashMode].length.value))
-    );
-    requestParam.time = fixValue(
-        flashParamConfig[currentFlashMode].time,
-        Number(flashParamElements[currentFlashMode].time.value) * 1000
-    );
-    requestParam.difficulty = flashParamElements.common.difficulty.value;
-    requestParam.flashRate = fixValue(
-        flashParamConfig.common.flashRate,
-        Number(flashParamElements.common.flashRate.value)
-    );
-    requestParam.offset = fixValue(
-        flashParamConfig.common.offset,
-        Number(flashParamElements.common.offset.value)
-    );
-
-    return requestParam;
-}
+import {changeMode, getCurrentParam, setUpInputBox, toggleFullscreenMode} from "./util_should_categorize";
+import {registerShortcuts} from "./shortcut";
 
 function flash(config = {}) {
     const measuredTime = {start: 0, end: 0};
@@ -550,33 +345,6 @@ function flash(config = {}) {
 
 function repeatFlash() {
     flash({repeat: true});
-}
-
-/**
- * 難易度切り替え
- * @param {string} value
- */
-function switchDifficulty(value) {
-    document.querySelector('#difficulty-' + value).checked = true;
-    flashParamElements.common.difficulty.value = difficultyMap[value];
-}
-
-function registerShortcuts() {
-    shortcut.add("ctrl+o", () => button.loadParams.click());
-    shortcut.add("ctrl+s", () => button.saveParams.click());
-    shortcut.add("ctrl+r", () => button.deleteParams.click());
-    shortcut.add("s", () => button.start.click());
-    shortcut.add("r", () => button.repeat.click());
-    shortcut.add("z", () => button.addition.click());
-    shortcut.add("x", () => button.subtraction.click());
-    shortcut.add("c", () => button.multiplication.click());
-    shortcut.add("d", () => switchDifficulty('easy'));
-    shortcut.add("f", () => switchDifficulty('normal'));
-    shortcut.add("g", () => switchDifficulty('hard'));
-    shortcut.add("n", () => button.numberHistory.click());
-    shortcut.add("w", () => toggleFullscreenMode());
-    shortcut.add("q", () => button.help.click());
-    shortcut.add('ctrl+,', () => button.openCommonMoreConfig.click());
 }
 
 function configureModalFocusing() {

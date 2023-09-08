@@ -1,6 +1,7 @@
 /* Global variables */
 
 import {getHtmlElement} from "./htmlElement";
+import {FlashNumberParam, FlashTimeParam} from "./flashParams";
 
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
@@ -31,15 +32,36 @@ export const audioAttr = {
 
 export const flashParamElements = {
     addition: {
-        digit: getHtmlElement("input", "addition-digit"),
-        length: getHtmlElement("input", "addition-length"),
-        time: getHtmlElement("input", "addition-time"),
+        digit: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "addition-digit"),
+            schema: {min: 1, max: 14, default: 1},
+        }),
+        length: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "addition-length"),
+            schema: {min: 2, max: 30, default: 3},
+        }),
+        time: new FlashTimeParam({
+            htmlElement: getHtmlElement("input", "addition-time"),
+            schema: {min: 1000, max: 30000, default: 5000},
+        }),
     },
     multiplication: {
-        digit1: getHtmlElement("input", "multiplication-digit-1"),
-        digit2: getHtmlElement("input", "multiplication-digit-2"),
-        length: getHtmlElement("input", "multiplication-length"),
-        time: getHtmlElement("input", "multiplication-time"),
+        digit1: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "multiplication-digit-1"),
+            schema: {min: 1, max: 7, default: 1},
+        }),
+        digit2: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "multiplication-digit-2"),
+            schema: {min: 1, max: 7, default: 1},
+        }),
+        length: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "multiplication-length"),
+            schema: {min: 2, max: 30, default: 3},
+        }),
+        time: new FlashTimeParam({
+            htmlElement: getHtmlElement("input", "multiplication-time"),
+            schema: {min: 1000, max: 30000, default: 5000},
+        }),
     },
     common: {
         difficulty: getHtmlElement("select", "difficulty"),

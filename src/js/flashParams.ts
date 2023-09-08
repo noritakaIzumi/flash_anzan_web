@@ -1,28 +1,62 @@
 import {button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
 import {loadAudioObj, setMute} from "./sound";
 import {getHtmlElement} from "./htmlElement";
+import {fixValue} from "./util_should_categorize";
 
-abstract class FlashParam<K extends HTMLElement & { value: string }, T, U = number> {
-    public abstract get value(): U;
+abstract class FlashParam<K extends HTMLElement & { value: string }, T, U> {
+    abstract get value(): U;
+    protected abstract set value(value: string | number);
 
     protected htmlElement: K;
     protected schema: T;
 
-    protected constructor(props: { htmlElement: K, schema: T }) {
+    constructor(props: { htmlElement: K, schema: T }) {
         this.htmlElement = props.htmlElement
         this.schema = props.schema
     }
 }
 
-type FlashParamNumberSchema = {
-    max: number,
+type FlashNumberParamSchema = {
     min: number,
+    max: number,
     default: number,
 }
 
-class AdditionDigitParam extends FlashParam<HTMLInputElement, FlashParamNumberSchema> {
+export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
     get value(): number {
         return Number(this.htmlElement.value);
+    }
+
+    protected set value(value: string | number) {
+        this.htmlElement.value = String(value)
+    }
+
+    increaseParam(amount: number): void {
+        this.value = fixValue(this.schema, Math.floor(this.value) + amount)
+    }
+
+    updateParam(): FlashNumberParam {
+        this.increaseParam(0)
+        return this
+    }
+}
+
+export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
+    get value(): number {
+        return Number(this.htmlElement.value) * 1000;
+    }
+
+    protected set value(value: string | number) {
+        this.htmlElement.value = String(value)
+    }
+
+    increaseParam(amount: number): void {
+        this.value = fixValue(this.schema, Math.floor(this.value) + amount) / 1000
+    }
+
+    updateParam(): FlashTimeParam {
+        this.increaseParam(0)
+        return this
     }
 }
 
