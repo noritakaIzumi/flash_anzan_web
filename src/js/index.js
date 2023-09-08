@@ -146,10 +146,6 @@ function flash(config = {}) {
     const currentFlashMode = CurrentFlashMode.getInstance().value;
     // 設定を取得する
     let requestParam = getCurrentParam();
-    flashParamElements[currentFlashMode].length.value = requestParam.length;
-    flashParamElements[currentFlashMode].time.value = requestParam.time / 1000;
-    flashParamElements.common.flashRate.value = requestParam.flashRate;
-    flashParamElements.common.offset.value = requestParam.offset;
 
     // 出題数字を生成、または前回の出題から読み込む
     let digitIsSame = false;

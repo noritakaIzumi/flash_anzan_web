@@ -40,16 +40,6 @@ export function fixValue(limit, targetValue) {
 export function setUpInputBox() {
     Object.keys(flashParamElements).map((mode) => {
         if (mode === 'common') {
-            // difficulty
-            flashParamElements.common.difficulty.value = flashParamConfig.common.difficulty.default;
-            // flashRate
-            flashParamElements.common.flashRate.max = String(flashParamConfig.common.flashRate.max);
-            flashParamElements.common.flashRate.min = String(flashParamConfig.common.flashRate.min);
-            flashParamElements.common.flashRate.value = String(flashParamConfig.common.flashRate.default);
-            // offset
-            flashParamElements.common.offset.max = String(flashParamConfig.common.offset.max);
-            flashParamElements.common.offset.min = String(flashParamConfig.common.offset.min);
-            flashParamElements.common.offset.value = String(flashParamConfig.common.offset.default);
             // isMuted
             button.isMuted.checked = flashParamConfig.common.isMuted.default;
             flashParamElements.common.isMuted.value = button.isMuted.checked ? isMutedMap.on : isMutedMap.off;
@@ -59,16 +49,6 @@ export function setUpInputBox() {
             return;
         }
         Object.keys(flashParamElements[mode]).map((config) => {
-            if (config === "time") {
-                flashParamElements[mode][config].max = flashParamConfig[mode][config].max / 1000;
-                flashParamElements[mode][config].min = flashParamConfig[mode][config].min / 1000;
-                flashParamElements[mode][config].value = flashParamConfig[mode][config].default / 1000;
-                flashParamElements[mode][config].step = flashParamConfig[mode][config].step / 1000;
-            } else {
-                flashParamElements[mode][config].max = flashParamConfig[mode][config].max;
-                flashParamElements[mode][config].min = flashParamConfig[mode][config].min;
-                flashParamElements[mode][config].value = flashParamConfig[mode][config].default;
-            }
             flashParamElements[mode][config].onfocus = function () {
                 this.tmp = this.value;
                 this.value = "";
@@ -116,14 +96,8 @@ export function getCurrentParam() {
             throw new RangeError('invalid mode')
     }
     requestParam.difficulty = flashParamElements.common.difficulty.value;
-    requestParam.flashRate = fixValue(
-        flashParamConfig.common.flashRate,
-        Number(flashParamElements.common.flashRate.value)
-    );
-    requestParam.offset = fixValue(
-        flashParamConfig.common.offset,
-        Number(flashParamElements.common.offset.value)
-    );
+    requestParam.flashRate = flashParamElements.common.flashRate.updateParam().value;
+    requestParam.offset = flashParamElements.common.offset.updateParam().value;
 
     return requestParam;
 }

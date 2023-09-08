@@ -1,7 +1,7 @@
 /* Global variables */
 
 import {getHtmlElement} from "./htmlElement";
-import {FlashNumberParam, FlashTimeParam} from "./flashParams";
+import {FlashDifficultyParam, FlashNumberParam, FlashTimeParam} from "./flashParams";
 
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
@@ -56,7 +56,7 @@ export const flashParamElements = {
         }),
         length: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "multiplication-length"),
-            schema: {min: 2, max: 30, default: 3},
+            schema: {min: 2, max: 30, default: 2},
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "multiplication-time"),
@@ -64,67 +64,24 @@ export const flashParamElements = {
         }),
     },
     common: {
-        difficulty: getHtmlElement("select", "difficulty"),
-        flashRate: getHtmlElement("input", "common-flashRate"),
-        offset: getHtmlElement("input", "common-offset"),
+        difficulty: new FlashDifficultyParam({
+            htmlElement: getHtmlElement("select", "difficulty"),
+            schema: {in_list: ['easy', 'normal', 'hard'] as const, default: 'easy'},
+        }),
+        flashRate: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "common-flashRate"),
+            schema: {min: 1, max: 99, default: 55},
+        }),
+        offset: new FlashNumberParam({
+            htmlElement: getHtmlElement("input", "common-offset"),
+            schema: {min: -500, max: 500, default: 0},
+        }),
         isMuted: getHtmlElement("input", "is-muted"),
         soundExtension: getHtmlElement("select", "sound-extension"),
     },
 };
 export const flashParamConfig = {
-    addition: {
-        digit: {
-            max: 14,
-            min: 1,
-            default: 1,
-        },
-        length: {
-            max: 30,
-            min: 2,
-            default: 3,
-        },
-        time: {
-            max: 30000,
-            min: 1000,
-            default: 5000,
-        },
-    },
-    multiplication: {
-        digit1: {
-            max: 7,
-            min: 1,
-            default: 1,
-        },
-        digit2: {
-            max: 7,
-            min: 1,
-            default: 1,
-        },
-        length: {
-            max: 30,
-            min: 2,
-            default: 2,
-        },
-        time: {
-            max: 30000,
-            min: 1000,
-            default: 5000,
-        },
-    },
     common: {
-        difficulty: {
-            default: difficultyMap.easy,
-        },
-        flashRate: {
-            max: 99,
-            min: 1,
-            default: 55,
-        },
-        offset: {
-            max: 500,
-            min: -500,
-            default: 0,
-        },
         isMuted: {
             default: false,
         },

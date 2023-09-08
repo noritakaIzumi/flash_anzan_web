@@ -1,4 +1,4 @@
-import {button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
+import {audioStatus, button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
 import {loadAudioObj, setMute} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 import {fixValue} from "./util_should_categorize";
@@ -10,7 +10,7 @@ abstract class FlashParam<K extends HTMLElement & { value: string }, T, U> {
     protected htmlElement: K;
     protected schema: T;
 
-    constructor(props: { htmlElement: K, schema: T }) {
+    protected constructor(props: { htmlElement: K, schema: T }) {
         this.htmlElement = props.htmlElement
         this.schema = props.schema
     }
@@ -31,6 +31,13 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.htmlElement.value = String(value)
     }
 
+    constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
+        super(props);
+        this.value = this.schema.default
+        this.htmlElement.max = String(this.schema.max)
+        this.htmlElement.min = String(this.schema.min)
+    }
+
     increaseParam(amount: number): void {
         this.value = fixValue(this.schema, Math.floor(this.value) + amount)
     }
@@ -47,16 +54,51 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     protected set value(value: string | number) {
-        this.htmlElement.value = String(value)
+        this.htmlElement.value = String(Number(value) / 1000)
+        this.htmlElement.max = String(this.schema.max)
+        this.htmlElement.min = String(this.schema.min)
+    }
+
+    constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
+        super(props);
+        this.value = this.schema.default
     }
 
     increaseParam(amount: number): void {
-        this.value = fixValue(this.schema, Math.floor(this.value) + amount) / 1000
+        this.value = fixValue(this.schema, Math.floor(this.value) + amount)
     }
 
     updateParam(): FlashTimeParam {
         this.increaseParam(0)
         return this
+    }
+}
+
+type FlashDifficultyParamSchema = {
+    in_list: readonly string[],
+    default: string,
+}
+
+export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
+    get value(): string {
+        return this.htmlElement.value;
+    }
+
+    set value(value: string) {
+        this.validateValue(value)
+        getHtmlElement("input", `difficulty-${value}`).checked = true;
+        this.htmlElement.value = value
+    }
+
+    protected validateValue(value: string) {
+        if (this.schema.in_list.indexOf(value) === -1) {
+            throw new RangeError(`invalid difficulty: ${value}`)
+        }
+    }
+
+    constructor(props: { htmlElement: HTMLSelectElement; schema: FlashDifficultyParamSchema }) {
+        super(props);
+        this.value = this.schema.default
     }
 }
 
