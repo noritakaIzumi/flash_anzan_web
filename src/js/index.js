@@ -510,18 +510,18 @@ function clearInputAnswerBox() {
 
             // 難易度切り替え
             button.difficulty.easy.addEventListener('click', () => {
-                flashParamElements.common.difficulty.value = 'easy';
+                flashParamElements.common.difficulty.valueV2 = 'easy';
             })
             button.difficulty.normal.addEventListener('click', () => {
-                flashParamElements.common.difficulty.value = 'normal';
+                flashParamElements.common.difficulty.valueV2 = 'normal';
             })
             button.difficulty.hard.addEventListener('click', () => {
-                flashParamElements.common.difficulty.value = 'hard';
+                flashParamElements.common.difficulty.valueV2 = 'hard';
             })
 
             // サウンド
             button.isMuted.addEventListener('change', event => {
-                flashParamElements.common.isMuted.value = event.target.checked;
+                flashParamElements.common.isMuted.valueV2 = event.target.checked;
             })
 
             // 出題設定読み込み

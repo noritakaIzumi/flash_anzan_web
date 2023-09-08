@@ -29,22 +29,6 @@ export function fixValue(limit, targetValue) {
 }
 
 export function setUpInputBox() {
-    Object.keys(flashParamElements).map((mode) => {
-        if (mode === 'common') {
-            return;
-        }
-        Object.keys(flashParamElements[mode]).map((config) => {
-            flashParamElements[mode][config].onfocus = function () {
-                this.tmp = this.value;
-                this.value = "";
-            };
-            flashParamElements[mode][config].onblur = function () {
-                if (this.value === "") {
-                    this.value = this.tmp;
-                }
-            };
-        });
-    });
     changeMode(modeNames.addition);
 }
 
@@ -66,23 +50,23 @@ export function getCurrentParam() {
     switch (currentFlashMode) {
         case modeNames.multiplication:
             requestParam.digit = [
-                flashParamElements.multiplication.digit1.updateParam().value,
-                flashParamElements.multiplication.digit2.updateParam().value,
+                flashParamElements.multiplication.digit1.updateParam().valueV2,
+                flashParamElements.multiplication.digit2.updateParam().valueV2,
             ];
-            requestParam.length = flashParamElements.multiplication.length.updateParam().value;
-            requestParam.time = flashParamElements.multiplication.time.updateParam().value;
+            requestParam.length = flashParamElements.multiplication.length.updateParam().valueV2;
+            requestParam.time = flashParamElements.multiplication.time.updateParam().valueV2;
             break;
         case modeNames.addition:
-            requestParam.digit = flashParamElements.addition.digit.updateParam().value
-            requestParam.length = flashParamElements.addition.length.updateParam().value;
-            requestParam.time = flashParamElements.addition.time.updateParam().value;
+            requestParam.digit = flashParamElements.addition.digit.updateParam().valueV2
+            requestParam.length = flashParamElements.addition.length.updateParam().valueV2;
+            requestParam.time = flashParamElements.addition.time.updateParam().valueV2;
             break;
         default:
             throw new RangeError('invalid mode')
     }
-    requestParam.difficulty = flashParamElements.common.difficulty.value;
-    requestParam.flashRate = flashParamElements.common.flashRate.updateParam().value;
-    requestParam.offset = flashParamElements.common.offset.updateParam().value;
+    requestParam.difficulty = flashParamElements.common.difficulty.valueV2;
+    requestParam.flashRate = flashParamElements.common.flashRate.updateParam().valueV2;
+    requestParam.offset = flashParamElements.common.offset.updateParam().valueV2;
 
     return requestParam;
 }
@@ -93,5 +77,5 @@ export function getCurrentParam() {
  */
 export function switchDifficulty(value) {
     document.querySelector('#difficulty-' + value).checked = true;
-    flashParamElements.common.difficulty.value = difficultyMap[value];
+    flashParamElements.common.difficulty.valueV2 = difficultyMap[value];
 }

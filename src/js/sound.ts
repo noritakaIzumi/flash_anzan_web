@@ -24,5 +24,5 @@ export function loadAudioObj(extension: string) {
 }
 
 export function isMuted() {
-    return flashParamElements.common.isMuted.value;
+    return flashParamElements.common.isMuted.valueV2;
 }
