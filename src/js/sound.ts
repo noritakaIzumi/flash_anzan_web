@@ -1,4 +1,4 @@
-import {audioAttr, audioObj, audioStatus, button, flashParamElements, isMutedMap} from "./globals";
+import {audioAttr, audioObj, flashParamElements} from "./globals";
 import {Howl} from "howler";
 
 const soundExtension = ['ogg', 'wav'] as const;
@@ -22,18 +22,6 @@ export function loadAudioObj(extension: string) {
     });
 }
 
-export function setMute(on: boolean): void {
-    if (on) {
-        button.isMuted.checked = true;
-        flashParamElements.common.isMuted.value = isMutedMap.on;
-        audioStatus.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>';
-    } else {
-        button.isMuted.checked = false;
-        flashParamElements.common.isMuted.value = isMutedMap.off;
-        audioStatus.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>';
-    }
-}
-
-export function muteIsOn() {
-    return button.isMuted.checked;
+export function isMuted() {
+    return flashParamElements.common.isMuted.value;
 }

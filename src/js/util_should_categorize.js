@@ -1,17 +1,8 @@
 /* button events */
 
 import {contractCalculateArea, expandCalculateArea, isFullscreen} from "./screen";
-import {
-    button,
-    calculateArea,
-    difficultyMap,
-    flashParamConfig,
-    flashParamElements,
-    isMutedMap,
-    modeNames
-} from "./globals";
+import {calculateArea, difficultyMap, flashParamConfig, flashParamElements, modeNames} from "./globals";
 import {CurrentFlashMode} from "./currentFlashMode";
-import {setMute} from "./sound";
 import {changeShortcut} from "./shortcut";
 
 export function toggleFullscreenMode(full) {
@@ -40,10 +31,6 @@ export function fixValue(limit, targetValue) {
 export function setUpInputBox() {
     Object.keys(flashParamElements).map((mode) => {
         if (mode === 'common') {
-            // isMuted
-            button.isMuted.checked = flashParamConfig.common.isMuted.default;
-            flashParamElements.common.isMuted.value = button.isMuted.checked ? isMutedMap.on : isMutedMap.off;
-            setMute(button.isMuted.checked);
             // soundExtension
             flashParamElements.common.soundExtension.value = flashParamConfig.common.soundExtension.default;
             return;

@@ -1,16 +1,16 @@
-import {audioStatus, button, flashParamElements, isMutedMap, modals, savedParamsKeyName} from "./globals";
-import {loadAudioObj, setMute} from "./sound";
+import {flashParamElements, modals, savedParamsKeyName} from "./globals";
+import {loadAudioObj} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 import {fixValue} from "./util_should_categorize";
 
-abstract class FlashParam<K extends HTMLElement & { value: string }, T, U> {
+abstract class FlashParam<K extends HTMLElement & { value: string }, T, U, VOptions = never> {
     abstract get value(): U;
     protected abstract set value(value: string | number);
 
     protected htmlElement: K;
     protected schema: T;
 
-    protected constructor(props: { htmlElement: K, schema: T }) {
+    protected constructor(props: { htmlElement: K, schema: T, options?: VOptions }) {
         this.htmlElement = props.htmlElement
         this.schema = props.schema
     }
@@ -102,6 +102,48 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
     }
 }
 
+type FlashIsMutedParamOptions = {
+    buttonElement: HTMLInputElement,
+    audioStatusElement: HTMLLabelElement,
+};
+
+export class FlashIsMutedParam extends FlashParam<
+    HTMLInputElement,
+    { default: boolean },
+    boolean,
+    FlashIsMutedParamOptions
+> {
+    private buttonElement: HTMLInputElement;
+    private audioStatusElement: HTMLLabelElement;
+
+    get value(): boolean {
+        return this.buttonElement.checked;
+    }
+
+    set value(value: boolean) {
+        if (value) {
+            this.buttonElement.checked = true;
+            this.htmlElement.value = 'on';
+            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>';
+        } else {
+            this.buttonElement.checked = false;
+            this.htmlElement.value = 'off';
+            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>';
+        }
+    }
+
+    constructor(props: {
+        htmlElement: HTMLInputElement,
+        schema: { default: boolean },
+        options: FlashIsMutedParamOptions
+    }) {
+        super(props);
+        this.buttonElement = props.options.buttonElement
+        this.audioStatusElement = props.options.audioStatusElement
+        this.value = props.schema.default
+    }
+}
+
 export function doLoadParams() {
     const modal = modals.params.load.complete;
     const modalMessage = modal.querySelector('.modal-body > p');
@@ -123,8 +165,6 @@ export function doLoadParams() {
         }
     );
 
-    button.isMuted.checked = flashParamElements.common.isMuted.value === isMutedMap.on;
-    setMute(button.isMuted.checked);
     loadAudioObj(flashParamElements.common.soundExtension.value);
     // 難易度選択
     getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.value}`).checked = true;

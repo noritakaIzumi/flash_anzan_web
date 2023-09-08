@@ -28,7 +28,7 @@ import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice} from "./screen";
-import {loadAudioObj, muteIsOn, setMute} from "./sound";
+import {loadAudioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 import {changeMode, getCurrentParam, setUpInputBox, toggleFullscreenMode} from "./util_should_categorize";
 import {registerShortcuts} from "./shortcut";
@@ -53,7 +53,7 @@ function flash(config = {}) {
             }
 
             button.repeat.disabled = true;
-            if (!muteIsOn()) {
+            if (!isMuted()) {
                 audioObj.answer[0].play();
             }
 
@@ -76,7 +76,7 @@ function flash(config = {}) {
                     headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`;
                 }
                 questionNumberArea.innerText = answer.toDisplay();
-                if (!muteIsOn()) {
+                if (!isMuted()) {
                     resultAudio.play();
                 }
 
@@ -215,7 +215,7 @@ function flash(config = {}) {
         function generateSoundSuite() {
             let sounds = [];
             for (let i = 0; i < requestParam.length; ++i) {
-                sounds.push(muteIsOn() ? null : audioObj.tick[i]);
+                sounds.push(isMuted() ? null : audioObj.tick[i]);
                 sounds.push(null);
             }
             return sounds;
@@ -272,7 +272,7 @@ function flash(config = {}) {
     };
 
     const playBeepFunctions = audioObj.beep.map(
-        a => muteIsOn()
+        a => isMuted()
             ? () => {
             }
             : () => {
@@ -522,7 +522,9 @@ function clearInputAnswerBox() {
             })
 
             // サウンド
-            button.isMuted.addEventListener('change', event => setMute(event.target.checked))
+            button.isMuted.addEventListener('change', event => {
+                flashParamElements.common.isMuted.value = event.target.checked;
+            })
             flashParamElements.common.soundExtension.addEventListener('change', event => loadAudioObj(event.target.value))
 
             // 出題設定読み込み

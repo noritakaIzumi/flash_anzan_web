@@ -1,7 +1,7 @@
 /* Global variables */
 
 import {getHtmlElement} from "./htmlElement";
-import {FlashDifficultyParam, FlashNumberParam, FlashTimeParam} from "./flashParams";
+import {FlashDifficultyParam, FlashIsMutedParam, FlashNumberParam, FlashTimeParam} from "./flashParams";
 
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
@@ -17,17 +17,45 @@ export const difficultyMap = {
     hard: 'hard',
 };
 
-export const isMutedMap = {
-    on: 'on',
-    off: 'off',
-};
-
 export const audioAttr = {
     directory: "./sounds",
     extension: {
         ogg: 'ogg',
         wav: 'wav',
     },
+};
+
+export const headerMessage = getHtmlElement("div", "header-message");
+export const questionNumberArea = getHtmlElement("div", "question-number-area");
+export const calculateArea = getHtmlElement("div", "calculate-area");
+export const inputAnswerBox = getHtmlElement("input", "input-answer-box");
+export const inputAnswerBoxTouchDisplay = getHtmlElement("input", "input-answer-box-touch-display");
+export const inputAnswerBoxTouchActual = getHtmlElement("input", "input-answer-box-touch-actual");
+export const noticeArea = getHtmlElement("p", "notice-area");
+export const versionNumber = getHtmlElement("span", "version-number")
+
+export const button = {
+    loadParams: getHtmlElement("button", "load-params-button"),
+    doLoadParams: getHtmlElement("button", "do-load-params"),
+    saveParams: getHtmlElement("button", "save-params-button"),
+    doSaveParams: getHtmlElement("button", "do-save-params"),
+    deleteParams: getHtmlElement("button", "delete-params-button"),
+    doDeleteParams: getHtmlElement("button", "do-delete-params"),
+    start: getHtmlElement("button", "start-button"),
+    repeat: getHtmlElement("button", "repeat-button"),
+    numberHistory: getHtmlElement("button", "number-history-button"),
+    addition: getHtmlElement("a", "pills-addition-tab"),
+    subtraction: getHtmlElement("a", "pills-subtraction-tab"),
+    multiplication: getHtmlElement("a", "pills-multiplication-tab"),
+    closeInputAnswer: getHtmlElement("button", 'closeInputAnswerModal'),
+    help: getHtmlElement("button", 'help-button'),
+    openCommonMoreConfig: getHtmlElement("button", 'open-common-more-config-button'),
+    difficulty: {
+        easy: getHtmlElement("input", 'difficulty-easy'),
+        normal: getHtmlElement("input", 'difficulty-normal'),
+        hard: getHtmlElement("input", 'difficulty-hard'),
+    },
+    isMuted: getHtmlElement("input", "is-muted-button"),
 };
 
 export const flashParamElements = {
@@ -76,7 +104,14 @@ export const flashParamElements = {
             htmlElement: getHtmlElement("input", "common-offset"),
             schema: {min: -500, max: 500, default: 0},
         }),
-        isMuted: getHtmlElement("input", "is-muted"),
+        isMuted: new FlashIsMutedParam({
+            htmlElement: getHtmlElement("input", "is-muted"),
+            schema: {default: false},
+            options: {
+                buttonElement: button.isMuted,
+                audioStatusElement: getHtmlElement("label", "audio-status"),
+            },
+        }),
         soundExtension: getHtmlElement("select", "sound-extension"),
     },
 };
@@ -91,39 +126,6 @@ export const flashParamConfig = {
     },
 };
 
-export const headerMessage = getHtmlElement("div", "header-message");
-export const questionNumberArea = getHtmlElement("div", "question-number-area");
-export const calculateArea = getHtmlElement("div", "calculate-area");
-export const inputAnswerBox = getHtmlElement("input", "input-answer-box");
-export const inputAnswerBoxTouchDisplay = getHtmlElement("input", "input-answer-box-touch-display");
-export const inputAnswerBoxTouchActual = getHtmlElement("input", "input-answer-box-touch-actual");
-export const noticeArea = getHtmlElement("p", "notice-area");
-export const versionNumber = getHtmlElement("span", "version-number")
-
-export const button = {
-    loadParams: getHtmlElement("button", "load-params-button"),
-    doLoadParams: getHtmlElement("button", "do-load-params"),
-    saveParams: getHtmlElement("button", "save-params-button"),
-    doSaveParams: getHtmlElement("button", "do-save-params"),
-    deleteParams: getHtmlElement("button", "delete-params-button"),
-    doDeleteParams: getHtmlElement("button", "do-delete-params"),
-    start: getHtmlElement("button", "start-button"),
-    repeat: getHtmlElement("button", "repeat-button"),
-    numberHistory: getHtmlElement("button", "number-history-button"),
-    addition: getHtmlElement("a", "pills-addition-tab"),
-    subtraction: getHtmlElement("a", "pills-subtraction-tab"),
-    multiplication: getHtmlElement("a", "pills-multiplication-tab"),
-    closeInputAnswer: getHtmlElement("button", 'closeInputAnswerModal'),
-    help: getHtmlElement("button", 'help-button'),
-    openCommonMoreConfig: getHtmlElement("button", 'open-common-more-config-button'),
-    difficulty: {
-        easy: getHtmlElement("input", 'difficulty-easy'),
-        normal: getHtmlElement("input", 'difficulty-normal'),
-        hard: getHtmlElement("input", 'difficulty-hard'),
-    },
-    isMuted: getHtmlElement("input", "is-muted-button"),
-};
-
 // RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
 export const audioObj = {
     beep: new Array(2),
@@ -133,8 +135,6 @@ export const audioObj = {
     incorrect: new Array(1),
     silence: new Array(1),
 };
-
-export const audioStatus = getHtmlElement("label", "audio-status");
 
 export const disableConfigTarget = [
     button.start,
