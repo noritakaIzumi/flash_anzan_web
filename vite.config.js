@@ -1,6 +1,5 @@
 import {defineConfig} from "vite";
-
-const path = require('path')
+import * as path from "path";
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
