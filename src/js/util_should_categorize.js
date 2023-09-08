@@ -50,23 +50,23 @@ export function getCurrentParam() {
     switch (currentFlashMode) {
         case modeNames.multiplication:
             requestParam.digit = [
-                flashParamElements.multiplication.digit1.updateParam().valueV2,
-                flashParamElements.multiplication.digit2.updateParam().valueV2,
+                flashParamElements.multiplication.digit1.updateParam().valueV1,
+                flashParamElements.multiplication.digit2.updateParam().valueV1,
             ];
-            requestParam.length = flashParamElements.multiplication.length.updateParam().valueV2;
-            requestParam.time = flashParamElements.multiplication.time.updateParam().valueV2;
+            requestParam.length = flashParamElements.multiplication.length.updateParam().valueV1;
+            requestParam.time = flashParamElements.multiplication.time.updateParam().valueV1;
             break;
         case modeNames.addition:
-            requestParam.digit = flashParamElements.addition.digit.updateParam().valueV2
-            requestParam.length = flashParamElements.addition.length.updateParam().valueV2;
-            requestParam.time = flashParamElements.addition.time.updateParam().valueV2;
+            requestParam.digit = flashParamElements.addition.digit.updateParam().valueV1
+            requestParam.length = flashParamElements.addition.length.updateParam().valueV1;
+            requestParam.time = flashParamElements.addition.time.updateParam().valueV1;
             break;
         default:
             throw new RangeError('invalid mode')
     }
-    requestParam.difficulty = flashParamElements.common.difficulty.valueV2;
-    requestParam.flashRate = flashParamElements.common.flashRate.updateParam().valueV2;
-    requestParam.offset = flashParamElements.common.offset.updateParam().valueV2;
+    requestParam.difficulty = flashParamElements.common.difficulty.valueV1;
+    requestParam.flashRate = flashParamElements.common.flashRate.updateParam().valueV1;
+    requestParam.offset = flashParamElements.common.offset.updateParam().valueV1;
 
     return requestParam;
 }
@@ -77,5 +77,5 @@ export function getCurrentParam() {
  */
 export function switchDifficulty(value) {
     document.querySelector('#difficulty-' + value).checked = true;
-    flashParamElements.common.difficulty.valueV2 = difficultyMap[value];
+    flashParamElements.common.difficulty.valueV1 = difficultyMap[value];
 }

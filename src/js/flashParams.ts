@@ -4,17 +4,17 @@ import {getHtmlElement} from "./htmlElement";
 import {fixValue} from "./util_should_categorize";
 
 abstract class FlashParam<K extends HTMLElement & { value: string }, T, U, VOptions = never> {
-    abstract get valueV2(): U;
-    abstract set valueV2(value: string | number);
+    abstract get valueV1(): U;
+    abstract set valueV1(value: string | number);
 
     /**
      * 保存用パラメータを書き出す。設定パラメータの下位互換性を保持する。
      */
-    abstract get valueV1(): string;
+    abstract get valueV0(): string;
     /**
      * 保存用パラメータから読み込む。設定パラメータの下位互換性を保持する。
      */
-    abstract set valueV1(value: string);
+    abstract set valueV0(value: string);
 
     protected htmlElement: K;
     protected schema: T;
@@ -32,31 +32,31 @@ type FlashNumberParamSchema = {
 }
 
 export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
-    get valueV2(): number {
+    get valueV1(): number {
         return Number(this.htmlElement.value);
     }
 
-    set valueV2(value: string | number) {
+    set valueV1(value: string | number) {
         this.htmlElement.value = String(value)
     }
 
-    get valueV1(): string {
+    get valueV0(): string {
         return this.htmlElement.value
     }
 
-    set valueV1(value: string) {
-        this.valueV2 = value
+    set valueV0(value: string) {
+        this.valueV1 = value
     }
 
     constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
         super(props);
-        this.valueV2 = this.schema.default
+        this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
     }
 
     increaseParam(amount: number): void {
-        this.valueV2 = fixValue(this.schema, Math.floor(this.valueV2) + amount)
+        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
     }
 
     updateParam(): FlashNumberParam {
@@ -66,31 +66,31 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
 }
 
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
-    get valueV2(): number {
+    get valueV1(): number {
         return Number(this.htmlElement.value) * 1000;
     }
 
-    set valueV2(value: string | number) {
+    set valueV1(value: string | number) {
         this.htmlElement.value = String(Number(value) / 1000)
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
     }
 
-    get valueV1(): string {
+    get valueV0(): string {
         return this.htmlElement.value
     }
 
-    set valueV1(value: string) {
-        this.valueV2 = Number(value) * 1000
+    set valueV0(value: string) {
+        this.valueV1 = Number(value) * 1000
     }
 
     constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
         super(props);
-        this.valueV2 = this.schema.default
+        this.valueV1 = this.schema.default
     }
 
     increaseParam(amount: number): void {
-        this.valueV2 = fixValue(this.schema, Math.floor(this.valueV2) + amount)
+        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
     }
 
     updateParam(): FlashTimeParam {
@@ -105,22 +105,22 @@ type FlashDifficultyParamSchema = {
 }
 
 export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
-    get valueV2(): string {
+    get valueV1(): string {
         return this.htmlElement.value;
     }
 
-    set valueV2(value: string) {
+    set valueV1(value: string) {
         this.validateValue(value)
         getHtmlElement("input", `difficulty-${value}`).checked = true;
         this.htmlElement.value = value
     }
 
-    get valueV1(): string {
-        return this.valueV2
+    get valueV0(): string {
+        return this.valueV1
     }
 
-    set valueV1(value: string) {
-        this.valueV2 = value
+    set valueV0(value: string) {
+        this.valueV1 = value
     }
 
     protected validateValue(value: string) {
@@ -131,7 +131,7 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
 
     constructor(props: { htmlElement: HTMLSelectElement; schema: FlashDifficultyParamSchema }) {
         super(props);
-        this.valueV2 = this.schema.default
+        this.valueV1 = this.schema.default
     }
 }
 
@@ -149,11 +149,11 @@ export class FlashIsMutedParam extends FlashParam<
     private buttonElement: HTMLInputElement;
     private audioStatusElement: HTMLLabelElement;
 
-    get valueV2(): boolean {
+    get valueV1(): boolean {
         return this.buttonElement.checked;
     }
 
-    set valueV2(value: boolean) {
+    set valueV1(value: boolean) {
         if (value) {
             this.buttonElement.checked = true;
             this.htmlElement.value = 'on';
@@ -165,17 +165,17 @@ export class FlashIsMutedParam extends FlashParam<
         }
     }
 
-    get valueV1(): string {
-        return this.valueV2 ? 'on' : 'off'
+    get valueV0(): string {
+        return this.valueV1 ? 'on' : 'off'
     }
 
-    set valueV1(value: string) {
+    set valueV0(value: string) {
         if (value === 'on') {
-            this.valueV2 = true
+            this.valueV1 = true
             return
         }
         if (value === 'off') {
-            this.valueV2 = false
+            this.valueV1 = false
             return
         }
         throw new RangeError(`invalid param: isMuted=${value}`)
@@ -189,7 +189,7 @@ export class FlashIsMutedParam extends FlashParam<
         super(props);
         this.buttonElement = props.options.buttonElement
         this.audioStatusElement = props.options.audioStatusElement
-        this.valueV2 = props.schema.default
+        this.valueV1 = props.schema.default
     }
 }
 
@@ -198,30 +198,30 @@ export class FlashSoundExtensionParam extends FlashParam<
     { default: SoundExtension },
     SoundExtension
 > {
-    get valueV2(): SoundExtension {
+    get valueV1(): SoundExtension {
         return this.htmlElement.value as SoundExtension;
     }
 
-    set valueV2(value: SoundExtension) {
+    set valueV1(value: SoundExtension) {
         this.htmlElement.value = value;
         this.htmlElement.dispatchEvent(new Event("change"))
     }
 
-    get valueV1(): SoundExtension {
-        return this.valueV2
+    get valueV0(): SoundExtension {
+        return this.valueV1
     }
 
-    set valueV1(value: string) {
+    set valueV0(value: string) {
         if ((soundExtension as unknown as string[]).indexOf(value) === -1) {
             throw new RangeError('invalid extension')
         }
-        this.valueV2 = value as SoundExtension;
+        this.valueV1 = value as SoundExtension;
     }
 
     constructor(props: { htmlElement: HTMLSelectElement; schema: { default: SoundExtension }; options?: never }) {
         super(props);
         this.htmlElement.addEventListener("change", (evt) => loadAudioObj((evt.target as HTMLSelectElement).value))
-        this.valueV2 = props.schema.default
+        this.valueV1 = props.schema.default
     }
 }
 
@@ -241,13 +241,13 @@ export function doLoadParams() {
         (mode) => {
             Object.keys(parsedParams[mode]).map(
                 (paramName) => {
-                    (flashParamElements[mode][paramName] as FlashParam<any, any, any>).valueV1 = parsedParams[mode][paramName];
+                    (flashParamElements[mode][paramName] as FlashParam<any, any, any>).valueV0 = parsedParams[mode][paramName];
                 });
         }
     );
 
     // 難易度選択
-    getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.valueV2}`).checked = true;
+    getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.valueV1}`).checked = true;
 }
 
 export function doSaveParams() {
@@ -257,7 +257,7 @@ export function doSaveParams() {
             params[mode] = {};
             Object.keys(flashParamElements[mode]).map(
                 (paramName) => {
-                    params[mode][paramName] = (flashParamElements[mode][paramName] as FlashParam<any, any, any>).valueV1;
+                    params[mode][paramName] = (flashParamElements[mode][paramName] as FlashParam<any, any, any>).valueV0;
                 });
         }
     );
