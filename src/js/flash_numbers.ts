@@ -11,7 +11,7 @@ import {difficultyMap, generateNumbersRetryLimit, modeNames} from "./globals";
  * @param {string} mode モード
  * @returns {number[]}
  */
-export function generateNumbers(digitCount, length, difficulty, mode) {
+export function generateNumbers(digitCount: number | number[], length: number, difficulty: string, mode: string): number[] {
     function getRandomDigit(excepts = []) {
         const d = [];
         for (let i = 0; i < 10; i++) {
@@ -23,7 +23,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
         return d[Math.floor(Math.random() * d.length)];
     }
 
-    function getRandomInt(digitCount, previousNum = null, digitAllDifferent = false) {
+    function getRandomInt(digitCount: number, previousNum: number = null, digitAllDifferent: boolean = false): number {
         const previousNumDigits = previousNum === null
             ? Array.from({length: digitCount}, () => null)
             : String(previousNum).split('').reverse().map((n) => {
@@ -51,13 +51,14 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
         // 出題数字
         let numbers = [];
         // 繰り上がり回数
-        let carries = [];
+        let carries: number[] = [];
 
         switch (mode) {
             case modeNames.multiplication: {
+                const _digitCount = digitCount as number[];
                 for (let i = 0; i < length; i++) {
-                    const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
-                    const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
+                    const number1 = getRandomInt(_digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true);
+                    const number2 = getRandomInt(_digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true);
                     const digits1 = String(number1).split('').reverse().map((n) => {
                         return Number(n);
                     });
@@ -107,21 +108,22 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                 break;
             }
             case modeNames.addition:
+                const _digitCount = digitCount as number;
                 const complexityMapKey = `${digitCount}-${length}`;
                 switch (difficulty) {
                     case difficultyMap.easy: {
-                        let tempAbacusValue;
+                        let tempAbacusValue: number;
                         for (let i = 0; i < length; i++) {
                             let getIntRetry = 0;
-                            let bestNumber;
+                            let bestNumber: number;
                             let bestCarry = -1;
                             while (true) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
+                                const number = getRandomInt(_digitCount, numbers.slice(-1)[0] || null, true);
 
                                 tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
-                                if (abacus.carry > digitCount) {
+                                if (abacus.carry > _digitCount) {
                                     if (abacus.carry > bestCarry) {
                                         bestNumber = number;
                                         bestCarry = abacus.carry;
@@ -146,7 +148,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                             }
                         }
 
-                        const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        const complexity = getCalculateComplexity(carries.slice(1), _digitCount);
                         // 1 桁 2 口 easy の閾値が 0 であることへの対応
                         if (
                             complexityMap.addition[complexityMapKey][difficulty] <= 0
@@ -162,13 +164,13 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                     }
                     case difficultyMap.normal: {
                         for (let i = 0; i < length; i++) {
-                            const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, true);
+                            const number = getRandomInt(_digitCount, numbers.slice(-1)[0] || null, true);
                             abacus = new Abacus(abacus.value).add(number);
                             numbers.push(number);
                             carries.push(abacus.carry);
                         }
 
-                        const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        const complexity = getCalculateComplexity(carries.slice(1), _digitCount);
                         if (complexity >= complexityMap.addition[complexityMapKey][difficultyMap.easy]
                             && complexity < complexityMap.addition[complexityMapKey][difficultyMap.hard]) {
                             return numbers;
@@ -177,18 +179,18 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                         break;
                     }
                     case difficultyMap.hard: {
-                        let tempAbacusValue;
+                        let tempAbacusValue: number;
                         for (let i = 0; i < length; i++) {
                             let getIntRetry = 0;
-                            let bestNumber;
+                            let bestNumber: number;
                             let bestCarry = -1;
                             while (true) {
-                                const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, false);
+                                const number = getRandomInt(_digitCount, numbers.slice(-1)[0] || null, false);
 
                                 tempAbacusValue = abacus.value;
                                 abacus = new Abacus(abacus.value).add(number);
 
-                                if (i >= 1 && abacus.carry < digitCount) {
+                                if (i >= 1 && abacus.carry < _digitCount) {
                                     if (abacus.carry > bestCarry) {
                                         bestNumber = number;
                                         bestCarry = abacus.carry;
@@ -213,7 +215,7 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
                             }
                         }
 
-                        const complexity = getCalculateComplexity(carries.slice(1), digitCount);
+                        const complexity = getCalculateComplexity(carries.slice(1), _digitCount);
                         if (complexity >= complexityMap.addition[complexityMapKey][difficulty]) {
                             return numbers;
                         }
@@ -234,10 +236,12 @@ export function generateNumbers(digitCount, length, difficulty, mode) {
 }
 
 export class FlashAnswer {
+    private readonly _value: number;
+
     /**
      * @param {number} answer
      */
-    constructor(answer) {
+    constructor(answer: number) {
         this._value = answer
     }
 

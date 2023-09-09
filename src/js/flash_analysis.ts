@@ -3,7 +3,7 @@
  * @param {number[]} data
  * @returns {number}
  */
-export function average(data) {
+export function average(data: number[]): number {
     let sum = 0;
     for (let i = 0; i < data.length; ++i) {
         sum += data[i];
@@ -16,7 +16,7 @@ export function average(data) {
  * @param {number[]} data
  * @returns {number}
  */
-export function variance(data) {
+export function variance(data: number[]): number {
     const ave = average(data);
     let variance = 0;
     for (let i = 0; i < data.length; i++) {
@@ -30,7 +30,7 @@ export function variance(data) {
  * @param {number[]} data
  * @returns {number}
  */
-export function standard_deviation(data) {
+export function standard_deviation(data: number[]): number {
     return Math.sqrt(variance(data));
 }
 
@@ -40,7 +40,7 @@ export function standard_deviation(data) {
  * @param digit
  * @returns {number}
  */
-export function getCalculateComplexity(carries, digit) {
+export function getCalculateComplexity(carries: number[], digit: number): number {
     carries = carries.map((c) => {
         return c / digit;
     });
