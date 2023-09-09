@@ -2,11 +2,11 @@
 // noinspection JSUnresolvedVariable
 const now = window.performance && (
     performance.now ||
-    performance.mozNow ||
-    performance.msNow ||
-    performance.oNow ||
-    performance.webkitNow
-);
+    ('mozNow' in performance && performance.mozNow) ||
+    ('msNow' in performance && performance.msNow) ||
+    ('oNow' in performance && performance.oNow) ||
+    ('webkitNow' in performance && performance.webkitNow)
+) as () => number;
 
 export const getTime = function () {
     return (now && now.call(performance)) || (new Date().getTime());
