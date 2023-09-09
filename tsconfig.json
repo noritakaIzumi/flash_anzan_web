@@ -2,7 +2,9 @@
   "compilerOptions": {
     "allowJs": true,
     "target": "es5",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "module": "ESNext"
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*"],
+  "lib": ["WebWorker"]
 }
