@@ -15,7 +15,7 @@ export class Abacus {
     private _carry: number;
 
     constructor(n = 0) {
-        this._digits = Array(String(n).length).fill(AbacusDigit.getInstance());
+        this._digits = Array(String(n).length).fill(new AbacusDigit());
         this._value = 0;
         this._carry = 0;
         this.add(n);
@@ -32,10 +32,10 @@ export class Abacus {
             }
 
             if (this._digits[i] === undefined) {
-                this._digits[i] = AbacusDigit.getInstance();
+                this._digits[i] = new AbacusDigit();
             }
 
-            const beforeDigit = Object.assign({}, this._digits[i]);
+            const beforeDigit = AbacusDigit.deepCopy(this._digits[i]);
             let newVal = this._digits[i].value + d;
             if (newVal >= 10) {
                 newVal -= 10;
@@ -79,7 +79,7 @@ export class AbacusDigit {
         this._one = one;
     }
 
-    static getInstance() {
-        return new AbacusDigit();
+    static deepCopy(abacusDigit: AbacusDigit) {
+        return new AbacusDigit(abacusDigit.value, abacusDigit.five, abacusDigit.one);
     }
 }
