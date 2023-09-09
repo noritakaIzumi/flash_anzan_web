@@ -164,4 +164,10 @@ export const modals = {
     input_answer: getHtmlElement("div", "inputAnswerModal"),
 };
 
-export const generateNumbersRetryLimit = 100;
+// 10 % の確率を連続で外す確率が 5000 分の 1 以下となる最小の回数
+export const generateNumbersRetryLimit = 81;
+// console.log(((n: number) => {
+//     const threshold = 0.02
+//     return Math.pow(0.9, n - 1) * 100 > threshold
+//         && Math.pow(0.9, n) * 100 <= threshold
+// })(generateNumbersRetryLimit))
