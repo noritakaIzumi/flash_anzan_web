@@ -151,24 +151,17 @@ function flash(config: FlashConfig = {}) {
     let requestParam = getCurrentParam();
 
     // 出題数字を生成、または前回の出題から読み込む
-    let digitIsSame = false;
-    let numberHistory = [];
-    if (currentFlashMode === modeNames.multiplication) {
-        const _numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
-        if (_numberHistory !== null) {
-            digitIsSame = _numberHistory.digitEquals(requestParam.digit);
-            numberHistory = _numberHistory.numberHistory;
-        }
-    } else if (currentFlashMode === modeNames.addition) {
-        const _numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
-        if (_numberHistory !== null) {
-            digitIsSame = _numberHistory.digitEquals(requestParam.digit);
-            numberHistory = _numberHistory.numberHistory;
-        }
-    } else {
-        throw new RangeError('invalid mode')
-    }
     const numbers = (() => {
+        let digitIsSame = false;
+        const numberHistory = (() => {
+            const numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
+            if (numberHistory === null) {
+                return [];
+            }
+            digitIsSame = numberHistory.digitEquals(requestParam.digit);
+            return numberHistory.numberHistory;
+        })()
+
         if (config.repeat && digitIsSame) {
             if (requestParam.length === numberHistory.length) {
                 return numberHistory;
@@ -392,6 +385,7 @@ function clearInputAnswerBox() {
 
     const setup = () => {
         audioObj.load(flashParamElements.common.soundExtension.valueV1);
+
 
         // ページ読み込み時処理
         (() => {

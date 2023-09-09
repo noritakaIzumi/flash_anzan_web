@@ -164,4 +164,4 @@ export const modals = {
     input_answer: getHtmlElement("div", "inputAnswerModal"),
 };
 
-export const generateNumbersRetryLimit = 100000;
+export const generateNumbersRetryLimit = 100;
