@@ -1,5 +1,5 @@
 import {flashDifficulty, FlashDifficulty, flashParamElements, modals, savedParamsKeyName} from "./globals";
-import {loadAudioObj, soundExtension, SoundExtension} from "./sound";
+import {audioObj, soundExtension, SoundExtension} from "./sound";
 import {getHtmlElement} from "./htmlElement";
 
 export function fixValue(limit: { max: number, min: number }, targetValue: number): number {
@@ -222,8 +222,8 @@ export class FlashSoundExtensionParam extends FlashParam<
 
     constructor(props: { htmlElement: HTMLSelectElement; schema: { default: SoundExtension }; options?: never }) {
         super(props);
-        this.htmlElement.addEventListener("change", (evt) => loadAudioObj((evt.target as HTMLSelectElement).value))
         this.valueV1 = props.schema.default
+        this.htmlElement.addEventListener("change", () => audioObj.load(this.htmlElement.value as SoundExtension))
     }
 }
 

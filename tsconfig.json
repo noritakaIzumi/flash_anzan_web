@@ -3,7 +3,9 @@
     "allowJs": true,
     "target": "es5",
     "isolatedModules": true,
-    "module": "ESNext"
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
+    "downlevelIteration": true
   },
   "include": ["./src/**/*"],
   "lib": ["WebWorker"]

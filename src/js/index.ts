@@ -4,7 +4,6 @@ import {SimpleKeyboard} from "simple-keyboard";
 import {FlashAnswer, generateNumbers} from "./flash_numbers";
 import {
     answerNumberDisplay,
-    audioObj,
     button,
     calculateArea,
     flashParamElements,
@@ -27,12 +26,16 @@ import {getTime} from "./time";
 import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
-import {isMuted} from "./sound";
+import {audioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 import {changeMode, getCurrentParam} from "./util_should_categorize";
 import {registerShortcuts} from "./shortcut/shortcut";
 
-function flash(config = {}) {
+type FlashConfig = {
+    repeat?: boolean,
+}
+
+function flash(config: FlashConfig = {}) {
     const measuredTime = {start: 0, end: 0};
     const flashNumberHistoryRegistry = FlashNumberHistoryRegistry.getInstance()
 
@@ -40,13 +43,13 @@ function flash(config = {}) {
      * 答え入力のための準備的な。
      * @param {FlashAnswer} answer
      */
-    const getPrepareAnswerInputFunc = (answer) => {
+    const getPrepareAnswerInputFunc = (answer: FlashAnswer) => {
         /**
          * 答えを表示する
          * @param {string} numberStr 答えの数字
          * @param {FlashAnswer} answer
          */
-        function displayAnswer(numberStr, answer) {
+        function displayAnswer(numberStr: string, answer: FlashAnswer) {
             if (numberStr) {
                 headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString();
             }
@@ -57,7 +60,7 @@ function flash(config = {}) {
             }
 
             setTimeout(() => {
-                let resultAudio;
+                let resultAudio: Howl;
                 if (numberStr === String(answer.toNumber())) {
                     resultAudio = audioObj.correct[0];
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
@@ -101,7 +104,8 @@ function flash(config = {}) {
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
-                    modals.input_answer.querySelector('.modal-footer').style.display = 'none';
+                    const modalFooter: HTMLDivElement = modals.input_answer.querySelector('.modal-footer');
+                    modalFooter.style.display = 'none';
                     clearInputAnswerBox();
                     switchInputAnswerBoxTab.touchTab.click();
                     noticeInputAnswerNonTouchDevice.style.display = 'none';
@@ -124,7 +128,7 @@ function flash(config = {}) {
                     }, {once: true});
             } else {
                 const listener = () => {
-                    return (event) => {
+                    return (event: KeyboardEvent) => {
                         if (
                             document.activeElement.id === 'input-answer-box'
                             && String(event.key).toLowerCase() === 'enter'
@@ -181,7 +185,7 @@ function flash(config = {}) {
      * 表示用に整形した数字の配列
      * @type {string[]}
      */
-    const localeStringNumbers = (() => {
+    const localeStringNumbers: string[] = (() => {
         switch (currentFlashMode) {
             case modeNames.multiplication:
                 return numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
@@ -198,7 +202,7 @@ function flash(config = {}) {
          * @param {string[]} fmtNumbers 整形された数字の配列
          * @returns {string[]} 点滅も含めた数字の表示順の配列
          */
-        function generateToggleNumberSuite(fmtNumbers) {
+        function generateToggleNumberSuite(fmtNumbers: string[]): string[] {
             let toggleNumberSuite = [];
             for (let i = 0; i < fmtNumbers.length; i++) {
                 toggleNumberSuite.push(fmtNumbers[i]);
@@ -209,10 +213,9 @@ function flash(config = {}) {
 
         /**
          * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
-         * @returns {*[]}
          */
         function generateSoundSuite() {
-            let sounds = [];
+            let sounds: (null | Howl)[] = [];
             for (let i = 0; i < requestParam.length; ++i) {
                 sounds.push(isMuted() ? null : audioObj.tick[i]);
                 sounds.push(null);
@@ -299,14 +302,14 @@ function flash(config = {}) {
 
     const start = getTime();
 
-    function setFlashTimeOut(fn, delay) {
-        const handle = {};
+    function setFlashTimeOut(fn: () => void, delay: number) {
+        const handle: { value?: number } = {};
 
         function loop() {
             const current = getTime();
             const delta = current - start;
             if (delta >= delay) {
-                fn.call();
+                fn();
             } else {
                 handle.value = requestAnimationFrame(loop);
             }
@@ -338,10 +341,6 @@ function flash(config = {}) {
     setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300);
 }
 
-function repeatFlash() {
-    flash({repeat: true});
-}
-
 function configureModalFocusing() {
     Object.keys(modals.params).forEach((op) => {
         const confirm = modals.params[op]['confirm'];
@@ -365,7 +364,7 @@ function configureModalFocusing() {
  * @param {number} timeoutMs
  * @returns {number}
  */
-function warmUpDisplayArea(timeoutMs) {
+function warmUpDisplayArea(timeoutMs: number): number {
     const currentNumberColor = questionNumberArea.style.color;
     const prepareGameFunctions = [
         () => questionNumberArea.style.color = "black",
@@ -392,46 +391,39 @@ function clearInputAnswerBox() {
     const warmupDelay = 1000;
 
     const setup = () => {
-        const audioContext = new AudioContext();
+        audioObj.load(flashParamElements.common.soundExtension.valueV1);
 
         // ページ読み込み時処理
         (() => {
-            button.start.addEventListener('click', () => {
-                audioContext.resume().then(() => {
-                });
+            let timeoutMs = warmUpDisplayArea(warmupDelay);
+            const prepareGameFunctions = [
+                () => changeMode('addition'),
+                configureModalFocusing,
+                () => {
+                    button.help.disabled = false;
+                    button.openCommonMoreConfig.disabled = false;
+                    button.loadParams.disabled = false;
+                    button.saveParams.disabled = false;
+                    button.deleteParams.disabled = false;
+                    button.start.disabled = false;
+                },
+                registerShortcuts,
+            ];
+            prepareGameFunctions.map((func) => {
+                setTimeout(func, timeoutMs);
+                timeoutMs += 50;
             });
 
-            (() => {
-                let timeoutMs = warmUpDisplayArea(warmupDelay);
-                const prepareGameFunctions = [
-                    () => changeMode('addition'),
-                    configureModalFocusing,
-                    () => {
-                        button.help.disabled = false;
-                        button.openCommonMoreConfig.disabled = false;
-                        button.loadParams.disabled = false;
-                        button.saveParams.disabled = false;
-                        button.deleteParams.disabled = false;
-                        button.start.disabled = false;
-                    },
-                    registerShortcuts,
-                ];
-                prepareGameFunctions.map((func) => {
-                    setTimeout(func, timeoutMs);
-                    timeoutMs += 50;
-                });
-
-                if (isTouchDevice()) {
-                    button.help.style.display = 'none';
-                }
-            })();
+            if (isTouchDevice()) {
+                button.help.style.display = 'none';
+            }
         })();
 
         // タッチデバイスの回答入力
         (() => {
             let inputs = [];
 
-            function onKeyPress(button) {
+            function onKeyPress(button: string) {
                 if (!button) {
                     return;
                 }
@@ -482,7 +474,7 @@ function clearInputAnswerBox() {
 
         // 回答入力タブ切り替え動作イベントを登録
         (() => {
-            const triggerTabs = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
+            const triggerTabs: Element[] = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'));
             triggerTabs.forEach(element => {
                 const tabTrigger = new bootstrap.Tab(element);
                 element.addEventListener('click', (event) => {
@@ -500,13 +492,13 @@ function clearInputAnswerBox() {
         // set onclick events in index.html
         (() => {
             // フラッシュ操作
-            button.start.addEventListener('click', flash)
-            button.repeat.addEventListener('click', repeatFlash)
+            button.start.addEventListener('click', () => flash())
+            button.repeat.addEventListener('click', () => flash({repeat: true}))
 
             // モード切り替え
-            button.addition.addEventListener('click', () => changeMode(modeNames.addition))
+            button.addition.addEventListener('click', () => changeMode("addition"))
             // button.subtraction.addEventListener('click', () => changeMode(modeNames.subtraction))
-            button.multiplication.addEventListener('click', () => changeMode(modeNames.multiplication))
+            button.multiplication.addEventListener('click', () => changeMode("multiplication"))
 
             // 難易度切り替え
             button.difficulty.easy.addEventListener('click', () => {
@@ -521,7 +513,7 @@ function clearInputAnswerBox() {
 
             // サウンド
             button.isMuted.addEventListener('change', event => {
-                flashParamElements.common.isMuted.valueV1 = event.target.checked;
+                flashParamElements.common.isMuted.valueV1 = (event.target as HTMLInputElement).checked;
             })
 
             // 出題設定読み込み

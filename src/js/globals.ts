@@ -63,16 +63,6 @@ export const button = {
     isMuted: getHtmlElement("input", "is-muted-button"),
 };
 
-// RMS -9.0 dB 付近で調整し，あとは聞いた感じで微調整
-export const audioObj = {
-    beep: new Array(2),
-    tick: new Array(30),
-    answer: new Array(1),
-    correct: new Array(1),
-    incorrect: new Array(1),
-    silence: new Array(1),
-};
-
 export const flashParamElements = {
     addition: {
         digit: new FlashNumberParam({
