@@ -30,7 +30,7 @@ import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setF
 import {isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
 import {changeMode, getCurrentParam} from "./util_should_categorize";
-import {registerShortcuts} from "./_shortcut";
+import {registerShortcuts} from "./shortcut/shortcut";
 
 function flash(config = {}) {
     const measuredTime = {start: 0, end: 0};

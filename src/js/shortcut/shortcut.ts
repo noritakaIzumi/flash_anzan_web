@@ -1,5 +1,6 @@
-import {button, flashParamElements, modeNames} from "./globals";
-import {toggleFullscreenMode} from "./screen";
+import {button, flashParamElements, modeNames} from "../globals";
+import {toggleFullscreenMode} from "../screen";
+import {shortcut} from "./handler";
 
 export function registerShortcuts() {
     shortcut.add("ctrl+o", () => button.loadParams.click());
