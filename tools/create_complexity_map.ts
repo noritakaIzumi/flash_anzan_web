@@ -100,7 +100,7 @@ type Mode = 'addition' | 'multiplication'
 
     try {
         fs.writeFileSync(
-            path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.js',
+            path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.ts',
             `export const complexityMap = ${JSON.stringify(result)};\n`);
         console.log('write end');
     } catch (e) {
