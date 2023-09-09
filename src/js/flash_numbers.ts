@@ -202,7 +202,6 @@ export function generateNumbersAdditionMode(digitCount: number, length: number, 
 
         const complexity = getCalculateComplexity(carries.slice(1), digitCount);
         const complexityMapKey = `${digitCount}-${length}`;
-        console.log(complexityMapKey, complexityMap.addition[complexityMapKey][difficultyMap.hard], complexity)
 
         const condition = (() => {
             if (difficulty === 'easy') {
