@@ -1,14 +1,6 @@
 import {FlashDigit, FlashMode, flashModes} from "./globals";
 
 export abstract class FlashNumberHistory<T> {
-    private set digit(value: T) {
-        this._digit = value;
-    }
-
-    private set numberHistory(value: T[]) {
-        this._numberHistory = value;
-    }
-
     protected get digit(): T {
         return this._digit;
     }
@@ -17,12 +9,12 @@ export abstract class FlashNumberHistory<T> {
         return this._numberHistory;
     }
 
-    private _digit: T;
-    private _numberHistory: T[];
+    private readonly _digit: T;
+    private readonly _numberHistory: T[];
 
     constructor(digit: T, numberHistory: T[]) {
-        this.digit = digit
-        this.numberHistory = numberHistory
+        this._digit = digit
+        this._numberHistory = numberHistory
     }
 
     public abstract digitEquals(digit: T): boolean;
@@ -66,7 +58,6 @@ export class FlashNumberHistoryRegistry {
 
     register(mode: "addition", digit: number, numbers: unknown[]): void
     register(mode: "multiplication", digit: [number, number], numbers: unknown[]): void
-    register(mode: FlashMode, digit: unknown, numbers: unknown[]): void
     register(mode: string, digit: unknown, numbers: unknown[]): void {
         this.validateMode(mode)
 

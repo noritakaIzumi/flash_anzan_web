@@ -1,19 +1,17 @@
 import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {SimpleKeyboard} from "simple-keyboard";
-import {FlashAnswer, generateNumbers} from "./flash_numbers";
+import {FlashAnswer} from "./flash_numbers";
 import {
     answerNumberDisplay,
     button,
     calculateArea,
-    FlashMode,
     flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
     modals,
-    multiplyFigure,
     noticeArea,
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
@@ -22,12 +20,11 @@ import {
     versionNumber
 } from "./globals";
 import {getTime} from "./time";
-import {flashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
 import {audioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode, FlashParam} from "./flash_param_set";
+import {changeMode} from "./flash_param_set";
 import {registerShortcuts} from "./shortcut/shortcut";
 import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion";
 
@@ -99,7 +96,10 @@ function flash(option: FlashOption = {}) {
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
-                    const modalFooter: HTMLDivElement = modals.input_answer.querySelector('.modal-footer');
+                    const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer');
+                    if (modalFooter === null) {
+                        throw new Error('element not found: modal footer')
+                    }
                     modalFooter.style.display = 'none';
                     clearInputAnswerBox();
                     switchInputAnswerBoxTab.touchTab.click();
@@ -116,16 +116,19 @@ function flash(option: FlashOption = {}) {
             modal.show();
             // 回答送信時のイベント設定
             if (isTouchDevice()) {
-                document.querySelector('#input-answer-box-area-touch .btn-send-answer')
-                    .addEventListener('click', () => {
-                        displayAnswer(inputAnswerBoxTouchActual.value, answer);
-                        modal.hide();
-                    }, {once: true});
+                const btnSendAnswer: HTMLButtonElement | null = document.querySelector('#input-answer-box-area-touch .btn-send-answer');
+                if (btnSendAnswer === null) {
+                    throw new Error('element not found: btn send answer')
+                }
+                btnSendAnswer.addEventListener('click', () => {
+                    displayAnswer(inputAnswerBoxTouchActual.value, answer);
+                    modal.hide();
+                }, {once: true});
             } else {
                 const listener = () => {
                     return (event: KeyboardEvent) => {
                         if (
-                            document.activeElement.id === 'input-answer-box'
+                            document.activeElement?.id === 'input-answer-box'
                             && String(event.key).toLowerCase() === 'enter'
                         ) {
                             displayAnswer(inputAnswerBox.value, answer);
@@ -136,56 +139,6 @@ function flash(option: FlashOption = {}) {
                     };
                 };
                 document.addEventListener('keydown', listener(), {once: true});
-            }
-        }
-    }
-
-    // 出題数字を生成、または前回の出題から読み込む
-    function getNumbers(flashMode: FlashMode, requestParam: FlashParam<unknown>, repeat: boolean) {
-        let digitIsSame = false;
-        const numberHistory = (() => {
-            const numberHistory = flashNumberHistoryRegistry.getHistory(flashMode);
-            if (numberHistory === null) {
-                return [];
-            }
-            digitIsSame = numberHistory.digitEquals(requestParam.digit);
-            return numberHistory.numberHistory;
-        })()
-
-        if (repeat && digitIsSame) {
-            if (requestParam.length === numberHistory.length) {
-                return numberHistory;
-            }
-            if (requestParam.length < numberHistory.length) {
-                return numberHistory.slice(0, requestParam.length);
-            }
-            return numberHistory.concat(generateNumbers(flashMode, requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
-        }
-        return generateNumbers(flashMode, requestParam.digit, requestParam.length, requestParam.difficulty);
-    }
-
-    /**
-     * 表示用に整形した数字の配列
-     * @type {string[]}
-     */
-    function getLocaleStringNumbers(flashMode: FlashMode, numbers: (number | [number, number])[]) {
-        switch (flashMode) {
-            case "multiplication":
-                return numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
-            case "addition":
-                return numbers.map((n) => n.toLocaleString());
-        }
-    }
-
-    function getFlashAnswer(flashMode: FlashMode, numbers: (number | [number, number])[]) {
-        switch (flashMode) {
-            case 'multiplication': {
-                const _numbers = numbers as [number, number][]
-                return new FlashAnswer(_numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]));
-            }
-            case 'addition': {
-                const _numbers = numbers as number[]
-                return new FlashAnswer(_numbers.reduce((a, b) => a + b));
             }
         }
     }
@@ -413,14 +366,21 @@ function clearInputAnswerBox() {
 
         // タッチデバイスの回答入力
         (() => {
-            let inputs = [];
+            let inputs: string[] = [];
 
             function onKeyPress(button: string) {
                 if (!button) {
+                    console.error('button is empty')
                     return;
                 }
-                const matched = button.match(/\d/g)[0];
+                const matchedArray = button.match(/\d/g);
+                if (!matchedArray) {
+                    console.error('non-number key pressed')
+                    return;
+                }
+                const matched = matchedArray[0];
                 if (!matched) {
+                    console.error('no key matched')
                     return;
                 }
                 inputs.push(matched);
@@ -516,7 +476,12 @@ function clearInputAnswerBox() {
     };
 
     (() => {
-        document.querySelector('#welcomeModal .modal-footer > button').addEventListener('click', setup);
+        const button: HTMLButtonElement | null = document.querySelector('#welcomeModal .modal-footer > button');
+        if (!button) {
+            throw new Error('element not found: modal footer button')
+        }
+
+        button.addEventListener('click', setup);
         const welcomeModal = new bootstrap.Modal(modals.welcome, {backdrop: 'static', keyboard: false, focus: true});
         welcomeModal.show();
     })();

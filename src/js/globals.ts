@@ -8,7 +8,6 @@ import {
     FlashSoundExtensionParam,
     FlashTimeParam
 } from "./flashParams";
-import {CurrentFlashMode} from "./currentFlashMode";
 
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
@@ -44,13 +43,6 @@ export type ComplexityThresholdMap = { [key in FlashMode]: ComplexityThresholdMa
 
 export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
 export type FlashDifficulty = typeof flashDifficulty[number]
-
-export const difficultyMap = {
-    easy: 'easy',
-    normal: 'normal',
-    hard: 'hard',
-};
-
 export const audioAttr = {
     directory: "./sounds",
 };
