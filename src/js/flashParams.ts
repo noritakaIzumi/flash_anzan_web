@@ -108,7 +108,7 @@ type FlashDifficultyParamSchema = {
 
 export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
     get valueV1(): FlashDifficulty {
-        return this.htmlElement.value;
+        return this.htmlElement.value as FlashDifficulty;
     }
 
     set valueV1(value: FlashDifficulty) {

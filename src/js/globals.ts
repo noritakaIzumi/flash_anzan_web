@@ -12,11 +12,30 @@ import {
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
 
-export const modeNames = {
+export type FlashDigit = {
+    addition: number,
+    multiplication: [number, number],
+}
+
+export const modeNames: { [key in FlashMode]: Lowercase<key> } = {
     addition: "addition",
     multiplication: "multiplication",
 };
 
+export type ComplexityMapKey = {
+    addition: `${number}-${number}`
+    multiplication: `${number}-${number}-${number}`
+}
+
+export type ComplexitySchema = {
+    med: number
+    hard: number
+    easy: number
+}
+
+export type Complexity = ComplexitySchema["easy" | "hard"]
+
+type AdditionModeComplexityMapKey = `${number}-${number}`
 export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
 export type FlashDifficulty = typeof flashDifficulty[number]
 
@@ -140,7 +159,6 @@ export const switchInputAnswerBoxTab = {
 }
 export const noticeInputAnswerNonTouchDevice = getHtmlElement("span", "notice-input-answer-non-touch-device")
 export const numberHistoryDisplay = getHtmlElement("td", "number-history-display");
-export const numberHistoryDisplayDelimiter = "<br>";
 export const answerNumberDisplay = getHtmlElement("td", "answer-number-display");
 
 export const savedParamsKeyName = "flash_anzan_params";

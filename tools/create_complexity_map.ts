@@ -1,5 +1,6 @@
 import {Abacus} from "../src/js/abacus";
 import {getCalculateComplexity} from "../src/js/flash_analysis"
+import {ComplexitySchema} from "../src/js/globals";
 
 function generateCarries(digitCount: number | number[], length: number, mode: Mode) {
     function getRandomInt(digitCount: number) {
@@ -101,7 +102,7 @@ type Mode = 'addition' | 'multiplication'
     try {
         fs.writeFileSync(
             path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.ts',
-            `export const complexityMap = ${JSON.stringify(result)};\n`);
+            `import{ComplexitySchema}from"./globals";export const complexityMap:{addition:{[key:\`\${number}-\${number}\`]:ComplexitySchema},multiplication:{[key:\`\${number}-\${number}-\${number}\`]:ComplexitySchema}}=${JSON.stringify(result)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);

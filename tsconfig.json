@@ -5,7 +5,8 @@
     "isolatedModules": true,
     "module": "ESNext",
     "moduleResolution": "nodenext",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "strictNullChecks": true
   },
   "include": ["./src/**/*"],
   "lib": ["WebWorker"]

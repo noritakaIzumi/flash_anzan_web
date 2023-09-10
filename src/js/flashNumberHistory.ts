@@ -1,4 +1,4 @@
-import {FlashMode, flashModes} from "./globals";
+import {FlashDigit, FlashMode, flashModes} from "./globals";
 
 abstract class FlashNumberHistory<T> {
     private set digit(value: T) {
@@ -43,7 +43,7 @@ export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<[nu
 export class FlashNumberHistoryRegistry {
     private static instance: FlashNumberHistoryRegistry
 
-    protected history: { [key in FlashMode]: FlashNumberHistory<unknown> | null } = {
+    protected history: { [key in FlashMode]: FlashNumberHistory<FlashDigit[key]> | null } = {
         addition: null,
         multiplication: null,
     };
@@ -64,20 +64,23 @@ export class FlashNumberHistoryRegistry {
         }
     }
 
-    register(_mode: string, digit: unknown, numbers: unknown[]): void {
-        this.validateMode(_mode)
+    register(mode: "addition", digit: number, numbers: unknown[]): void
+    register(mode: "multiplication", digit: [number, number], numbers: unknown[]): void
+    register(mode: FlashMode, digit: unknown, numbers: unknown[]): void
+    register(mode: string, digit: unknown, numbers: unknown[]): void {
+        this.validateMode(mode)
 
-        const mapping: {
-            [key in FlashMode]: { new(digit: unknown, history: unknown[]): FlashNumberHistory<unknown> }
-        } = {
+        const mapping = {
             addition: AdditionModeFlashNumberHistory,
             multiplication: MultiplicationModeFlashNumberHistory,
         }
-        this.history[_mode] = new mapping[_mode](digit, numbers)
+        this.history[mode] = new mapping[mode](digit, numbers)
     }
 
-    getHistory(_mode: string): FlashNumberHistory<unknown> | null {
-        this.validateMode(_mode)
-        return this.history[_mode]
+    getHistory<TMode extends FlashMode>(mode: TMode): FlashNumberHistory<FlashDigit[TMode]> | null {
+        this.validateMode(mode)
+        return this.history[mode]
     }
 }
+
+export const flashNumberHistoryRegistry = FlashNumberHistoryRegistry.getInstance()

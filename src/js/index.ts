@@ -6,29 +6,28 @@ import {
     answerNumberDisplay,
     button,
     calculateArea,
+    FlashMode,
     flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
     modals,
-    modeNames,
     multiplyFigure,
     noticeArea,
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
-    numberHistoryDisplayDelimiter,
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
 } from "./globals";
 import {getTime} from "./time";
-import {FlashNumberHistoryRegistry} from "./flashNumberHistory";
+import {flashNumberHistoryRegistry} from "./flashNumberHistory";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
 import {audioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode, getCurrentParam} from "./util_should_categorize";
+import {changeMode, FlashParam, getCurrentParam} from "./util_should_categorize";
 import {registerShortcuts} from "./shortcut/shortcut";
 
 type FlashConfig = {
@@ -37,7 +36,6 @@ type FlashConfig = {
 
 function flash(config: FlashConfig = {}) {
     const measuredTime = {start: 0, end: 0};
-    const flashNumberHistoryRegistry = FlashNumberHistoryRegistry.getInstance()
 
     /**
      * 答え入力のための準備的な。
@@ -145,16 +143,11 @@ function flash(config: FlashConfig = {}) {
         }
     }
 
-    // ここからフラッシュ出題の処理
-    const currentFlashMode = CurrentFlashMode.getInstance().value;
-    // 設定を取得する
-    let requestParam = getCurrentParam();
-
     // 出題数字を生成、または前回の出題から読み込む
-    const numbers = (() => {
+    function getNumbers(flashMode: FlashMode, requestParam: FlashParam<unknown>, repeat: boolean) {
         let digitIsSame = false;
         const numberHistory = (() => {
-            const numberHistory = flashNumberHistoryRegistry.getHistory(currentFlashMode);
+            const numberHistory = flashNumberHistoryRegistry.getHistory(flashMode);
             if (numberHistory === null) {
                 return [];
             }
@@ -162,41 +155,52 @@ function flash(config: FlashConfig = {}) {
             return numberHistory.numberHistory;
         })()
 
-        if (config.repeat && digitIsSame) {
+        if (repeat && digitIsSame) {
             if (requestParam.length === numberHistory.length) {
                 return numberHistory;
             }
             if (requestParam.length < numberHistory.length) {
                 return numberHistory.slice(0, requestParam.length);
             }
-            return numberHistory.concat(generateNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, currentFlashMode));
+            return numberHistory.concat(generateNumbers(flashMode, requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
         }
-        return generateNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, currentFlashMode);
-    })();
+        return generateNumbers(flashMode, requestParam.digit, requestParam.length, requestParam.difficulty);
+    }
 
     /**
      * 表示用に整形した数字の配列
      * @type {string[]}
      */
-    const localeStringNumbers: string[] = (() => {
-        switch (currentFlashMode) {
-            case modeNames.multiplication:
+    function getLocaleStringNumbers(flashMode: FlashMode, numbers: (number | [number, number])[]) {
+        switch (flashMode) {
+            case "multiplication":
                 return numbers.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString());
-            case modeNames.addition:
+            case "addition":
                 return numbers.map((n) => n.toLocaleString());
-            default:
-                throw new RangeError('invalid mode')
         }
-    })();
+    }
 
-    const getFlashSuite = () => {
+    function getFlashAnswer(flashMode: FlashMode, numbers: (number | [number, number])[]) {
+        switch (flashMode) {
+            case 'multiplication': {
+                const _numbers = numbers as [number, number][]
+                return new FlashAnswer(_numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]));
+            }
+            case 'addition': {
+                const _numbers = numbers as number[]
+                return new FlashAnswer(_numbers.reduce((a, b) => a + b));
+            }
+        }
+    }
+
+    const getFlashSuite = (numbersToDisplay: string[]) => {
         /**
          * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
          * @param {string[]} fmtNumbers 整形された数字の配列
          * @returns {string[]} 点滅も含めた数字の表示順の配列
          */
         function generateToggleNumberSuite(fmtNumbers: string[]): string[] {
-            let toggleNumberSuite = [];
+            let toggleNumberSuite: string[] = [];
             for (let i = 0; i < fmtNumbers.length; i++) {
                 toggleNumberSuite.push(fmtNumbers[i]);
                 toggleNumberSuite.push("");
@@ -226,7 +230,7 @@ function flash(config: FlashConfig = {}) {
             };
         })
 
-        const toggleNumberSuite = generateToggleNumberSuite(localeStringNumbers);
+        const toggleNumberSuite = generateToggleNumberSuite(numbersToDisplay);
         for (const [i, toggleNumber] of toggleNumberSuite.entries()) {
             if (i === 0) {
                 result[i].toggleNumberFunction = () => {
@@ -275,23 +279,22 @@ function flash(config: FlashConfig = {}) {
             }
     );
 
+    // ここからフラッシュ出題の処理
+    const currentFlashMode = CurrentFlashMode.getInstance().value;
+    // 設定を取得する
+    const requestParam = getCurrentParam(currentFlashMode);
+    const numbers = getNumbers(currentFlashMode, requestParam, !!config.repeat);
+    const numbersToDisplay: string[] = getLocaleStringNumbers(currentFlashMode, numbers);
+    const flashAnswer = getFlashAnswer(currentFlashMode, numbers);
+    const flashAnswerToDisplay = flashAnswer.toDisplay();
+    flashNumberHistoryRegistry.register(currentFlashMode, requestParam.digit, numbers)
+
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     button.numberHistory.disabled = true;
-    const flashAnswer = (() => {
-        switch (currentFlashMode) {
-            case modeNames.multiplication:
-                return new FlashAnswer(numbers.reduce((a, b) => (a[1] ? a[0] * a[1] : a) + b[0] * b[1]));
-            case modeNames.addition:
-                return new FlashAnswer(numbers.reduce((a, b) => a + b));
-            default:
-                throw new RangeError('invalid mode')
-        }
-    })();
-    numberHistoryDisplay.innerHTML = localeStringNumbers.join(numberHistoryDisplayDelimiter);
-    flashNumberHistoryRegistry.register(currentFlashMode, requestParam.digit, numbers)
-    answerNumberDisplay.innerText = flashAnswer.toDisplay();
+    numberHistoryDisplay.innerHTML = numbersToDisplay.join("<br>");
+    answerNumberDisplay.innerText = flashAnswerToDisplay;
 
     const start = getTime();
 
@@ -320,7 +323,7 @@ function flash(config: FlashConfig = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    const flashSuite = getFlashSuite();
+    const flashSuite = getFlashSuite(numbersToDisplay);
     const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer);
     setTimeout(() => {
         audioObj.silence[0].play();

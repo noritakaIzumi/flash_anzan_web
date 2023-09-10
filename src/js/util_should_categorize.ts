@@ -1,4 +1,4 @@
-import {FlashMode, flashParamElements} from "./globals";
+import {FlashDifficulty, FlashMode, flashParamElements} from "./globals";
 import {CurrentFlashMode} from "./currentFlashMode";
 import {changeShortcut} from "./shortcut/shortcut";
 
@@ -7,9 +7,20 @@ export function changeMode(mode: FlashMode) {
     CurrentFlashMode.getInstance().value = mode;
 }
 
-export function getCurrentParam() {
-    const currentFlashMode = CurrentFlashMode.getInstance().value;
-    switch (currentFlashMode) {
+export type FlashParam<TDigit> = {
+    digit: TDigit
+    length: number
+    time: number
+    difficulty: FlashDifficulty
+    flashRate: number
+    offset: number
+}
+
+export function getCurrentParam(flashMode: "addition"): FlashParam<number>
+export function getCurrentParam(flashMode: "multiplication"): FlashParam<[number, number]>
+export function getCurrentParam(flashMode: FlashMode): FlashParam<number> | FlashParam<[number, number]>
+export function getCurrentParam(flashMode: FlashMode): FlashParam<number> | FlashParam<[number, number]> {
+    switch (flashMode) {
         case 'multiplication':
             return {
                 digit: [
