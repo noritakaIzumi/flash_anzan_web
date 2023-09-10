@@ -4,7 +4,7 @@ import {
     FlashNumberParam,
     FlashSoundExtensionParam,
     FlashTimeParam
-} from "../flashParams.js";
+} from "../flash/flashParams.js";
 import {button, getHtmlElement} from "./htmlElement.js";
 
 export type FlashParamElements = {

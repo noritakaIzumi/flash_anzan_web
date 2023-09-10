@@ -1,11 +1,7 @@
-import {
-    flashDifficulty,
-    FlashDifficulty,
-    savedParamsKeyName
-} from "./globals.js";
-import {audioObj, soundExtension, SoundExtension} from "./sound.js";
-import {getHtmlElement, modals} from "./dom/htmlElement.js";
-import {flashParamElementCategoryName, flashParamElements} from "./dom/flashParamElements.js";
+import {flashDifficulty, FlashDifficulty, savedParamsKeyName} from "../globals.js";
+import {audioObj, soundExtension, SoundExtension} from "../sound.js";
+import {button, modals} from "../dom/htmlElement.js";
+import {flashParamElementCategoryName, flashParamElements} from "../dom/flashParamElements.js";
 
 export function fixValue(limit: { max: number, min: number }, targetValue: number): number {
     return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
@@ -117,7 +113,7 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
     }
 
     set valueV1(value: FlashDifficulty) {
-        getHtmlElement("input", `difficulty-${value}`).checked = true;
+        button.difficulty[value].checked = true
         this.htmlElement.value = value
     }
 
@@ -271,7 +267,7 @@ export function doLoadParams() {
     });
 
     // 難易度選択
-    getHtmlElement("input", `difficulty-${flashParamElements.common.difficulty.valueV1}`).checked = true;
+    button.difficulty[flashParamElements.common.difficulty.valueV1].checked = true
 }
 
 export function doSaveParams() {

@@ -1,4 +1,4 @@
-import {FlashDigit, FlashMode, flashModes} from "./globals.js";
+import {FlashDigit, FlashMode, flashModes} from "../globals.js";
 
 export abstract class FlashNumberHistory<T> {
     protected get digit(): T {

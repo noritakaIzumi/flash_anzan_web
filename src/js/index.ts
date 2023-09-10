@@ -1,13 +1,13 @@
 import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {SimpleKeyboard} from "simple-keyboard";
-import {FlashAnswer} from "./flash_numbers.js";
+import {FlashAnswer} from "./flash/flashNumbers.js";
 import {getTime} from "./time.js";
 import {CurrentFlashMode} from "./currentFlashMode.js";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen.js";
 import {audioObj, isMuted} from "./sound.js";
-import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams.js";
-import {changeMode} from "./flash_param_set.js";
+import {doDeleteParams, doLoadParams, doSaveParams} from "./flash/flashParams.js";
+import {changeMode} from "./flash/flashParamSet.js";
 import {registerShortcuts} from "./shortcut/shortcut.js";
 import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion.js";
 import {flashParamElements} from "./dom/flashParamElements.js";

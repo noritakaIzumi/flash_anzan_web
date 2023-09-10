@@ -2,7 +2,7 @@ import {
     AdditionModeGetFlashParamSetAdapter,
     FlashParamSet,
     MultiplicationModeGetFlashParamSetAdapter
-} from "../flash_param_set.js";
+} from "./flashParamSet.js";
 import {
     AdditionModeCreateNewNumbersAdapter,
     AdditionModeFlashGenerator,
@@ -16,9 +16,9 @@ import {
     MultiplicationModeFlashGenerator,
     MultiplicationModeFlashNumbers,
     MultiplicationModeGetFlashAnswerAdapter
-} from "../flash_numbers.js";
-import {complexityThresholdMap} from "../complexityThresholdMap.js";
-import {flashNumberHistoryRegistry} from "../flashNumberHistory.js";
+} from "./flashNumbers.js";
+import {complexityThresholdMap} from "../lib/complexityThresholdMap.js";
+import {flashNumberHistoryRegistry} from "./flashNumberHistory.js";
 import {FlashDigit, FlashMode} from "../globals.js";
 
 export type FlashOption = {

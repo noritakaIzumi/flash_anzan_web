@@ -1,9 +1,9 @@
-import {calculateComplexity} from "../src/js/flash_analysis.js"
+import {calculateComplexity} from "../src/js/flash/flashAnalysis.js"
 import {ComplexityThresholdMap, FlashMode} from "../src/js/globals.js";
 import {
     AdditionModeUnknownDifficultyCreateRawNumbersAdapter,
     MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter
-} from "../src/js/flash_numbers.js";
+} from "../src/js/flash/flashNumbers.js";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -58,7 +58,7 @@ type Threshold = { hard: number, easy: number }
 
     try {
         fs.writeFileSync(
-            path.dirname(path.dirname(__filename)) + '/src/js/complexityThresholdMap.ts',
+            path.dirname(path.dirname(__filename)) + '/src/js/lib/complexityThresholdMap.ts',
             `import{ComplexityThresholdMap}from"./globals.js";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`);
         console.log('write end');
     } catch (e) {
