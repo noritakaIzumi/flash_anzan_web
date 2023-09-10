@@ -6,6 +6,7 @@ import {
     FlashTimeParam
 } from "../flash/flashParams.js";
 import {button, getHtmlElement} from "./htmlElement.js";
+import {flashParamSchema} from "../flash/flashParamSchema.js";
 
 export type FlashParamElements = {
     addition: {
@@ -32,51 +33,51 @@ export const flashParamElements: FlashParamElements = {
     addition: {
         digit: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "addition-digit"),
-            schema: {min: 1, max: 14, default: 1},
+            schema: flashParamSchema.addition.digit,
         }),
         length: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "addition-length"),
-            schema: {min: 2, max: 30, default: 3},
+            schema: flashParamSchema.addition.length,
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "addition-time"),
-            schema: {min: 1000, max: 30000, default: 5000},
+            schema: flashParamSchema.addition.time,
         }),
     },
     multiplication: {
         digit1: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "multiplication-digit-1"),
-            schema: {min: 1, max: 7, default: 1},
+            schema: flashParamSchema.multiplication.digit1,
         }),
         digit2: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "multiplication-digit-2"),
-            schema: {min: 1, max: 7, default: 1},
+            schema: flashParamSchema.multiplication.digit2,
         }),
         length: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "multiplication-length"),
-            schema: {min: 2, max: 30, default: 2},
+            schema: flashParamSchema.multiplication.length,
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "multiplication-time"),
-            schema: {min: 1000, max: 30000, default: 5000},
+            schema: flashParamSchema.multiplication.time,
         }),
     },
     common: {
         difficulty: new FlashDifficultyParam({
             htmlElement: getHtmlElement("select", "difficulty"),
-            schema: {default: 'easy'},
+            schema: flashParamSchema.common.difficulty,
         }),
         flashRate: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "common-flashRate"),
-            schema: {min: 1, max: 99, default: 55},
+            schema: flashParamSchema.common.flashRate,
         }),
         offset: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "common-offset"),
-            schema: {min: -500, max: 500, default: 0},
+            schema: flashParamSchema.common.offset,
         }),
         isMuted: new FlashIsMutedParam({
             htmlElement: getHtmlElement("input", "is-muted"),
-            schema: {default: false},
+            schema: flashParamSchema.common.isMuted,
             options: {
                 buttonElement: button.isMuted,
                 audioStatusElement: getHtmlElement("label", "audio-status"),
@@ -84,7 +85,7 @@ export const flashParamElements: FlashParamElements = {
         }),
         soundExtension: new FlashSoundExtensionParam({
             htmlElement: getHtmlElement("select", "sound-extension"),
-            schema: {default: 'wav'},
+            schema: flashParamSchema.common.soundExtension,
         }),
     },
 };

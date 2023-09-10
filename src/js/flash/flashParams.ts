@@ -2,12 +2,23 @@ import {flashDifficulty, FlashDifficulty, savedParamsKeyName} from "../globals.j
 import {audioObj, soundExtension, SoundExtension} from "../sound.js";
 import {button, modals} from "../dom/htmlElement.js";
 import {flashParamElementCategoryName, flashParamElements} from "../dom/flashParamElements.js";
+import {
+    FlashDifficultyParamSchema,
+    FlashIsMutedParamSchema,
+    FlashNumberParamSchema,
+    FlashSoundExtensionParamSchema
+} from "./flashParamSchema.js";
 
-export function fixValue(limit: { max: number, min: number }, targetValue: number): number {
+export function fixValue(limit: {
+    max: number,
+    min: number
+}, targetValue: number): number {
     return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
 }
 
-abstract class FlashParam<K extends HTMLElement & { value: string }, T, U, VOptions = never> {
+abstract class FlashParam<K extends HTMLElement & {
+    value: string
+}, T, U, VOptions = never> {
     abstract get valueV1(): U;
     abstract set valueV1(value: string | number);
 
@@ -23,16 +34,14 @@ abstract class FlashParam<K extends HTMLElement & { value: string }, T, U, VOpti
     protected htmlElement: K;
     protected schema: T;
 
-    protected constructor(props: { htmlElement: K, schema: T, options?: VOptions }) {
+    protected constructor(props: {
+        htmlElement: K,
+        schema: T,
+        options?: VOptions
+    }) {
         this.htmlElement = props.htmlElement
         this.schema = props.schema
     }
-}
-
-type FlashNumberParamSchema = {
-    min: number,
-    max: number,
-    default: number,
 }
 
 export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
@@ -52,7 +61,10 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.valueV1 = value
     }
 
-    constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
+    constructor(props: {
+        htmlElement: HTMLInputElement;
+        schema: FlashNumberParamSchema
+    }) {
         super(props);
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
@@ -88,7 +100,10 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         this.valueV1 = Number(value) * 1000
     }
 
-    constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
+    constructor(props: {
+        htmlElement: HTMLInputElement;
+        schema: FlashNumberParamSchema
+    }) {
         super(props);
         this.valueV1 = this.schema.default
     }
@@ -101,10 +116,6 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         this.increaseParam(0)
         return this
     }
-}
-
-type FlashDifficultyParamSchema = {
-    default: FlashDifficulty,
 }
 
 export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
@@ -132,7 +143,10 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
         }
     }
 
-    constructor(props: { htmlElement: HTMLSelectElement; schema: FlashDifficultyParamSchema }) {
+    constructor(props: {
+        htmlElement: HTMLSelectElement;
+        schema: FlashDifficultyParamSchema
+    }) {
         super(props);
         this.valueV1 = this.schema.default
     }
@@ -145,7 +159,7 @@ type FlashIsMutedParamOptions = {
 
 export class FlashIsMutedParam extends FlashParam<
     HTMLInputElement,
-    { default: boolean },
+    FlashIsMutedParamSchema,
     boolean,
     FlashIsMutedParamOptions
 > {
@@ -186,7 +200,9 @@ export class FlashIsMutedParam extends FlashParam<
 
     constructor(props: {
         htmlElement: HTMLInputElement,
-        schema: { default: boolean },
+        schema: {
+            default: boolean
+        },
         options: FlashIsMutedParamOptions
     }) {
         super(props);
@@ -198,7 +214,7 @@ export class FlashIsMutedParam extends FlashParam<
 
 export class FlashSoundExtensionParam extends FlashParam<
     HTMLSelectElement,
-    { default: SoundExtension },
+    FlashSoundExtensionParamSchema,
     SoundExtension
 > {
     get valueV1(): SoundExtension {
@@ -221,7 +237,13 @@ export class FlashSoundExtensionParam extends FlashParam<
         this.valueV1 = value as SoundExtension;
     }
 
-    constructor(props: { htmlElement: HTMLSelectElement; schema: { default: SoundExtension }; options?: never }) {
+    constructor(props: {
+        htmlElement: HTMLSelectElement;
+        schema: {
+            default: SoundExtension
+        };
+        options?: never
+    }) {
         super(props);
         this.valueV1 = props.schema.default
         this.htmlElement.addEventListener("change", () => audioObj.load(this.htmlElement.value as SoundExtension))
@@ -271,7 +293,11 @@ export function doLoadParams() {
 }
 
 export function doSaveParams() {
-    const params: { [key in keyof typeof flashParamElementCategoryName]: { [key: string]: string } } = {
+    const params: {
+        [key in keyof typeof flashParamElementCategoryName]: {
+            [key: string]: string
+        }
+    } = {
         addition: {},
         multiplication: {},
         common: {},
