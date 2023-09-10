@@ -5,7 +5,7 @@ import {flashParamElementCategoryName, flashParamElements} from "../dom/flashPar
 import {
     FlashDifficultyParamSchema,
     FlashIsMutedParamSchema,
-    FlashNumberParamSchema,
+    FlashNumberParamSchema, FlashNumberParamWithDifficultySupportSchema,
     FlashSoundExtensionParamSchema
 } from "./flashParamSchema.js";
 
@@ -64,6 +64,43 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     constructor(props: {
         htmlElement: HTMLInputElement;
         schema: FlashNumberParamSchema
+    }) {
+        super(props);
+        this.valueV1 = this.schema.default
+        this.htmlElement.max = String(this.schema.max)
+        this.htmlElement.min = String(this.schema.min)
+    }
+
+    increaseParam(amount: number): void {
+        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
+    }
+
+    updateParam(): FlashNumberParam {
+        this.increaseParam(0)
+        return this
+    }
+}
+
+export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputElement, FlashNumberParamWithDifficultySupportSchema, number> {
+    get valueV1(): number {
+        return Number(this.htmlElement.value);
+    }
+
+    set valueV1(value: string | number) {
+        this.htmlElement.value = String(value)
+    }
+
+    get valueV0(): string {
+        return this.htmlElement.value
+    }
+
+    set valueV0(value: string) {
+        this.valueV1 = value
+    }
+
+    constructor(props: {
+        htmlElement: HTMLInputElement;
+        schema: FlashNumberParamWithDifficultySupportSchema
     }) {
         super(props);
         this.valueV1 = this.schema.default

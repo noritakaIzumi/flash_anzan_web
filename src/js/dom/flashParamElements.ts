@@ -2,6 +2,7 @@ import {
     FlashDifficultyParam,
     FlashIsMutedParam,
     FlashNumberParam,
+    FlashNumberWithDifficultySupportParam,
     FlashSoundExtensionParam,
     FlashTimeParam
 } from "../flash/flashParams.js";
@@ -31,11 +32,11 @@ export type FlashParamElements = {
 
 export const flashParamElements: FlashParamElements = {
     addition: {
-        digit: new FlashNumberParam({
+        digit: new FlashNumberWithDifficultySupportParam({
             htmlElement: getHtmlElement("input", "addition-digit"),
             schema: flashParamSchema.addition.digit,
         }),
-        length: new FlashNumberParam({
+        length: new FlashNumberWithDifficultySupportParam({
             htmlElement: getHtmlElement("input", "addition-length"),
             schema: flashParamSchema.addition.length,
         }),
@@ -45,15 +46,15 @@ export const flashParamElements: FlashParamElements = {
         }),
     },
     multiplication: {
-        digit1: new FlashNumberParam({
+        digit1: new FlashNumberWithDifficultySupportParam({
             htmlElement: getHtmlElement("input", "multiplication-digit-1"),
             schema: flashParamSchema.multiplication.digit1,
         }),
-        digit2: new FlashNumberParam({
+        digit2: new FlashNumberWithDifficultySupportParam({
             htmlElement: getHtmlElement("input", "multiplication-digit-2"),
             schema: flashParamSchema.multiplication.digit2,
         }),
-        length: new FlashNumberParam({
+        length: new FlashNumberWithDifficultySupportParam({
             htmlElement: getHtmlElement("input", "multiplication-length"),
             schema: flashParamSchema.multiplication.length,
         }),

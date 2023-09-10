@@ -6,6 +6,7 @@ export type FlashNumberParamSchema = {
     max: number,
     default: number,
 }
+export type FlashNumberParamWithDifficultySupportSchema = FlashNumberParamSchema & { difficultySupportMax: number }
 export type FlashDifficultyParamSchema = {
     default: FlashDifficulty,
 }
@@ -17,14 +18,14 @@ export type FlashSoundExtensionParamSchema = {
 };
 export type FlashParamSchema = {
     addition: {
-        digit: FlashNumberParamSchema
-        length: FlashNumberParamSchema
+        digit: FlashNumberParamWithDifficultySupportSchema
+        length: FlashNumberParamWithDifficultySupportSchema
         time: FlashNumberParamSchema
     }
     multiplication: {
-        digit1: FlashNumberParamSchema
-        digit2: FlashNumberParamSchema
-        length: FlashNumberParamSchema
+        digit1: FlashNumberParamWithDifficultySupportSchema
+        digit2: FlashNumberParamWithDifficultySupportSchema
+        length: FlashNumberParamWithDifficultySupportSchema
         time: FlashNumberParamSchema
     }
     common: {
@@ -37,14 +38,14 @@ export type FlashParamSchema = {
 }
 export const flashParamSchema: FlashParamSchema = {
     addition: {
-        digit: {min: 1, max: 14, default: 1},
-        length: {min: 2, max: 30, default: 3},
+        digit: {min: 1, max: 14, default: 1, difficultySupportMax: 6},
+        length: {min: 2, max: 30, default: 3, difficultySupportMax: 30},
         time: {min: 1_000, max: 30_000, default: 5_000},
     },
     multiplication: {
-        digit1: {min: 1, max: 7, default: 1},
-        digit2: {min: 1, max: 7, default: 1},
-        length: {min: 2, max: 30, default: 2},
+        digit1: {min: 1, max: 7, default: 1, difficultySupportMax: 3},
+        digit2: {min: 1, max: 7, default: 1, difficultySupportMax: 3},
+        length: {min: 2, max: 30, default: 2, difficultySupportMax: 30},
         time: {min: 1_000, max: 30_000, default: 5_000},
     },
     common: {

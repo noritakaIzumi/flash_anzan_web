@@ -28,13 +28,13 @@ type Threshold = {
 (() => {
     // main
     const complexityThresholdMap: ComplexityThresholdMap = {addition: {}, multiplication: {}};
-    const sampleCount = 10;
+    const sampleCount = 10000;
     const threshold: Threshold = {hard: 0.1, easy: 0.9};
 
     let mode: FlashMode = 'addition';
     const additionModeParamSchema = flashParamSchema.addition
-    for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.max; ++digitCount) {
-        for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.max; ++length) {
+    for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.difficultySupportMax; ++digitCount) {
+        for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.difficultySupportMax; ++length) {
             const complexities: number[] = []
             for (let _ = 0; _ < sampleCount; _++) {
                 const rawNumbers = new AdditionModeUnknownDifficultyCreateRawNumbersAdapter().execute(digitCount, length)
@@ -48,9 +48,9 @@ type Threshold = {
 
     mode = 'multiplication';
     const multiplicationModeParamSchema = flashParamSchema.multiplication
-    for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.max; digitCount1++) {
-        for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.max; digitCount2++) {
-            for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.max; length++) {
+    for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax; digitCount1++) {
+        for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax; digitCount2++) {
+            for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.difficultySupportMax; length++) {
                 const complexities: number[] = []
                 for (let _ = 0; _ < sampleCount; _++) {
                     const rawNumbers = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter().execute([digitCount1, digitCount2], length)
