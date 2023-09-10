@@ -1,6 +1,7 @@
 import {audioAttr} from "./globals.js";
 import {Howl} from "howler";
 import {flashParamElements} from "./dom/flashParamElements.js";
+import {flashParamSchema} from "./flash/flashParamSchema.js";
 
 export const soundExtension = ['ogg', 'wav'] as const;
 export type SoundExtension = typeof soundExtension[number];
@@ -15,6 +16,8 @@ type AudioObjKey = typeof audioObjKey[number]
 type AudioObjInterface = {
     [key in AudioObjKey]: Howl[]
 }
+
+const tickSoundLength = Math.max(flashParamSchema.addition.length.max, flashParamSchema.multiplication.length.max);
 
 class AudioObj implements AudioObjInterface {
     get beep(): Howl[] {
@@ -42,7 +45,7 @@ class AudioObj implements AudioObjInterface {
     }
 
     private readonly _beep: Howl[] = new Array(2);
-    private readonly _tick: Howl[] = new Array(30);
+    private readonly _tick: Howl[] = new Array(tickSoundLength);
     private readonly _answer: Howl[] = new Array(1);
     private readonly _correct: Howl[] = new Array(1);
     private readonly _incorrect: Howl[] = new Array(1);
