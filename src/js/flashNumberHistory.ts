@@ -1,4 +1,4 @@
-import {FlashDigit, FlashMode, flashModes} from "./globals";
+import {FlashDigit, FlashMode, flashModes} from "./globals.js";
 
 export abstract class FlashNumberHistory<T> {
     protected get digit(): T {
@@ -56,16 +56,17 @@ export class FlashNumberHistoryRegistry {
         }
     }
 
-    register(mode: "addition", digit: number, numbers: unknown[]): void
-    register(mode: "multiplication", digit: [number, number], numbers: unknown[]): void
-    register(mode: string, digit: unknown, numbers: unknown[]): void {
-        this.validateMode(mode)
-
-        const mapping = {
-            addition: AdditionModeFlashNumberHistory,
-            multiplication: MultiplicationModeFlashNumberHistory,
+    register(mode: "addition", digit: number, numbers: number[]): void
+    register(mode: "multiplication", digit: [number, number], numbers: [number, number][]): void
+    register(mode: FlashMode, digit: number & [number, number], numbers: number[] & [number, number][]): void {
+        switch (mode) {
+            case "addition":
+                this.history.addition = new AdditionModeFlashNumberHistory(digit, numbers)
+                break;
+            case "multiplication":
+                this.history.multiplication = new MultiplicationModeFlashNumberHistory(digit, numbers)
+                break;
         }
-        this.history[mode] = new mapping[mode](digit, numbers)
     }
 
     getHistory<TMode extends FlashMode>(mode: TMode): FlashNumberHistory<FlashDigit[TMode]> | null {

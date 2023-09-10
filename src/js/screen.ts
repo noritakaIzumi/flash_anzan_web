@@ -1,4 +1,4 @@
-import {calculateArea, disableConfigTarget, questionNumberArea} from "./globals";
+import {calculateArea, disableConfigTarget, questionNumberArea} from "./dom/htmlElement.js";
 
 export function isTouchDevice() {
     return window.ontouchstart === null;

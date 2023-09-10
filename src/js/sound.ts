@@ -1,5 +1,6 @@
-import {audioAttr, flashParamElements} from "./globals";
+import {audioAttr} from "./globals.js";
 import {Howl} from "howler";
+import {flashParamElements} from "./dom/flashParamElements.js";
 
 export const soundExtension = ['ogg', 'wav'] as const;
 export type SoundExtension = typeof soundExtension[number];
@@ -8,7 +9,14 @@ export function isMuted() {
     return flashParamElements.common.isMuted.valueV1;
 }
 
-class AudioObj {
+const audioObjKey = ['beep', 'tick', 'answer', 'correct', 'incorrect', 'silence'] as const;
+type AudioObjKey = typeof audioObjKey[number]
+
+type AudioObjInterface = {
+    [key in AudioObjKey]: Howl[]
+}
+
+class AudioObj implements AudioObjInterface {
     get beep(): Howl[] {
         return this._beep;
     }
@@ -46,7 +54,7 @@ class AudioObj {
     load(extension: SoundExtension) {
         let timeoutMs = 100;
         let audioPath = '';
-        const loadByName = (name: string) => {
+        audioObjKey.map(name => {
             audioPath = `${audioAttr.directory}/${name}.${extension}`;
             for (let i = 0; i < this[name].length; i++) {
                 this[name][i] = new Howl({src: [audioPath]});
@@ -55,13 +63,7 @@ class AudioObj {
                 }, timeoutMs);
                 timeoutMs += 50;
             }
-        }
-        loadByName('beep')
-        loadByName('tick')
-        loadByName('answer')
-        loadByName('correct')
-        loadByName('incorrect')
-        loadByName('silence')
+        })
     }
 }
 

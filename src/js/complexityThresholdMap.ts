@@ -1,4 +1,4 @@
-import {ComplexityThresholdMap} from "./globals";
+import {ComplexityThresholdMap} from "./globals.js";
 
 export const complexityThresholdMap: ComplexityThresholdMap = {
     "addition": {

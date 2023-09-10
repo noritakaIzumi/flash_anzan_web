@@ -2,18 +2,21 @@
   "name": "flash-anzan",
   "version": "0.20.0",
   "description": "フラッシュ暗算で脳を鍛えよう",
+  "type": "module",
   "dependencies": {
     "bootstrap": "^5.1.3",
     "bootstrap-icons": "^1.10.5",
     "hotkeys-js": "^3.12.0",
     "howler": "^2.2.3",
+    "jsdom": "^22.1.0",
+    "sass": "^1.66.1",
     "simple-keyboard": "^3.4.38",
-    "vite": "^4.4.9",
-    "sass": "^1.66.1"
+    "vite": "^4.4.9"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.6",
     "@types/howler": "^2.2.8",
+    "@types/jsdom": "^21.1.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

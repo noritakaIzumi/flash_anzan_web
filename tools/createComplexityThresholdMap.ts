@@ -1,9 +1,11 @@
-import {calculateComplexity} from "../src/js/flash_analysis"
-import {ComplexityThresholdMap, FlashMode} from "../src/js/globals";
+import {calculateComplexity} from "../src/js/flash_analysis.js"
+import {ComplexityThresholdMap, FlashMode} from "../src/js/globals.js";
 import {
     AdditionModeUnknownDifficultyCreateRawNumbersAdapter,
     MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter
-} from "../src/js/flash_numbers";
+} from "../src/js/flash_numbers.js";
+import * as fs from "fs";
+import * as path from "path";
 
 function getRank(numbers: number[], threshold: Threshold) {
     const half = (numbers.length / 2) | 0;
@@ -21,7 +23,7 @@ type Threshold = { hard: number, easy: number }
 (() => {
     // main
     const complexityThresholdMap: ComplexityThresholdMap = {addition: {}, multiplication: {}};
-    const sampleCount = 10000;
+    const sampleCount = 100;
     const threshold: Threshold = {hard: 0.1, easy: 0.9};
 
     let mode: FlashMode = 'addition';
@@ -54,13 +56,10 @@ type Threshold = { hard: number, easy: number }
         }
     }
 
-    const path = require('path');
-    const fs = require('fs');
-
     try {
         fs.writeFileSync(
             path.dirname(path.dirname(__filename)) + '/src/js/complexityThresholdMap.ts',
-            `import{ComplexityThresholdMap}from"./globals";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`);
+            `import{ComplexityThresholdMap}from"./globals.js";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);

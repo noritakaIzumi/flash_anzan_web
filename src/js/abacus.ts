@@ -27,6 +27,9 @@ export class Abacus {
         });
         for (let i = numArr.length - 1; i >= 0; i--) {
             const d = numArr.shift();
+            if (d === undefined) {
+                throw new Error('wrong add number to abacus')
+            }
             if (d === 0) {
                 continue;
             }

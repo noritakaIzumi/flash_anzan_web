@@ -1,12 +1,20 @@
 import '../scss/styles.scss'
 import * as bootstrap from 'bootstrap'
 import {SimpleKeyboard} from "simple-keyboard";
-import {FlashAnswer} from "./flash_numbers";
+import {FlashAnswer} from "./flash_numbers.js";
+import {getTime} from "./time.js";
+import {CurrentFlashMode} from "./currentFlashMode.js";
+import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen.js";
+import {audioObj, isMuted} from "./sound.js";
+import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams.js";
+import {changeMode} from "./flash_param_set.js";
+import {registerShortcuts} from "./shortcut/shortcut.js";
+import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion.js";
+import {flashParamElements} from "./dom/flashParamElements.js";
 import {
     answerNumberDisplay,
     button,
     calculateArea,
-    flashParamElements,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
@@ -18,15 +26,7 @@ import {
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
-} from "./globals";
-import {getTime} from "./time";
-import {CurrentFlashMode} from "./currentFlashMode";
-import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
-import {audioObj, isMuted} from "./sound";
-import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode} from "./flash_param_set";
-import {registerShortcuts} from "./shortcut/shortcut";
-import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion";
+} from "./dom/htmlElement.js";
 
 function flash(option: FlashOption = {}) {
     const measuredTime = {start: 0, end: 0};

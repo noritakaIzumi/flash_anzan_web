@@ -1,4 +1,4 @@
-import {FlashMode} from "./globals";
+import {FlashMode} from "./globals.js";
 
 export class CurrentFlashMode {
     get value(): FlashMode {

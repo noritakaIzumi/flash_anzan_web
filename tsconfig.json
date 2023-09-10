@@ -9,6 +9,14 @@
     "strictNullChecks": true,
     "strict": true
   },
-  "include": ["./src/**/*"],
-  "lib": ["WebWorker"]
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "./src/**/*",
+    "./tools/**/*"
+  ],
+  "lib": [
+    "WebWorker"
+  ]
 }

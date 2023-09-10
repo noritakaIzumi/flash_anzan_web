@@ -1,5 +1,5 @@
-import {Abacus} from "./abacus";
-import {calculateComplexity} from "./flash_analysis";
+import {Abacus} from "./abacus.js";
+import {calculateComplexity} from "./flash_analysis.js";
 import {
     Complexity,
     ComplexityThreshold,
@@ -10,10 +10,10 @@ import {
     FlashMode,
     generateNumbersRetryLimit,
     multiplyFigure
-} from "./globals";
-import {FlashParam} from "./flash_param_set";
-import {FlashNumberHistory, flashNumberHistoryRegistry} from "./flashNumberHistory";
-import {ExecuteInterface} from "./interface/executeInterface";
+} from "./globals.js";
+import {FlashParam} from "./flash_param_set.js";
+import {FlashNumberHistory, flashNumberHistoryRegistry} from "./flashNumberHistory.js";
+import {ExecuteInterface} from "./interface/executeInterface.js";
 
 function getRandomDigit(excepts: number[] = []) {
     const d: number[] = [];

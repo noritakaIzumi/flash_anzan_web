@@ -1,7 +1,8 @@
-import {FlashDifficulty, FlashDigit, FlashMode, flashParamElements} from "./globals";
-import {CurrentFlashMode} from "./currentFlashMode";
-import {changeShortcut} from "./shortcut/shortcut";
-import {ExecuteInterface} from "./interface/executeInterface";
+import {FlashDifficulty, FlashDigit, FlashMode} from "./globals.js";
+import {CurrentFlashMode} from "./currentFlashMode.js";
+import {changeShortcut} from "./shortcut/shortcut.js";
+import {ExecuteInterface} from "./interface/executeInterface.js";
+import {flashParamElements} from "./dom/flashParamElements.js";
 
 export function changeMode(mode: FlashMode) {
     changeShortcut(mode);
