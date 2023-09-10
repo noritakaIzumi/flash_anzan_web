@@ -415,23 +415,7 @@ export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractC
  * たし算モード・難易度未指定
  * 複雑度境界リストの作成に使用する
  */
-export class AdditionModeUnknownDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): { numbers: FlashDigit["addition"][]; carries: number[] } {
-        // 出題数字
-        let numbers: FlashDigit["addition"][] = [];
-        // 繰り上がり回数
-        let carries: number[] = [];
-
-        let abacus = new Abacus(0);
-        for (let i = 0; i < length; i++) {
-            const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, false);
-            abacus = new Abacus(abacus.value).add(number);
-            numbers.push(number);
-            carries.push(abacus.carry);
-        }
-
-        return {numbers: numbers, carries: carries}
-    }
+export class AdditionModeUnknownDifficultyCreateRawNumbersAdapter extends AdditionModeNormalDifficultyCreateRawNumbersAdapter {
 }
 
 export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"multiplication"> {
