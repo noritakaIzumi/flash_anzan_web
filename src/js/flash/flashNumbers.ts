@@ -157,7 +157,7 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 if (requestParam.length < numberHistory.length) {
                     return numberHistory.slice(0, requestParam.length);
                 }
-                return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty, options));
+                return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options).slice(numberHistory.length - requestParam.length));
             }
             return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options);
         })();
