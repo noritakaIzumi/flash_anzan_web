@@ -3,15 +3,18 @@ import {calculateComplexity} from "./flash_analysis";
 import {complexityThresholdMap} from "./complexity_map";
 import {
     Complexity,
-    ComplexityThresholdMapKey,
     ComplexityThreshold,
+    ComplexityThresholdMapByMode,
+    ComplexityThresholdMapKey,
     difficultyMap,
     FlashDifficulty,
     FlashDigit,
     FlashMode,
-    generateNumbersRetryLimit, ComplexityThresholdMapByMode, multiplyFigure, flashParamElements
+    flashParamElements,
+    generateNumbersRetryLimit,
+    multiplyFigure
 } from "./globals";
-import {FlashParam, getCurrentParam} from "./util_should_categorize";
+import {FlashParam} from "./util_should_categorize";
 import {FlashNumberHistory, flashNumberHistoryRegistry, FlashNumberHistoryRegistry} from "./flashNumberHistory";
 
 function getRandomDigit(excepts: number[] = []) {
@@ -293,10 +296,10 @@ export interface ExecuteInterface {
     execute(...args: any[]): any;
 }
 
-export class AdditionModeFlashNumberGenerator implements ExecuteInterface {
+export abstract class AbstractFlashNumberGenerator<T extends FlashMode> implements ExecuteInterface {
     protected flashNumberHistoryRegistry: FlashNumberHistoryRegistry;
-    protected createNewNumbers: AbstractCreateNewNumbers<"addition">;
-    protected flashNumbersClass: { new(numbers: FlashDigit["addition"][]): FlashNumbers<FlashDigit["addition"]> };
+    protected createNewNumbers: AbstractCreateNewNumbers<T>;
+    protected flashNumbersClass: { new(numbers: FlashDigit[T][]): FlashNumbers<FlashDigit[T]> };
 
     constructor(
         {
@@ -305,8 +308,8 @@ export class AdditionModeFlashNumberGenerator implements ExecuteInterface {
             flashNumbersClass,
         }: {
             flashNumberHistoryRegistry: FlashNumberHistoryRegistry,
-            createNewNumbers: AbstractCreateNewNumbers<"addition">,
-            flashNumbersClass: { new(numbers: FlashDigit["addition"][]): FlashNumbers<FlashDigit["addition"]> },
+            createNewNumbers: AbstractCreateNewNumbers<T>,
+            flashNumbersClass: { new(numbers: FlashDigit[T][]): FlashNumbers<FlashDigit[T]> },
         }
     ) {
         this.flashNumberHistoryRegistry = flashNumberHistoryRegistry
@@ -314,8 +317,7 @@ export class AdditionModeFlashNumberGenerator implements ExecuteInterface {
         this.flashNumbersClass = flashNumbersClass
     }
 
-    execute(repeat: boolean) {
-        const requestParam = this.getCurrentParam()
+    execute(requestParam: FlashParam<FlashDigit[T]>, repeat: boolean) {
         const numberHistoryObj = this.getNumberHistoryObj();
         const digitIsSame = !!numberHistoryObj?.digitEquals(requestParam.digit)
         const numberHistory = numberHistoryObj?.numberHistory || []
@@ -336,22 +338,9 @@ export class AdditionModeFlashNumberGenerator implements ExecuteInterface {
         return new this.flashNumbersClass(numbers)
     }
 
-    protected getCurrentParam(): FlashParam<FlashDigit["addition"]> {
-        return {
-            digit: flashParamElements.addition.digit.updateParam().valueV1,
-            length: flashParamElements.addition.length.updateParam().valueV1,
-            time: flashParamElements.addition.time.updateParam().valueV1,
-            difficulty: flashParamElements.common.difficulty.valueV1,
-            flashRate: flashParamElements.common.flashRate.updateParam().valueV1,
-            offset: flashParamElements.common.offset.updateParam().valueV1,
-        }
-    }
+    protected abstract getNumberHistoryObj(): FlashNumberHistory<FlashDigit[T]> | null;
 
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["addition"]> | null {
-        return flashNumberHistoryRegistry.getHistory("addition")
-    }
-
-    protected createNumbers(digitCount: FlashDigit["addition"], length: number, difficulty: FlashDifficulty): FlashDigit["addition"][] {
+    protected createNumbers(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty): FlashDigit[T][] {
         let retry = 0;
         while (retry < generateNumbersRetryLimit) {
             try {
@@ -369,51 +358,26 @@ export class AdditionModeFlashNumberGenerator implements ExecuteInterface {
     }
 }
 
-export class MultiplicationModeFlashNumberGenerator implements ExecuteInterface {
-    protected flashNumberHistoryRegistry: FlashNumberHistoryRegistry;
-    protected createNewNumbers: AbstractCreateNewNumbers<"multiplication">;
-    protected flashNumbersClass: { new(numbers: FlashDigit["multiplication"][]): FlashNumbers<FlashDigit["multiplication"]> };
-
-    constructor(
-        {
-            flashNumberHistoryRegistry,
-            createNewNumbers,
-            flashNumbersClass,
-        }: {
-            flashNumberHistoryRegistry: FlashNumberHistoryRegistry,
-            createNewNumbers: AbstractCreateNewNumbers<"multiplication">,
-            flashNumbersClass: { new(numbers: FlashDigit["multiplication"][]): FlashNumbers<FlashDigit["multiplication"]> },
+export class AdditionModeFlashNumberGenerator extends AbstractFlashNumberGenerator<"addition"> {
+    protected getCurrentParam(): FlashParam<FlashDigit["addition"]> {
+        return {
+            digit: flashParamElements.addition.digit.updateParam().valueV1,
+            length: flashParamElements.addition.length.updateParam().valueV1,
+            time: flashParamElements.addition.time.updateParam().valueV1,
+            difficulty: flashParamElements.common.difficulty.valueV1,
+            flashRate: flashParamElements.common.flashRate.updateParam().valueV1,
+            offset: flashParamElements.common.offset.updateParam().valueV1,
         }
-    ) {
-        this.flashNumberHistoryRegistry = flashNumberHistoryRegistry
-        this.createNewNumbers = createNewNumbers
-        this.flashNumbersClass = flashNumbersClass
     }
 
-    execute(repeat: boolean) {
-        const requestParam = this.getCurrentParam()
-        const numberHistoryObj = this.getNumberHistoryObj();
-        const digitIsSame = !!numberHistoryObj?.digitEquals(requestParam.digit)
-        const numberHistory = numberHistoryObj?.numberHistory || []
-
-        const numbers = (() => {
-            if (repeat && digitIsSame) {
-                if (requestParam.length === numberHistory.length) {
-                    return numberHistory;
-                }
-                if (requestParam.length < numberHistory.length) {
-                    return numberHistory.slice(0, requestParam.length);
-                }
-                return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
-            }
-            return this.createNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty);
-        })();
-
-        return new this.flashNumbersClass(numbers)
-    }
-
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["multiplication"]> | null {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["addition"]> | null {
         return flashNumberHistoryRegistry.getHistory("addition")
+    }
+}
+
+export class MultiplicationModeFlashNumberGenerator extends AbstractFlashNumberGenerator<"multiplication"> {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["multiplication"]> | null {
+        return flashNumberHistoryRegistry.getHistory("multiplication")
     }
 
     protected getCurrentParam(): FlashParam<FlashDigit["multiplication"]> {
@@ -428,23 +392,6 @@ export class MultiplicationModeFlashNumberGenerator implements ExecuteInterface 
             flashRate: flashParamElements.common.flashRate.updateParam().valueV1,
             offset: flashParamElements.common.offset.updateParam().valueV1,
         }
-    }
-
-    protected createNumbers(digitCount: FlashDigit["multiplication"], length: number, difficulty: FlashDifficulty): FlashDigit["multiplication"][] {
-        let retry = 0;
-        while (retry < generateNumbersRetryLimit) {
-            try {
-                return this.createNewNumbers.execute(digitCount, length, difficulty)
-            } catch (e: any) {
-                if (e instanceof CreatedNumbersDoNotSatisfyConstraintError) {
-                    // TODO: 開発時だけ何かログを出す
-                    retry++;
-                } else {
-                    throw new Error('an error occurred when creating numbers')
-                }
-            }
-        }
-        throw new Error('retry limit exceeded for generating numbers');
     }
 }
 
