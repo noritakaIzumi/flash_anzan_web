@@ -1,6 +1,6 @@
 import {Abacus} from "./abacus";
 import {calculateComplexity} from "./flash_analysis";
-import {complexityThresholdMap} from "./complexity_map";
+import {complexityThresholdMap} from "./complexityMap";
 import {
     Complexity,
     ComplexityThreshold,
@@ -348,7 +348,7 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 }
                 return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty));
             }
-            return this.createNumbers(requestParam.digit, requestParam.length - numberHistory.length, requestParam.difficulty);
+            return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty);
         })();
 
         return {numbers: new this.flashNumbersClass(numbers), answer: new this.getFlashAnswerAdapter().execute(numbers)}
@@ -366,7 +366,8 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                     // TODO: 開発時だけ何かログを出す
                     retry++;
                 } else {
-                    throw new Error('an error occurred when creating numbers')
+                    // TODO: 開発時だけ何かログを出す
+                    throw e
                 }
             }
         }
@@ -411,7 +412,7 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
     }
 
     execute(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty): FlashDigit[T][] {
-        const result = new this.createRawNumbersAdaptersByMode[difficulty]().execute(digitCount)
+        const result = new this.createRawNumbersAdaptersByMode[difficulty]().execute(digitCount, length)
         const numbers = result.numbers
         const carries = result.carries
 
@@ -463,11 +464,11 @@ export class CreatedNumbersDoNotSatisfyConstraintError extends Error {
 }
 
 export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
-    abstract execute(digitCount: FlashDigit[T]): { numbers: FlashDigit[T][], carries: number[] };
+    abstract execute(digitCount: FlashDigit[T], length: number): { numbers: FlashDigit[T][], carries: number[] };
 }
 
 export class AdditionModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"]): { numbers: FlashDigit["addition"][], carries: number[] } {
+    execute(digitCount: FlashDigit["addition"], length: number): { numbers: FlashDigit["addition"][], carries: number[] } {
         // 出題数字
         let numbers: FlashDigit["addition"][] = [];
         // 繰り上がり回数
@@ -515,7 +516,7 @@ export class AdditionModeEasyDifficultyCreateRawNumbersAdapter extends AbstractC
 }
 
 export class AdditionModeNormalDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"]): { numbers: FlashDigit["addition"][]; carries: number[] } {
+    execute(digitCount: FlashDigit["addition"], length: number): { numbers: FlashDigit["addition"][]; carries: number[] } {
         // 出題数字
         let numbers: FlashDigit["addition"][] = [];
         // 繰り上がり回数
@@ -534,7 +535,7 @@ export class AdditionModeNormalDifficultyCreateRawNumbersAdapter extends Abstrac
 }
 
 export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"]): { numbers: FlashDigit["addition"][]; carries: number[] } {
+    execute(digitCount: FlashDigit["addition"], length: number): { numbers: FlashDigit["addition"][]; carries: number[] } {
         // 出題数字
         let numbers: FlashDigit["addition"][] = [];
         // 繰り上がり回数
@@ -582,7 +583,7 @@ export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractC
 }
 
 export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"multiplication"> {
-    execute(digitCount: FlashDigit["multiplication"]): { numbers: FlashDigit["multiplication"][], carries: number[] } {
+    execute(digitCount: FlashDigit["multiplication"], length: number): { numbers: FlashDigit["multiplication"][], carries: number[] } {
         // そろばん
         let abacus = new Abacus(0);
         // 出題数字

@@ -21,7 +21,7 @@
     "start": "vite",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
-    "build:complexity_map": "ts-node tools/create_complexity_map.ts",
+    "build:complexity_map": "ts-node tools/createComplexityThresholdMap.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

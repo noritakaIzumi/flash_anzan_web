@@ -27,14 +27,11 @@ import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
 import {audioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode, FlashParam, getCurrentParam} from "./flash_param_set";
+import {changeMode, FlashParam} from "./flash_param_set";
 import {registerShortcuts} from "./shortcut/shortcut";
+import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion";
 
-type FlashConfig = {
-    repeat?: boolean,
-}
-
-function flash(config: FlashConfig = {}) {
+function flash(option: FlashOption = {}) {
     const measuredTime = {start: 0, end: 0};
 
     /**
@@ -280,14 +277,12 @@ function flash(config: FlashConfig = {}) {
     );
 
     // ここからフラッシュ出題の処理
-    const currentFlashMode = CurrentFlashMode.getInstance().value;
     // 設定を取得する
-    const requestParam = getCurrentParam(currentFlashMode);
-    const numbers = getNumbers(currentFlashMode, requestParam, !!config.repeat);
-    const numbersToDisplay: string[] = getLocaleStringNumbers(currentFlashMode, numbers);
-    const flashAnswer = getFlashAnswer(currentFlashMode, numbers);
-    const flashAnswerToDisplay = flashAnswer.toDisplay();
-    flashNumberHistoryRegistry.register(currentFlashMode, requestParam.digit, numbers)
+    const question = FlashQuestionCreator.create(CurrentFlashMode.getInstance().value, option)
+    const requestParam = question.paramSet
+    const numbersToDisplay = question.flash.numbers.toDisplay()
+    const flashAnswer = question.flash.answer
+    const flashAnswerToDisplay = question.flash.answer.toDisplay()
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";

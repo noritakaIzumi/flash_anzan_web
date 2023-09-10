@@ -101,8 +101,8 @@ type Mode = 'addition' | 'multiplication'
 
     try {
         fs.writeFileSync(
-            path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.ts',
-            `import{ComplexitySchema}from"./globals";export const complexityThresholdMap:{addition:{[key:\`\${number}-\${number}\`]:ComplexitySchema},multiplication:{[key:\`\${number}-\${number}-\${number}\`]:ComplexitySchema}}=${JSON.stringify(result)};\n`);
+            path.dirname(path.dirname(__filename)) + '/src/js/complexityMap.ts',
+            `import{ComplexityThresholdMap}from"./globals";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(result)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);

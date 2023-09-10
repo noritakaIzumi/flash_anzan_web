@@ -8,6 +8,7 @@ import {
     FlashSoundExtensionParam,
     FlashTimeParam
 } from "./flashParams";
+import {CurrentFlashMode} from "./currentFlashMode";
 
 export const flashModes = ['addition', 'multiplication'] as const;
 export type FlashMode = typeof flashModes[number];
@@ -38,6 +39,8 @@ export type Complexity = ComplexityThreshold["easy" | "hard"]
 export type ComplexityThresholdMapByMode<T extends FlashMode> = {
     [key in ComplexityThresholdMapKey[T]]: ComplexityThreshold
 }
+
+export type ComplexityThresholdMap = { [key in FlashMode]: ComplexityThresholdMapByMode<key> }
 
 export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
 export type FlashDifficulty = typeof flashDifficulty[number]
