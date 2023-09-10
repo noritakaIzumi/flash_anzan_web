@@ -39,13 +39,13 @@ export const flashParamSchema: FlashParamSchema = {
     addition: {
         digit: {min: 1, max: 14, default: 1},
         length: {min: 2, max: 30, default: 3},
-        time: {min: 1000, max: 30000, default: 5000},
+        time: {min: 1_000, max: 30_000, default: 5_000},
     },
     multiplication: {
         digit1: {min: 1, max: 7, default: 1},
         digit2: {min: 1, max: 7, default: 1},
         length: {min: 2, max: 30, default: 2},
-        time: {min: 1000, max: 30000, default: 5000},
+        time: {min: 1_000, max: 30_000, default: 5_000},
     },
     common: {
         difficulty: {default: 'easy'},
