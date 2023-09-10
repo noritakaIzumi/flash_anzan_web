@@ -13,7 +13,7 @@ export class CurrentFlashMode {
     private _value: FlashMode;
 
     private constructor(value: FlashMode) {
-        this.value = value
+        this._value = value
     }
 
     public static getInstance(): CurrentFlashMode {
