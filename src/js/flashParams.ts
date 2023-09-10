@@ -230,6 +230,9 @@ export class FlashSoundExtensionParam extends FlashParam<
 export function doLoadParams() {
     const modal = modals.params.load.complete;
     const modalMessage = modal.querySelector('.modal-body > p');
+    if (modalMessage === null) {
+        throw new Error('modal message element not found')
+    }
 
     const loadedParams = localStorage.getItem(savedParamsKeyName);
     if (!loadedParams) {

@@ -27,7 +27,7 @@ import {CurrentFlashMode} from "./currentFlashMode";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen";
 import {audioObj, isMuted} from "./sound";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flashParams";
-import {changeMode, FlashParam, getCurrentParam} from "./util_should_categorize";
+import {changeMode, FlashParam, getCurrentParam} from "./flash_param_set";
 import {registerShortcuts} from "./shortcut/shortcut";
 
 type FlashConfig = {
