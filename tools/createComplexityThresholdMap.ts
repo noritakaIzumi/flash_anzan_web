@@ -7,6 +7,7 @@ import {
 import * as fs from "fs";
 import * as path from "path";
 import {fileURLToPath} from 'url';
+import {flashParamSchema} from "../src/js/flash/flashParamSchema.js";
 
 function getRank(numbers: number[], threshold: Threshold) {
     const half = (numbers.length / 2) | 0;
@@ -31,8 +32,9 @@ type Threshold = {
     const threshold: Threshold = {hard: 0.1, easy: 0.9};
 
     let mode: FlashMode = 'addition';
-    for (let digitCount = 1; digitCount <= 14; ++digitCount) {
-        for (let length = 2; length <= 30; ++length) {
+    const additionModeParamSchema = flashParamSchema.addition
+    for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.max; ++digitCount) {
+        for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.max; ++length) {
             const complexities: number[] = []
             for (let _ = 0; _ < sampleCount; _++) {
                 const rawNumbers = new AdditionModeUnknownDifficultyCreateRawNumbersAdapter().execute(digitCount, length)
@@ -45,9 +47,10 @@ type Threshold = {
     }
 
     mode = 'multiplication';
-    for (let digitCount1 = 1; digitCount1 <= 7; digitCount1++) {
-        for (let digitCount2 = 1; digitCount2 <= 7; digitCount2++) {
-            for (let length = 2; length <= 30; length++) {
+    const multiplicationModeParamSchema = flashParamSchema.multiplication
+    for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.max; digitCount1++) {
+        for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.max; digitCount2++) {
+            for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.max; length++) {
                 const complexities: number[] = []
                 for (let _ = 0; _ < sampleCount; _++) {
                     const rawNumbers = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter().execute([digitCount1, digitCount2], length)
