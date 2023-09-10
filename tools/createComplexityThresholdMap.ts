@@ -51,6 +51,12 @@ type Threshold = {
     for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax; digitCount1++) {
         for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax; digitCount2++) {
             for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.difficultySupportMax; length++) {
+                const digitFlippedComplexityThreshold = complexityThresholdMap.multiplication[`${digitCount2}-${digitCount1}-${length}`];
+                if (digitFlippedComplexityThreshold) {
+                    complexityThresholdMap.multiplication[`${digitCount1}-${digitCount2}-${length}`] = digitFlippedComplexityThreshold;
+                    console.log(`${mode} ${digitCount1} 桁× ${digitCount2} 桁 ${length} 口: ${digitCount2} 桁× ${digitCount1} 桁 ${length} 口 から copy`);
+                    continue;
+                }
                 const complexities: number[] = []
                 for (let _ = 0; _ < sampleCount; _++) {
                     const rawNumbers = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter().execute([digitCount1, digitCount2], length)
