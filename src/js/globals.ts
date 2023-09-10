@@ -29,6 +29,7 @@ export type ComplexityThresholdMap = { [key in FlashMode]: ComplexityThresholdMa
 
 export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
 export type FlashDifficulty = typeof flashDifficulty[number]
+export type UnknownFlashDifficulty = "unknown"
 
 export const audioAttr = {
     directory: "./sounds",

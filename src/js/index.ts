@@ -9,7 +9,7 @@ import {audioObj, isMuted} from "./sound.js";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flash/flashParams.js";
 import {changeMode} from "./flash/flashParamSet.js";
 import {registerShortcuts} from "./shortcut/shortcut.js";
-import {FlashOption, FlashQuestionCreator} from "./flash/flashQuestion.js";
+import {FlashOptions, FlashQuestionCreatorFactory} from "./flash/flashQuestionCreator.js";
 import {flashParamElements} from "./dom/flashParamElements.js";
 import {
     answerNumberDisplay,
@@ -28,7 +28,7 @@ import {
     versionNumber
 } from "./dom/htmlElement.js";
 
-function flash(option: FlashOption = {}) {
+function flash(options: FlashOptions = {}) {
     const measuredTime = {start: 0, end: 0};
 
     /**
@@ -230,8 +230,15 @@ function flash(option: FlashOption = {}) {
     );
 
     // ここからフラッシュ出題の処理
+    const flashQuestionCreator = FlashQuestionCreatorFactory.getInstance(CurrentFlashMode.getInstance().value)
+    if (!flashQuestionCreator.difficultyIsSupported()) {
+        if (!confirm('難易度設定がサポートされていない桁数・口数ですがよろしいですか？')) {
+            return;
+        }
+        options.allowUnknownDifficulty = true
+    }
     // 設定を取得する
-    const question = FlashQuestionCreator.create(CurrentFlashMode.getInstance().value, option)
+    const question = flashQuestionCreator.create(options)
     const requestParam = question.paramSet
     const numbersToDisplay = question.flash.numbers.toDisplay()
     const flashAnswer = question.flash.answer
