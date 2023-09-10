@@ -6,7 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "nodenext",
     "downlevelIteration": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "strict": true
   },
   "include": ["./src/**/*"],
   "lib": ["WebWorker"]
