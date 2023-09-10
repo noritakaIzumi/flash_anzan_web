@@ -1,6 +1,6 @@
 import {Abacus} from "../src/js/abacus";
-import {getCalculateComplexity} from "../src/js/flash_analysis"
-import {ComplexitySchema} from "../src/js/globals";
+import {calculateComplexity} from "../src/js/flash_analysis"
+import {ComplexityThreshold} from "../src/js/globals";
 
 function generateCarries(digitCount: number | number[], length: number, mode: Mode) {
     function getRandomInt(digitCount: number) {
@@ -61,7 +61,7 @@ function generateComplexity(digitCount: number | number[], length: number, mode:
     const complexities: number[] = [];
     for (let _ = 0; _ < sampleCount; _++) {
         const carries = generateCarries(digitCount, length, mode);
-        const complexity = getCalculateComplexity(carries, typeof digitCount === 'object' ? digitCount[0] * digitCount[1] : digitCount);
+        const complexity = calculateComplexity(carries, typeof digitCount === 'object' ? digitCount[0] * digitCount[1] : digitCount);
         complexities.push(complexity);
     }
 
@@ -102,7 +102,7 @@ type Mode = 'addition' | 'multiplication'
     try {
         fs.writeFileSync(
             path.dirname(path.dirname(__filename)) + '/src/js/complexity_map.ts',
-            `import{ComplexitySchema}from"./globals";export const complexityMap:{addition:{[key:\`\${number}-\${number}\`]:ComplexitySchema},multiplication:{[key:\`\${number}-\${number}-\${number}\`]:ComplexitySchema}}=${JSON.stringify(result)};\n`);
+            `import{ComplexitySchema}from"./globals";export const complexityThresholdMap:{addition:{[key:\`\${number}-\${number}\`]:ComplexitySchema},multiplication:{[key:\`\${number}-\${number}-\${number}\`]:ComplexitySchema}}=${JSON.stringify(result)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);

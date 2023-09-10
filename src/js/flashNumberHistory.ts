@@ -1,6 +1,6 @@
 import {FlashDigit, FlashMode, flashModes} from "./globals";
 
-abstract class FlashNumberHistory<T> {
+export abstract class FlashNumberHistory<T> {
     private set digit(value: T) {
         this._digit = value;
     }

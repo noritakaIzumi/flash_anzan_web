@@ -40,7 +40,7 @@ export function standard_deviation(data: number[]): number {
  * @param digit
  * @returns {number}
  */
-export function getCalculateComplexity(carries: number[], digit: number): number {
+export function calculateComplexity(carries: number[], digit: number): number {
     carries = carries.map((c) => {
         return c / digit;
     });

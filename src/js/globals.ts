@@ -22,20 +22,23 @@ export const modeNames: { [key in FlashMode]: Lowercase<key> } = {
     multiplication: "multiplication",
 };
 
-export type ComplexityMapKey = {
+export type ComplexityThresholdMapKey = {
     addition: `${number}-${number}`
     multiplication: `${number}-${number}-${number}`
 }
 
-export type ComplexitySchema = {
+export type ComplexityThreshold = {
     med: number
     hard: number
     easy: number
 }
 
-export type Complexity = ComplexitySchema["easy" | "hard"]
+export type Complexity = ComplexityThreshold["easy" | "hard"]
 
-type AdditionModeComplexityMapKey = `${number}-${number}`
+export type ComplexityThresholdMapByMode<T extends FlashMode> = {
+    [key in ComplexityThresholdMapKey[T]]: ComplexityThreshold
+}
+
 export const flashDifficulty = ['easy', 'normal', 'hard'] as const;
 export type FlashDifficulty = typeof flashDifficulty[number]
 
