@@ -6,6 +6,7 @@ import {
 } from "../src/js/flash/flashNumbers.js";
 import * as fs from "fs";
 import * as path from "path";
+import {fileURLToPath} from 'url';
 
 function getRank(numbers: number[], threshold: Threshold) {
     const half = (numbers.length / 2) | 0;
@@ -18,12 +19,15 @@ function getRank(numbers: number[], threshold: Threshold) {
     };
 }
 
-type Threshold = { hard: number, easy: number }
+type Threshold = {
+    hard: number,
+    easy: number
+}
 
 (() => {
     // main
     const complexityThresholdMap: ComplexityThresholdMap = {addition: {}, multiplication: {}};
-    const sampleCount = 100;
+    const sampleCount = 10;
     const threshold: Threshold = {hard: 0.1, easy: 0.9};
 
     let mode: FlashMode = 'addition';
@@ -57,9 +61,10 @@ type Threshold = { hard: number, easy: number }
     }
 
     try {
+        const __filename = fileURLToPath(import.meta.url)
         fs.writeFileSync(
             path.dirname(path.dirname(__filename)) + '/src/js/lib/complexityThresholdMap.ts',
-            `import{ComplexityThresholdMap}from"./globals.js";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`);
+            `import{ComplexityThresholdMap}from"../globals.js";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`);
         console.log('write end');
     } catch (e) {
         console.log(e);
