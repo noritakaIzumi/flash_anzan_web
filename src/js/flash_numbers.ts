@@ -382,6 +382,29 @@ export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractC
     }
 }
 
+/**
+ * たし算モード・難易度未指定
+ * 複雑度境界リストの作成に使用する
+ */
+export class AdditionModeUnknownDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
+    execute(digitCount: FlashDigit["addition"], length: number): { numbers: FlashDigit["addition"][]; carries: number[] } {
+        // 出題数字
+        let numbers: FlashDigit["addition"][] = [];
+        // 繰り上がり回数
+        let carries: number[] = [];
+
+        let abacus = new Abacus(0);
+        for (let i = 0; i < length; i++) {
+            const number = getRandomInt(digitCount, numbers.slice(-1)[0] || null, false);
+            abacus = new Abacus(abacus.value).add(number);
+            numbers.push(number);
+            carries.push(abacus.carry);
+        }
+
+        return {numbers: numbers, carries: carries}
+    }
+}
+
 export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"multiplication"> {
     execute(digitCount: FlashDigit["multiplication"], length: number): { numbers: FlashDigit["multiplication"][], carries: number[] } {
         // そろばん
@@ -418,6 +441,27 @@ export class MultiplicationModeNormalDifficultyCreateRawNumbersAdapter extends M
 }
 
 export class MultiplicationModeHardDifficultyCreateRawNumbersAdapter extends MultiplicationModeEasyDifficultyCreateRawNumbersAdapter {
+}
+
+/**
+ * かけ算モード・難易度未指定
+ * 複雑度境界リストの作成に使用する
+ */
+export class MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter extends MultiplicationModeEasyDifficultyCreateRawNumbersAdapter {
+}
+
+export type CreateRawNumbersAdapterMap = { [mode in FlashMode]: CreateRawNumbersAdapterMapByMode<mode> }
+export const createRawNumbersAdapterMap: CreateRawNumbersAdapterMap = {
+    addition: {
+        easy: AdditionModeEasyDifficultyCreateRawNumbersAdapter,
+        normal: AdditionModeNormalDifficultyCreateRawNumbersAdapter,
+        hard: AdditionModeHardDifficultyCreateRawNumbersAdapter,
+    },
+    multiplication: {
+        easy: MultiplicationModeEasyDifficultyCreateRawNumbersAdapter,
+        normal: MultiplicationModeNormalDifficultyCreateRawNumbersAdapter,
+        hard: MultiplicationModeHardDifficultyCreateRawNumbersAdapter,
+    },
 }
 
 export abstract class AbstractComplexityIsValidAdapter implements ExecuteInterface {
@@ -462,4 +506,18 @@ export class MultiplicationModeHardDifficultyComplexityIsValidAdapter extends Ab
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
         return complexity >= complexitySchema.hard;
     }
+}
+
+export type ComplexityIsValidAdapterMap = { [mode in FlashMode]: ComplexityIsValidAdapterMapByMode }
+export const complexityIsValidAdapterMap: ComplexityIsValidAdapterMap = {
+    addition: {
+        easy: AdditionModeEasyDifficultyComplexityIsValidAdapter,
+        normal: AdditionModeNormalDifficultyComplexityIsValidAdapter,
+        hard: AdditionModeHardDifficultyComplexityIsValidAdapter,
+    },
+    multiplication: {
+        easy: MultiplicationModeEasyDifficultyComplexityIsValidAdapter,
+        normal: MultiplicationModeNormalDifficultyComplexityIsValidAdapter,
+        hard: MultiplicationModeHardDifficultyComplexityIsValidAdapter,
+    },
 }

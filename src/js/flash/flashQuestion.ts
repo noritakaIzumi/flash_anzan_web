@@ -5,27 +5,19 @@ import {
 } from "../flash_param_set";
 import {
     AdditionModeCreateNewNumbersAdapter,
-    AdditionModeEasyDifficultyComplexityIsValidAdapter,
-    AdditionModeEasyDifficultyCreateRawNumbersAdapter,
     AdditionModeFlashGenerator,
     AdditionModeFlashNumbers,
     AdditionModeGetFlashAnswerAdapter,
-    AdditionModeHardDifficultyComplexityIsValidAdapter,
-    AdditionModeHardDifficultyCreateRawNumbersAdapter,
-    AdditionModeNormalDifficultyComplexityIsValidAdapter,
-    AdditionModeNormalDifficultyCreateRawNumbersAdapter, FlashAnswer, FlashNumbers,
+    complexityIsValidAdapterMap,
+    createRawNumbersAdapterMap,
+    FlashAnswer,
+    FlashNumbers,
     MultiplicationModeCreateNewNumbersAdapter,
-    MultiplicationModeEasyDifficultyComplexityIsValidAdapter,
-    MultiplicationModeEasyDifficultyCreateRawNumbersAdapter,
     MultiplicationModeFlashGenerator,
     MultiplicationModeFlashNumbers,
-    MultiplicationModeGetFlashAnswerAdapter,
-    MultiplicationModeHardDifficultyComplexityIsValidAdapter,
-    MultiplicationModeHardDifficultyCreateRawNumbersAdapter,
-    MultiplicationModeNormalDifficultyComplexityIsValidAdapter,
-    MultiplicationModeNormalDifficultyCreateRawNumbersAdapter
+    MultiplicationModeGetFlashAnswerAdapter
 } from "../flash_numbers";
-import {complexityThresholdMap} from "../complexityMap";
+import {complexityThresholdMap} from "../complexityThresholdMap";
 import {flashNumberHistoryRegistry} from "../flashNumberHistory";
 import {FlashDigit, FlashMode} from "../globals";
 
@@ -42,16 +34,8 @@ export class AdditionModeFlashQuestion extends FlashQuestion<"addition"> {
         const paramSet = new AdditionModeGetFlashParamSetAdapter().execute()
         const flash = new AdditionModeFlashGenerator({
             createNewNumbersAdapter: new AdditionModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: {
-                    easy: AdditionModeEasyDifficultyCreateRawNumbersAdapter,
-                    normal: AdditionModeNormalDifficultyCreateRawNumbersAdapter,
-                    hard: AdditionModeHardDifficultyCreateRawNumbersAdapter,
-                },
-                complexityIsValidAdapterMapByMode: {
-                    easy: AdditionModeEasyDifficultyComplexityIsValidAdapter,
-                    normal: AdditionModeNormalDifficultyComplexityIsValidAdapter,
-                    hard: AdditionModeHardDifficultyComplexityIsValidAdapter,
-                },
+                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.addition,
+                complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.addition,
                 complexityThresholdMapByMode: complexityThresholdMap.addition,
             }),
             flashNumbersClass: AdditionModeFlashNumbers,
@@ -69,16 +53,8 @@ export class MultiplicationModeFlashQuestion extends FlashQuestion<"multiplicati
         const paramSet = new MultiplicationModeGetFlashParamSetAdapter().execute()
         const flash = new MultiplicationModeFlashGenerator({
             createNewNumbersAdapter: new MultiplicationModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: {
-                    easy: MultiplicationModeEasyDifficultyCreateRawNumbersAdapter,
-                    normal: MultiplicationModeNormalDifficultyCreateRawNumbersAdapter,
-                    hard: MultiplicationModeHardDifficultyCreateRawNumbersAdapter,
-                },
-                complexityIsValidAdapterMapByMode: {
-                    easy: MultiplicationModeEasyDifficultyComplexityIsValidAdapter,
-                    normal: MultiplicationModeNormalDifficultyComplexityIsValidAdapter,
-                    hard: MultiplicationModeHardDifficultyComplexityIsValidAdapter,
-                },
+                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.multiplication,
+                complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.multiplication,
                 complexityThresholdMapByMode: complexityThresholdMap.multiplication,
             }),
             flashNumbersClass: MultiplicationModeFlashNumbers,
