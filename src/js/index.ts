@@ -23,6 +23,7 @@ import {
     noticeArea,
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
+    ParamsModalOperation,
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
@@ -293,17 +294,24 @@ function flash(options: FlashOptions = {}) {
 }
 
 function configureModalFocusing() {
-    Object.keys(modals.params).forEach((op) => {
+    (Object.keys(modals.params) as ParamsModalOperation[]).map((op) => {
         const confirm = modals.params[op]['confirm'];
-        const b = confirm.querySelector('.modal-footer > button:last-child');
+        const modalOkButton: HTMLButtonElement | null = confirm.querySelector('.modal-footer > button:last-child');
+        if (!modalOkButton) {
+            throw new Error('element not found: modal ok button')
+        }
         confirm.addEventListener('shown.bs.modal', () => {
-            b.focus();
+            modalOkButton.focus();
         });
 
         const completed = modals.params[op]['complete'];
         completed.addEventListener('shown.bs.modal', () => {
+            const modalEscapeButton: HTMLButtonElement | null = completed.querySelector('.modal-header > button');
+            if (!modalEscapeButton) {
+                throw new Error('element not found: modal escape button')
+            }
             setTimeout(() => {
-                completed.querySelector('.modal-header > button').click();
+                modalEscapeButton.click();
             }, 1000);
         });
     });

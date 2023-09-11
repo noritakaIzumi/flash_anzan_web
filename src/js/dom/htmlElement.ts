@@ -51,7 +51,13 @@ export const switchInputAnswerBoxTab = {
 export const noticeInputAnswerNonTouchDevice = getHtmlElement("span", "notice-input-answer-non-touch-device")
 export const numberHistoryDisplay = getHtmlElement("td", "number-history-display");
 export const answerNumberDisplay = getHtmlElement("td", "answer-number-display");
-export const modals = {
+export const paramsModalOperation = ['load', 'save', 'delete'] as const;
+export type ParamsModalOperation = typeof paramsModalOperation[number]
+export const modals: {
+    welcome: HTMLDivElement,
+    params: { [op in ParamsModalOperation]: { [phase in "confirm" | "complete"]: HTMLDivElement } },
+    input_answer: HTMLDivElement
+} = {
     welcome: getHtmlElement("div", "welcomeModal"),
     params: {
         load: {
