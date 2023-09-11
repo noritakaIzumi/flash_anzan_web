@@ -6,6 +6,7 @@
 
 # Compiled app directory
 /dist
+/build
 
 # desktop.ini
 **/desktop.ini
