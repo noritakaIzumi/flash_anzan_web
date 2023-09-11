@@ -1,4 +1,5 @@
-import {FlashDigit, FlashMode, flashModes} from "../globals.js";
+import {FlashDigit, FlashMode} from "../globals.js";
+import {FlashAnswer} from "./flashNumbers.js";
 
 export abstract class FlashNumberHistory<T> {
     protected get digit(): T {
@@ -9,70 +10,58 @@ export abstract class FlashNumberHistory<T> {
         return this._numberHistory;
     }
 
+    get answer(): FlashAnswer {
+        return this._answer;
+    }
+
     private readonly _digit: T;
     private readonly _numberHistory: T[];
+    private readonly _answer: FlashAnswer;
 
-    constructor(digit: T, numberHistory: T[]) {
+    constructor(digit: T, numberHistory: T[], answer: FlashAnswer) {
         this._digit = digit
         this._numberHistory = numberHistory
+        this._answer = answer
     }
 
     public abstract digitEquals(digit: T): boolean;
 }
 
-export class AdditionModeFlashNumberHistory extends FlashNumberHistory<number> {
+export class AdditionModeFlashNumberHistory extends FlashNumberHistory<FlashDigit["addition"]> {
     digitEquals(digit: number): boolean {
         return digit === this.digit
     }
 }
 
-export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<[number, number]> {
+export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<FlashDigit["multiplication"]> {
     digitEquals(digit: [number, number]): boolean {
         return digit[0] === this.digit[0] && digit[1] === this.digit[1]
     }
 }
 
-export class FlashNumberHistoryRegistry {
-    private static instance: FlashNumberHistoryRegistry
+export abstract class AbstractFlashNumberHistoryRegistry<T extends FlashMode, TDigit = FlashDigit[T]> {
+    protected history: FlashNumberHistory<TDigit> | null = null
 
-    protected history: { [key in FlashMode]: FlashNumberHistory<FlashDigit[key]> | null } = {
-        addition: null,
-        multiplication: null,
-    };
+    abstract register(digit: TDigit, numbers: TDigit[], answer: FlashAnswer): void;
 
-    public static getInstance() {
-        if (!FlashNumberHistoryRegistry.instance) {
-            FlashNumberHistoryRegistry.instance = new FlashNumberHistoryRegistry()
-        }
-        return FlashNumberHistoryRegistry.instance
-    }
-
-    private constructor() {
-    }
-
-    protected validateMode(_mode: string) {
-        if (flashModes.indexOf(_mode as unknown as FlashMode) === -1) {
-            throw new RangeError('invalid mode')
-        }
-    }
-
-    register(mode: "addition", digit: number, numbers: number[]): void
-    register(mode: "multiplication", digit: [number, number], numbers: [number, number][]): void
-    register(mode: FlashMode, digit: number & [number, number], numbers: number[] & [number, number][]): void {
-        switch (mode) {
-            case "addition":
-                this.history.addition = new AdditionModeFlashNumberHistory(digit, numbers)
-                break;
-            case "multiplication":
-                this.history.multiplication = new MultiplicationModeFlashNumberHistory(digit, numbers)
-                break;
-        }
-    }
-
-    getHistory<TMode extends FlashMode>(mode: TMode): FlashNumberHistory<FlashDigit[TMode]> | null {
-        this.validateMode(mode)
-        return this.history[mode]
+    getHistory(): FlashNumberHistory<TDigit> | null {
+        return this.history
     }
 }
 
-export const flashNumberHistoryRegistry = FlashNumberHistoryRegistry.getInstance()
+export class AdditionModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<"addition"> {
+    register(digit: FlashDigit["addition"], numbers: FlashDigit["addition"][], answer: FlashAnswer): void {
+        this.history = new AdditionModeFlashNumberHistory(digit, numbers, answer)
+    }
+}
+
+export class MultiplicationModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<"multiplication"> {
+    register(digit: FlashDigit["multiplication"], numbers: FlashDigit["multiplication"][], answer: FlashAnswer): void {
+        this.history = new MultiplicationModeFlashNumberHistory(digit, numbers, answer)
+    }
+}
+
+export const _flashNumberHistoryRegistry: Readonly<{ [key in FlashMode]: AbstractFlashNumberHistoryRegistry<key> }> = {
+    addition: new AdditionModeFlashNumberHistoryRegistry(),
+    multiplication: new MultiplicationModeFlashNumberHistoryRegistry(),
+}

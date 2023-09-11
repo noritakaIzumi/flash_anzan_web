@@ -13,7 +13,7 @@ import {
     UnknownFlashDifficulty
 } from "../globals.js";
 import {FlashParam} from "./flashParamSet.js";
-import {FlashNumberHistory, flashNumberHistoryRegistry} from "./flashNumberHistory.js";
+import {_flashNumberHistoryRegistry, FlashNumberHistory} from "./flashNumberHistory.js";
 import {ExecuteInterface} from "../interface/executeInterface.js";
 import {FlashOptions} from "./flashQuestionCreator.js";
 
@@ -187,13 +187,13 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
 
 export class AdditionModeFlashGenerator extends AbstractFlashGenerator<"addition"> {
     protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["addition"]> | null {
-        return flashNumberHistoryRegistry.getHistory("addition")
+        return _flashNumberHistoryRegistry.addition.getHistory()
     }
 }
 
 export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<"multiplication"> {
     protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["multiplication"]> | null {
-        return flashNumberHistoryRegistry.getHistory("multiplication")
+        return _flashNumberHistoryRegistry.multiplication.getHistory()
     }
 }
 

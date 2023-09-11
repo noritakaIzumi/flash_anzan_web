@@ -20,7 +20,7 @@ import {
     MultiplicationModeGetFlashAnswerAdapter
 } from "./flashNumbers.js";
 import {complexityThresholdMap} from "../lib/complexityThresholdMap.js";
-import {flashNumberHistoryRegistry} from "./flashNumberHistory.js";
+import {_flashNumberHistoryRegistry} from "./flashNumberHistory.js";
 import {FlashDigit, FlashMode} from "../globals.js";
 
 export type FlashOptions = {
@@ -69,7 +69,7 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addi
             getFlashAnswerAdapter: AdditionModeGetFlashAnswerAdapter,
         }).execute(this.paramSet, option)
 
-        flashNumberHistoryRegistry.register("addition", this.paramSet.digit, flash.numbers.raw)
+        _flashNumberHistoryRegistry.addition.register(this.paramSet.digit, flash.numbers.raw, flash.answer)
 
         return {paramSet: this.paramSet, flash}
     }
@@ -96,7 +96,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
             getFlashAnswerAdapter: MultiplicationModeGetFlashAnswerAdapter,
         }).execute(this.paramSet, option)
 
-        flashNumberHistoryRegistry.register("multiplication", this.paramSet.digit, flash.numbers.raw)
+        _flashNumberHistoryRegistry.multiplication.register(this.paramSet.digit, flash.numbers.raw, flash.answer)
 
         return {paramSet: this.paramSet, flash}
     }
