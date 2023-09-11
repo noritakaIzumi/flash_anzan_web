@@ -7,7 +7,7 @@ import {CurrentFlashMode} from "./currentFlashMode.js";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen.js";
 import {audioObj, isMuted} from "./sound.js";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flash/flashParams.js";
-import {changeMode} from "./flash/flashParamSet.js";
+import {FlashParamSet, changeMode} from "./flash/flashParamSet.js";
 import {registerShortcuts} from "./shortcut/shortcut.js";
 import {FlashOptions, FlashQuestionCreatorFactory} from "./flash/flashQuestionCreator.js";
 import {flashParamElements} from "./dom/flashParamElements.js";
@@ -28,6 +28,7 @@ import {
     switchInputAnswerBoxTab,
     versionNumber
 } from "./dom/htmlElement.js";
+import {FlashMode} from "./globals.js";
 
 function flash(options: FlashOptions = {}) {
     const measuredTime = {start: 0, end: 0};
@@ -144,7 +145,7 @@ function flash(options: FlashOptions = {}) {
         }
     }
 
-    const getFlashSuite = (numbersToDisplay: string[]) => {
+    const getFlashSuite = (numbersToDisplay: string[], requestParam: FlashParamSet<FlashMode>) => {
         /**
          * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
          * @param {string[]} fmtNumbers 整形された数字の配列
@@ -279,7 +280,7 @@ function flash(options: FlashOptions = {}) {
     const beforeBeepTime = 500;
     const beepInterval = 875;
     const flashStartTiming = beforeBeepTime + beepInterval * 2;
-    const flashSuite = getFlashSuite(numbersToDisplay);
+    const flashSuite = getFlashSuite(numbersToDisplay, requestParam);
     const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer);
     setTimeout(() => {
         audioObj.silence[0].play();
