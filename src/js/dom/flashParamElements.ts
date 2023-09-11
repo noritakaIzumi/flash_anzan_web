@@ -11,14 +11,14 @@ import {flashParamSchema} from "../flash/flashParamSchema.js";
 
 export type FlashParamElements = {
     addition: {
-        digit: FlashNumberParam
-        length: FlashNumberParam
+        digit: FlashNumberWithDifficultySupportParam
+        length: FlashNumberWithDifficultySupportParam
         time: FlashTimeParam
     }
     multiplication: {
-        digit1: FlashNumberParam
-        digit2: FlashNumberParam
-        length: FlashNumberParam
+        digit1: FlashNumberWithDifficultySupportParam
+        digit2: FlashNumberWithDifficultySupportParam
+        length: FlashNumberWithDifficultySupportParam
         time: FlashTimeParam
     }
     common: {
