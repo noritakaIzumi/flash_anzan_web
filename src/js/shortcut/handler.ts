@@ -10,6 +10,7 @@ export interface ShortcutHandlerInterface {
 
 class JaywcjloveShortcutHandler implements ShortcutHandlerInterface {
     add(key: string, callback: () => any): void {
+        // @ts-ignore
         hotkeys(key, (event) => {
             event.preventDefault()
             callback()
@@ -17,6 +18,7 @@ class JaywcjloveShortcutHandler implements ShortcutHandlerInterface {
     }
 
     remove(key: string): void {
+        // @ts-ignore
         hotkeys.unbind(key)
     }
 }
