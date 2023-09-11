@@ -3,11 +3,11 @@ import * as bootstrap from 'bootstrap'
 import {SimpleKeyboard} from "simple-keyboard";
 import {FlashAnswer} from "./flash/flashNumbers.js";
 import {getTime} from "./time.js";
-import {CurrentFlashMode} from "./currentFlashMode.js";
+import {currentFlashMode} from "./currentFlashMode.js";
 import {disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode} from "./screen.js";
 import {audioObj, isMuted} from "./sound.js";
 import {doDeleteParams, doLoadParams, doSaveParams} from "./flash/flashParams.js";
-import {FlashParamSet, changeMode} from "./flash/flashParamSet.js";
+import {changeMode, FlashParamSet} from "./flash/flashParamSet.js";
 import {registerShortcuts} from "./shortcut/shortcut.js";
 import {FlashOptions, FlashQuestionCreatorFactory} from "./flash/flashQuestionCreator.js";
 import {flashParamElements} from "./dom/flashParamElements.js";
@@ -29,6 +29,7 @@ import {
     versionNumber
 } from "./dom/htmlElement.js";
 import {FlashMode} from "./globals.js";
+import {latestFlashNumberHistory} from "./flash/flashNumberHistory.js";
 
 function flash(options: FlashOptions = {}) {
     const measuredTime = {start: 0, end: 0};
@@ -232,7 +233,7 @@ function flash(options: FlashOptions = {}) {
     );
 
     // ここからフラッシュ出題の処理
-    const flashQuestionCreator = FlashQuestionCreatorFactory.getInstance(CurrentFlashMode.getInstance().value)
+    const flashQuestionCreator = FlashQuestionCreatorFactory.getInstance(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
         if (!confirm('難易度設定がサポートされていない桁数・口数ですがよろしいですか？')) {
             return;
@@ -244,14 +245,11 @@ function flash(options: FlashOptions = {}) {
     const requestParam = question.paramSet
     const numbersToDisplay = question.flash.numbers.toDisplay()
     const flashAnswer = question.flash.answer
-    const flashAnswerToDisplay = question.flash.answer.toDisplay()
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = "";
     questionNumberArea.innerText = "";
     button.numberHistory.disabled = true;
-    numberHistoryDisplay.innerHTML = numbersToDisplay.join("<br>");
-    answerNumberDisplay.innerText = flashAnswerToDisplay;
 
     const start = getTime();
 
@@ -488,6 +486,17 @@ function clearInputAnswerBox() {
             button.doLoadParams.addEventListener('click', doLoadParams)
             button.doSaveParams.addEventListener('click', doSaveParams)
             button.doDeleteParams.addEventListener('click', doDeleteParams)
+
+            // 出題履歴表示
+            button.numberHistory.addEventListener('click', () => {
+                const latestHistory = latestFlashNumberHistory.history;
+                if (latestHistory === null) {
+                    return
+                }
+                numberHistoryDisplay.innerHTML = latestHistory.numberHistory.toDisplay().join("<br>")
+                answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
+                new bootstrap.Modal(modals.number_history).show()
+            })
         })();
     };
 

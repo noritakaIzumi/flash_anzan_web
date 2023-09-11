@@ -23,3 +23,5 @@ export class CurrentFlashMode {
         return CurrentFlashMode.instance
     }
 }
+
+export const currentFlashMode = CurrentFlashMode.getInstance()

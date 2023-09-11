@@ -56,7 +56,8 @@ export type ParamsModalOperation = typeof paramsModalOperation[number]
 export const modals: {
     welcome: HTMLDivElement,
     params: { [op in ParamsModalOperation]: { [phase in "confirm" | "complete"]: HTMLDivElement } },
-    input_answer: HTMLDivElement
+    input_answer: HTMLDivElement,
+    number_history: HTMLDivElement,
 } = {
     welcome: getHtmlElement("div", "welcomeModal"),
     params: {
@@ -74,4 +75,5 @@ export const modals: {
         },
     },
     input_answer: getHtmlElement("div", "inputAnswerModal"),
+    number_history: getHtmlElement("div", "numberHistoryModal"),
 };
