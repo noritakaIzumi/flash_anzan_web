@@ -54,7 +54,7 @@ function flash(options: FlashOptions = {}) {
 
             setTimeout(() => {
                 let resultAudio: Howl;
-                if (numberStr === String(answer.toNumber())) {
+                if (numberStr === answer.toString()) {
                     resultAudio = audioObj.correct[0];
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`;
                 } else if (numberStr.length > 0) {

@@ -60,8 +60,8 @@ export class FlashAnswer implements ToDisplayInterface<string> {
         this._value = answer
     }
 
-    toNumber() {
-        return this._value
+    toString() {
+        return String(this._value)
     }
 
     toDisplay(): string {
