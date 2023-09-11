@@ -5,7 +5,8 @@ import {flashParamElementCategoryName, flashParamElements} from "../dom/flashPar
 import {
     FlashDifficultyParamSchema,
     FlashIsMutedParamSchema,
-    FlashNumberParamSchema, FlashNumberParamWithDifficultySupportSchema,
+    FlashNumberParamSchema,
+    FlashNumberParamWithDifficultySupportSchema,
     FlashSoundExtensionParamSchema
 } from "./flashParamSchema.js";
 
@@ -14,6 +15,21 @@ export function fixValue(limit: {
     min: number
 }, targetValue: number): number {
     return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
+}
+
+const tempValueStore: { [key: string]: string } = {};
+
+export function setupInputElementForTouch(element: HTMLInputElement) {
+    element.addEventListener('focus', () => {
+        tempValueStore[element.id] = element.value
+        element.value = ''
+    })
+    element.addEventListener('blur', () => {
+        if (element.value === '') {
+            element.value = tempValueStore[element.id]
+            delete tempValueStore[element.id]
+        }
+    })
 }
 
 abstract class FlashParam<K extends HTMLElement & {
@@ -69,6 +85,7 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
+        setupInputElementForTouch(this.htmlElement)
     }
 
     increaseParam(amount: number): void {
@@ -106,6 +123,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputE
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
+        setupInputElementForTouch(this.htmlElement)
     }
 
     increaseParam(amount: number): void {
@@ -143,6 +161,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }) {
         super(props);
         this.valueV1 = this.schema.default
+        setupInputElementForTouch(this.htmlElement)
     }
 
     increaseParam(amount: number): void {
