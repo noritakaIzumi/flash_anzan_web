@@ -376,5 +376,5 @@ export function doSaveParams(): void {
 }
 
 export function doDeleteParams(): void {
-    localStorage.clear()
+    localStorage.removeItem(savedParamsKeyName)
 }
