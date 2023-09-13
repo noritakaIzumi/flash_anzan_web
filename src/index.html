@@ -52,7 +52,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/icon-32x32.png">
     <link rel="manifest" href="manifest.json">
     <!-- service worker -->
-    <script type="module" src="js/delete_sw.js"></script>
+    <script type="module" src="js/delete_sw.ts"></script>
 </head>
 <body class="hide-cursor">
 <div id="calculate-area" class="calculate-area" data-full-screen="0">
@@ -94,15 +94,13 @@
             <button type="button" id="repeat-button" class="btn btn-danger me-2" disabled>
                 <i class="bi bi-arrow-repeat"></i><span class="ps-2">リトライ</span>
             </button>
-            <button type="button" id="number-history-button" class="btn btn-info me-2"
-                    data-bs-toggle="modal" data-bs-target="#numberHistoryModal" disabled>
+            <button type="button" id="number-history-button" class="btn btn-info me-2" disabled>
                 <i class="bi bi-journal-text"></i>
             </button>
         </div>
     </div>
     <hr class="my-2">
     <div class="container-fluid">
-        <div id="current-mode" class="display-none"></div>
         <div class="d-flex flex-wrap">
             <div class="my-2 me-3">
                 <ul class="nav nav-pills" id="pills-tab" role="tablist">
@@ -128,7 +126,7 @@
             </div>
             <div class="my-2">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btnradio" id="difficulty-easy" autocomplete="off" checked>
+                    <input type="radio" class="btn-check" name="btnradio" id="difficulty-easy" autocomplete="off">
                     <label class="btn btn-outline-success" for="difficulty-easy">かんたん</label>
                     <input type="radio" class="btn-check" name="btnradio" id="difficulty-normal" autocomplete="off">
                     <label class="btn btn-outline-warning" for="difficulty-normal">ふつう</label>
@@ -227,11 +225,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <span id="version-number" class="text-muted"></span>
-    </div>
-    <div class="container display-none">
-        <p id="answer-number"></p>
-        <p id="number-history-stringify"></p>
+        <span id="version-number" class="text-light"></span>
     </div>
 </div>
 
@@ -265,8 +259,9 @@
                     <h5 class="mb-3">効果音</h5>
                     <div class="container">
                         <div class="btn-group w-auto mb-2" role="group">
-                            <input type="checkbox" class="btn-check" id="is-muted" autocomplete="off">
-                            <label class="btn btn-outline-danger" for="is-muted" id="audio-status"></label>
+                            <input type="checkbox" class="btn-check" id="is-muted-button" autocomplete="off">
+                            <label class="btn btn-outline-danger" for="is-muted-button" id="audio-status"></label>
+                            <input type="hidden" id="is-muted">
                         </div>
                         <div class="input-group w-auto mb-2">
                             <div class="input-group-prepend">
@@ -473,7 +468,7 @@
                             <div class="col-sm-9">
                                 <label for="input-answer-box-touch-display" style="display: none;"></label>
                                 <input type="text" id="input-answer-box-touch-display" inputmode="numeric" class="form-control input-answer-box" autocomplete="off" readonly>
-                                <div class="simple-keyboard"></div>
+                                <div class="input-answer-keyboard-touch"></div>
                                 <input type="hidden" id="input-answer-box-touch-actual">
                             </div>
                             <div class="col-sm-3 d-flex flex-sm-column justify-content-end align-bottom">
@@ -710,8 +705,6 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="js/shortcut.js"></script>
-<script type="module" src="js/index.js?ver=v0.18.1"></script>
+<script type="module" src="js/index.ts"></script>
 </body>
 </html>

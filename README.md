@@ -13,5 +13,5 @@ https://technical-study.gitlab.io/flash_anzan_web/
 - 難易度境界リストの作成
 
 ```bash
-node ./tools/create_complexity_map.js
+ts-node ./tools/createComplexityThresholdMap.ts
 ```

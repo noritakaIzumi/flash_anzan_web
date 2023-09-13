@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "isolatedModules": true,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "downlevelIteration": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "outDir": "build"
+  },
+  "ts-node": {
+    "esm": true
+  },
+  "include": [
+    "./vite.config.ts",
+    "./src/public/sw.js",
+    "./src/**/*.ts",
+    "./tools/**/*.ts"
+  ],
+  "lib": [
+    "WebWorker"
+  ]
+}
