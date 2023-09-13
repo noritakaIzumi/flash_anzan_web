@@ -13,7 +13,7 @@ export default defineConfig({
     root: path.resolve(__dirname, "src"),
     base: "",
     define: {
-        __APP_VERSION__: `"${appVersion}"`,
+        APP_VERSION: `"${appVersion}"`,
     },
     build: {
         outDir: "../dist",

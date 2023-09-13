@@ -366,7 +366,7 @@ function clearInputAnswerBox(): void {
 
 (() => {
     // バージョン番号
-    const version = __APP_VERSION__
+    const version = APP_VERSION
     const warmupDelay = 1000
 
     const setup = (): void => {
