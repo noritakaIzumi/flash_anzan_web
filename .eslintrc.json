@@ -26,5 +26,9 @@
       "error",
       "double"
     ]
-  }
+  },
+  "ignorePatterns": [
+    "/build/**/*",
+    "/dist/**/*"
+  ]
 }

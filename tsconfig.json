@@ -15,8 +15,10 @@
     "esm": true
   },
   "include": [
-    "./src/**/*",
-    "./tools/**/*"
+    "./vite.config.js",
+    "./src/public/sw.js",
+    "./src/**/*.ts",
+    "./tools/**/*.ts"
   ],
   "lib": [
     "WebWorker"
