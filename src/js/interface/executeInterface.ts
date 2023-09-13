@@ -1,3 +1,3 @@
 export interface ExecuteInterface {
-    execute(...args: any[]): any;
+    execute: (...args: any[]) => any
 }

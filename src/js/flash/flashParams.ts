@@ -1,23 +1,23 @@
-import {flashDifficulty, FlashDifficulty, savedParamsKeyName} from "../globals.js";
-import {audioObj, soundExtension, SoundExtension} from "../sound.js";
-import {button, modals} from "../dom/htmlElement.js";
-import {flashParamElementCategoryName, flashParamElements} from "../dom/flashParamElements.js";
+import {flashDifficulty, type FlashDifficulty, savedParamsKeyName} from '../globals.js'
+import {audioObj, soundExtension, type SoundExtension} from '../sound.js'
+import {button, modals} from '../dom/htmlElement.js'
+import {type flashParamElementCategoryName, flashParamElements} from '../dom/flashParamElements.js'
 import {
-    FlashDifficultyParamSchema,
-    FlashIsMutedParamSchema,
-    FlashNumberParamSchema,
-    FlashNumberParamWithDifficultySupportSchema,
-    FlashSoundExtensionParamSchema
-} from "./flashParamSchema.js";
+    type FlashDifficultyParamSchema,
+    type FlashIsMutedParamSchema,
+    type FlashNumberParamSchema,
+    type FlashNumberParamWithDifficultySupportSchema,
+    type FlashSoundExtensionParamSchema
+} from './flashParamSchema.js'
 
 export function fixValue(limit: {
-    max: number,
+    max: number
     min: number
 }, targetValue: number): number {
-    return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)));
+    return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)))
 }
 
-const tempValueStore: { [key: string]: string } = {};
+const tempValueStore: Record<string, string> = {}
 
 export function setupInputElementForTouch(element: HTMLInputElement) {
     element.addEventListener('focus', () => {
@@ -35,24 +35,24 @@ export function setupInputElementForTouch(element: HTMLInputElement) {
 abstract class FlashParam<K extends HTMLElement & {
     value: string
 }, T, U, VOptions = never> {
-    abstract get valueV1(): U;
-    abstract set valueV1(value: string | number);
+    abstract get valueV1(): U
+    abstract set valueV1(value: string | number)
 
     /**
      * 保存用パラメータを書き出す。設定パラメータの下位互換性を保持する。
      */
-    abstract get valueV0(): string;
+    abstract get valueV0(): string
     /**
      * 保存用パラメータから読み込む。設定パラメータの下位互換性を保持する。
      */
-    abstract set valueV0(value: string);
+    abstract set valueV0(value: string)
 
-    protected htmlElement: K;
-    protected schema: T;
+    protected htmlElement: K
+    protected schema: T
 
     protected constructor(props: {
-        htmlElement: K,
-        schema: T,
+        htmlElement: K
+        schema: T
         options?: VOptions
     }) {
         this.htmlElement = props.htmlElement
@@ -62,7 +62,7 @@ abstract class FlashParam<K extends HTMLElement & {
 
 export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
     get valueV1(): number {
-        return Number(this.htmlElement.value);
+        return Number(this.htmlElement.value)
     }
 
     set valueV1(value: string | number) {
@@ -78,10 +78,10 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement;
+        htmlElement: HTMLInputElement
         schema: FlashNumberParamSchema
     }) {
-        super(props);
+        super(props)
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
@@ -100,7 +100,7 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
 
 export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputElement, FlashNumberParamWithDifficultySupportSchema, number> {
     get valueV1(): number {
-        return Number(this.htmlElement.value);
+        return Number(this.htmlElement.value)
     }
 
     set valueV1(value: string | number) {
@@ -116,10 +116,10 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputE
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement;
+        htmlElement: HTMLInputElement
         schema: FlashNumberParamWithDifficultySupportSchema
     }) {
-        super(props);
+        super(props)
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
@@ -138,7 +138,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputE
 
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
     get valueV1(): number {
-        return Number(this.htmlElement.value) * 1000;
+        return Number(this.htmlElement.value) * 1000
     }
 
     set valueV1(value: string | number) {
@@ -156,10 +156,10 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement;
+        htmlElement: HTMLInputElement
         schema: FlashNumberParamSchema
     }) {
-        super(props);
+        super(props)
         this.valueV1 = this.schema.default
         setupInputElementForTouch(this.htmlElement)
     }
@@ -176,7 +176,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
 
 export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDifficultyParamSchema, string> {
     get valueV1(): FlashDifficulty {
-        return this.htmlElement.value as FlashDifficulty;
+        return this.htmlElement.value as FlashDifficulty
     }
 
     set valueV1(value: FlashDifficulty) {
@@ -194,24 +194,24 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
     }
 
     protected validateValue(value: string) {
-        if ((flashDifficulty as unknown as string[]).indexOf(value) === -1) {
+        if (!(flashDifficulty as unknown as string[]).includes(value)) {
             throw new RangeError(`invalid difficulty: ${value}`)
         }
     }
 
     constructor(props: {
-        htmlElement: HTMLSelectElement;
+        htmlElement: HTMLSelectElement
         schema: FlashDifficultyParamSchema
     }) {
-        super(props);
+        super(props)
         this.valueV1 = this.schema.default
     }
 }
 
-type FlashIsMutedParamOptions = {
-    buttonElement: HTMLInputElement,
-    audioStatusElement: HTMLLabelElement,
-};
+interface FlashIsMutedParamOptions {
+    buttonElement: HTMLInputElement
+    audioStatusElement: HTMLLabelElement
+}
 
 export class FlashIsMutedParam extends FlashParam<
     HTMLInputElement,
@@ -219,22 +219,22 @@ export class FlashIsMutedParam extends FlashParam<
     boolean,
     FlashIsMutedParamOptions
 > {
-    private buttonElement: HTMLInputElement;
-    private audioStatusElement: HTMLLabelElement;
+    private readonly buttonElement: HTMLInputElement
+    private readonly audioStatusElement: HTMLLabelElement
 
     get valueV1(): boolean {
-        return this.buttonElement.checked;
+        return this.buttonElement.checked
     }
 
     set valueV1(value: boolean) {
         if (value) {
-            this.buttonElement.checked = true;
-            this.htmlElement.value = 'on';
-            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>';
+            this.buttonElement.checked = true
+            this.htmlElement.value = 'on'
+            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>'
         } else {
-            this.buttonElement.checked = false;
-            this.htmlElement.value = 'off';
-            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>';
+            this.buttonElement.checked = false
+            this.htmlElement.value = 'off'
+            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>'
         }
     }
 
@@ -255,13 +255,13 @@ export class FlashIsMutedParam extends FlashParam<
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement,
+        htmlElement: HTMLInputElement
         schema: {
             default: boolean
-        },
+        }
         options: FlashIsMutedParamOptions
     }) {
-        super(props);
+        super(props)
         this.buttonElement = props.options.buttonElement
         this.audioStatusElement = props.options.audioStatusElement
         this.valueV1 = props.schema.default
@@ -274,12 +274,12 @@ export class FlashSoundExtensionParam extends FlashParam<
     SoundExtension
 > {
     get valueV1(): SoundExtension {
-        return this.htmlElement.value as SoundExtension;
+        return this.htmlElement.value as SoundExtension
     }
 
     set valueV1(value: SoundExtension) {
-        this.htmlElement.value = value;
-        this.htmlElement.dispatchEvent(new Event("change"))
+        this.htmlElement.value = value
+        this.htmlElement.dispatchEvent(new Event('change'))
     }
 
     get valueV0(): SoundExtension {
@@ -287,62 +287,64 @@ export class FlashSoundExtensionParam extends FlashParam<
     }
 
     set valueV0(value: string) {
-        if ((soundExtension as unknown as string[]).indexOf(value) === -1) {
+        if (!(soundExtension as unknown as string[]).includes(value)) {
             throw new RangeError('invalid extension')
         }
-        this.valueV1 = value as SoundExtension;
+        this.valueV1 = value as SoundExtension
     }
 
     constructor(props: {
-        htmlElement: HTMLSelectElement;
+        htmlElement: HTMLSelectElement
         schema: {
             default: SoundExtension
-        };
+        }
         options?: never
     }) {
-        super(props);
+        super(props)
         this.valueV1 = props.schema.default
-        this.htmlElement.addEventListener("change", () => audioObj.load(this.htmlElement.value as SoundExtension))
+        this.htmlElement.addEventListener('change', () => {
+            audioObj.load(this.htmlElement.value as SoundExtension)
+        })
     }
 }
 
 export function doLoadParams() {
-    const modal = modals.params.load.complete;
-    const modalMessage = modal.querySelector('.modal-body > p');
+    const modal = modals.params.load.complete
+    const modalMessage = modal.querySelector('.modal-body > p')
     if (modalMessage === null) {
         throw new Error('element not found: modal message')
     }
 
-    const loadedParams = localStorage.getItem(savedParamsKeyName);
+    const loadedParams = localStorage.getItem(savedParamsKeyName)
     if (!loadedParams) {
-        modalMessage.innerHTML = '設定がありません';
-        return;
+        modalMessage.innerHTML = '設定がありません'
+        return
     }
-    modalMessage.innerHTML = '設定を読み込みました';
+    modalMessage.innerHTML = '設定を読み込みました'
 
-    const parsedParams = JSON.parse(loadedParams);
+    const parsedParams = JSON.parse(loadedParams)
     Object.keys(parsedParams).map((mode) => {
         switch (mode as keyof typeof flashParamElements) {
-            case "addition":
-                flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
-                flashParamElements.addition.length.valueV0 = parsedParams.addition.length
-                flashParamElements.addition.time.valueV0 = parsedParams.addition.time
-                break;
-            case "multiplication":
-                flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
-                flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
-                flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
-                flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
-                break;
-            case "common":
-                flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
-                flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
-                flashParamElements.common.offset.valueV0 = parsedParams.common.offset
-                flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
-                flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
-                break;
+        case 'addition':
+            flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
+            flashParamElements.addition.length.valueV0 = parsedParams.addition.length
+            flashParamElements.addition.time.valueV0 = parsedParams.addition.time
+            break
+        case 'multiplication':
+            flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
+            flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
+            flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
+            flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
+            break
+        case 'common':
+            flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
+            flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
+            flashParamElements.common.offset.valueV0 = parsedParams.common.offset
+            flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
+            flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
+            break
         }
-    });
+    })
 
     // 難易度選択
     button.difficulty[flashParamElements.common.difficulty.valueV1].checked = true
@@ -350,14 +352,12 @@ export function doLoadParams() {
 
 export function doSaveParams() {
     const params: {
-        [key in keyof typeof flashParamElementCategoryName]: {
-            [key: string]: string
-        }
+        [key in keyof typeof flashParamElementCategoryName]: Record<string, string>
     } = {
         addition: {},
         multiplication: {},
-        common: {},
-    };
+        common: {}
+    }
 
     params.addition.digit = flashParamElements.addition.digit.valueV0
     params.addition.length = flashParamElements.addition.length.valueV0
@@ -372,9 +372,9 @@ export function doSaveParams() {
     params.common.isMuted = flashParamElements.common.isMuted.valueV0
     params.common.soundExtension = flashParamElements.common.soundExtension.valueV0
 
-    localStorage.setItem(savedParamsKeyName, JSON.stringify(params));
+    localStorage.setItem(savedParamsKeyName, JSON.stringify(params))
 }
 
 export function doDeleteParams() {
-    localStorage.clear();
+    localStorage.clear()
 }

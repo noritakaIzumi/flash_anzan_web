@@ -10,6 +10,17 @@
     "sourceType": "module"
   },
   "rules": {
-    "@typescript-eslint/indent": ["error", 4]
+    "@typescript-eslint/indent": [
+      "error",
+      4
+    ],
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ]
   }
 }
