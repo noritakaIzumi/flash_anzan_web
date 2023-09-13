@@ -1,6 +1,6 @@
 export function getHtmlElement<K extends keyof HTMLElementTagNameMap>(tagName: K, id: string): HTMLElementTagNameMap[K] {
     const element = document.getElementsByTagName(tagName).namedItem(id)
-    if (!element) {
+    if (element === null) {
         throw new ReferenceError(`element does not exist (tagName: ${tagName}, id: ${id})`)
     }
     return element
@@ -33,20 +33,20 @@ export const button = {
     difficulty: {
         easy: getHtmlElement('input', 'difficulty-easy'),
         normal: getHtmlElement('input', 'difficulty-normal'),
-        hard: getHtmlElement('input', 'difficulty-hard')
+        hard: getHtmlElement('input', 'difficulty-hard'),
     },
-    isMuted: getHtmlElement('input', 'is-muted-button')
+    isMuted: getHtmlElement('input', 'is-muted-button'),
 }
 export const disableConfigTarget = [
     button.start,
     button.repeat,
     button.loadParams,
     button.saveParams,
-    button.deleteParams
+    button.deleteParams,
 ]
 export const switchInputAnswerBoxTab = {
     touchTab: getHtmlElement('button', 'switchInputAnswerBoxTab-touch-tab'),
-    keyboardTab: getHtmlElement('button', 'switchInputAnswerBoxTab-keyboard-tab')
+    keyboardTab: getHtmlElement('button', 'switchInputAnswerBoxTab-keyboard-tab'),
 }
 export const noticeInputAnswerNonTouchDevice = getHtmlElement('span', 'notice-input-answer-non-touch-device')
 export const numberHistoryDisplay = getHtmlElement('td', 'number-history-display')
@@ -63,17 +63,17 @@ export const modals: {
     params: {
         load: {
             confirm: getHtmlElement('div', 'loadParamsConfirmModal'),
-            complete: getHtmlElement('div', 'loadParamsCompletedModal')
+            complete: getHtmlElement('div', 'loadParamsCompletedModal'),
         },
         save: {
             confirm: getHtmlElement('div', 'saveParamsConfirmModal'),
-            complete: getHtmlElement('div', 'saveParamsCompletedModal')
+            complete: getHtmlElement('div', 'saveParamsCompletedModal'),
         },
         delete: {
             confirm: getHtmlElement('div', 'deleteParamsConfirmModal'),
-            complete: getHtmlElement('div', 'deleteParamsCompletedModal')
-        }
+            complete: getHtmlElement('div', 'deleteParamsCompletedModal'),
+        },
     },
     input_answer: getHtmlElement('div', 'inputAnswerModal'),
-    number_history: getHtmlElement('div', 'numberHistoryModal')
+    number_history: getHtmlElement('div', 'numberHistoryModal'),
 }

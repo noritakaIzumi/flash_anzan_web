@@ -9,7 +9,7 @@ import { audioObj, isMuted } from './sound.js'
 import { doDeleteParams, doLoadParams, doSaveParams } from './flash/flashParams.js'
 import { changeMode, type FlashParamSet } from './flash/flashParamSet.js'
 import { registerShortcuts } from './shortcut/shortcut.js'
-import { type FlashOptions, FlashQuestionCreatorFactory } from './flash/flashQuestionCreator.js'
+import { type FlashOptions, getFlashQuestionCreator } from './flash/flashQuestionCreator.js'
 import { flashParamElements } from './dom/flashParamElements.js'
 import {
     answerNumberDisplay,
@@ -246,7 +246,7 @@ function flash(options: FlashOptions = {}): void {
     )
 
     // ここからフラッシュ出題の処理
-    const flashQuestionCreator = FlashQuestionCreatorFactory.getInstance(currentFlashMode.value)
+    const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
         if (!confirm('難易度設定がサポートされていない桁数・口数ですがよろしいですか？')) {
             return

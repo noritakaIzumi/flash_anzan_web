@@ -30,6 +30,6 @@ export function variance(data: number[]): number {
  * @param {number[]} data
  * @returns {number}
  */
-export function standard_deviation(data: number[]): number {
+export function standardDeviation(data: number[]): number {
     return Math.sqrt(variance(data))
 }

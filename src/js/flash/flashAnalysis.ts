@@ -1,4 +1,4 @@
-import {average, standard_deviation} from '../lib/analysis.js'
+import { average, standardDeviation } from '../lib/analysis.js'
 
 /**
  * 計算の複雑度を求める（繰り上がり回数などから算出）。
@@ -10,5 +10,5 @@ export function calculateComplexity(carries: number[], digit: number): number {
     carries = carries.map((c) => {
         return c / digit
     })
-    return average(carries) + standard_deviation(carries) * 0.25
+    return average(carries) + standardDeviation(carries) * 0.25
 }

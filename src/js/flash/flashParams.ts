@@ -1,7 +1,7 @@
-import {flashDifficulty, type FlashDifficulty, savedParamsKeyName} from '../globals.js'
-import {audioObj, soundExtension, type SoundExtension} from '../sound.js'
-import {button, modals} from '../dom/htmlElement.js'
-import {type flashParamElementCategoryName, flashParamElements} from '../dom/flashParamElements.js'
+import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from '../globals.js'
+import { audioObj, soundExtension, type SoundExtension } from '../sound.js'
+import { button, modals } from '../dom/htmlElement.js'
+import { type flashParamElementCategoryName, flashParamElements } from '../dom/flashParamElements.js'
 import {
     type FlashDifficultyParamSchema,
     type FlashIsMutedParamSchema,
@@ -17,17 +17,17 @@ export function fixValue(limit: {
     return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)))
 }
 
-const tempValueStore: Record<string, string> = {}
+const tempValueStore: Record<string, string | undefined> = {}
 
-export function setupInputElementForTouch(element: HTMLInputElement) {
+export function setupInputElementForTouch(element: HTMLInputElement): void {
     element.addEventListener('focus', () => {
         tempValueStore[element.id] = element.value
         element.value = ''
     })
     element.addEventListener('blur', () => {
         if (element.value === '') {
-            element.value = tempValueStore[element.id]
-            delete tempValueStore[element.id]
+            element.value = tempValueStore[element.id] ?? ''
+            tempValueStore[element.id] = undefined
         }
     })
 }
@@ -193,7 +193,7 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
         this.valueV1 = value as FlashDifficulty
     }
 
-    protected validateValue(value: string) {
+    protected validateValue(value: string): void {
         if (!(flashDifficulty as unknown as string[]).includes(value)) {
             throw new RangeError(`invalid difficulty: ${value}`)
         }
@@ -214,10 +214,10 @@ interface FlashIsMutedParamOptions {
 }
 
 export class FlashIsMutedParam extends FlashParam<
-    HTMLInputElement,
-    FlashIsMutedParamSchema,
-    boolean,
-    FlashIsMutedParamOptions
+HTMLInputElement,
+FlashIsMutedParamSchema,
+boolean,
+FlashIsMutedParamOptions
 > {
     private readonly buttonElement: HTMLInputElement
     private readonly audioStatusElement: HTMLLabelElement
@@ -269,9 +269,9 @@ export class FlashIsMutedParam extends FlashParam<
 }
 
 export class FlashSoundExtensionParam extends FlashParam<
-    HTMLSelectElement,
-    FlashSoundExtensionParamSchema,
-    SoundExtension
+HTMLSelectElement,
+FlashSoundExtensionParamSchema,
+SoundExtension
 > {
     get valueV1(): SoundExtension {
         return this.htmlElement.value as SoundExtension
@@ -308,7 +308,7 @@ export class FlashSoundExtensionParam extends FlashParam<
     }
 }
 
-export function doLoadParams() {
+export function doLoadParams(): void {
     const modal = modals.params.load.complete
     const modalMessage = modal.querySelector('.modal-body > p')
     if (modalMessage === null) {
@@ -316,33 +316,33 @@ export function doLoadParams() {
     }
 
     const loadedParams = localStorage.getItem(savedParamsKeyName)
-    if (!loadedParams) {
+    if (loadedParams === null) {
         modalMessage.innerHTML = '設定がありません'
         return
     }
     modalMessage.innerHTML = '設定を読み込みました'
 
     const parsedParams = JSON.parse(loadedParams)
-    Object.keys(parsedParams).map((mode) => {
+    Object.keys(parsedParams).forEach(mode => {
         switch (mode as keyof typeof flashParamElements) {
-        case 'addition':
-            flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
-            flashParamElements.addition.length.valueV0 = parsedParams.addition.length
-            flashParamElements.addition.time.valueV0 = parsedParams.addition.time
-            break
-        case 'multiplication':
-            flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
-            flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
-            flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
-            flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
-            break
-        case 'common':
-            flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
-            flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
-            flashParamElements.common.offset.valueV0 = parsedParams.common.offset
-            flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
-            flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
-            break
+            case 'addition':
+                flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
+                flashParamElements.addition.length.valueV0 = parsedParams.addition.length
+                flashParamElements.addition.time.valueV0 = parsedParams.addition.time
+                break
+            case 'multiplication':
+                flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
+                flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
+                flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
+                flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
+                break
+            case 'common':
+                flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
+                flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
+                flashParamElements.common.offset.valueV0 = parsedParams.common.offset
+                flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
+                flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
+                break
         }
     })
 
@@ -350,13 +350,13 @@ export function doLoadParams() {
     button.difficulty[flashParamElements.common.difficulty.valueV1].checked = true
 }
 
-export function doSaveParams() {
+export function doSaveParams(): void {
     const params: {
         [key in keyof typeof flashParamElementCategoryName]: Record<string, string>
     } = {
         addition: {},
         multiplication: {},
-        common: {}
+        common: {},
     }
 
     params.addition.digit = flashParamElements.addition.digit.valueV0
@@ -375,6 +375,6 @@ export function doSaveParams() {
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params))
 }
 
-export function doDeleteParams() {
+export function doDeleteParams(): void {
     localStorage.clear()
 }

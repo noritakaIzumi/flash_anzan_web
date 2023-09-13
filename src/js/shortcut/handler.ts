@@ -10,7 +10,7 @@ export interface ShortcutHandlerInterface {
 
 class JaywcjloveShortcutHandler implements ShortcutHandlerInterface {
     add(key: string, callback: () => any): void {
-        // @ts-expect-error
+        // @ts-expect-error depends on usage
         hotkeys(key, (event) => {
             event.preventDefault()
             callback()
@@ -18,7 +18,7 @@ class JaywcjloveShortcutHandler implements ShortcutHandlerInterface {
     }
 
     remove(key: string): void {
-        // @ts-expect-error
+        // @ts-expect-error depends on usage
         hotkeys.unbind(key)
     }
 }
