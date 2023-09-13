@@ -31,7 +31,9 @@ import {
 import { type FlashMode } from './globals.js'
 import { latestFlashNumberHistory } from './flash/flashNumberHistory.js'
 
-interface SetFlashTimeOutHandle { value?: number }
+interface SetFlashTimeOutHandle {
+    value?: number
+}
 
 function flash(options: FlashOptions = {}): void {
     const measuredTime = {
@@ -109,7 +111,6 @@ function flash(options: FlashOptions = {}): void {
                         throw new Error('element not found: modal footer')
                     }
                     modalFooter.style.display = 'none'
-                    clearInputAnswerBox()
                     switchInputAnswerBoxTab.touchTab.click()
                     noticeInputAnswerNonTouchDevice.style.display = 'none'
                 }
@@ -401,61 +402,33 @@ function clearInputAnswerBox(): void {
 
         // タッチデバイスの回答入力
         (() => {
-            let inputs: string[] = []
-
-            function onKeyPress(button: string): void {
-                if (button === '') {
-                    console.error('button is empty')
-                    return
-                }
-                const matchedArray = button.match(/\d/g)
-                if (matchedArray == null) {
-                    console.error('non-number key pressed')
-                    return
-                }
-                const matched = matchedArray.pop()
-                if (matched === undefined) {
-                    console.error('no key matched')
-                    return
-                }
-                inputs.push(matched)
-                let value = ''
-                {
-                    const reversedInputs = [...inputs].reverse()
-                    let n = 0
-                    for (let i = 0; i < inputs.length; i++) {
-                        if (n === 3) {
-                            value = `,${value}`
-                            n = 0
-                        }
-                        value = reversedInputs[i] + value
-                        n++
-                    }
-                }
-                value = value.replace(/^[0,]+/g, '')
-                inputAnswerBoxTouchDisplay.value = value === '' ? '0' : value
-                inputAnswerBoxTouchActual.value = value === '' ? '0' : value.replace(',', '')
+            function updateInput(value: string): void {
+                const actualValue = value.trim().replace(/^0+$/, '0').replace(/^0+([1-9]+)$/, '$1')
+                inputAnswerBoxTouchActual.value = actualValue
+                inputAnswerBoxTouchDisplay.value = actualValue.split('').reverse().map((digit, i) => {
+                    return i > 0 && i % 3 === 0 ? `${digit},` : digit
+                }).reverse().join('')
             }
 
-            const clearInput = (): void => {
-                clearInputAnswerBox()
-                inputs = []
+            function clearInput(): void {
+                inputAnswerKeyboard.clearInput()
+                updateInput('')
             }
+
             Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
                 element.addEventListener('click', clearInput)
             })
             modals.input_answer.addEventListener('show.bs.modal', clearInput)
 
-            // eslint-disable-next-line no-new
-            new SimpleKeyboard({
-                onKeyPress: button => {
-                    onKeyPress(button)
+            const inputAnswerKeyboard = new SimpleKeyboard('.input-answer-keyboard-touch', {
+                onChange: value => {
+                    updateInput(value)
                 },
                 layout: {
                     default: [
-                        '{numpad7} {numpad8} {numpad9}',
-                        '{numpad4} {numpad5} {numpad6}',
-                        '{numpad1} {numpad2} {numpad3}',
+                        '7 8 9',
+                        '4 5 6',
+                        '1 2 3',
                         ' 0 ',
                     ],
                 },
