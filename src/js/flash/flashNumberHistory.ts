@@ -1,5 +1,5 @@
-import { type FlashDigit, type FlashMode } from '../globals.js'
-import { type FlashAnswer, type FlashNumbers } from './flashNumbers.js'
+import { type FlashDigit, type FlashMode } from "../globals.js"
+import { type FlashAnswer, type FlashNumbers } from "./flashNumbers.js"
 
 export abstract class FlashNumberHistory<T> {
     protected get digit(): T {
@@ -27,13 +27,13 @@ export abstract class FlashNumberHistory<T> {
     public abstract digitEquals(digit: T): boolean
 }
 
-export class AdditionModeFlashNumberHistory extends FlashNumberHistory<FlashDigit['addition']> {
+export class AdditionModeFlashNumberHistory extends FlashNumberHistory<FlashDigit["addition"]> {
     digitEquals(digit: number): boolean {
         return digit === this.digit
     }
 }
 
-export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<FlashDigit['multiplication']> {
+export class MultiplicationModeFlashNumberHistory extends FlashNumberHistory<FlashDigit["multiplication"]> {
     digitEquals(digit: [number, number]): boolean {
         return digit[0] === this.digit[0] && digit[1] === this.digit[1]
     }
@@ -45,7 +45,7 @@ class LatestFlashNumberHistoryWriteToken {
 
     use(): void {
         if (this.used) {
-            throw new Error('token is already used')
+            throw new Error("token is already used")
         }
         this.used = true
     }
@@ -93,14 +93,14 @@ export abstract class AbstractFlashNumberHistoryRegistry<T extends FlashMode, TD
     abstract register(digit: TDigit, numbers: FlashNumbers<FlashDigit[T]>, answer: FlashAnswer): void
 }
 
-export class AdditionModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<'addition'> {
-    register(digit: FlashDigit['addition'], numbers: FlashNumbers<FlashDigit['addition']>, answer: FlashAnswer): void {
+export class AdditionModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<"addition"> {
+    register(digit: FlashDigit["addition"], numbers: FlashNumbers<FlashDigit["addition"]>, answer: FlashAnswer): void {
         this.history = new AdditionModeFlashNumberHistory(digit, numbers, answer)
     }
 }
 
-export class MultiplicationModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<'multiplication'> {
-    register(digit: FlashDigit['multiplication'], numbers: FlashNumbers<FlashDigit['multiplication']>, answer: FlashAnswer): void {
+export class MultiplicationModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<"multiplication"> {
+    register(digit: FlashDigit["multiplication"], numbers: FlashNumbers<FlashDigit["multiplication"]>, answer: FlashAnswer): void {
         this.history = new MultiplicationModeFlashNumberHistory(digit, numbers, answer)
     }
 }

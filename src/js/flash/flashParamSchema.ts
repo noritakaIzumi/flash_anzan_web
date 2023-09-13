@@ -1,5 +1,5 @@
-import { type FlashDifficulty } from '../globals.js'
-import { type SoundExtension } from '../sound.js'
+import { type FlashDifficulty } from "../globals.js"
+import { type SoundExtension } from "../sound.js"
 
 export interface FlashNumberParamSchema {
     min: number
@@ -88,7 +88,7 @@ export const flashParamSchema: FlashParamSchema = {
         },
     },
     common: {
-        difficulty: { default: 'easy' },
+        difficulty: { default: "easy" },
         flashRate: {
             min: 1,
             max: 99,
@@ -100,6 +100,6 @@ export const flashParamSchema: FlashParamSchema = {
             default: 0,
         },
         isMuted: { default: false },
-        soundExtension: { default: 'wav' },
+        soundExtension: { default: "wav" },
     },
 }

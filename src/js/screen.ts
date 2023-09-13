@@ -1,4 +1,4 @@
-import { calculateArea, disableConfigTarget, questionNumberArea } from './dom/htmlElement.js'
+import { calculateArea, disableConfigTarget, questionNumberArea } from "./dom/htmlElement.js"
 
 export function isTouchDevice(): boolean {
     return window.ontouchstart === null
@@ -7,10 +7,10 @@ export function isTouchDevice(): boolean {
 export function setFullscreenMode(on: boolean): void {
     if (on) {
         expandCalculateArea()
-        calculateArea.dataset.fullScreen = '1'
+        calculateArea.dataset.fullScreen = "1"
     } else {
         contractCalculateArea()
-        calculateArea.dataset.fullScreen = '0'
+        calculateArea.dataset.fullScreen = "0"
     }
 }
 
@@ -23,7 +23,7 @@ export function toggleFullscreenMode(): void {
 }
 
 export function isFullscreen(): boolean {
-    return calculateArea.dataset.fullScreen === '1'
+    return calculateArea.dataset.fullScreen === "1"
 }
 
 /**
@@ -48,14 +48,14 @@ export function enableHtmlButtons(): void {
  * 出題数字エリアを表示する。
  */
 export function expandCalculateArea(): void {
-    calculateArea.classList.add('full-screen')
-    questionNumberArea.classList.add('big-size-number')
+    calculateArea.classList.add("full-screen")
+    questionNumberArea.classList.add("big-size-number")
 }
 
 /**
  * 出題数字エリアを隠す。
  */
 export function contractCalculateArea(): void {
-    questionNumberArea.classList.remove('big-size-number')
-    calculateArea.classList.remove('full-screen')
+    questionNumberArea.classList.remove("big-size-number")
+    calculateArea.classList.remove("full-screen")
 }

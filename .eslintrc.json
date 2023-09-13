@@ -21,6 +21,10 @@
         "arrays": "always-multiline",
         "objects": "always-multiline"
       }
+    ],
+    "@typescript-eslint/quotes": [
+      "error",
+      "double"
     ]
   }
 }

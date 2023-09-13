@@ -1,16 +1,16 @@
-import '../scss/styles.scss'
-import * as bootstrap from 'bootstrap'
-import { SimpleKeyboard } from 'simple-keyboard'
-import { type FlashAnswer } from './flash/flashNumbers.js'
-import { getTime } from './time.js'
-import { currentFlashMode } from './currentFlashMode.js'
-import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from './screen.js'
-import { audioObj, isMuted } from './sound.js'
-import { doDeleteParams, doLoadParams, doSaveParams } from './flash/flashParams.js'
-import { changeMode, type FlashParamSet } from './flash/flashParamSet.js'
-import { registerShortcuts } from './shortcut/shortcut.js'
-import { type FlashOptions, getFlashQuestionCreator } from './flash/flashQuestionCreator.js'
-import { flashParamElements } from './dom/flashParamElements.js'
+import "../scss/styles.scss"
+import * as bootstrap from "bootstrap"
+import { SimpleKeyboard } from "simple-keyboard"
+import { type FlashAnswer } from "./flash/flashNumbers.js"
+import { getTime } from "./time.js"
+import { currentFlashMode } from "./currentFlashMode.js"
+import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
+import { audioObj, isMuted } from "./sound.js"
+import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
+import { changeMode, type FlashParamSet } from "./flash/flashParamSet.js"
+import { registerShortcuts } from "./shortcut/shortcut.js"
+import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
+import { flashParamElements } from "./dom/flashParamElements.js"
 import {
     answerNumberDisplay,
     button,
@@ -27,9 +27,9 @@ import {
     questionNumberArea,
     switchInputAnswerBoxTab,
     versionNumber
-} from './dom/htmlElement.js'
-import { type FlashMode } from './globals.js'
-import { latestFlashNumberHistory } from './flash/flashNumberHistory.js'
+} from "./dom/htmlElement.js"
+import { type FlashMode } from "./globals.js"
+import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -52,8 +52,8 @@ function flash(options: FlashOptions = {}): void {
          * @param {FlashAnswer} answer
          */
         function displayAnswer(numberStr: string, answer: FlashAnswer): void {
-            if (numberStr !== '') {
-                headerMessage.innerText = 'あなたの答え：' + Number(numberStr).toLocaleString()
+            if (numberStr !== "") {
+                headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString()
             }
 
             button.repeat.disabled = true
@@ -71,11 +71,11 @@ function flash(options: FlashOptions = {}): void {
                     headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`
                 } else {
                     resultAudio = audioObj.silence[0]
-                    headerMessage.innerText = '答え\n'
+                    headerMessage.innerText = "答え\n"
                 }
                 {
                     const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start)
-                    const afterDecimalPointStr = ('00' + String(flashElapsedTimeMs % 1000)).slice(-3)
+                    const afterDecimalPointStr = ("00" + String(flashElapsedTimeMs % 1000)).slice(-3)
                     const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000))
                     headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`
                 }
@@ -88,39 +88,39 @@ function flash(options: FlashOptions = {}): void {
                 button.numberHistory.disabled = false
                 if (isFullscreen()) {
                     if (isTouchDevice()) { // タッチデバイス
-                        calculateArea.addEventListener('touchend', (event) => {
+                        calculateArea.addEventListener("touchend", (event) => {
                             event.preventDefault()
                             setFullscreenMode(false)
                         }, { once: true })
-                        noticeArea.innerText = '画面をタッチすると戻ります。'
+                        noticeArea.innerText = "画面をタッチすると戻ります。"
                     } else { // 非タッチデバイス
-                        noticeArea.innerText = 'W キーを押すと戻ります。'
+                        noticeArea.innerText = "W キーを押すと戻ります。"
                     }
                 }
             }, 1200)
         }
 
         return () => {
-            inputAnswerBox.value = ''
+            inputAnswerBox.value = ""
 
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
-                    const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer')
+                    const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector(".modal-footer")
                     if (modalFooter === null) {
-                        throw new Error('element not found: modal footer')
+                        throw new Error("element not found: modal footer")
                     }
-                    modalFooter.style.display = 'none'
+                    modalFooter.style.display = "none"
                     switchInputAnswerBoxTab.touchTab.click()
-                    noticeInputAnswerNonTouchDevice.style.display = 'none'
+                    noticeInputAnswerNonTouchDevice.style.display = "none"
                 }
                 : () => {
                     clearInputAnswerBox()
                     switchInputAnswerBoxTab.keyboardTab.click()
                     inputAnswerBox.focus()
-                    noticeInputAnswerNonTouchDevice.style.display = 'block'
+                    noticeInputAnswerNonTouchDevice.style.display = "block"
                 }
-            modals.input_answer.addEventListener('shown.bs.modal', listener)
+            modals.input_answer.addEventListener("shown.bs.modal", listener)
             const modal = new bootstrap.Modal(modals.input_answer, {
                 backdrop: false,
                 keyboard: false,
@@ -129,11 +129,11 @@ function flash(options: FlashOptions = {}): void {
             modal.show()
             // 回答送信時のイベント設定
             if (isTouchDevice()) {
-                const btnSendAnswer: HTMLButtonElement | null = document.querySelector('#input-answer-box-area-touch .btn-send-answer')
+                const btnSendAnswer: HTMLButtonElement | null = document.querySelector("#input-answer-box-area-touch .btn-send-answer")
                 if (btnSendAnswer === null) {
-                    throw new Error('element not found: btn send answer')
+                    throw new Error("element not found: btn send answer")
                 }
-                btnSendAnswer.addEventListener('click', () => {
+                btnSendAnswer.addEventListener("click", () => {
                     displayAnswer(inputAnswerBoxTouchActual.value, answer)
                     modal.hide()
                 }, { once: true })
@@ -141,17 +141,17 @@ function flash(options: FlashOptions = {}): void {
                 const listener = () => {
                     return (event: KeyboardEvent) => {
                         if (
-                            document.activeElement?.id === 'input-answer-box' &&
-                            String(event.key).toLowerCase() === 'enter'
+                            document.activeElement?.id === "input-answer-box" &&
+                            String(event.key).toLowerCase() === "enter"
                         ) {
                             displayAnswer(inputAnswerBox.value, answer)
                             modal.hide()
                             return
                         }
-                        document.addEventListener('keydown', listener(), { once: true })
+                        document.addEventListener("keydown", listener(), { once: true })
                     }
                 }
-                document.addEventListener('keydown', listener(), { once: true })
+                document.addEventListener("keydown", listener(), { once: true })
             }
         }
     }
@@ -170,7 +170,7 @@ function flash(options: FlashOptions = {}): void {
             const toggleNumberSuite: string[] = []
             for (let i = 0; i < fmtNumbers.length; i++) {
                 toggleNumberSuite.push(fmtNumbers[i])
-                toggleNumberSuite.push('')
+                toggleNumberSuite.push("")
             }
             return toggleNumberSuite
         }
@@ -248,7 +248,7 @@ function flash(options: FlashOptions = {}): void {
     // ここからフラッシュ出題の処理
     const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
-        if (!confirm('難易度設定がサポートされていない桁数・口数ですがよろしいですか？')) {
+        if (!confirm("難易度設定がサポートされていない桁数・口数ですがよろしいですか？")) {
             return
         }
         options.allowUnknownDifficulty = true
@@ -260,8 +260,8 @@ function flash(options: FlashOptions = {}): void {
     const flashAnswer = question.flash.answer
 
     // 答えと出題数字履歴を作成する
-    headerMessage.innerText = ''
-    questionNumberArea.innerText = ''
+    headerMessage.innerText = ""
+    questionNumberArea.innerText = ""
     button.numberHistory.disabled = true
 
     const start = getTime()
@@ -286,7 +286,7 @@ function flash(options: FlashOptions = {}): void {
     // Register flash events
     disableHtmlButtons()
     setFullscreenMode(true)
-    noticeArea.innerText = ''
+    noticeArea.innerText = ""
     warmUpDisplayArea(0)
     const beforeBeepTime = 500
     const beepInterval = 875
@@ -308,19 +308,19 @@ function flash(options: FlashOptions = {}): void {
 function configureModalFocusing(): void {
     (Object.keys(modals.params) as ParamsModalOperation[]).forEach((op) => {
         const confirm = modals.params[op].confirm
-        const modalOkButton: HTMLButtonElement | null = confirm.querySelector('.modal-footer > button:last-child')
+        const modalOkButton: HTMLButtonElement | null = confirm.querySelector(".modal-footer > button:last-child")
         if (modalOkButton == null) {
-            throw new Error('element not found: modal ok button')
+            throw new Error("element not found: modal ok button")
         }
-        confirm.addEventListener('shown.bs.modal', () => {
+        confirm.addEventListener("shown.bs.modal", () => {
             modalOkButton.focus()
         })
 
         const completed = modals.params[op].complete
-        completed.addEventListener('shown.bs.modal', () => {
-            const modalEscapeButton: HTMLButtonElement | null = completed.querySelector('.modal-header > button')
+        completed.addEventListener("shown.bs.modal", () => {
+            const modalEscapeButton: HTMLButtonElement | null = completed.querySelector(".modal-header > button")
             if (modalEscapeButton == null) {
-                throw new Error('element not found: modal escape button')
+                throw new Error("element not found: modal escape button")
             }
             setTimeout(() => {
                 modalEscapeButton.click()
@@ -339,13 +339,13 @@ function warmUpDisplayArea(timeoutMs: number): number {
     const currentNumberColor = questionNumberArea.style.color
     const prepareGameFunctions = [
         () => {
-            questionNumberArea.style.color = 'black'
+            questionNumberArea.style.color = "black"
         },
         () => {
-            questionNumberArea.innerText = '0'
+            questionNumberArea.innerText = "0"
         },
         () => {
-            questionNumberArea.innerText = ''
+            questionNumberArea.innerText = ""
         },
         () => {
             questionNumberArea.style.color = currentNumberColor
@@ -359,14 +359,14 @@ function warmUpDisplayArea(timeoutMs: number): number {
 }
 
 function clearInputAnswerBox(): void {
-    inputAnswerBox.value = ''
-    inputAnswerBoxTouchDisplay.value = ''
-    inputAnswerBoxTouchActual.value = ''
+    inputAnswerBox.value = ""
+    inputAnswerBoxTouchDisplay.value = ""
+    inputAnswerBoxTouchActual.value = ""
 }
 
 (() => {
     // バージョン番号
-    const version = 'v0.20.0'
+    const version = "v0.20.0"
     const warmupDelay = 1000
 
     const setup = (): void => {
@@ -377,7 +377,7 @@ function clearInputAnswerBox(): void {
             let timeoutMs = warmUpDisplayArea(warmupDelay)
             const prepareGameFunctions = [
                 () => {
-                    changeMode('addition')
+                    changeMode("addition")
                 },
                 configureModalFocusing,
                 () => {
@@ -396,40 +396,40 @@ function clearInputAnswerBox(): void {
             })
 
             if (isTouchDevice()) {
-                button.help.style.display = 'none'
+                button.help.style.display = "none"
             }
         })();
 
         // タッチデバイスの回答入力
         (() => {
             function updateInput(value: string): void {
-                const actualValue = value.trim().replace(/^0+$/, '0').replace(/^0+([1-9]+)$/, '$1')
+                const actualValue = value.trim().replace(/^0+$/, "0").replace(/^0+([1-9]+)$/, "$1")
                 inputAnswerBoxTouchActual.value = actualValue
-                inputAnswerBoxTouchDisplay.value = actualValue.split('').reverse().map((digit, i) => {
+                inputAnswerBoxTouchDisplay.value = actualValue.split("").reverse().map((digit, i) => {
                     return i > 0 && i % 3 === 0 ? `${digit},` : digit
-                }).reverse().join('')
+                }).reverse().join("")
             }
 
             function clearInput(): void {
                 inputAnswerKeyboard.clearInput()
-                updateInput('')
+                updateInput("")
             }
 
-            Array.from(document.getElementsByClassName('btn-clear-input-answer-box')).forEach(element => {
-                element.addEventListener('click', clearInput)
+            Array.from(document.getElementsByClassName("btn-clear-input-answer-box")).forEach(element => {
+                element.addEventListener("click", clearInput)
             })
-            modals.input_answer.addEventListener('show.bs.modal', clearInput)
+            modals.input_answer.addEventListener("show.bs.modal", clearInput)
 
-            const inputAnswerKeyboard = new SimpleKeyboard('.input-answer-keyboard-touch', {
+            const inputAnswerKeyboard = new SimpleKeyboard(".input-answer-keyboard-touch", {
                 onChange: value => {
                     updateInput(value)
                 },
                 layout: {
                     default: [
-                        '7 8 9',
-                        '4 5 6',
-                        '1 2 3',
-                        ' 0 ',
+                        "7 8 9",
+                        "4 5 6",
+                        "1 2 3",
+                        " 0 ",
                     ],
                 },
             })
@@ -437,10 +437,10 @@ function clearInputAnswerBox(): void {
 
         // 回答入力タブ切り替え動作イベントを登録
         (() => {
-            const triggerTabs: Element[] = [].slice.call(document.querySelectorAll('#switchInputAnswerBoxTab button'))
+            const triggerTabs: Element[] = [].slice.call(document.querySelectorAll("#switchInputAnswerBoxTab button"))
             triggerTabs.forEach(element => {
                 const tabTrigger = new bootstrap.Tab(element)
-                element.addEventListener('click', (event) => {
+                element.addEventListener("click", (event) => {
                     event.preventDefault()
                     tabTrigger.show()
                 })
@@ -455,50 +455,50 @@ function clearInputAnswerBox(): void {
         // set onclick events in index.html
         (() => {
             // フラッシュ操作
-            button.start.addEventListener('click', () => {
+            button.start.addEventListener("click", () => {
                 flash()
             })
-            button.repeat.addEventListener('click', () => {
+            button.repeat.addEventListener("click", () => {
                 flash({ repeat: true })
             })
 
             // モード切り替え
-            button.addition.addEventListener('click', () => {
-                changeMode('addition')
+            button.addition.addEventListener("click", () => {
+                changeMode("addition")
             })
             // button.subtraction.addEventListener('click', () => changeMode(modeNames.subtraction))
-            button.multiplication.addEventListener('click', () => {
-                changeMode('multiplication')
+            button.multiplication.addEventListener("click", () => {
+                changeMode("multiplication")
             })
 
             // 難易度切り替え
-            button.difficulty.easy.addEventListener('click', () => {
-                flashParamElements.common.difficulty.valueV1 = 'easy'
+            button.difficulty.easy.addEventListener("click", () => {
+                flashParamElements.common.difficulty.valueV1 = "easy"
             })
-            button.difficulty.normal.addEventListener('click', () => {
-                flashParamElements.common.difficulty.valueV1 = 'normal'
+            button.difficulty.normal.addEventListener("click", () => {
+                flashParamElements.common.difficulty.valueV1 = "normal"
             })
-            button.difficulty.hard.addEventListener('click', () => {
-                flashParamElements.common.difficulty.valueV1 = 'hard'
+            button.difficulty.hard.addEventListener("click", () => {
+                flashParamElements.common.difficulty.valueV1 = "hard"
             })
 
             // サウンド
-            button.isMuted.addEventListener('change', event => {
+            button.isMuted.addEventListener("change", event => {
                 flashParamElements.common.isMuted.valueV1 = (event.target as HTMLInputElement).checked
             })
 
             // 出題設定読み込み
-            button.doLoadParams.addEventListener('click', doLoadParams)
-            button.doSaveParams.addEventListener('click', doSaveParams)
-            button.doDeleteParams.addEventListener('click', doDeleteParams)
+            button.doLoadParams.addEventListener("click", doLoadParams)
+            button.doSaveParams.addEventListener("click", doSaveParams)
+            button.doDeleteParams.addEventListener("click", doDeleteParams)
 
             // 出題履歴表示
-            button.numberHistory.addEventListener('click', () => {
+            button.numberHistory.addEventListener("click", () => {
                 const latestHistory = latestFlashNumberHistory.history
                 if (latestHistory === null) {
                     return
                 }
-                numberHistoryDisplay.innerHTML = latestHistory.numberHistory.toDisplay().join('<br>')
+                numberHistoryDisplay.innerHTML = latestHistory.numberHistory.toDisplay().join("<br>")
                 answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
                 new bootstrap.Modal(modals.number_history).show()
             })
@@ -506,14 +506,14 @@ function clearInputAnswerBox(): void {
     };
 
     (() => {
-        const button: HTMLButtonElement | null = document.querySelector('#welcomeModal .modal-footer > button')
+        const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")
         if (button == null) {
-            throw new Error('element not found: modal footer button')
+            throw new Error("element not found: modal footer button")
         }
 
-        button.addEventListener('click', setup)
+        button.addEventListener("click", setup)
         const welcomeModal = new bootstrap.Modal(modals.welcome, {
-            backdrop: 'static',
+            backdrop: "static",
             keyboard: false,
             focus: true,
         })

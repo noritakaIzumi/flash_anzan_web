@@ -1,16 +1,16 @@
-import { audioAttr } from './globals.js'
-import { Howl } from 'howler'
-import { flashParamElements } from './dom/flashParamElements.js'
-import { flashParamSchema } from './flash/flashParamSchema.js'
+import { audioAttr } from "./globals.js"
+import { Howl } from "howler"
+import { flashParamElements } from "./dom/flashParamElements.js"
+import { flashParamSchema } from "./flash/flashParamSchema.js"
 
-export const soundExtension = ['ogg', 'wav'] as const
+export const soundExtension = ["ogg", "wav"] as const
 export type SoundExtension = typeof soundExtension[number]
 
 export function isMuted(): boolean {
     return flashParamElements.common.isMuted.valueV1
 }
 
-const audioObjKey = ['beep', 'tick', 'answer', 'correct', 'incorrect', 'silence'] as const
+const audioObjKey = ["beep", "tick", "answer", "correct", "incorrect", "silence"] as const
 type AudioObjKey = typeof audioObjKey[number]
 
 type AudioObjInterface = {
@@ -53,7 +53,7 @@ class AudioObj implements AudioObjInterface {
 
     load(extension: SoundExtension): void {
         let timeoutMs = 100
-        let audioPath = ''
+        let audioPath = ""
         audioObjKey.forEach(name => {
             audioPath = `${audioAttr.directory}/${name}.${extension}`
             for (let i = 0; i < this[name].length; i++) {

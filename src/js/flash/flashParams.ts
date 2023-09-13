@@ -1,14 +1,14 @@
-import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from '../globals.js'
-import { audioObj, soundExtension, type SoundExtension } from '../sound.js'
-import { button, modals } from '../dom/htmlElement.js'
-import { type flashParamElementCategoryName, flashParamElements } from '../dom/flashParamElements.js'
+import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from "../globals.js"
+import { audioObj, soundExtension, type SoundExtension } from "../sound.js"
+import { button, modals } from "../dom/htmlElement.js"
+import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {
     type FlashDifficultyParamSchema,
     type FlashIsMutedParamSchema,
     type FlashNumberParamSchema,
     type FlashNumberParamWithDifficultySupportSchema,
     type FlashSoundExtensionParamSchema
-} from './flashParamSchema.js'
+} from "./flashParamSchema.js"
 
 export function fixValue(limit: {
     max: number
@@ -20,13 +20,13 @@ export function fixValue(limit: {
 const tempValueStore: Record<string, string | undefined> = {}
 
 export function setupInputElementForTouch(element: HTMLInputElement): void {
-    element.addEventListener('focus', () => {
+    element.addEventListener("focus", () => {
         tempValueStore[element.id] = element.value
-        element.value = ''
+        element.value = ""
     })
-    element.addEventListener('blur', () => {
-        if (element.value === '') {
-            element.value = tempValueStore[element.id] ?? ''
+    element.addEventListener("blur", () => {
+        if (element.value === "") {
+            element.value = tempValueStore[element.id] ?? ""
             tempValueStore[element.id] = undefined
         }
     })
@@ -229,25 +229,25 @@ FlashIsMutedParamOptions
     set valueV1(value: boolean) {
         if (value) {
             this.buttonElement.checked = true
-            this.htmlElement.value = 'on'
-            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-mute"></i><span class="ps-2">オフ</span>'
+            this.htmlElement.value = "on"
+            this.audioStatusElement.innerHTML = "<i class=\"bi bi-volume-mute\"></i><span class=\"ps-2\">オフ</span>"
         } else {
             this.buttonElement.checked = false
-            this.htmlElement.value = 'off'
-            this.audioStatusElement.innerHTML = '<i class="bi bi-volume-up"></i><span class="ps-2">オン</span>'
+            this.htmlElement.value = "off"
+            this.audioStatusElement.innerHTML = "<i class=\"bi bi-volume-up\"></i><span class=\"ps-2\">オン</span>"
         }
     }
 
     get valueV0(): string {
-        return this.valueV1 ? 'on' : 'off'
+        return this.valueV1 ? "on" : "off"
     }
 
     set valueV0(value: string) {
-        if (value === 'on') {
+        if (value === "on") {
             this.valueV1 = true
             return
         }
-        if (value === 'off') {
+        if (value === "off") {
             this.valueV1 = false
             return
         }
@@ -279,7 +279,7 @@ SoundExtension
 
     set valueV1(value: SoundExtension) {
         this.htmlElement.value = value
-        this.htmlElement.dispatchEvent(new Event('change'))
+        this.htmlElement.dispatchEvent(new Event("change"))
     }
 
     get valueV0(): SoundExtension {
@@ -288,7 +288,7 @@ SoundExtension
 
     set valueV0(value: string) {
         if (!(soundExtension as unknown as string[]).includes(value)) {
-            throw new RangeError('invalid extension')
+            throw new RangeError("invalid extension")
         }
         this.valueV1 = value as SoundExtension
     }
@@ -302,7 +302,7 @@ SoundExtension
     }) {
         super(props)
         this.valueV1 = props.schema.default
-        this.htmlElement.addEventListener('change', () => {
+        this.htmlElement.addEventListener("change", () => {
             audioObj.load(this.htmlElement.value as SoundExtension)
         })
     }
@@ -310,33 +310,33 @@ SoundExtension
 
 export function doLoadParams(): void {
     const modal = modals.params.load.complete
-    const modalMessage = modal.querySelector('.modal-body > p')
+    const modalMessage = modal.querySelector(".modal-body > p")
     if (modalMessage === null) {
-        throw new Error('element not found: modal message')
+        throw new Error("element not found: modal message")
     }
 
     const loadedParams = localStorage.getItem(savedParamsKeyName)
     if (loadedParams === null) {
-        modalMessage.innerHTML = '設定がありません'
+        modalMessage.innerHTML = "設定がありません"
         return
     }
-    modalMessage.innerHTML = '設定を読み込みました'
+    modalMessage.innerHTML = "設定を読み込みました"
 
     const parsedParams = JSON.parse(loadedParams)
     Object.keys(parsedParams).forEach(mode => {
         switch (mode as keyof typeof flashParamElements) {
-            case 'addition':
+            case "addition":
                 flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
                 flashParamElements.addition.length.valueV0 = parsedParams.addition.length
                 flashParamElements.addition.time.valueV0 = parsedParams.addition.time
                 break
-            case 'multiplication':
+            case "multiplication":
                 flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
                 flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
                 flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
                 flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
                 break
-            case 'common':
+            case "common":
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
                 flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
                 flashParamElements.common.offset.valueV0 = parsedParams.common.offset

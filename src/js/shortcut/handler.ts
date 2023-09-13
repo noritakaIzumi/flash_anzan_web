@@ -1,4 +1,4 @@
-import hotkeys from 'hotkeys-js'
+import hotkeys from "hotkeys-js"
 
 export interface ShortcutHandlerInterface {
     // ショートカットを追加する

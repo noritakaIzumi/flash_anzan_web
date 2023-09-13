@@ -1,13 +1,13 @@
-import { calculateComplexity } from '../src/js/flash/flashAnalysis.js'
-import { type ComplexityThreshold, type ComplexityThresholdMap, type FlashMode } from '../src/js/globals.js'
+import { calculateComplexity } from "../src/js/flash/flashAnalysis.js"
+import { type ComplexityThreshold, type ComplexityThresholdMap, type FlashMode } from "../src/js/globals.js"
 import {
     AdditionModeUnknownDifficultyCreateRawNumbersAdapter,
     MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter
-} from '../src/js/flash/flashNumbers.js'
-import * as fs from 'fs'
-import * as path from 'path'
-import { fileURLToPath } from 'url'
-import { flashParamSchema } from '../src/js/flash/flashParamSchema.js'
+} from "../src/js/flash/flashNumbers.js"
+import * as fs from "fs"
+import * as path from "path"
+import { fileURLToPath } from "url"
+import { flashParamSchema } from "../src/js/flash/flashParamSchema.js"
 
 function getRank(numbers: number[], threshold: Threshold): ComplexityThreshold {
     const half = (numbers.length / 2) | 0
@@ -37,7 +37,7 @@ interface Threshold {
         easy: 0.9,
     }
 
-    let mode: FlashMode = 'addition'
+    let mode: FlashMode = "addition"
     const additionModeParamSchema = flashParamSchema.addition
     for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.difficultySupportMax; ++digitCount) {
         for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.difficultySupportMax; ++length) {
@@ -52,7 +52,7 @@ interface Threshold {
         }
     }
 
-    mode = 'multiplication'
+    mode = "multiplication"
     const multiplicationModeParamSchema = flashParamSchema.multiplication
     for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax; digitCount1++) {
         for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax; digitCount2++) {
@@ -78,9 +78,9 @@ interface Threshold {
     try {
         const filename = fileURLToPath(import.meta.url)
         fs.writeFileSync(
-            path.dirname(path.dirname(filename)) + '/src/js/lib/complexityThresholdMap.ts',
+            path.dirname(path.dirname(filename)) + "/src/js/lib/complexityThresholdMap.ts",
             `import{ComplexityThresholdMap}from"../globals.js";export const complexityThresholdMap:ComplexityThresholdMap=${JSON.stringify(complexityThresholdMap)};\n`)
-        console.log('write end')
+        console.log("write end")
     } catch (e) {
         console.log(e)
     }
