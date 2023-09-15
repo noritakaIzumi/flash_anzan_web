@@ -257,17 +257,34 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     }
 
     // Register flash events
+    const flashSuite = (() => {
+        const flashSuite: Array<{ fn: () => void, delay: number }> = []
+        flashSuite.push({
+            fn: () => {
+                playSound.play()
+            },
+            delay: beforeBeepTime - requestParam.offset,
+        })
+        for (let i = 0; i < requestParam.length * 2; i++) {
+            flashSuite.push({
+                fn: toggleNumberFunctions[i],
+                delay: flashStartTiming + toggleTimings[i],
+            })
+        }
+        flashSuite.push({
+            fn: prepareAnswerInputFunc,
+            delay: flashStartTiming + requestParam.time + 300,
+        })
+        return flashSuite
+    })()
+
     disableHtmlButtons()
     setFullscreenMode(true)
     noticeArea.innerText = ""
     warmUpDisplayArea(0)
-    setFlashTimeOut(() => {
-        playSound.play()
-    }, beforeBeepTime - requestParam.offset)
-    for (let i = 0; i < requestParam.length * 2; i++) {
-        setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + toggleTimings[i])
+    for (const flashSuiteElement of flashSuite) {
+        setFlashTimeOut(flashSuiteElement.fn, flashSuiteElement.delay)
     }
-    setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300)
 }
 
 function configureModalFocusing(): void {
