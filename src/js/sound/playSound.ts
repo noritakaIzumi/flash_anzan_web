@@ -1,35 +1,25 @@
-import Crunker from "crunker"
 import { type SoundExtension } from "./sound.js"
 import { audioAttr } from "../globals.js"
+import { getCrunkerInstance } from "./crunker.js"
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-let crunker: Crunker
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-function getCrunkerInstance(): Crunker {
-    if (crunker === undefined) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        crunker = new Crunker()
-    }
-    return crunker
+const audioBuffersCollection: { [key in SoundExtension]: AudioBuffer[] | undefined } = {
+    ogg: undefined,
+    wav: undefined,
 }
 
-const audioBuffersCollection: { [key in SoundExtension]: AudioBuffer[] } = {
-    ogg: [],
-    wav: [],
-}
-
-async function getAudioBuffers(extension: SoundExtension): Promise<AudioBuffer[]> {
-    if (audioBuffersCollection[extension].length <= 0) {
+export async function initAudioBuffers(extension: SoundExtension): Promise<void> {
+    if (audioBuffersCollection[extension] === undefined) {
         audioBuffersCollection[extension] = await getCrunkerInstance().fetchAudio(
             `${audioAttr.directory}/beep.${extension}`,
             `${audioAttr.directory}/tick.${extension}`,
             `${audioAttr.directory}/silence.${extension}`
         )
     }
-    return audioBuffersCollection[extension]
+}
+
+async function getAudioBuffers(extension: SoundExtension): Promise<AudioBuffer[]> {
+    await initAudioBuffers(extension)
+    return audioBuffersCollection[extension] as AudioBuffer[]
 }
 
 export class PlaySoundCreator {

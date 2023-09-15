@@ -1,6 +1,7 @@
 import { audioAttr } from "../globals.js"
 import { Howl } from "howler"
 import { flashParamElements } from "../dom/flashParamElements.js"
+import { initAudioBuffers } from "./playSound.js";
 
 export const soundExtension = ["ogg", "wav"] as const
 export type SoundExtension = typeof soundExtension[number]
@@ -63,6 +64,8 @@ class AudioObj implements AudioObjInterface {
                 timeoutMs += 50
             }
         })
+
+        void initAudioBuffers(extension)
     }
 }
 
