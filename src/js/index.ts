@@ -30,12 +30,13 @@ import {
 } from "./dom/htmlElement.js"
 import { type FlashMode } from "./globals.js"
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
+import { PlaySoundCreator } from "./sound/playSound.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
 }
 
-function flash(options: FlashOptions = {}): void {
+async function flash(options: FlashOptions = {}): Promise<void> {
     const measuredTime = {
         start: 0,
         end: 0,
@@ -156,34 +157,6 @@ function flash(options: FlashOptions = {}): void {
         }
     }
 
-    const getPlayTickFunctions = (length: number): Array<() => void> => {
-        /**
-         * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
-         */
-        function generateSoundSuite(length: number): Array<Howl | null> {
-            const sounds: Array<null | Howl> = []
-            for (let i = 0; i < length; ++i) {
-                sounds.push(isMuted() ? null : audioObj.tick[i])
-                sounds.push(null)
-            }
-            return sounds
-        }
-
-        const result: Array<() => void> = []
-        const soundSuite = generateSoundSuite(length)
-        for (const sound of soundSuite) {
-            if (sound === null) {
-                result.push(() => {
-                })
-            } else {
-                result.push(() => {
-                    sound.play()
-                })
-            }
-        }
-        return result
-    }
-
     const getToggleNumberFunctions = (numbersToDisplay: string[]): Array<() => void> => {
         /**
          * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
@@ -232,15 +205,6 @@ function flash(options: FlashOptions = {}): void {
         return result
     }
 
-    const playBeepFunctions = audioObj.beep.map(
-        a => isMuted()
-            ? () => {
-            }
-            : () => {
-                a.play()
-            }
-    )
-
     // ここからフラッシュ出題の処理
     const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
@@ -259,6 +223,19 @@ function flash(options: FlashOptions = {}): void {
     headerMessage.innerText = ""
     questionNumberArea.innerText = ""
     button.numberHistory.disabled = true
+
+    // フラッシュ音声と表示タイミングの作成
+    const beforeBeepTime = 500
+    const beepInterval = 875
+    const flashStartTiming = beforeBeepTime + beepInterval * 2
+    const toggleTimings = getToggleTimings(requestParam)
+    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
+    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer)
+    const playSound = await new PlaySoundCreator().create({
+        extension: flashParamElements.common.soundExtension.valueV1,
+        beepInterval,
+        toggleTimings,
+    })
 
     const start = getTime()
 
@@ -284,20 +261,10 @@ function flash(options: FlashOptions = {}): void {
     setFullscreenMode(true)
     noticeArea.innerText = ""
     warmUpDisplayArea(0)
-    const beforeBeepTime = 500
-    const beepInterval = 875
-    const flashStartTiming = beforeBeepTime + beepInterval * 2
-    const toggleTimings = getToggleTimings(requestParam)
-    const playTickFunctions = getPlayTickFunctions(requestParam.length)
-    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
-    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer)
-    setTimeout(() => {
-        audioObj.silence[0].play()
-    }, 0)
-    setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset)
-    setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset)
+    setFlashTimeOut(() => {
+        playSound.play()
+    }, beforeBeepTime - requestParam.offset)
     for (let i = 0; i < requestParam.length * 2; i++) {
-        setFlashTimeOut(playTickFunctions[i], flashStartTiming + toggleTimings[i] - requestParam.offset)
         setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + toggleTimings[i])
     }
     setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300)
@@ -454,10 +421,10 @@ function clearInputAnswerBox(): void {
         (() => {
             // フラッシュ操作
             button.start.addEventListener("click", () => {
-                flash()
+                void flash()
             })
             button.repeat.addEventListener("click", () => {
-                flash({ repeat: true })
+                void flash({ repeat: true })
             })
 
             // モード切り替え

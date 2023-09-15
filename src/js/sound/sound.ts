@@ -1,7 +1,6 @@
 import { audioAttr } from "../globals.js"
 import { Howl } from "howler"
 import { flashParamElements } from "../dom/flashParamElements.js"
-import { flashParamSchema } from "../flash/flashParamSchema.js"
 
 export const soundExtension = ["ogg", "wav"] as const
 export type SoundExtension = typeof soundExtension[number]
@@ -11,13 +10,13 @@ export function isMuted(): boolean {
 }
 
 const audioObjKey = ["beep", "tick", "answer", "correct", "incorrect", "silence"] as const
-type AudioObjKey = typeof audioObjKey[number]
+export type AudioObjKey = typeof audioObjKey[number]
 
 type AudioObjInterface = {
     [key in AudioObjKey]: Howl[]
 }
-
-const tickSoundLength = Math.max(flashParamSchema.addition.length.max, flashParamSchema.multiplication.length.max)
+export type AudioFilename = `${AudioObjKey}.${SoundExtension}`
+export type AudioPath = `${string}/${AudioFilename}`
 
 class AudioObj implements AudioObjInterface {
     get beep(): Howl[] {
@@ -44,8 +43,8 @@ class AudioObj implements AudioObjInterface {
         return this._silence
     }
 
-    private readonly _beep: Howl[] = new Array(2)
-    private readonly _tick: Howl[] = new Array(tickSoundLength)
+    private readonly _beep: Howl[] = new Array(0)
+    private readonly _tick: Howl[] = new Array(0)
     private readonly _answer: Howl[] = new Array(1)
     private readonly _correct: Howl[] = new Array(1)
     private readonly _incorrect: Howl[] = new Array(1)
@@ -53,11 +52,11 @@ class AudioObj implements AudioObjInterface {
 
     load(extension: SoundExtension): void {
         let timeoutMs = 100
-        let audioPath = ""
+        let audioPath: AudioPath
         audioObjKey.forEach(name => {
             audioPath = `${audioAttr.directory}/${name}.${extension}`
             for (let i = 0; i < this[name].length; i++) {
-                this[name][i] = new Howl({ src: [audioPath] })
+                this[name][i] = new Howl({src: [audioPath]})
                 setTimeout(() => {
                     this[name][i].load()
                 }, timeoutMs)

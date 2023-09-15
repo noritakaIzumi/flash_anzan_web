@@ -11,6 +11,7 @@
       "dependencies": {
         "bootstrap": "^5.1.3",
         "bootstrap-icons": "^1.10.5",
+        "crunker": "^2.1.0",
         "hotkeys-js": "^3.12.0",
         "howler": "^2.2.3",
         "jsdom": "^22.1.0",
@@ -1257,6 +1258,11 @@
       "engines": {
         "node": ">= 8"
       }
+    },
+    "node_modules/crunker": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/crunker/-/crunker-2.1.0.tgz",
+      "integrity": "sha512-yn2hd2Po8u7Bympg66ElL5MIQcQnSAaPh16h2i8rZwaArwlESZEf4m+9Z6Abu/HMr+YNvPrNgA7ioN0bKVQcAw=="
     },
     "node_modules/cssstyle": {
       "version": "3.0.0",
