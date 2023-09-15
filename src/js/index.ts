@@ -156,11 +156,35 @@ function flash(options: FlashOptions = {}): void {
         }
     }
 
-    const getFlashSuite = (numbersToDisplay: string[], requestParam: FlashParamSet<FlashMode>): Array<{
-        playTickFunction: () => void
-        toggleNumberFunction: () => void
-        _toggleTiming: number
-    }> => {
+    const getPlayTickFunctions = (length: number): Array<() => void> => {
+        /**
+         * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
+         */
+        function generateSoundSuite(length: number): Array<Howl | null> {
+            const sounds: Array<null | Howl> = []
+            for (let i = 0; i < length; ++i) {
+                sounds.push(isMuted() ? null : audioObj.tick[i])
+                sounds.push(null)
+            }
+            return sounds
+        }
+
+        const result: Array<() => void> = []
+        const soundSuite = generateSoundSuite(length)
+        for (const sound of soundSuite) {
+            if (sound === null) {
+                result.push(() => {
+                })
+            } else {
+                result.push(() => {
+                    sound.play()
+                })
+            }
+        }
+        return result
+    }
+
+    const getToggleNumberFunctions = (numbersToDisplay: string[]): Array<() => void> => {
         /**
          * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
          * @param {string[]} fmtNumbers 整形された数字の配列
@@ -175,64 +199,36 @@ function flash(options: FlashOptions = {}): void {
             return toggleNumberSuite
         }
 
-        /**
-         * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
-         */
-        function generateSoundSuite(): Array<Howl | null> {
-            const sounds: Array<null | Howl> = []
-            for (let i = 0; i < requestParam.length; ++i) {
-                sounds.push(isMuted() ? null : audioObj.tick[i])
-                sounds.push(null)
-            }
-            return sounds
-        }
-
-        const result = Array.from({ length: requestParam.length * 2 }, () => {
-            return {
-                toggleNumberFunction: () => {
-                },
-                playTickFunction: () => {
-                },
-                _toggleTiming: 0,
-            }
-        })
-
+        const result: Array<() => void> = []
         const toggleNumberSuite = generateToggleNumberSuite(numbersToDisplay)
         for (const [i, toggleNumber] of toggleNumberSuite.entries()) {
             if (i === 0) {
-                result[i].toggleNumberFunction = () => {
+                result.push(() => {
                     measuredTime.start = getTime()
                     questionNumberArea.innerText = toggleNumber
-                }
+                })
             } else if (i === toggleNumberSuite.length - 1) {
-                result[i].toggleNumberFunction = () => {
+                result.push(() => {
                     questionNumberArea.innerText = toggleNumber
                     measuredTime.end = getTime()
-                }
+                })
             } else {
-                result[i].toggleNumberFunction = () => {
+                result.push(() => {
                     questionNumberArea.innerText = toggleNumber
-                }
+                })
             }
         }
+        return result
+    }
 
-        const soundSuite = generateSoundSuite()
-        for (const [i, sound] of soundSuite.entries()) {
-            result[i].playTickFunction = sound === null
-                ? () => {
-                }
-                : () => {
-                    sound.play()
-                }
-        }
-
-        for (let i = 0; i < result.length; i++) {
-            result[i]._toggleTiming =
-                requestParam.time *
+    const getToggleTimings = (requestParam: FlashParamSet<FlashMode>): number[] => {
+        const result: number[] = []
+        for (let i = 0; i < requestParam.length * 2; i++) {
+            result.push(requestParam.time *
                 (Math.floor(i / 2) * 100 + requestParam.flashRate * (i % 2)) /
                 ((requestParam.length - 1) * 100 + requestParam.flashRate)
+            )
         }
-
         return result
     }
 
@@ -291,16 +287,18 @@ function flash(options: FlashOptions = {}): void {
     const beforeBeepTime = 500
     const beepInterval = 875
     const flashStartTiming = beforeBeepTime + beepInterval * 2
-    const flashSuite = getFlashSuite(numbersToDisplay, requestParam)
+    const toggleTimings = getToggleTimings(requestParam)
+    const playTickFunctions = getPlayTickFunctions(requestParam.length)
+    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
     const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer)
     setTimeout(() => {
         audioObj.silence[0].play()
     }, 0)
     setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset)
     setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset)
-    for (let i = 0; i < flashSuite.length; i++) {
-        setFlashTimeOut(flashSuite[i].playTickFunction, flashStartTiming + flashSuite[i]._toggleTiming - requestParam.offset)
-        setFlashTimeOut(flashSuite[i].toggleNumberFunction, flashStartTiming + flashSuite[i]._toggleTiming)
+    for (let i = 0; i < requestParam.length * 2; i++) {
+        setFlashTimeOut(playTickFunctions[i], flashStartTiming + toggleTimings[i] - requestParam.offset)
+        setFlashTimeOut(toggleNumberFunctions[i], flashStartTiming + toggleTimings[i])
     }
     setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300)
 }
