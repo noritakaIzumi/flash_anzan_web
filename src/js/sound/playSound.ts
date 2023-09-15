@@ -1,5 +1,5 @@
 import Crunker from "crunker"
-import { type AudioPath, type SoundExtension } from "./sound.js"
+import { type SoundExtension } from "./sound.js"
 import { audioAttr } from "../globals.js"
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -16,6 +16,22 @@ function getCrunkerInstance(): Crunker {
     return crunker
 }
 
+const audioBuffersCollection: { [key in SoundExtension]: AudioBuffer[] } = {
+    ogg: [],
+    wav: [],
+}
+
+async function getAudioBuffers(extension: SoundExtension): Promise<AudioBuffer[]> {
+    if (audioBuffersCollection[extension].length <= 0) {
+        audioBuffersCollection[extension] = await getCrunkerInstance().fetchAudio(
+            `${audioAttr.directory}/beep.${extension}`,
+            `${audioAttr.directory}/tick.${extension}`,
+            `${audioAttr.directory}/silence.${extension}`
+        )
+    }
+    return audioBuffersCollection[extension]
+}
+
 export class PlaySoundCreator {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
@@ -30,11 +46,7 @@ export class PlaySoundCreator {
         beepInterval: number
         toggleTimings: number[]
     }): Promise<PlaySound> {
-        const beepAudioPath: AudioPath = `${audioAttr.directory}/beep.${props.extension}`
-        const tickAudioPath: AudioPath = `${audioAttr.directory}/tick.${props.extension}`
-        const silenceAudioPath: AudioPath = `${audioAttr.directory}/silence.${props.extension}`
-
-        const [beepAudioBuffer, tickAudioBuffer, silenceAudioBuffer]: AudioBuffer[] = await this.crunker.fetchAudio(beepAudioPath, tickAudioPath, silenceAudioPath)
+        const [beepAudioBuffer, tickAudioBuffer, silenceAudioBuffer]: AudioBuffer[] = await getAudioBuffers(props.extension)
 
         const audios: AudioBuffer[] = []
         audios.push(this.crunker.padAudio(beepAudioBuffer, 0, 0))

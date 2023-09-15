@@ -56,7 +56,7 @@ class AudioObj implements AudioObjInterface {
         audioObjKey.forEach(name => {
             audioPath = `${audioAttr.directory}/${name}.${extension}`
             for (let i = 0; i < this[name].length; i++) {
-                this[name][i] = new Howl({src: [audioPath]})
+                this[name][i] = new Howl({ src: [audioPath] })
                 setTimeout(() => {
                     this[name][i].load()
                 }, timeoutMs)
