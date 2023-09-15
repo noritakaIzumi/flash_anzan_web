@@ -1,7 +1,7 @@
-import { audioAttr } from "./globals.js"
+import { audioAttr } from "../globals.js"
 import { Howl } from "howler"
-import { flashParamElements } from "./dom/flashParamElements.js"
-import { flashParamSchema } from "./flash/flashParamSchema.js"
+import { flashParamElements } from "../dom/flashParamElements.js"
+import { flashParamSchema } from "../flash/flashParamSchema.js"
 
 export const soundExtension = ["ogg", "wav"] as const
 export type SoundExtension = typeof soundExtension[number]
