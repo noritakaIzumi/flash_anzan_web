@@ -64,8 +64,8 @@ class AudioObj implements AudioObjInterface {
                 timeoutMs += 50
             }
         })
-
-        void initAudioBuffers(extension)
+        void initAudioBuffers(extension, "beep")
+        void initAudioBuffers(extension, "tick")
     }
 }
 

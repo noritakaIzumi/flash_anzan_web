@@ -1,24 +1,26 @@
-import { type SoundExtension } from "./sound.js"
+import { type AudioObjKey, type AudioPath, type SoundExtension } from "./sound.js"
 import { audioAttr } from "../globals.js"
 import { getCrunkerInstance } from "./crunker.js"
 
-const audioBuffersCollection: { [key in SoundExtension]: Array<[AudioBuffer, AudioBuffer]> | undefined } = {
-    ogg: undefined,
-    wav: undefined,
+const audioBuffersRegistry: { [ext in SoundExtension]: { [name in AudioObjKey]?: AudioBuffer } } = {
+    ogg: {},
+    wav: {},
 }
 
-export async function initAudioBuffers(extension: SoundExtension): Promise<void> {
-    if (audioBuffersCollection[extension] === undefined) {
-        audioBuffersCollection[extension] = await getCrunkerInstance().fetchAudio(
-            `${audioAttr.directory}/beep.${extension}`,
-            `${audioAttr.directory}/tick.${extension}`
-        )
+export async function initAudioBuffers(extension: SoundExtension, name: AudioObjKey): Promise<void> {
+    if (audioBuffersRegistry[extension][name] === undefined) {
+        const audioFilename: AudioPath = `${audioAttr.directory}/${name}.${extension}`
+        const audioBuffers: AudioBuffer | undefined = (await getCrunkerInstance().fetchAudio(audioFilename)).pop()
+        if (audioBuffers === undefined) {
+            throw new Error(`failed to fetch audio: (ext: ${extension}, name: ${name})`)
+        }
+        audioBuffersRegistry[extension][name] = audioBuffers
     }
 }
 
-async function getAudioBuffers(extension: SoundExtension): Promise<Array<[AudioBuffer, AudioBuffer]>> {
-    await initAudioBuffers(extension)
-    return audioBuffersCollection[extension] as Array<[AudioBuffer, AudioBuffer]>
+async function getAudioBuffers(extension: SoundExtension, name: AudioObjKey): Promise<AudioBuffer> {
+    await initAudioBuffers(extension, name)
+    return audioBuffersRegistry[extension][name] as AudioBuffer
 }
 
 export class PlaySoundCreator {
@@ -30,20 +32,31 @@ export class PlaySoundCreator {
         this.crunker = getCrunkerInstance()
     }
 
-    async create(props: {
+    async createBeep(props: {
         soundExtension: SoundExtension
         beepInterval: number
-        toggleTimings: number[]
+        beepCount: number
     }): Promise<PlaySound> {
-        const [beepAudioBuffer, tickAudioBuffer]: Array<[AudioBuffer, AudioBuffer]> = await getAudioBuffers(props.soundExtension)
+        const beepAudioBuffer = await getAudioBuffers(props.soundExtension, "beep")
 
         const audios: AudioBuffer[] = []
-        audios.push(this.crunker.padAudio(beepAudioBuffer, 0, 0))
-        audios.push(this.crunker.padAudio(beepAudioBuffer, 0, props.beepInterval / 1000))
-        const beepStart = props.beepInterval * 2 / 1000
+        for (let i = 0; i < props.beepCount; i++) {
+            audios.push(this.crunker.padAudio(beepAudioBuffer, 0, props.beepInterval * i / 1000))
+        }
+
+        return new PlaySound(this.crunker.mergeAudio(audios))
+    }
+
+    async createTick(props: {
+        soundExtension: SoundExtension
+        toggleTimings: number[]
+    }): Promise<PlaySound> {
+        const tickAudioBuffer = await getAudioBuffers(props.soundExtension, "tick")
+
+        const audios: AudioBuffer[] = []
         for (const [i, toggleTiming] of props.toggleTimings.entries()) {
             if (i % 2 === 0) {
-                audios.push(this.crunker.padAudio(tickAudioBuffer, 0, beepStart + toggleTiming / 1000))
+                audios.push(this.crunker.padAudio(tickAudioBuffer, 0, toggleTiming / 1000))
             }
         }
 

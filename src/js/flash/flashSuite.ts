@@ -5,7 +5,7 @@ import { type FlashMode } from "../globals.js"
 import { measuredTime } from "./measuredTime.js"
 import { getTime } from "../time.js"
 import { questionNumberArea } from "../dom/htmlElement.js"
-import { beepInterval, firstBeepTiming } from "../../config/beepTiming.js"
+import { beepCount, beepInterval, firstBeepTiming } from "../../config/beepTiming.js"
 
 export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] => {
     const result: number[] = []
@@ -77,7 +77,8 @@ export async function getFlashSuite({
 }: GetFlashSuiteParams): Promise<FlashSuite> {
     const toggleTimings = getToggleTimings(paramSet)
     const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
-    const playSound = await new PlaySoundCreator().create({ soundExtension, beepInterval, toggleTimings })
+    const beepSound = await new PlaySoundCreator().createBeep({ soundExtension, beepInterval, beepCount })
+    const tickSound = await new PlaySoundCreator().createTick({ soundExtension, toggleTimings })
 
     const flashSuite: FlashSuite = []
     flashSuite.push({
@@ -88,11 +89,17 @@ export async function getFlashSuite({
     })
     flashSuite.push({
         fn: () => {
-            playSound.play()
+            beepSound.play()
         },
         delay: firstBeepTiming - paramSet.offset,
     })
-    const flashStartTiming = firstBeepTiming + beepInterval * 2
+    const flashStartTiming = firstBeepTiming + beepInterval * beepCount
+    flashSuite.push({
+        fn: () => {
+            tickSound.play()
+        },
+        delay: flashStartTiming - paramSet.offset,
+    })
     for (let i = 0; i < paramSet.length * 2; i++) {
         flashSuite.push({
             fn: toggleNumberFunctions[i],
