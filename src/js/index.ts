@@ -31,16 +31,15 @@ import {
 import { type FlashMode } from "./globals.js"
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
 import { PlaySoundCreator } from "./sound/playSound.js"
+import { getFlashSuite } from "./flash/flashSuite.js"
+import { measuredTime } from "./flash/measuredTime.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
 }
 
 async function flash(options: FlashOptions = {}): Promise<void> {
-    const measuredTime = {
-        start: 0,
-        end: 0,
-    }
+    measuredTime.reset()
 
     /**
      * 答え入力のための準備的な。
@@ -257,32 +256,15 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     }
 
     // Register flash events
-    const flashSuite = (() => {
-        const flashSuite: Array<{ fn: () => void, delay: number }> = []
-        flashSuite.push({
-            fn: () => {
-                audioObj.silence[0].play()
-            },
-            delay: 0,
-        })
-        flashSuite.push({
-            fn: () => {
-                playSound.play()
-            },
-            delay: beforeBeepTime - requestParam.offset,
-        })
-        for (let i = 0; i < requestParam.length * 2; i++) {
-            flashSuite.push({
-                fn: toggleNumberFunctions[i],
-                delay: flashStartTiming + toggleTimings[i],
-            })
-        }
-        flashSuite.push({
-            fn: prepareAnswerInputFunc,
-            delay: flashStartTiming + requestParam.time + 300,
-        })
-        return flashSuite
-    })()
+    const flashSuite = getFlashSuite({
+        playSound,
+        beforeBeepTime,
+        requestParam,
+        toggleNumberFunctions,
+        flashStartTiming,
+        toggleTimings,
+        prepareAnswerInputFunc,
+    })
 
     disableHtmlButtons()
     setFullscreenMode(true)
