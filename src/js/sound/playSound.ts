@@ -64,7 +64,13 @@ export class PlaySoundCreator {
     }
 }
 
-export const playSoundCreator = new PlaySoundCreator()
+let playSoundCreator: PlaySoundCreator | undefined
+export function getPlaySoundCreator(): PlaySoundCreator {
+    if (playSoundCreator === undefined) {
+        playSoundCreator = new PlaySoundCreator()
+    }
+    return playSoundCreator
+}
 
 export class PlaySound {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
