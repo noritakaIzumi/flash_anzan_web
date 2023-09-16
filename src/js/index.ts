@@ -261,6 +261,12 @@ async function flash(options: FlashOptions = {}): Promise<void> {
         const flashSuite: Array<{ fn: () => void, delay: number }> = []
         flashSuite.push({
             fn: () => {
+                audioObj.silence[0].play()
+            },
+            delay: 0,
+        })
+        flashSuite.push({
+            fn: () => {
                 playSound.play()
             },
             delay: beforeBeepTime - requestParam.offset,
