@@ -7,7 +7,7 @@ import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
 import { audioObj, isMuted } from "./sound/sound.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
-import { changeMode, type FlashParamSet } from "./flash/flashParamSet.js"
+import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
 import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
 import { flashParamElements } from "./dom/flashParamElements.js"
@@ -28,9 +28,7 @@ import {
     switchInputAnswerBoxTab,
     versionNumber
 } from "./dom/htmlElement.js"
-import { type FlashMode } from "./globals.js"
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
-import { PlaySoundCreator } from "./sound/playSound.js"
 import { getFlashSuite } from "./flash/flashSuite.js"
 import { measuredTime } from "./flash/measuredTime.js"
 
@@ -156,54 +154,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
         }
     }
 
-    const getToggleNumberFunctions = (numbersToDisplay: string[]): Array<() => void> => {
-        /**
-         * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
-         * @param {string[]} fmtNumbers 整形された数字の配列
-         * @returns {string[]} 点滅も含めた数字の表示順の配列
-         */
-        function generateToggleNumberSuite(fmtNumbers: string[]): string[] {
-            const toggleNumberSuite: string[] = []
-            for (let i = 0; i < fmtNumbers.length; i++) {
-                toggleNumberSuite.push(fmtNumbers[i])
-                toggleNumberSuite.push("")
-            }
-            return toggleNumberSuite
-        }
-
-        const result: Array<() => void> = []
-        const toggleNumberSuite = generateToggleNumberSuite(numbersToDisplay)
-        for (const [i, toggleNumber] of toggleNumberSuite.entries()) {
-            if (i === 0) {
-                result.push(() => {
-                    measuredTime.start = getTime()
-                    questionNumberArea.innerText = toggleNumber
-                })
-            } else if (i === toggleNumberSuite.length - 1) {
-                result.push(() => {
-                    questionNumberArea.innerText = toggleNumber
-                    measuredTime.end = getTime()
-                })
-            } else {
-                result.push(() => {
-                    questionNumberArea.innerText = toggleNumber
-                })
-            }
-        }
-        return result
-    }
-
-    const getToggleTimings = (requestParam: FlashParamSet<FlashMode>): number[] => {
-        const result: number[] = []
-        for (let i = 0; i < requestParam.length * 2; i++) {
-            result.push(requestParam.time *
-                (Math.floor(i / 2) * 100 + requestParam.flashRate * (i % 2)) /
-                ((requestParam.length - 1) * 100 + requestParam.flashRate)
-            )
-        }
-        return result
-    }
-
     // ここからフラッシュ出題の処理
     const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
@@ -212,29 +162,22 @@ async function flash(options: FlashOptions = {}): Promise<void> {
         }
         options.allowUnknownDifficulty = true
     }
-    // 設定を取得する
+
+    // 出題するフラッシュ
     const question = flashQuestionCreator.create(options)
-    const requestParam = question.paramSet
-    const numbersToDisplay = question.flash.numbers.toDisplay()
-    const flashAnswer = question.flash.answer
+
+    // フラッシュ音声と表示タイミング
+    const flashSuite = await getFlashSuite({
+        soundExtension: flashParamElements.common.soundExtension.valueV1,
+        paramSet: question.paramSet,
+        prepareAnswerInputFunc: getPrepareAnswerInputFunc(question.flash.answer),
+        numbersToDisplay: question.flash.numbers.toDisplay(),
+    })
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = ""
     questionNumberArea.innerText = ""
     button.numberHistory.disabled = true
-
-    // フラッシュ音声と表示タイミングの作成
-    const beforeBeepTime = 500
-    const beepInterval = 875
-    const flashStartTiming = beforeBeepTime + beepInterval * 2
-    const toggleTimings = getToggleTimings(requestParam)
-    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
-    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer)
-    const playSound = await new PlaySoundCreator().create({
-        extension: flashParamElements.common.soundExtension.valueV1,
-        beepInterval,
-        toggleTimings,
-    })
 
     const start = getTime()
 
@@ -256,16 +199,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     }
 
     // Register flash events
-    const flashSuite = getFlashSuite({
-        playSound,
-        beforeBeepTime,
-        requestParam,
-        toggleNumberFunctions,
-        flashStartTiming,
-        toggleTimings,
-        prepareAnswerInputFunc,
-    })
-
     disableHtmlButtons()
     setFullscreenMode(true)
     noticeArea.innerText = ""

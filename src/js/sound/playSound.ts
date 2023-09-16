@@ -31,11 +31,11 @@ export class PlaySoundCreator {
     }
 
     async create(props: {
-        extension: SoundExtension
+        soundExtension: SoundExtension
         beepInterval: number
         toggleTimings: number[]
     }): Promise<PlaySound> {
-        const [beepAudioBuffer, tickAudioBuffer]: Array<[AudioBuffer, AudioBuffer]> = await getAudioBuffers(props.extension)
+        const [beepAudioBuffer, tickAudioBuffer]: Array<[AudioBuffer, AudioBuffer]> = await getAudioBuffers(props.soundExtension)
 
         const audios: AudioBuffer[] = []
         audios.push(this.crunker.padAudio(beepAudioBuffer, 0, 0))
