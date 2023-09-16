@@ -4,21 +4,26 @@ import { fileURLToPath } from "url"
 import path from "path"
 import { type AudioPath, soundExtension, type SoundExtension } from "../src/js/globals.js"
 import * as fs from "fs"
+import { ESLint } from "eslint"
 
 const filename = fileURLToPath(import.meta.url)
-const soundsPath = `${path.dirname(path.dirname(filename))}/src/sounds`
-const publicSoundsPath = `${path.dirname(path.dirname(filename))}/src/public/sounds`
+const rootPath = path.dirname(path.dirname(filename))
+const publicSoundsPath = `${rootPath}/src/public/sounds`
 
 // FIXME: types が format=howler2 に対応していないため、型を上書きして暫定対応
 function getOpts(extension: SoundExtension): Omit<audiosprite.Option, "format"> & { format: audiosprite.ExportType | "howler2" } {
     return {
         output: `${publicSoundsPath}/flash_audiosprite`,
-        path: "public/sounds",
+        path: "sounds",
         export: extension,
         format: "howler2",
         log: "debug",
         channels: 2,
     }
+}
+
+function capitalize(string: string): string {
+    return string.charAt(0).toUpperCase() + string.slice(1)
 }
 
 (() => {
@@ -40,13 +45,28 @@ function getOpts(extension: SoundExtension): Omit<audiosprite.Option, "format"> 
     for (const ext of soundExtension) {
         const opts = getOpts(ext)
         // FIXME: 型を上書きして暫定対応
-        audiosprite(targetFiles[ext], opts as audiosprite.Option, function (err: Error | null, obj: audiosprite.Result) {
+        audiosprite(targetFiles[ext], opts as audiosprite.Option, function (err: Error | null, obj: audiosprite.Result): void {
             if (err !== null) {
                 console.error(err)
                 return
             }
 
-            fs.writeFileSync(`${soundsPath}/${opts.format}_${ext}.json`, JSON.stringify(obj, null, 2), { encoding: "utf-8" })
+            const basename = `${opts.format}Option${capitalize(ext)}`
+            const filepath = `${rootPath}/src/js/lib/${basename}.ts`
+            const data = `
+import { type HowlOptions } from "howler"
+
+export const ${basename}: HowlOptions = ${JSON.stringify(obj, null, 2)}
+`.trim()
+            fs.writeFileSync(filepath, data, { encoding: "utf-8" })
+
+            // lint
+            const eslint = new ESLint({ fix: true })
+            void eslint.lintFiles(filepath).then(async results => {
+                await ESLint.outputFixes(results)
+            }).then(() => {
+                console.log(`lint completed: ${filepath}`)
+            })
         })
     }
 })()
