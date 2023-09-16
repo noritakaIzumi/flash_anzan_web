@@ -52,16 +52,11 @@ class AudioObj implements AudioObjInterface {
     private readonly _silence: Howl[] = new Array(1)
 
     load(extension: SoundExtension): void {
-        let timeoutMs = 100
         let audioPath: AudioPath
         audioObjKey.forEach(name => {
             audioPath = `${audioAttr.directory}/${name}.${extension}`
             for (let i = 0; i < this[name].length; i++) {
                 this[name][i] = new Howl({ src: [audioPath] })
-                setTimeout(() => {
-                    this[name][i].load()
-                }, timeoutMs)
-                timeoutMs += 50
             }
         })
         void initAudioBuffers(extension, "beep")
