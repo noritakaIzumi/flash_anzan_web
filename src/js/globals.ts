@@ -52,5 +52,5 @@ export type SoundExtension = typeof soundExtension[number]
 
 export const audioObjKey = ["beep", "tick", "answer", "correct", "incorrect", "silence"] as const
 export type AudioObjKey = typeof audioObjKey[number]
-export type AudioFilename = `${AudioObjKey}.${SoundExtension}`
-export type AudioPath = `${string}/${AudioFilename}`
+export type AudioFilename<T extends SoundExtension> = `${AudioObjKey}.${T}`
+export type AudioPath<T extends SoundExtension = SoundExtension> = `${string}/${AudioFilename<T>}`
