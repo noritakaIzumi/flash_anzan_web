@@ -64,6 +64,8 @@ export class PlaySoundCreator {
     }
 }
 
+export const playSoundCreator = new PlaySoundCreator()
+
 export class PlaySound {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error

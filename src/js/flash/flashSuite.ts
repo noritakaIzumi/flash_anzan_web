@@ -1,5 +1,5 @@
 import { audioObj, type SoundExtension } from "../sound/sound.js"
-import { PlaySoundCreator } from "../sound/playSound.js"
+import { playSoundCreator } from "../sound/playSound.js"
 import { type FlashParamSet } from "./flashParamSet.js"
 import { type FlashMode } from "../globals.js"
 import { measuredTime } from "./measuredTime.js"
@@ -77,8 +77,8 @@ export async function getFlashSuite({
 }: GetFlashSuiteParams): Promise<FlashSuite> {
     const toggleTimings = getToggleTimings(paramSet)
     const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
-    const beepSound = await new PlaySoundCreator().createBeep({ soundExtension, beepInterval, beepCount })
-    const tickSound = await new PlaySoundCreator().createTick({ soundExtension, toggleTimings })
+    const beepSound = await playSoundCreator.createBeep({ soundExtension, beepInterval, beepCount })
+    const tickSound = await playSoundCreator.createTick({ soundExtension, toggleTimings })
 
     const flashSuite: FlashSuite = []
     flashSuite.push({
