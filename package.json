@@ -34,6 +34,7 @@
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
     "build:complexity_map": "ts-node tools/createComplexityThresholdMap.ts",
+    "build:sound": "ts-node tools/combineSounds.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --fix './**/*.{js,ts}'",
     "update-version": "npm i --package-lock-only"

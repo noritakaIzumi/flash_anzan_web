@@ -12,7 +12,7 @@ const publicSoundsPath = `${path.dirname(path.dirname(filename))}/src/public/sou
 // FIXME: types が format=howler2 に対応していないため、型を上書きして暫定対応
 function getOpts(extension: SoundExtension): Omit<audiosprite.Option, "format"> & { format: audiosprite.ExportType | "howler2" } {
     return {
-        output: `${publicSoundsPath}/flash`,
+        output: `${publicSoundsPath}/flash_audiosprite`,
         path: "public/sounds",
         export: extension,
         format: "howler2",
@@ -40,13 +40,13 @@ function getOpts(extension: SoundExtension): Omit<audiosprite.Option, "format"> 
     for (const ext of soundExtension) {
         const opts = getOpts(ext)
         // FIXME: 型を上書きして暫定対応
-        audiosprite(targetFiles[ext], opts as audiosprite.Option, function (err: Error, obj: audiosprite.Result) {
-            if (err) {
+        audiosprite(targetFiles[ext], opts as audiosprite.Option, function (err: Error | null, obj: audiosprite.Result) {
+            if (err !== null) {
                 console.error(err)
                 return
             }
 
-            fs.writeFileSync(`${soundsPath}/${opts.format}_${ext}.json`, JSON.stringify(obj, null, 2), {encoding: "utf-8"})
+            fs.writeFileSync(`${soundsPath}/${opts.format}_${ext}.json`, JSON.stringify(obj, null, 2), { encoding: "utf-8" })
         })
     }
 })()
