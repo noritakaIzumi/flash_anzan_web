@@ -84,7 +84,7 @@ export async function getFlashSuite({
     const flashSuite: FlashSuite = []
     flashSuite.push({
         fn: () => {
-            audioObj.silence[0].play()
+            audioObj.play("silence")
         },
         delay: 0,
     })

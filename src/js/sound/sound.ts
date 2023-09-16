@@ -13,43 +13,16 @@ export function isMuted(): boolean {
 const audioObjKey = ["beep", "tick", "answer", "correct", "incorrect", "silence"] as const
 export type AudioObjKey = typeof audioObjKey[number]
 
-type AudioObjInterface = {
-    [key in AudioObjKey]: Howl[]
-}
 export type AudioFilename = `${AudioObjKey}.${SoundExtension}`
 export type AudioPath = `${string}/${AudioFilename}`
 
-class AudioObj implements AudioObjInterface {
-    get beep(): Howl[] {
-        return this._beep
-    }
-
-    get tick(): Howl[] {
-        return this._tick
-    }
-
-    get answer(): Howl[] {
-        return this._answer
-    }
-
-    get correct(): Howl[] {
-        return this._correct
-    }
-
-    get incorrect(): Howl[] {
-        return this._incorrect
-    }
-
-    get silence(): Howl[] {
-        return this._silence
-    }
-
-    private readonly _beep: Howl[] = new Array(0)
-    private readonly _tick: Howl[] = new Array(0)
-    private readonly _answer: Howl[] = new Array(1)
-    private readonly _correct: Howl[] = new Array(1)
-    private readonly _incorrect: Howl[] = new Array(1)
-    private readonly _silence: Howl[] = new Array(1)
+class AudioObj {
+    private readonly beep: Howl[] = new Array(0)
+    private readonly tick: Howl[] = new Array(0)
+    private readonly answer: Howl[] = new Array(1)
+    private readonly correct: Howl[] = new Array(1)
+    private readonly incorrect: Howl[] = new Array(1)
+    private readonly silence: Howl[] = new Array(1)
 
     load(extension: SoundExtension): void {
         let audioPath: AudioPath
@@ -61,6 +34,19 @@ class AudioObj implements AudioObjInterface {
         })
         void initAudioBuffers(extension, "beep")
         void initAudioBuffers(extension, "tick")
+    }
+
+    play(name: AudioObjKey): void {
+        switch (name) {
+            case "answer":
+            case "correct":
+            case "incorrect":
+            case "silence":
+                this[name][0].play()
+                break
+            default:
+                throw new Error(`The sound "${name}" cannot play directly`)
+        }
     }
 }
 

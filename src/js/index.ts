@@ -5,7 +5,7 @@ import { type FlashAnswer } from "./flash/flashNumbers.js"
 import { getTime } from "./time.js"
 import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
-import { audioObj, isMuted } from "./sound/sound.js"
+import { audioObj, type AudioObjKey, isMuted } from "./sound/sound.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
 import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
@@ -56,19 +56,19 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
             button.repeat.disabled = true
             if (!isMuted()) {
-                audioObj.answer[0].play()
+                audioObj.play("answer")
             }
 
             setTimeout(() => {
-                let resultAudio: Howl
+                let resultAudioObj: AudioObjKey
                 if (numberStr === answer.toString()) {
-                    resultAudio = audioObj.correct[0]
+                    resultAudioObj = "correct"
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`
                 } else if (numberStr.length > 0) {
-                    resultAudio = audioObj.incorrect[0]
+                    resultAudioObj = "incorrect"
                     headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`
                 } else {
-                    resultAudio = audioObj.silence[0]
+                    resultAudioObj = "silence"
                     headerMessage.innerText = "答え\n"
                 }
                 {
@@ -79,7 +79,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                 }
                 questionNumberArea.innerText = answer.toDisplay()
                 if (!isMuted()) {
-                    resultAudio.play()
+                    audioObj.play(resultAudioObj)
                 }
 
                 enableHtmlButtons()
