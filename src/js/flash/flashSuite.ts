@@ -1,6 +1,6 @@
-import { audioObj, type SoundExtension } from "../sound/sound.js"
+import { audioObj } from "../sound/sound.js"
 import { type FlashParamSet } from "./flashParamSet.js"
-import { type FlashMode } from "../globals.js"
+import { type FlashMode, type SoundExtension } from "../globals.js"
 import { measuredTime } from "./measuredTime.js"
 import { getTime } from "../time.js"
 import { questionNumberArea } from "../dom/htmlElement.js"

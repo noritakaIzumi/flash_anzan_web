@@ -5,7 +5,7 @@ import { type FlashAnswer } from "./flash/flashNumbers.js"
 import { getTime } from "./time.js"
 import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
-import { audioObj, type AudioObjKey, isMuted } from "./sound/sound.js"
+import { audioObj, isMuted } from "./sound/sound.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
 import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
@@ -31,6 +31,7 @@ import {
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
 import { getFlashSuite } from "./flash/flashSuite.js"
 import { measuredTime } from "./flash/measuredTime.js"
+import { type AudioObjKey } from "./globals.js"
 
 interface SetFlashTimeOutHandle {
     value?: number

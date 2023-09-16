@@ -1,5 +1,11 @@
-import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from "../globals.js"
-import { audioObj, soundExtension, type SoundExtension } from "../sound/sound.js"
+import {
+    flashDifficulty,
+    type FlashDifficulty,
+    savedParamsKeyName,
+    soundExtension,
+    type SoundExtension
+} from "../globals.js"
+import { audioObj } from "../sound/sound.js"
 import { button, modals } from "../dom/htmlElement.js"
 import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {

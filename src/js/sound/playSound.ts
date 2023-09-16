@@ -1,5 +1,4 @@
-import { type AudioObjKey, type AudioPath, type SoundExtension } from "./sound.js"
-import { audioAttr } from "../globals.js"
+import { audioAttr, type AudioObjKey, type AudioPath, type SoundExtension } from "../globals.js"
 import { getCrunkerInstance } from "./crunker.js"
 
 const audioBuffersRegistry: { [ext in SoundExtension]: { [name in AudioObjKey]?: AudioBuffer } } = {
