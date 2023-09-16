@@ -1,12 +1,12 @@
 {
   "name": "flash-anzan",
-  "version": "0.24.2",
+  "version": "0.24.3",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "flash-anzan",
-      "version": "0.24.2",
+      "version": "0.24.3",
       "license": "MIT",
       "dependencies": {
         "bootstrap": "^5.1.3",
