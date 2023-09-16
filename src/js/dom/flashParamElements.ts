@@ -7,7 +7,8 @@ import {
     FlashTimeParam
 } from "../flash/flashParams.js"
 import { button, getHtmlElement } from "./htmlElement.js"
-import { flashParamSchema } from "../flash/flashParamSchema.js"
+
+import { flashParamSchema } from "../../config/flashParamSchema.js"
 
 export interface FlashParamElements {
     addition: {

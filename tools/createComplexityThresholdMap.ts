@@ -7,7 +7,8 @@ import {
 import * as fs from "fs"
 import * as path from "path"
 import { fileURLToPath } from "url"
-import { flashParamSchema } from "../src/js/flash/flashParamSchema.js"
+
+import { flashParamSchema } from "../src/config/flashParamSchema.js"
 
 function getRank(numbers: number[], threshold: Threshold): ComplexityThreshold {
     const half = (numbers.length / 2) | 0
