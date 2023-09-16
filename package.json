@@ -19,6 +19,7 @@
     "@types/howler": "^2.2.8",
     "@types/jsdom": "^21.1.2",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "audiosprite": "^0.7.2",
     "eslint": "^8.49.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
     "eslint-plugin-import": "^2.28.1",
