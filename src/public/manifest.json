@@ -1,7 +1,7 @@
 {
-  "name": "フラッシュ暗算",
-  "short_name": "Flash Anzan",
-  "description": "数字光ってるのかっこいいでしょ",
+  "name": "おーろら★ふらっしゅ",
+  "short_name": "Aurora Flash",
+  "description": "連続で表示される数字を足し算するゲーム",
   "start_url": "./",
   "id": "./",
   "display": "fullscreen",
