@@ -4,7 +4,7 @@
   "description": "数字光ってるのかっこいいでしょ",
   "start_url": "./",
   "id": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
   "background_color": "black",
   "theme_color": "limegreen",
