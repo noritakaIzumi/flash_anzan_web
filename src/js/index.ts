@@ -283,6 +283,7 @@ function clearInputAnswerBox(): void {
                 },
                 configureModalFocusing,
                 () => {
+                    button.quit.disabled = false
                     button.help.disabled = false
                     button.openCommonMoreConfig.disabled = false
                     button.loadParams.disabled = false
@@ -403,6 +404,13 @@ function clearInputAnswerBox(): void {
                 numberHistoryDisplay.innerHTML = latestHistory.numberHistory.toDisplay().join("<br>")
                 answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
                 new bootstrap.Modal(modals.number_history).show()
+            })
+
+            // 終了ボタン
+            button.quit.addEventListener("click", () => {
+                if (confirm("終了しますか？")) {
+                    window.close()
+                }
             })
         })()
 
