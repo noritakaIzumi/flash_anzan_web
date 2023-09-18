@@ -264,7 +264,7 @@ function warmUpDisplayArea(timeoutMs: number): number {
 
 function clearInputAnswerBox(): void {
     inputAnswerBox.value = ""
-    inputAnswerBoxTouchDisplay.innerText = ""
+    inputAnswerBoxTouchDisplay.value = ""
     inputAnswerBoxTouchActual.value = ""
 }
 
@@ -308,7 +308,7 @@ function clearInputAnswerBox(): void {
             function updateInput(value: string): void {
                 const actualValue = value.trim().replace(/^0+$/, "0").replace(/^0+([1-9]+)$/, "$1")
                 inputAnswerBoxTouchActual.value = actualValue
-                inputAnswerBoxTouchDisplay.innerText = actualValue.split("").reverse().map((digit, i) => {
+                inputAnswerBoxTouchDisplay.value = actualValue.split("").reverse().map((digit, i) => {
                     return i > 0 && i % 3 === 0 ? `${digit},` : digit
                 }).reverse().join("")
             }
