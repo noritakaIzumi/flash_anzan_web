@@ -269,8 +269,6 @@ function clearInputAnswerBox(): void {
 }
 
 (() => {
-    // バージョン番号
-    const version = APP_VERSION
     const warmupDelay = 1000
 
     const setup = (): void => {
@@ -353,7 +351,7 @@ function clearInputAnswerBox(): void {
 
         // バージョン番号の表示
         (() => {
-            versionNumber.innerText = version
+            versionNumber.innerText = APP_VERSION
         })();
 
         // set onclick events in index.html
