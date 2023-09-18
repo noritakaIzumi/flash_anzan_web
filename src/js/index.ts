@@ -407,6 +407,11 @@ function clearInputAnswerBox(): void {
                 new bootstrap.Modal(modals.number_history).show()
             })
         })()
+
+        // フラッシュ出題エリアの選択を禁止する
+        calculateArea.addEventListener("selectstart", (event) => {
+            event.preventDefault()
+        })
     };
 
     (() => {
