@@ -407,10 +407,8 @@ function clearInputAnswerBox(): void {
             })
 
             // 終了ボタン
-            button.quit.addEventListener("click", () => {
-                if (confirm("終了しますか？")) {
-                    window.close()
-                }
+            button.doQuit.addEventListener("click", () => {
+                window.close()
             })
         })()
 

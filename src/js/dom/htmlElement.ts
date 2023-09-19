@@ -37,6 +37,7 @@ export const button = {
     },
     isMuted: getHtmlElement("input", "is-muted-button"),
     quit: getHtmlElement("button", "quit-button"),
+    doQuit: getHtmlElement("button", "do-quit-button"),
 }
 export const disableConfigTarget = [
     button.start,

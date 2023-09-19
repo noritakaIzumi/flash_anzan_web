@@ -67,7 +67,8 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
-            <button type="button" id="quit-button" class="btn btn-outline-danger me-2" disabled>
+            <button type="button" id="quit-button" class="btn btn-outline-danger me-2"
+                    data-bs-toggle="modal" data-bs-target="#comfirmQuitModal" disabled>
                 <i class="bi bi-x"></i><span class="ps-2">終了</span>
             </button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
@@ -515,6 +516,24 @@
                     </tr>
                     </tfoot>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Confirm to quit -->
+<div class="modal" id="comfirmQuitModal" tabindex="-1" aria-labelledby="comfirmQuitModalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Flash Anzan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>終了しますか？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
+                <button type="button" id="do-quit-button" class="btn btn-primary" data-bs-dismiss="modal">はい</button>
             </div>
         </div>
     </div>
