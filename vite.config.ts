@@ -14,6 +14,7 @@ export default defineConfig({
     base: "",
     define: {
         APP_VERSION: `"${appVersion}"`,
+        APP_NAME: "\"おーろら★ふらっしゅ\"",
     },
     build: {
         outDir: "../dist",

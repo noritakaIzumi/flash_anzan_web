@@ -418,18 +418,34 @@ function clearInputAnswerBox(): void {
         })
     };
 
+    // autoload
     (() => {
-        const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")
-        if (button == null) {
-            throw new Error("element not found: modal footer button")
-        }
+        // アプリ名を埋め込む
+        (() => {
+            const titleElement = document.querySelector("title")
+            if (titleElement === null) {
+                throw new Error("element not found: title")
+            }
+            titleElement.textContent = APP_NAME
+            document.querySelectorAll(".app-name-embedded").forEach(element => {
+                element.textContent = APP_NAME
+            })
+        })();
 
-        button.addEventListener("click", setup)
-        const welcomeModal = new bootstrap.Modal(modals.welcome, {
-            backdrop: "static",
-            keyboard: false,
-            focus: true,
-        })
-        welcomeModal.show()
+        // setup welcome modal
+        (() => {
+            const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")
+            if (button == null) {
+                throw new Error("element not found: modal footer button")
+            }
+
+            button.addEventListener("click", setup)
+            const welcomeModal = new bootstrap.Modal(modals.welcome, {
+                backdrop: "static",
+                keyboard: false,
+                focus: true,
+            })
+            welcomeModal.show()
+        })()
     })()
 })()
