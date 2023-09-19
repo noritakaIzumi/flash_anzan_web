@@ -8,10 +8,10 @@ const appVersion = (() => {
     return `v${body.version}`
 })()
 
-const appName = (() => {
+const [appName, appDescription] = (() => {
     const json = fs.readFileSync(path.resolve(__dirname) + "/src/public/manifest.json")
-    const body = JSON.parse(json.toString()) as { name: string }
-    return `${body.name}`
+    const body = JSON.parse(json.toString()) as { name: string, description: string }
+    return [body.name, body.description]
 })()
 
 // noinspection JSUnusedGlobalSymbols
@@ -21,6 +21,7 @@ export default defineConfig({
     define: {
         APP_VERSION: `"${appVersion}"`,
         APP_NAME: `"${appName}"`,
+        APP_DESCRIPTION: `"${appDescription}"`,
     },
     build: {
         outDir: "../dist",

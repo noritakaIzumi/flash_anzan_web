@@ -420,7 +420,7 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
-        // アプリ名を埋め込む
+        // embed app name and description
         (() => {
             const titleElement = document.querySelector("title")
             if (titleElement === null) {
@@ -430,6 +430,12 @@ function clearInputAnswerBox(): void {
             document.querySelectorAll(".app-name-embedded").forEach(element => {
                 element.textContent = APP_NAME
             })
+
+            const descriptionElement = document.getElementsByTagName("meta").namedItem("description")
+            if (descriptionElement === null) {
+                throw new Error("element not found: meta description")
+            }
+            descriptionElement.textContent = APP_DESCRIPTION
         })();
 
         // setup welcome modal
