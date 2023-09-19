@@ -25,8 +25,7 @@ import {
     numberHistoryDisplay,
     type ParamsModalOperation,
     questionNumberArea,
-    switchInputAnswerBoxTab,
-    versionNumber
+    switchInputAnswerBoxTab
 } from "./dom/htmlElement.js"
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
 import { getFlashSuite } from "./flash/flashSuite.js"
@@ -350,11 +349,6 @@ function clearInputAnswerBox(): void {
             })
         })();
 
-        // バージョン番号の表示
-        (() => {
-            versionNumber.innerText = APP_VERSION
-        })();
-
         // set onclick events in index.html
         (() => {
             // フラッシュ操作
@@ -420,24 +414,6 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
-        // embed app name and description
-        (() => {
-            const titleElement = document.querySelector("title")
-            if (titleElement === null) {
-                throw new Error("element not found: title")
-            }
-            titleElement.textContent = APP_NAME
-            document.querySelectorAll(".app-name-embedded").forEach(element => {
-                element.textContent = APP_NAME
-            })
-
-            const descriptionElement = document.getElementsByTagName("meta").namedItem("description")
-            if (descriptionElement === null) {
-                throw new Error("element not found: meta description")
-            }
-            descriptionElement.textContent = APP_DESCRIPTION
-        })();
-
         // setup welcome modal
         (() => {
             const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")

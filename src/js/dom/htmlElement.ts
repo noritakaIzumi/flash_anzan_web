@@ -13,7 +13,6 @@ export const inputAnswerBox = getHtmlElement("input", "input-answer-box")
 export const inputAnswerBoxTouchDisplay = getHtmlElement("input", "input-answer-box-touch-display")
 export const inputAnswerBoxTouchActual = getHtmlElement("input", "input-answer-box-touch-actual")
 export const noticeArea = getHtmlElement("p", "notice-area")
-export const versionNumber = getHtmlElement("span", "version-number")
 export const button = {
     loadParams: getHtmlElement("button", "load-params-button"),
     doLoadParams: getHtmlElement("button", "do-load-params"),

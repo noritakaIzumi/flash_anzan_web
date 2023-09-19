@@ -1,6 +1,7 @@
 import { defineConfig } from "vite"
 import * as path from "path"
 import * as fs from "fs"
+import { createHtmlPlugin } from "vite-plugin-html"
 
 const appVersion = (() => {
     const json = fs.readFileSync(path.resolve(__dirname) + "/package.json")
@@ -18,11 +19,6 @@ const [appName, appDescription] = (() => {
 export default defineConfig({
     root: path.resolve(__dirname, "src"),
     base: "",
-    define: {
-        APP_VERSION: `"${appVersion}"`,
-        APP_NAME: `"${appName}"`,
-        APP_DESCRIPTION: `"${appDescription}"`,
-    },
     build: {
         outDir: "../dist",
         rollupOptions: {
@@ -33,6 +29,18 @@ export default defineConfig({
             },
         },
     },
+    plugins: [
+        createHtmlPlugin({
+            minify: true,
+            inject: {
+                data: {
+                    title: appName,
+                    description: appDescription,
+                    versionNumber: appVersion,
+                },
+            },
+        }),
+    ],
     css: {
         devSourcemap: true,
     },

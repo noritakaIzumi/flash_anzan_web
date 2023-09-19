@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title><!-- Set when build -->
+    <title><%- title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-    <meta name="description" content=""><!-- Set when build -->
+    <meta name="description" content="<%- description %>">
     <meta name="theme-color" content="limegreen">
     <!--icons-->
     <meta name="msapplication-square70x70logo" content="favicons/site-tile-70x70.png">
@@ -232,7 +232,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <span id="version-number" class="text-light"></span>
+        <span id="version-number" class="text-light"><%- versionNumber %></span>
     </div>
 </div>
 
@@ -242,7 +242,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="welcomeModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="welcomeModalLabel"><%- title %></h5>
             </div>
             <div class="modal-body">
                 <p>ようこそ！準備ができたら「はじめる」をクリックしてください。</p>
@@ -319,7 +319,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsConfirmModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="loadParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -339,7 +339,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsCompletedModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="loadParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -353,7 +353,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsConfirmModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="saveParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -373,7 +373,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsCompletedModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="saveParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -387,7 +387,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsConfirmModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="deleteParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -407,7 +407,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsCompletedModalLabel"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title" id="deleteParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -525,7 +525,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><span class="app-name-embedded"></span></h5>
+                <h5 class="modal-title"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
