@@ -1,7 +1,7 @@
 {
-  "name": "flash-anzan",
+  "name": "aurora-flash",
   "version": "0.26.0",
-  "description": "フラッシュ暗算で脳を鍛えよう",
+  "description": "フラッシュ暗算",
   "type": "module",
   "dependencies": {
     "bootstrap": "^5.1.3",

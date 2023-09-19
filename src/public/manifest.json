@@ -1,7 +1,7 @@
 {
   "name": "おーろら★ふらっしゅ",
-  "short_name": "Aurora Flash",
-  "description": "連続で表示される数字を足し算するゲーム",
+  "short_name": "フラッシュ暗算",
+  "description": "フラッシュ暗算。連続で表示される数字を計算するゲームです。",
   "start_url": "./",
   "id": "./",
   "display": "fullscreen",
