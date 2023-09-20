@@ -249,15 +249,6 @@ function clearInputAnswerBox(): void {
                     changeMode("addition")
                 },
                 configureModalFocusing,
-                () => {
-                    button.quit.disabled = false
-                    button.help.disabled = false
-                    button.openCommonMoreConfig.disabled = false
-                    button.loadParams.disabled = false
-                    button.saveParams.disabled = false
-                    button.deleteParams.disabled = false
-                    button.start.disabled = false
-                },
                 registerShortcuts,
             ]
             prepareGameFunctions.forEach((func) => {
