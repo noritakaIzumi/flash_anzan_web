@@ -202,7 +202,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     disableHtmlButtons()
     setFullscreenMode(true)
     noticeArea.innerText = ""
-    warmUpDisplayArea(0)
     for (const flashSuiteElement of flashSuite) {
         setFlashTimeOut(flashSuiteElement.fn, flashSuiteElement.delay)
     }
@@ -232,35 +231,6 @@ function configureModalFocusing(): void {
     })
 }
 
-/**
- * 表示エリアのウォーミングアップ。
- * フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく。
- * @param {number} timeoutMs
- * @returns {number}
- */
-function warmUpDisplayArea(timeoutMs: number): number {
-    const currentNumberColor = questionNumberArea.style.color
-    const prepareGameFunctions = [
-        () => {
-            questionNumberArea.style.color = "black"
-        },
-        () => {
-            questionNumberArea.innerText = "0"
-        },
-        () => {
-            questionNumberArea.innerText = ""
-        },
-        () => {
-            questionNumberArea.style.color = currentNumberColor
-        },
-    ]
-    prepareGameFunctions.forEach((func) => {
-        setTimeout(func, timeoutMs)
-        timeoutMs += 50
-    })
-    return timeoutMs
-}
-
 function clearInputAnswerBox(): void {
     inputAnswerBox.value = ""
     inputAnswerBoxTouchDisplay.value = ""
@@ -268,14 +238,12 @@ function clearInputAnswerBox(): void {
 }
 
 (() => {
-    const warmupDelay = 1000
-
     const setup = (): void => {
         audioObj.load(flashParamElements.common.soundExtension.valueV1);
 
         // ページ読み込み時処理
         (() => {
-            let timeoutMs = warmUpDisplayArea(warmupDelay)
+            let timeoutMs = 0
             const prepareGameFunctions = [
                 () => {
                     changeMode("addition")
