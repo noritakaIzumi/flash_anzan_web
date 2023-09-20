@@ -416,16 +416,32 @@ function clearInputAnswerBox(): void {
     (() => {
         // setup welcome modal
         (() => {
-            const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")
+            const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
             if (button == null) {
                 throw new Error("element not found: modal footer button")
             }
-
-            button.addEventListener("click", setup)
+            const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
+            if (spinner === null) {
+                throw new Error("element not found: button spinner")
+            }
+            const text = button.querySelector<HTMLSpanElement>(".button-text")
+            if (text === null) {
+                throw new Error("element not found: button text")
+            }
             const welcomeModal = new bootstrap.Modal(modals.welcome, {
                 backdrop: "static",
                 keyboard: false,
                 focus: true,
+            })
+
+            button.addEventListener("click", () => {
+                button.disabled = true
+                // keep button width
+                button.style.width = getComputedStyle(button).width
+                spinner.classList.remove("d-none")
+                text.classList.add("d-none")
+                setup()
+                welcomeModal.hide()
             })
             welcomeModal.show()
         })()
