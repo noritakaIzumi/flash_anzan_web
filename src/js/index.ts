@@ -243,19 +243,9 @@ function clearInputAnswerBox(): void {
 
         // ページ読み込み時処理
         (() => {
-            let timeoutMs = 0
-            const prepareGameFunctions = [
-                () => {
-                    changeMode("addition")
-                },
-                configureModalFocusing,
-                registerShortcuts,
-            ]
-            prepareGameFunctions.forEach((func) => {
-                setTimeout(func, timeoutMs)
-                timeoutMs += 50
-            })
-
+            changeMode("addition")
+            configureModalFocusing()
+            registerShortcuts()
             if (isTouchDevice()) {
                 button.help.style.display = "none"
             }
