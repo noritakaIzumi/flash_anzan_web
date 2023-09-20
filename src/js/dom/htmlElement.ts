@@ -78,3 +78,7 @@ export const modals: {
     input_answer: getHtmlElement("div", "inputAnswerModal"),
     number_history: getHtmlElement("div", "numberHistoryModal"),
 }
+export const fonts = {
+    abacus: getHtmlElement("link", "preload-font--abacus"),
+    kosugimaru: getHtmlElement("link", "preload-font--kosugimaru"),
+}

@@ -31,6 +31,8 @@ import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
 import { getFlashSuite } from "./flash/flashSuite.js"
 import { measuredTime } from "./flash/measuredTime.js"
 import { type AudioObjKey } from "./globals.js"
+import { waitLoaded } from "./loadStatusManager.js"
+import { waitSoundsAndFontsLoadedTimeout } from "../config/timeout.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -238,7 +240,9 @@ function clearInputAnswerBox(): void {
 }
 
 (() => {
-    const setup = (): void => {
+    const setup = async (): Promise<void> => {
+        const waitLoadedPromise = waitLoaded(waitSoundsAndFontsLoadedTimeout)
+
         audioObj.load(flashParamElements.common.soundExtension.valueV1);
 
         // ページ読み込み時処理
@@ -359,6 +363,8 @@ function clearInputAnswerBox(): void {
         calculateArea.addEventListener("selectstart", (event) => {
             event.preventDefault()
         })
+
+        await waitLoadedPromise
     };
 
     // autoload
@@ -390,7 +396,15 @@ function clearInputAnswerBox(): void {
                 spinner.classList.remove("d-none")
                 text.classList.add("d-none")
                 setup()
-                welcomeModal.hide()
+                    .then(_ => {
+                        welcomeModal.hide()
+                    })
+                    .catch(_ => {
+                        alert("フォント・音声の読み込みに失敗しました。")
+                        if (confirm("もう一度読み込みますか？")) {
+                            location.reload()
+                        }
+                    })
             })
             welcomeModal.show()
         })()

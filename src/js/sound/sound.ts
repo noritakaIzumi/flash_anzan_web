@@ -4,6 +4,7 @@ import { flashParamElements } from "../dom/flashParamElements.js"
 import { initAudioBuffers } from "./playSound.js"
 import { howler2OptionWav } from "../lib/howler2OptionWav.js"
 import { howler2OptionOgg } from "../lib/howler2OptionOgg.js"
+import { loadStatusManager } from "../loadStatusManager.js"
 
 export function isMuted(): boolean {
     return flashParamElements.common.isMuted.valueV1
@@ -18,6 +19,7 @@ const howlOptions: { [ext in SoundExtension]: HowlOptions } = {
 function getHowl(extension: SoundExtension): Howl {
     if (howlStore[extension] === undefined) {
         howlStore[extension] = new Howl(howlOptions[extension])
+        loadStatusManager.markAsLoaded("sound")
     }
     return howlStore[extension] as Howl
 }
