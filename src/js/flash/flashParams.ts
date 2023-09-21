@@ -104,7 +104,7 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     }
 }
 
-export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputElement, FlashNumberParamWithDifficultySupportSchema, number> {
+export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelectElement, FlashNumberParamWithDifficultySupportSchema, number> {
     get valueV1(): number {
         return Number(this.htmlElement.value)
     }
@@ -122,21 +122,25 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputE
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement
+        htmlElement: HTMLSelectElement
         schema: FlashNumberParamWithDifficultySupportSchema
     }) {
         super(props)
         this.valueV1 = this.schema.default
-        this.htmlElement.max = String(this.schema.max)
-        this.htmlElement.min = String(this.schema.min)
-        setupInputElementForTouch(this.htmlElement)
+        for (let i = this.schema.min; i <= this.schema.max; i++) {
+            const strNum = String(i)
+            const element = document.createElement("option")
+            element.value = strNum
+            element.textContent = strNum
+            this.htmlElement.appendChild(element)
+        }
     }
 
     increaseParam(amount: number): void {
         this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
     }
 
-    updateParam(): FlashNumberParam {
+    updateParam(): FlashNumberWithDifficultySupportParam {
         this.increaseParam(0)
         return this
     }

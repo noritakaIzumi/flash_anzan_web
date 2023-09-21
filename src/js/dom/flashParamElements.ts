@@ -34,11 +34,11 @@ export interface FlashParamElements {
 export const flashParamElements: FlashParamElements = {
     addition: {
         digit: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "addition-digit"),
+            htmlElement: getHtmlElement("select", "addition-digit"),
             schema: flashParamSchema.addition.digit,
         }),
         length: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "addition-length"),
+            htmlElement: getHtmlElement("select", "addition-length"),
             schema: flashParamSchema.addition.length,
         }),
         time: new FlashTimeParam({
@@ -48,15 +48,15 @@ export const flashParamElements: FlashParamElements = {
     },
     multiplication: {
         digit1: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-digit-1"),
+            htmlElement: getHtmlElement("select", "multiplication-digit-1"),
             schema: flashParamSchema.multiplication.digit1,
         }),
         digit2: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-digit-2"),
+            htmlElement: getHtmlElement("select", "multiplication-digit-2"),
             schema: flashParamSchema.multiplication.digit2,
         }),
         length: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-length"),
+            htmlElement: getHtmlElement("select", "multiplication-length"),
             schema: flashParamSchema.multiplication.length,
         }),
         time: new FlashTimeParam({
