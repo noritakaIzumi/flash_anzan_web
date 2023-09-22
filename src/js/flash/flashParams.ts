@@ -6,7 +6,7 @@ import {
     type SoundExtension
 } from "../globals.js"
 import { audioObj } from "../sound/sound.js"
-import { button, modals } from "../dom/htmlElement.js"
+import { button, modals, numberHistoryDisplay } from "../dom/htmlElement.js"
 import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {
     type FlashDifficultyParamSchema,
@@ -110,7 +110,8 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
     }
 
     set valueV1(value: string | number) {
-        this.htmlElement.value = String(value)
+        const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
+        this.htmlElement.value = String(fixedValue)
     }
 
     get valueV0(): string {
@@ -137,7 +138,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
     }
 
     increaseParam(amount: number): void {
-        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
+        this.valueV1 = this.valueV1 + amount
     }
 
     updateParam(): FlashNumberWithDifficultySupportParam {
@@ -152,7 +153,8 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     set valueV1(value: string | number) {
-        this.htmlElement.value = String(Number(value) / 1000)
+        const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
+        this.htmlElement.value = String(fixedValue / 1000)
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
     }
@@ -175,7 +177,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     increaseParam(amount: number): void {
-        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
+        this.valueV1 += amount
     }
 
     updateParam(): FlashTimeParam {
