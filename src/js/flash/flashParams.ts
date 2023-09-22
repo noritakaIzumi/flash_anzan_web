@@ -148,7 +148,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
 
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
     get valueV1(): number {
-        return Number(this.htmlElement.value) * 1000
+        return Math.round(Number(this.htmlElement.value) * 1000)
     }
 
     set valueV1(value: string | number) {
@@ -162,7 +162,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     set valueV0(value: string) {
-        this.valueV1 = Number(value) * 1000
+        this.valueV1 = Math.round(Number(value) * 1000)
     }
 
     constructor(props: {
