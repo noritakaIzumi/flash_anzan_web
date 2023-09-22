@@ -6,7 +6,7 @@ import {
     type SoundExtension
 } from "../globals.js"
 import { audioObj } from "../sound/sound.js"
-import { button, modals, numberHistoryDisplay } from "../dom/htmlElement.js"
+import { button, modals } from "../dom/htmlElement.js"
 import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {
     type FlashDifficultyParamSchema,
