@@ -15,8 +15,7 @@
 }
 
 html {
-  --html-margin-x: 10px;
-  margin: 0 var(--html-margin-x);
+  margin: 0 10px;
 }
 
 body {
@@ -208,6 +207,5 @@ input[type="number"] {
 }
 
 .operation-panel {
-  width: calc(100vw - var(--html-margin-x) * 2);
   height: calc(100vh - map-get($spacers, 2) * 2 - 1px);
 }
