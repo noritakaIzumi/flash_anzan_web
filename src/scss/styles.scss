@@ -15,7 +15,8 @@
 }
 
 html {
-  margin: 0 10px;
+  --html-margin-x: 10px;
+  margin: 0 var(--html-margin-x);
 }
 
 body {
@@ -204,4 +205,9 @@ input[type="number"] {
 .display-none.show {
   display: block;
   animation: show 300ms linear 0s;
+}
+
+.operation-panel {
+  width: calc(100vw - var(--html-margin-x) * 2);
+  height: calc(100vh - map-get($spacers, 2) * 2 - 1px);
 }
