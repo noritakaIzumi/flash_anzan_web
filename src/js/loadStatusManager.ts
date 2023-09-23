@@ -11,6 +11,10 @@ export class LoadStatusManager {
         sound: false,
     }
 
+    resetSoundLoadedStatus(): void {
+        this.status.sound = false
+    }
+
     markAsLoaded(key: LoadStatusKey): void {
         this.status[key] = true
     }

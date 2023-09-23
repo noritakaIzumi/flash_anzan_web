@@ -11,15 +11,23 @@ export function isMuted(): boolean {
 }
 
 const howlStore: { [ext in SoundExtension]?: Howl | undefined } = {}
-const howlOptions: { [ext in SoundExtension]: HowlOptions } = {
-    ogg: howler2OptionOgg,
-    wav: howler2OptionWav,
+
+function getHowlOptions(ext: SoundExtension): HowlOptions {
+    const optionMap: { [ext in SoundExtension]: HowlOptions } = {
+        ogg: howler2OptionOgg,
+        wav: howler2OptionWav,
+    }
+    const option = optionMap[ext]
+    option.onload = () => {
+        loadStatusManager.markAsLoaded("sound")
+    }
+    return option
 }
 
 function getHowl(extension: SoundExtension): Howl {
     if (howlStore[extension] === undefined) {
-        howlStore[extension] = new Howl(howlOptions[extension])
-        loadStatusManager.markAsLoaded("sound")
+        loadStatusManager.resetSoundLoadedStatus()
+        howlStore[extension] = new Howl(getHowlOptions(extension))
     }
     return howlStore[extension] as Howl
 }
