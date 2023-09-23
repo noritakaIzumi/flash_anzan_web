@@ -127,7 +127,6 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
         schema: FlashNumberParamWithDifficultySupportSchema
     }) {
         super(props)
-        this.valueV1 = this.schema.default
         for (let i = this.schema.min; i <= this.schema.max; i++) {
             const strNum = String(i)
             const element = document.createElement("option")
@@ -135,6 +134,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
             element.textContent = strNum
             this.htmlElement.appendChild(element)
         }
+        this.valueV1 = this.schema.default
     }
 
     increaseParam(amount: number): void {
