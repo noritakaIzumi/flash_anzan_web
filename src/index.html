@@ -175,11 +175,17 @@
                     </div>
                     <div class="col-sm-auto">
                         <label for="addition-time" class="text-light">秒数</label>
+                        <label for="addition-time-int" class="d-none"></label>
+                        <label for="addition-time-dec1" class="d-none"></label>
+                        <label for="addition-time-dec2" class="d-none"></label>
                         <div class="input-group input-group-lg">
-                            <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end"
-                                   autocomplete="off">
+                            <select id="addition-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <span class="input-group-text">.</span>
+                            <select id="addition-time-dec1" class="form-select text-end"></select>
+                            <select id="addition-time-dec2" class="form-select text-end"></select>
                             <span class="input-group-text">秒</span>
                         </div>
+                        <input type="number" inputmode="numeric" id="addition-time" class="d-none" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -206,11 +212,17 @@
                     </div>
                     <div class="col-sm-auto">
                         <label for="multiplication-time" class="text-light">秒数</label>
+                        <label for="multiplication-time-int" class="d-none"></label>
+                        <label for="multiplication-time-dec1" class="d-none"></label>
+                        <label for="multiplication-time-dec2" class="d-none"></label>
                         <div class="input-group input-group-lg">
-                            <input type="text" inputmode="numeric" id="multiplication-time"
-                                   class="form-control text-end" autocomplete="off">
+                            <select id="multiplication-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <span class="input-group-text">.</span>
+                            <select id="multiplication-time-dec1" class="form-select text-end"></select>
+                            <select id="multiplication-time-dec2" class="form-select text-end"></select>
                             <span class="input-group-text">秒</span>
                         </div>
+                        <input type="number" inputmode="numeric" id="multiplication-time" class="d-none" autocomplete="off">
                     </div>
                 </div>
             </div>

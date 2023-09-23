@@ -147,7 +147,15 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
     }
 }
 
+export interface FlashTimeDigitElements {
+    int: HTMLSelectElement
+    dec1: HTMLSelectElement
+    dec2: HTMLSelectElement
+}
+
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
+    private readonly digitElements: FlashTimeDigitElements
+
     get valueV1(): number {
         return Math.round(Number(this.htmlElement.value) * 1000)
     }
@@ -157,6 +165,10 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         this.htmlElement.value = String(fixedValue / 1000)
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
+
+        this.digitElements.int.value = String(Math.floor(fixedValue / 1000))
+        this.digitElements.dec1.value = String(Math.floor((fixedValue % 1000) / 100))
+        this.digitElements.dec2.value = String(Math.floor((fixedValue % 100) / 10))
     }
 
     get valueV0(): string {
@@ -169,11 +181,42 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
 
     constructor(props: {
         htmlElement: HTMLInputElement
+        digitElements: FlashTimeDigitElements
         schema: FlashNumberParamSchema
     }) {
         super(props)
+        this.digitElements = props.digitElements
+        this.setupDigitElements()
         this.valueV1 = this.schema.default
-        setupInputElementForTouch(this.htmlElement)
+    }
+
+    private concatValues(): string {
+        return `${this.digitElements.int.value}${this.digitElements.dec1.value}${this.digitElements.dec2.value}0`
+    }
+
+    private setupDigitElements(): void {
+        function addOptions(parent: HTMLSelectElement, start: number, end: number): void {
+            for (let i = start; i <= end; i++) {
+                const strNum = String(i)
+                const element = document.createElement("option")
+                element.value = strNum
+                element.textContent = strNum
+                parent.appendChild(element)
+            }
+        }
+
+        addOptions(this.digitElements.int, Math.floor(this.schema.min / 1000), Math.floor(this.schema.max / 1000))
+        addOptions(this.digitElements.dec1, 0, 9)
+        addOptions(this.digitElements.dec2, 0, 9)
+        this.digitElements.int.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
+        this.digitElements.dec1.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
+        this.digitElements.dec2.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
     }
 
     increaseParam(amount: number): void {

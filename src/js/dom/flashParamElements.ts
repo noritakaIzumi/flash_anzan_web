@@ -43,6 +43,11 @@ export const flashParamElements: FlashParamElements = {
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "addition-time"),
+            digitElements: {
+                int: getHtmlElement("select", "addition-time-int"),
+                dec1: getHtmlElement("select", "addition-time-dec1"),
+                dec2: getHtmlElement("select", "addition-time-dec2"),
+            },
             schema: flashParamSchema.addition.time,
         }),
     },
@@ -61,6 +66,11 @@ export const flashParamElements: FlashParamElements = {
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "multiplication-time"),
+            digitElements: {
+                int: getHtmlElement("select", "multiplication-time-int"),
+                dec1: getHtmlElement("select", "multiplication-time-dec1"),
+                dec2: getHtmlElement("select", "multiplication-time-dec2"),
+            },
             schema: flashParamSchema.multiplication.time,
         }),
     },
