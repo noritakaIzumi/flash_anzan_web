@@ -32,7 +32,6 @@ import { getFlashSuite } from "./flash/flashSuite.js"
 import { measuredTime } from "./flash/measuredTime.js"
 import { type AudioObjKey } from "./globals.js"
 import { waitLoaded } from "./loadStatusManager.js"
-import { waitSoundsAndFontsLoadedTimeout } from "../config/timeout.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -241,7 +240,7 @@ function clearInputAnswerBox(): void {
 
 (() => {
     const setup = async (): Promise<void> => {
-        const waitLoadedPromise = waitLoaded(waitSoundsAndFontsLoadedTimeout)
+        const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
         audioObj.load(flashParamElements.common.soundExtension.valueV1);
 
