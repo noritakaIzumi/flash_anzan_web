@@ -50,7 +50,7 @@ export const flashParamSchema: FlashParamSchema = {
         flashRate: {
             min: 1,
             max: 99,
-            default: 55,
+            default: 50,
         },
         offset: {
             min: -500,

@@ -11,7 +11,7 @@ export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] =
     for (let i = 0; i < paramSet.length * 2; i++) {
         result.push(paramSet.time *
             (Math.floor(i / 2) * 100 + paramSet.flashRate * (i % 2)) /
-            ((paramSet.length - 1) * 100 + paramSet.flashRate)
+            ((paramSet.length - 1) * 100 + 50)
         )
     }
     return result
@@ -93,7 +93,7 @@ export async function getFlashSuite({
         },
         delay: APP_CONFIG_FIRST_BEEP_TIMING - paramSet.offset,
     })
-    const flashStartTiming = APP_CONFIG_FIRST_BEEP_TIMING + APP_CONFIG_BEEP_INTERVAL * APP_CONFIG_BEEP_COUNT
+    const flashStartTiming = APP_CONFIG_FIRST_TICK_TIMING
     flashSuite.push({
         fn: () => {
             tickSound.play()
@@ -108,7 +108,7 @@ export async function getFlashSuite({
     }
     flashSuite.push({
         fn: prepareAnswerInputFunc,
-        delay: flashStartTiming + paramSet.time + 300,
+        delay: flashStartTiming + toggleTimings[paramSet.length * 2 - 1] + 300,
     })
     return flashSuite
 }
