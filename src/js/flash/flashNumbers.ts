@@ -290,6 +290,13 @@ export class CreatedNumbersDoNotSatisfyConstraintError extends Error {
 }
 
 export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
+    // 出題数字
+    protected numbers: Array<FlashDigit[T]> = []
+    // 繰り上がり回数
+    protected carries: number[] = []
+    // そろばんオブジェクト
+    protected abacus: Abacus = new Abacus(0)
+
     abstract execute(digitCount: FlashDigit[T], length: number): { numbers: Array<FlashDigit[T]>, carries: number[] }
 }
 
@@ -298,51 +305,45 @@ export class AdditionModeEasyDifficultyCreateRawNumbersAdapter extends AbstractC
         numbers: Array<FlashDigit["addition"]>
         carries: number[]
     } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
-        let tempAbacusValue: number
         for (let i = 0; i < length; i++) {
+            let tempAbacusValue: number
             let getIntRetry = 0
             let bestNumber = 0
             let bestCarry = -1
             while (true) {
-                const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, true)
+                const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, true)
 
-                tempAbacusValue = abacus.value
-                abacus = new Abacus(abacus.value).add(number)
+                tempAbacusValue = this.abacus.value
+                this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (abacus.carry > digitCount) {
-                    if (abacus.carry > bestCarry) {
+                if (this.abacus.carry > digitCount) {
+                    if (this.abacus.carry > bestCarry) {
                         bestNumber = number
-                        bestCarry = abacus.carry
+                        bestCarry = this.abacus.carry
                     }
 
-                    abacus = new Abacus(tempAbacusValue)
+                    this.abacus = new Abacus(tempAbacusValue)
 
                     if (getIntRetry < 100) {
                         getIntRetry++
                         continue
                     }
 
-                    abacus = abacus.add(bestNumber)
-                    numbers.push(bestNumber)
-                    carries.push(abacus.carry)
+                    this.abacus = this.abacus.add(bestNumber)
+                    this.numbers.push(bestNumber)
+                    this.carries.push(this.abacus.carry)
                     break
                 }
 
-                numbers.push(number)
-                carries.push(abacus.carry)
+                this.numbers.push(number)
+                this.carries.push(this.abacus.carry)
                 break
             }
         }
 
         return {
-            numbers,
-            carries,
+            numbers: this.numbers,
+            carries: this.carries,
         }
     }
 }
@@ -352,22 +353,16 @@ export class AdditionModeNormalDifficultyCreateRawNumbersAdapter extends Abstrac
         numbers: Array<FlashDigit["addition"]>
         carries: number[]
     } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
         for (let i = 0; i < length; i++) {
-            const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, true)
-            abacus = new Abacus(abacus.value).add(number)
-            numbers.push(number)
-            carries.push(abacus.carry)
+            const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, true)
+            this.abacus = new Abacus(this.abacus.value).add(number)
+            this.numbers.push(number)
+            this.carries.push(this.abacus.carry)
         }
 
         return {
-            numbers,
-            carries,
+            numbers: this.numbers,
+            carries: this.carries,
         }
     }
 }
@@ -377,51 +372,45 @@ export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractC
         numbers: Array<FlashDigit["addition"]>
         carries: number[]
     } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
-        let tempAbacusValue: number
         for (let i = 0; i < length; i++) {
+            let tempAbacusValue: number
             let getIntRetry = 0
             let bestNumber = 0
             let bestCarry = -1
             while (true) {
-                const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, false)
+                const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, false)
 
-                tempAbacusValue = abacus.value
-                abacus = new Abacus(abacus.value).add(number)
+                tempAbacusValue = this.abacus.value
+                this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (i >= 1 && abacus.carry < digitCount) {
-                    if (abacus.carry > bestCarry) {
+                if (i >= 1 && this.abacus.carry < digitCount) {
+                    if (this.abacus.carry > bestCarry) {
                         bestNumber = number
-                        bestCarry = abacus.carry
+                        bestCarry = this.abacus.carry
                     }
 
-                    abacus = new Abacus(tempAbacusValue)
+                    this.abacus = new Abacus(tempAbacusValue)
 
                     if (getIntRetry < 100) {
                         getIntRetry++
                         continue
                     }
 
-                    abacus = abacus.add(bestNumber)
-                    numbers.push(bestNumber)
-                    carries.push(abacus.carry)
+                    this.abacus = this.abacus.add(bestNumber)
+                    this.numbers.push(bestNumber)
+                    this.carries.push(this.abacus.carry)
                     break
                 }
 
-                numbers.push(number)
-                carries.push(abacus.carry)
+                this.numbers.push(number)
+                this.carries.push(this.abacus.carry)
                 break
             }
         }
 
         return {
-            numbers,
-            carries,
+            numbers: this.numbers,
+            carries: this.carries,
         }
     }
 }
@@ -438,16 +427,9 @@ export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends Abs
         numbers: Array<FlashDigit["multiplication"]>
         carries: number[]
     } {
-        // そろばん
-        let abacus = new Abacus(0)
-        // 出題数字
-        const numbers: Array<FlashDigit["multiplication"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
         for (let i = 0; i < length; i++) {
-            const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true)
-            const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true)
+            const number1 = getRandomInt(digitCount[0], this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null, true)
+            const number2 = getRandomInt(digitCount[1], this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null, true)
             const digits1 = String(number1).split("").reverse().map((n) => {
                 return Number(n)
             })
@@ -456,17 +438,17 @@ export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends Abs
             })
             for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
                 for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
-                    abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
+                    this.abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
                 }
             }
-            numbers.push([number1, number2])
-            carries.push(abacus.carry)
-            abacus = new Abacus(abacus.value)
+            this.numbers.push([number1, number2])
+            this.carries.push(this.abacus.carry)
+            this.abacus = new Abacus(this.abacus.value)
         }
 
         return {
-            numbers,
-            carries,
+            numbers: this.numbers,
+            carries: this.carries,
         }
     }
 }
