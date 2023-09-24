@@ -4,7 +4,7 @@ import { fileURLToPath } from "url"
 import path from "path"
 import { type AudioPath, soundExtension, type SoundExtension } from "../src/js/globals.js"
 import * as fs from "fs"
-import { ESLint } from "eslint"
+import { eslintFix } from "./eslintFix.js"
 
 const filename = fileURLToPath(import.meta.url)
 const rootPath = path.dirname(path.dirname(filename))
@@ -59,14 +59,7 @@ import { type HowlOptions } from "howler"
 export const ${basename}: HowlOptions = ${JSON.stringify(obj, null, 2)}
 `.trim()
             fs.writeFileSync(filepath, data, { encoding: "utf-8" })
-
-            // lint
-            const eslint = new ESLint({ fix: true })
-            void eslint.lintFiles(filepath).then(async results => {
-                await ESLint.outputFixes(results)
-            }).then(() => {
-                console.log(`lint completed: ${filepath}`)
-            })
+            eslintFix(filepath)
         })
     }
 })()
