@@ -83,8 +83,12 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
             } else {
                 complexitySampleMap[mode][mapKey] = []
                 for (let _ = 0; _ < sampleCount; _++) {
-                    const rawNumbers = new AdditionModeUnknownDifficultyCreateRawNumbersAdapter().execute(digitCount, length)
-                    const complexity = calculateComplexity(rawNumbers.carries, digitCount)
+                    const createRawNumbersAdapter = new AdditionModeUnknownDifficultyCreateRawNumbersAdapter({ digitCount })
+                    for (let i = 0; i < length; i++) {
+                        createRawNumbersAdapter.execute()
+                    }
+                    const result = createRawNumbersAdapter.getResult()
+                    const complexity = calculateComplexity(result.carries, digitCount)
                     complexitySampleMap[mode][mapKey].push(complexity)
                 }
                 writeComplexitySample(mode, mapKey, complexitySampleMap[mode][mapKey])
@@ -115,8 +119,12 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
                 } else {
                     complexitySampleMap[mode][mapKey] = []
                     for (let _ = 0; _ < sampleCount; _++) {
-                        const rawNumbers = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter().execute([digitCount1, digitCount2], length)
-                        const complexity = calculateComplexity(rawNumbers.carries, digitCount1 * digitCount2)
+                        const createRawNumbersAdapter = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter({ digitCount: [digitCount1, digitCount2] })
+                        for (let i = 0; i < length; i++) {
+                            createRawNumbersAdapter.execute()
+                        }
+                        const result = createRawNumbersAdapter.getResult()
+                        const complexity = calculateComplexity(result.carries, digitCount1 * digitCount2)
                         complexitySampleMap[mode][mapKey].push(complexity)
                     }
                     writeComplexitySample(mode, mapKey, complexitySampleMap[mode][mapKey])

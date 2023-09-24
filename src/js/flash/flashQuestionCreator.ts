@@ -21,6 +21,7 @@ import {
 import { complexityThresholdMap } from "../lib/complexityThresholdMap.js"
 import { flashNumberHistoryRegistry } from "./flashNumberHistory.js"
 import { type FlashMode } from "../globals.js"
+import { flashParamSchema } from "../../config/flashParamSchema.js"
 
 export interface FlashOptions {
     repeat?: boolean
@@ -52,7 +53,7 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addi
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(this.paramSet.digit, this.paramSet.length)
+        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(this.paramSet.digit, flashParamSchema.addition.length.difficultySupportMax)
         return complexityThresholdMapKey in complexityThresholdMap.addition
     }
 
@@ -62,6 +63,7 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addi
                 createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.addition,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.addition,
                 complexityThresholdMapByMode: complexityThresholdMap.addition,
+                difficultySupportMaxLength: flashParamSchema.addition.length.difficultySupportMax,
             }),
             flashNumbersClass: AdditionModeFlashNumbers,
             getFlashAnswerAdapter: AdditionModeGetFlashAnswerAdapter,
@@ -82,7 +84,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(this.paramSet.digit, this.paramSet.length)
+        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(this.paramSet.digit, flashParamSchema.multiplication.length.difficultySupportMax)
         return complexityThresholdMapKey in complexityThresholdMap.multiplication
     }
 
@@ -92,6 +94,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
                 createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.multiplication,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.multiplication,
                 complexityThresholdMapByMode: complexityThresholdMap.multiplication,
+                difficultySupportMaxLength: flashParamSchema.multiplication.length.difficultySupportMax,
             }),
             flashNumbersClass: MultiplicationModeFlashNumbers,
             getFlashAnswerAdapter: MultiplicationModeGetFlashAnswerAdapter,
