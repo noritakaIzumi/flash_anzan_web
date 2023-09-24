@@ -198,7 +198,7 @@ export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<"mu
 }
 
 type CreateRawNumbersAdapterMapByMode<T extends FlashMode> = {
-    [key in FlashDifficulty | UnknownFlashDifficulty]: new() => AbstractCreateRawNumbersAdapter<T>
+    [key in FlashDifficulty | UnknownFlashDifficulty]: new(digitCount: FlashDigit[T], saved: { numbers: Array<FlashDigit[T]>, carries: number[] }) => AbstractCreateRawNumbersAdapter<T>
 }
 type ComplexityIsValidAdapterMapByMode = {
     [key in FlashDifficulty]: new() => AbstractComplexityIsValidAdapter
@@ -232,13 +232,19 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
         if (complexityThreshold === undefined) {
             if (options.allowUnknownDifficulty ?? false) {
                 // eslint-disable-next-line new-cap
-                return new this.createRawNumbersAdaptersByMode.unknown().execute(digitCount, length).numbers
+                const createRawNumbersAdapter = new this.createRawNumbersAdaptersByMode.unknown(digitCount, { numbers: [], carries: [] })
+                for (let _ = 0; _ < length; _++) {
+                    createRawNumbersAdapter.execute()
+                }
+                return createRawNumbersAdapter.getResult().numbers
             }
             throw new RangeError(`complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`)
         }
 
-        const createRawNumbersAdapter = new this.createRawNumbersAdaptersByMode[difficulty]()
-        createRawNumbersAdapter.execute(digitCount, length)
+        const createRawNumbersAdapter = new this.createRawNumbersAdaptersByMode[difficulty](digitCount, { numbers: [], carries: [] })
+        for (let _ = 0; _ < length; _++) {
+            createRawNumbersAdapter.execute()
+        }
         const result = createRawNumbersAdapter.getResult()
         const numbers = result.numbers
         const carries = result.carries
@@ -292,9 +298,10 @@ export class CreatedNumbersDoNotSatisfyConstraintError extends Error {
 }
 
 export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
-    constructor(numbers: Array<FlashDigit[T]> = [], carries: number[] = []) {
-        this.numbers = numbers
-        this.carries = carries
+    constructor(digitCount: FlashDigit[T], saved: { numbers: Array<FlashDigit[T]>, carries: number[] } = { numbers: [], carries: [] }) {
+        this.digitCount = digitCount
+        this.numbers = saved.numbers
+        this.carries = saved.carries
     }
 
     getResult(): { numbers: Array<FlashDigit[T]>, carries: number[] } {
@@ -304,6 +311,7 @@ export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit
         }
     }
 
+    protected readonly digitCount: FlashDigit[T]
     // 出題数字
     protected numbers: Array<FlashDigit[T]> = []
     // 繰り上がり回数
@@ -311,120 +319,90 @@ export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit
     // そろばんオブジェクト
     protected abacus: Abacus = new Abacus(0)
 
-    abstract execute(digitCount: FlashDigit[T], length: number): { numbers: Array<FlashDigit[T]>, carries: number[] }
+    abstract execute(): void
 }
 
 export class AdditionModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        for (let _ = 0; _ < length; _++) {
-            let tempAbacusValue: number
-            let getIntRetry = 0
-            let bestNumber = 0
-            let bestCarry = -1
-            while (true) {
-                const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, true)
+    execute(): void {
+        let tempAbacusValue: number
+        let getIntRetry = 0
+        let bestNumber = 0
+        let bestCarry = -1
+        while (true) {
+            const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, true)
 
-                tempAbacusValue = this.abacus.value
-                this.abacus = new Abacus(this.abacus.value).add(number)
+            tempAbacusValue = this.abacus.value
+            this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (this.abacus.carry > digitCount) {
-                    if (this.abacus.carry > bestCarry) {
-                        bestNumber = number
-                        bestCarry = this.abacus.carry
-                    }
-
-                    this.abacus = new Abacus(tempAbacusValue)
-
-                    if (getIntRetry < 100) {
-                        getIntRetry++
-                        continue
-                    }
-
-                    this.abacus = this.abacus.add(bestNumber)
-                    this.numbers.push(bestNumber)
-                    this.carries.push(this.abacus.carry)
-                    break
+            if (this.abacus.carry > this.digitCount) {
+                if (this.abacus.carry > bestCarry) {
+                    bestNumber = number
+                    bestCarry = this.abacus.carry
                 }
 
-                this.numbers.push(number)
+                this.abacus = new Abacus(tempAbacusValue)
+
+                if (getIntRetry < 100) {
+                    getIntRetry++
+                    continue
+                }
+
+                this.abacus = this.abacus.add(bestNumber)
+                this.numbers.push(bestNumber)
                 this.carries.push(this.abacus.carry)
                 break
             }
-        }
 
-        return {
-            numbers: this.numbers,
-            carries: this.carries,
+            this.numbers.push(number)
+            this.carries.push(this.abacus.carry)
+            break
         }
     }
 }
 
 export class AdditionModeNormalDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        for (let _ = 0; _ < length; _++) {
-            const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, true)
-            this.abacus = new Abacus(this.abacus.value).add(number)
-            this.numbers.push(number)
-            this.carries.push(this.abacus.carry)
-        }
-
-        return {
-            numbers: this.numbers,
-            carries: this.carries,
-        }
+    execute(): void {
+        const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, true)
+        this.abacus = new Abacus(this.abacus.value).add(number)
+        this.numbers.push(number)
+        this.carries.push(this.abacus.carry)
     }
 }
 
 export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        for (let _ = 0; _ < length; _++) {
-            let tempAbacusValue: number
-            let getIntRetry = 0
-            let bestNumber = 0
-            let bestCarry = -1
-            while (true) {
-                const number = getRandomInt(digitCount, this.numbers.slice(-1)[0] ?? null, false)
+    execute(): void {
+        let tempAbacusValue: number
+        let getIntRetry = 0
+        let bestNumber = 0
+        let bestCarry = -1
+        while (true) {
+            const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, false)
 
-                tempAbacusValue = this.abacus.value
-                this.abacus = new Abacus(this.abacus.value).add(number)
+            tempAbacusValue = this.abacus.value
+            this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (this.numbers.length >= 1 && this.abacus.carry < digitCount) {
-                    if (this.abacus.carry > bestCarry) {
-                        bestNumber = number
-                        bestCarry = this.abacus.carry
-                    }
-
-                    this.abacus = new Abacus(tempAbacusValue)
-
-                    if (getIntRetry < 100) {
-                        getIntRetry++
-                        continue
-                    }
-
-                    this.abacus = this.abacus.add(bestNumber)
-                    this.numbers.push(bestNumber)
-                    this.carries.push(this.abacus.carry)
-                    break
+            if (this.numbers.length >= 1 && this.abacus.carry < this.digitCount) {
+                if (this.abacus.carry > bestCarry) {
+                    bestNumber = number
+                    bestCarry = this.abacus.carry
                 }
 
-                this.numbers.push(number)
+                this.abacus = new Abacus(tempAbacusValue)
+
+                if (getIntRetry < 100) {
+                    getIntRetry++
+                    continue
+                }
+
+                this.abacus = this.abacus.add(bestNumber)
+                this.numbers.push(bestNumber)
                 this.carries.push(this.abacus.carry)
                 break
             }
-        }
 
-        return {
-            numbers: this.numbers,
-            carries: this.carries,
+            this.numbers.push(number)
+            this.carries.push(this.abacus.carry)
+            break
         }
     }
 }
@@ -437,33 +415,23 @@ export class AdditionModeUnknownDifficultyCreateRawNumbersAdapter extends Additi
 }
 
 export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"multiplication"> {
-    execute(digitCount: FlashDigit["multiplication"], length: number): {
-        numbers: Array<FlashDigit["multiplication"]>
-        carries: number[]
-    } {
-        for (let _ = 0; _ < length; _++) {
-            const number1 = getRandomInt(digitCount[0], this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null, true)
-            const number2 = getRandomInt(digitCount[1], this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null, true)
-            const digits1 = String(number1).split("").reverse().map((n) => {
-                return Number(n)
-            })
-            const digits2 = String(number2).split("").reverse().map((n) => {
-                return Number(n)
-            })
-            for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
-                for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
-                    this.abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
-                }
+    execute(): void {
+        const number1 = getRandomInt(this.digitCount[0], this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null, true)
+        const number2 = getRandomInt(this.digitCount[1], this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null, true)
+        const digits1 = String(number1).split("").reverse().map((n) => {
+            return Number(n)
+        })
+        const digits2 = String(number2).split("").reverse().map((n) => {
+            return Number(n)
+        })
+        for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
+            for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
+                this.abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
             }
-            this.numbers.push([number1, number2])
-            this.carries.push(this.abacus.carry)
-            this.abacus = new Abacus(this.abacus.value)
         }
-
-        return {
-            numbers: this.numbers,
-            carries: this.carries,
-        }
+        this.numbers.push([number1, number2])
+        this.carries.push(this.abacus.carry)
+        this.abacus = new Abacus(this.abacus.value)
     }
 }
 
