@@ -53,6 +53,8 @@ async function flash(options: FlashOptions = {}): Promise<void> {
         function displayAnswer(numberStr: string, answer: FlashAnswer): void {
             if (numberStr !== "") {
                 headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString()
+            } else {
+                headerMessage.innerText = ""
             }
 
             button.repeat.disabled = true
@@ -64,19 +66,13 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                 let resultAudioObj: AudioObjKey
                 if (numberStr === answer.toString()) {
                     resultAudioObj = "correct"
-                    headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`
+                    headerMessage.innerText = `正解！（${headerMessage.innerText}）`
                 } else if (numberStr.length > 0) {
                     resultAudioObj = "incorrect"
-                    headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`
+                    headerMessage.innerText = `不正解...（${headerMessage.innerText}）`
                 } else {
                     resultAudioObj = "silence"
-                    headerMessage.innerText = "答え\n"
-                }
-                {
-                    const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start)
-                    const afterDecimalPointStr = ("00" + String(flashElapsedTimeMs % 1000)).slice(-3)
-                    const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000))
-                    headerMessage.innerText += `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`
+                    headerMessage.innerText = "答え"
                 }
                 questionNumberArea.innerText = answer.toDisplay()
                 if (!isMuted()) {
@@ -101,6 +97,12 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
         return () => {
             inputAnswerBox.value = ""
+            {
+                const flashElapsedTimeMs = Math.floor(measuredTime.end - measuredTime.start)
+                const afterDecimalPointStr = ("00" + String(flashElapsedTimeMs % 1000)).slice(-3)
+                const beforeDecimalPointStr = String(Math.floor(flashElapsedTimeMs / 1000))
+                headerMessage.innerText = `実時間計測: ${beforeDecimalPointStr}.${afterDecimalPointStr} 秒（1 口目表示～最終口消画）`
+            }
 
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
