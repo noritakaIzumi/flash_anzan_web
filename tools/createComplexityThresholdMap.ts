@@ -66,8 +66,8 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
 
     const sampleCount = 10000
     const threshold: Threshold = {
-        hard: 0.1,
-        easy: 0.9,
+        hard: 0.2,
+        easy: 0.8,
     }
 
     let mode: FlashMode = "addition"
