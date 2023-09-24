@@ -6,8 +6,8 @@ import {
     type FlashMode
 } from "../src/js/globals.js"
 import {
-    AdditionModeUnknownDifficultyCreateRawNumbersAdapter,
-    MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter
+    AdditionModeUnknownDifficultyCreateRawNumberAdapter,
+    MultiplicationModeUnknownDifficultyCreateRawNumberAdapter
 } from "../src/js/flash/flashNumbers.js"
 import * as fs from "fs"
 import * as path from "path"
@@ -83,11 +83,11 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
             } else {
                 complexitySampleMap[mode][mapKey] = []
                 for (let _ = 0; _ < sampleCount; _++) {
-                    const createRawNumbersAdapter = new AdditionModeUnknownDifficultyCreateRawNumbersAdapter({ digitCount })
+                    const createRawNumberAdapter = new AdditionModeUnknownDifficultyCreateRawNumberAdapter({ digitCount })
                     for (let i = 0; i < length; i++) {
-                        createRawNumbersAdapter.execute()
+                        createRawNumberAdapter.execute()
                     }
-                    const result = createRawNumbersAdapter.getResult()
+                    const result = createRawNumberAdapter.getResult()
                     const complexity = calculateComplexity(result.carries, digitCount)
                     complexitySampleMap[mode][mapKey].push(complexity)
                 }
@@ -119,11 +119,11 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
                 } else {
                     complexitySampleMap[mode][mapKey] = []
                     for (let _ = 0; _ < sampleCount; _++) {
-                        const createRawNumbersAdapter = new MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter({ digitCount: [digitCount1, digitCount2] })
+                        const createRawNumberAdapter = new MultiplicationModeUnknownDifficultyCreateRawNumberAdapter({ digitCount: [digitCount1, digitCount2] })
                         for (let i = 0; i < length; i++) {
-                            createRawNumbersAdapter.execute()
+                            createRawNumberAdapter.execute()
                         }
-                        const result = createRawNumbersAdapter.getResult()
+                        const result = createRawNumberAdapter.getResult()
                         const complexity = calculateComplexity(result.carries, digitCount1 * digitCount2)
                         complexitySampleMap[mode][mapKey].push(complexity)
                     }

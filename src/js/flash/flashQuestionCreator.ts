@@ -9,7 +9,7 @@ import {
     AdditionModeFlashNumbers,
     AdditionModeGetFlashAnswerAdapter,
     complexityIsValidAdapterMap,
-    createRawNumbersAdapterMap,
+    createRawNumberAdapterMap,
     type Flash,
     getAdditionModeComplexityThresholdMapKey,
     getMultiplicationModeComplexityThresholdMapKey,
@@ -60,7 +60,7 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addi
     create(option: FlashOptions): FlashQuestion<"addition"> {
         const flash = new AdditionModeFlashGenerator({
             createNewNumbersAdapter: new AdditionModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.addition,
+                createRawNumberAdapterMapByMode: createRawNumberAdapterMap.addition,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.addition,
                 complexityThresholdMapByMode: complexityThresholdMap.addition,
                 difficultySupportMaxLength: flashParamSchema.addition.length.difficultySupportMax,
@@ -91,7 +91,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
     create(option: FlashOptions): FlashQuestion<"multiplication"> {
         const flash = new MultiplicationModeFlashGenerator({
             createNewNumbersAdapter: new MultiplicationModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.multiplication,
+                createRawNumberAdapterMapByMode: createRawNumberAdapterMap.multiplication,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.multiplication,
                 complexityThresholdMapByMode: complexityThresholdMap.multiplication,
                 difficultySupportMaxLength: flashParamSchema.multiplication.length.difficultySupportMax,
