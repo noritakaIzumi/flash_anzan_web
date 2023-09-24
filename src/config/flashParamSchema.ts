@@ -10,13 +10,13 @@ export const flashParamSchema: FlashParamSchema = {
         },
         length: {
             min: 2,
-            max: 30,
+            max: 100,
             default: 3,
             difficultySupportMax: 30,
         },
         time: {
             min: 1_000,
-            max: 10_000,
+            max: 20_000,
             default: 3_000,
         },
     },
