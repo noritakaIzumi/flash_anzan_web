@@ -46,3 +46,11 @@ export const generateNumbersRetryLimit = 81
 //     return Math.pow(0.9, n - 1) * 100 > threshold
 //         && Math.pow(0.9, n) * 100 <= threshold
 // })(generateNumbersRetryLimit))
+
+export const soundExtension = ["ogg", "wav"] as const
+export type SoundExtension = typeof soundExtension[number]
+
+export const audioObjKey = ["beep", "tick", "answer", "correct", "incorrect", "silence"] as const
+export type AudioObjKey = typeof audioObjKey[number]
+export type AudioFilename<T extends SoundExtension> = `${AudioObjKey}.${T}`
+export type AudioPath<T extends SoundExtension = SoundExtension> = `${string}/${AudioFilename<T>}`

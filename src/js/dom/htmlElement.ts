@@ -13,7 +13,6 @@ export const inputAnswerBox = getHtmlElement("input", "input-answer-box")
 export const inputAnswerBoxTouchDisplay = getHtmlElement("input", "input-answer-box-touch-display")
 export const inputAnswerBoxTouchActual = getHtmlElement("input", "input-answer-box-touch-actual")
 export const noticeArea = getHtmlElement("p", "notice-area")
-export const versionNumber = getHtmlElement("span", "version-number")
 export const button = {
     loadParams: getHtmlElement("button", "load-params-button"),
     doLoadParams: getHtmlElement("button", "do-load-params"),
@@ -36,6 +35,8 @@ export const button = {
         hard: getHtmlElement("input", "difficulty-hard"),
     },
     isMuted: getHtmlElement("input", "is-muted-button"),
+    quit: getHtmlElement("button", "quit-button"),
+    doQuit: getHtmlElement("button", "do-quit-button"),
 }
 export const disableConfigTarget = [
     button.start,
@@ -76,4 +77,8 @@ export const modals: {
     },
     input_answer: getHtmlElement("div", "inputAnswerModal"),
     number_history: getHtmlElement("div", "numberHistoryModal"),
+}
+export const fonts = {
+    abacus: getHtmlElement("link", "preload-font--abacus"),
+    kosugimaru: getHtmlElement("link", "preload-font--kosugimaru"),
 }

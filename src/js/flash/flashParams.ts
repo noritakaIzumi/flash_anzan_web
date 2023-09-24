@@ -1,5 +1,11 @@
-import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from "../globals.js"
-import { audioObj, soundExtension, type SoundExtension } from "../sound.js"
+import {
+    flashDifficulty,
+    type FlashDifficulty,
+    savedParamsKeyName,
+    soundExtension,
+    type SoundExtension
+} from "../globals.js"
+import { audioObj } from "../sound/sound.js"
 import { button, modals } from "../dom/htmlElement.js"
 import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {
@@ -98,13 +104,14 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     }
 }
 
-export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputElement, FlashNumberParamWithDifficultySupportSchema, number> {
+export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelectElement, FlashNumberParamWithDifficultySupportSchema, number> {
     get valueV1(): number {
         return Number(this.htmlElement.value)
     }
 
     set valueV1(value: string | number) {
-        this.htmlElement.value = String(value)
+        const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
+        this.htmlElement.value = String(fixedValue)
     }
 
     get valueV0(): string {
@@ -116,35 +123,52 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLInputE
     }
 
     constructor(props: {
-        htmlElement: HTMLInputElement
+        htmlElement: HTMLSelectElement
         schema: FlashNumberParamWithDifficultySupportSchema
     }) {
         super(props)
+        for (let i = this.schema.min; i <= this.schema.max; i++) {
+            const strNum = String(i)
+            const element = document.createElement("option")
+            element.value = strNum
+            element.textContent = strNum
+            this.htmlElement.appendChild(element)
+        }
         this.valueV1 = this.schema.default
-        this.htmlElement.max = String(this.schema.max)
-        this.htmlElement.min = String(this.schema.min)
-        setupInputElementForTouch(this.htmlElement)
     }
 
     increaseParam(amount: number): void {
-        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
+        this.valueV1 = this.valueV1 + amount
     }
 
-    updateParam(): FlashNumberParam {
+    updateParam(): FlashNumberWithDifficultySupportParam {
         this.increaseParam(0)
         return this
     }
 }
 
+export interface FlashTimeDigitElements {
+    int: HTMLSelectElement
+    dec1: HTMLSelectElement
+    dec2: HTMLSelectElement
+}
+
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
+    private readonly digitElements: FlashTimeDigitElements
+
     get valueV1(): number {
-        return Number(this.htmlElement.value) * 1000
+        return Math.round(Number(this.htmlElement.value) * 1000)
     }
 
     set valueV1(value: string | number) {
-        this.htmlElement.value = String(Number(value) / 1000)
+        const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
+        this.htmlElement.value = String(fixedValue / 1000)
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
+
+        this.digitElements.int.value = String(Math.floor(fixedValue / 1000))
+        this.digitElements.dec1.value = String(Math.floor((fixedValue % 1000) / 100))
+        this.digitElements.dec2.value = String(Math.floor((fixedValue % 100) / 10))
     }
 
     get valueV0(): string {
@@ -152,20 +176,51 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     set valueV0(value: string) {
-        this.valueV1 = Number(value) * 1000
+        this.valueV1 = Math.round(Number(value) * 1000)
     }
 
     constructor(props: {
         htmlElement: HTMLInputElement
+        digitElements: FlashTimeDigitElements
         schema: FlashNumberParamSchema
     }) {
         super(props)
+        this.digitElements = props.digitElements
+        this.setupDigitElements()
         this.valueV1 = this.schema.default
-        setupInputElementForTouch(this.htmlElement)
+    }
+
+    private concatValues(): string {
+        return `${this.digitElements.int.value}${this.digitElements.dec1.value}${this.digitElements.dec2.value}0`
+    }
+
+    private setupDigitElements(): void {
+        function addOptions(parent: HTMLSelectElement, start: number, end: number): void {
+            for (let i = start; i <= end; i++) {
+                const strNum = String(i)
+                const element = document.createElement("option")
+                element.value = strNum
+                element.textContent = strNum
+                parent.appendChild(element)
+            }
+        }
+
+        addOptions(this.digitElements.int, Math.floor(this.schema.min / 1000), Math.floor(this.schema.max / 1000))
+        addOptions(this.digitElements.dec1, 0, 9)
+        addOptions(this.digitElements.dec2, 0, 9)
+        this.digitElements.int.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
+        this.digitElements.dec1.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
+        this.digitElements.dec2.addEventListener("change", () => {
+            this.valueV1 = this.concatValues()
+        })
     }
 
     increaseParam(amount: number): void {
-        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
+        this.valueV1 += amount
     }
 
     updateParam(): FlashTimeParam {

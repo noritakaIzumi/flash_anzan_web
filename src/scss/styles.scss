@@ -1,4 +1,6 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
+// customize bootstrap
+@import "custom";
+
 @import "bootstrap-icons/font/bootstrap-icons.css";
 @import "simple-keyboard/build/css/index.css";
 
@@ -202,4 +204,8 @@ input[type="number"] {
 .display-none.show {
   display: block;
   animation: show 300ms linear 0s;
+}
+
+.operation-panel {
+  height: calc(100vh - map-get($spacers, 2) * 2 - 1px);
 }

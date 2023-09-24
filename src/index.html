@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Flash Anzan</title>
+    <title><%- title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-    <meta name="description" content="フラッシュ暗算">
+    <meta name="description" content="<%- description %>">
     <meta name="theme-color" content="limegreen">
     <!--icons-->
     <meta name="msapplication-square70x70logo" content="favicons/site-tile-70x70.png">
@@ -51,6 +51,11 @@
     <link rel="icon" type="image/png" sizes="24x24" href="favicons/icon-24x24.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicons/icon-32x32.png">
     <link rel="manifest" href="manifest.json">
+    <!-- preload fonts -->
+    <link id="preload-font--abacus" rel="preload" href="fonts/ABACUS2.woff" as="font" crossorigin
+          data-loaded="0" onload="this.dataset.loaded = '1';">
+    <link id="preload-font--kosugimaru" rel="preload" href="fonts/KosugiMaru-Regular.ttf" as="font" crossorigin
+          data-loaded="0" onload="this.dataset.loaded = '1';">
     <!-- service worker -->
     <script type="module" src="js/delete_sw.ts"></script>
 </head>
@@ -64,31 +69,35 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
+            <button type="button" id="quit-button" class="btn btn-outline-danger me-2"
+                    data-bs-toggle="modal" data-bs-target="#comfirmQuitModal">
+                <i class="bi bi-x"></i><span class="ps-2">終了</span>
+            </button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
-                    data-bs-toggle="modal" data-bs-target="#helpModal" disabled>
+                    data-bs-toggle="modal" data-bs-target="#helpModal">
                 <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
             </button>
             <button type="button" id="open-common-more-config-button" class="btn btn-outline-light me-2"
-                    data-bs-toggle="modal" data-bs-target="#commonMoreConfigModal" disabled>
+                    data-bs-toggle="modal" data-bs-target="#commonMoreConfigModal">
                 <i class="bi bi-gear-fill"></i><span class="ps-2">環境設定</span>
             </button>
         </div>
         <div class="p-2">
             <button type="button" id="load-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal" disabled>
+                    data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal">
                 <i class="bi bi-folder2-open"></i><span class="ps-2">読込</span>
             </button>
             <button type="button" id="save-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#saveParamsConfirmModal" disabled>
+                    data-bs-toggle="modal" data-bs-target="#saveParamsConfirmModal">
                 <i class="bi bi-save"></i><span class="ps-2">保存</span>
             </button>
             <button type="button" id="delete-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#deleteParamsConfirmModal" disabled>
+                    data-bs-toggle="modal" data-bs-target="#deleteParamsConfirmModal">
                 <i class="bi bi-trash"></i><span class="ps-2">削除</span>
             </button>
         </div>
         <div class="p-2">
-            <button type="button" id="start-button" class="btn btn-danger me-2" disabled>
+            <button type="button" id="start-button" class="btn btn-danger me-2">
                 <i class="bi bi-play-fill"></i><span class="ps-2">スタート</span>
             </button>
             <button type="button" id="repeat-button" class="btn btn-danger me-2" disabled>
@@ -152,33 +161,31 @@
                 <div class="row row-cols-sm-auto mb-2">
                     <div class="col-sm-auto">
                         <label for="addition-digit" class="text-light">桁数</label>
-                        <div class="input-group">
-                            <input type="text" inputmode="decimal" id="addition-digit" class="form-control text-end"
-                                   autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">桁</span>
-                            </div>
+                        <div class="input-group input-group-lg">
+                            <select id="addition-digit" class="form-select text-end"></select>
+                            <span class="input-group-text">桁</span>
                         </div>
                     </div>
                     <div class="col-sm-auto">
                         <label for="addition-length" class="text-light">口数</label>
-                        <div class="input-group">
-                            <input type="text" inputmode="decimal" id="addition-length" class="form-control text-end"
-                                   autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">口</span>
-                            </div>
+                        <div class="input-group input-group-lg">
+                            <select id="addition-length" class="form-select text-end"></select>
+                            <span class="input-group-text">口</span>
                         </div>
                     </div>
                     <div class="col-sm-auto">
                         <label for="addition-time" class="text-light">秒数</label>
-                        <div class="input-group col">
-                            <input type="text" inputmode="numeric" id="addition-time" class="form-control text-end"
-                                   autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">秒</span>
-                            </div>
+                        <label for="addition-time-int" class="d-none"></label>
+                        <label for="addition-time-dec1" class="d-none"></label>
+                        <label for="addition-time-dec2" class="d-none"></label>
+                        <div class="input-group input-group-lg">
+                            <select id="addition-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <span class="input-group-text">.</span>
+                            <select id="addition-time-dec1" class="form-select text-end" style="max-width: fit-content"></select>
+                            <select id="addition-time-dec2" class="form-select text-end" style="max-width: fit-content"></select>
+                            <span class="input-group-text">秒</span>
                         </div>
+                        <input type="number" inputmode="numeric" id="addition-time" class="d-none" autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -187,68 +194,68 @@
                 <div class="row row-cols-sm-auto mb-2">
                     <div class="col-sm-auto">
                         <label for="multiplication-digit-1" class="text-light">桁数</label>
-                        <div class="input-group">
-                            <input type="text" inputmode="decimal" id="multiplication-digit-1"
-                                   class="form-control text-end" autocomplete="off">
+                        <div class="input-group input-group-lg">
+                            <select id="multiplication-digit-1" class="form-select text-end"></select>
                             <span class="input-group-text">桁</span>
                             <span class="input-group-text">×</span>
                             <label for="multiplication-digit-2"></label>
-                            <input type="text" inputmode="decimal" id="multiplication-digit-2"
-                                   class="form-control text-end" autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">桁</span>
-                            </div>
+                            <select id="multiplication-digit-2" class="form-select text-end"></select>
+                            <span class="input-group-text">桁</span>
                         </div>
                     </div>
                     <div class="col-sm-auto">
                         <label for="multiplication-length" class="text-light">口数</label>
-                        <div class="input-group">
-                            <input type="text" inputmode="decimal" id="multiplication-length"
-                                   class="form-control text-end" autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">口</span>
-                            </div>
+                        <div class="input-group input-group-lg">
+                            <select id="multiplication-length" class="form-select text-end"></select>
+                            <span class="input-group-text">口</span>
                         </div>
                     </div>
                     <div class="col-sm-auto">
                         <label for="multiplication-time" class="text-light">秒数</label>
-                        <div class="input-group">
-                            <input type="text" inputmode="numeric" id="multiplication-time"
-                                   class="form-control text-end" autocomplete="off">
-                            <div class="input-group-append">
-                                <span class="input-group-text">秒</span>
-                            </div>
+                        <label for="multiplication-time-int" class="d-none"></label>
+                        <label for="multiplication-time-dec1" class="d-none"></label>
+                        <label for="multiplication-time-dec2" class="d-none"></label>
+                        <div class="input-group input-group-lg">
+                            <select id="multiplication-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <span class="input-group-text">.</span>
+                            <select id="multiplication-time-dec1" class="form-select text-end"></select>
+                            <select id="multiplication-time-dec2" class="form-select text-end"></select>
+                            <span class="input-group-text">秒</span>
                         </div>
+                        <input type="number" inputmode="numeric" id="multiplication-time" class="d-none" autocomplete="off">
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="container-fluid">
-        <span id="version-number" class="text-light"></span>
+        <span id="version-number" class="text-light"><%- versionNumber %></span>
     </div>
 </div>
 
 <!-- Modal -->
-<!-- Load Params -->
+<!-- Welcome -->
 <div class="modal" id="welcomeModal" tabindex="-1" aria-labelledby="welcomeModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="welcomeModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="welcomeModalLabel"><%- title %></h5>
             </div>
             <div class="modal-body">
                 <p>ようこそ！準備ができたら「はじめる」をクリックしてください。</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">はじめる</button>
+                <button type="button" class="btn btn-primary">
+                    <span class="d-none spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="button-text">はじめる</span>
+                </button>
             </div>
         </div>
     </div>
 </div>
 <!-- Common More Config -->
 <div class="modal" id="commonMoreConfigModal" tabindex="-1" aria-labelledby="commonMoreConfigModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="commonMoreConfigModalLabel">環境設定</h5>
@@ -309,10 +316,10 @@
 </div>
 <!-- Load Params -->
 <div class="modal" id="loadParamsConfirmModal" tabindex="-1" aria-labelledby="loadParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsConfirmModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="loadParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -329,10 +336,10 @@
     </div>
 </div>
 <div class="modal" id="loadParamsCompletedModal" tabindex="-1" aria-labelledby="loadParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsCompletedModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="loadParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -343,10 +350,10 @@
 </div>
 <!-- Save Params -->
 <div class="modal" id="saveParamsConfirmModal" tabindex="-1" aria-labelledby="saveParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsConfirmModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="saveParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -363,10 +370,10 @@
     </div>
 </div>
 <div class="modal" id="saveParamsCompletedModal" tabindex="-1" aria-labelledby="saveParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsCompletedModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="saveParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -377,10 +384,10 @@
 </div>
 <!-- Delete Params -->
 <div class="modal" id="deleteParamsConfirmModal" tabindex="-1" aria-labelledby="deleteParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsConfirmModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="deleteParamsConfirmModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -397,10 +404,10 @@
     </div>
 </div>
 <div class="modal" id="deleteParamsCompletedModal" tabindex="-1" aria-labelledby="deleteParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsCompletedModalLabel">Flash Anzan</h5>
+                <h5 class="modal-title" id="deleteParamsCompletedModalLabel"><%- title %></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -456,7 +463,7 @@
                             aria-labelledby="switchInputAnswerBoxTab-keyboard-tab"
                     >
                         <label for="input-answer-box" style="display: none;"></label>
-                        <input type="text" id="input-answer-box" inputmode="numeric" class="form-control input-answer-box" autocomplete="off">
+                        <input type="number" id="input-answer-box" inputmode="numeric" class="form-control input-answer-box" autocomplete="off">
                     </div>
                     <div
                             class="tab-pane"
@@ -513,9 +520,27 @@
         </div>
     </div>
 </div>
+<!-- Confirm to quit -->
+<div class="modal" id="comfirmQuitModal" tabindex="-1" aria-labelledby="comfirmQuitModalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><%- title %></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>終了しますか？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
+                <button type="button" id="do-quit-button" class="btn btn-primary" data-bs-dismiss="modal">はい</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Help -->
 <div class="modal" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="helpModalLabel">ショートカット</h5>

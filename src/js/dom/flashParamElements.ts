@@ -7,7 +7,8 @@ import {
     FlashTimeParam
 } from "../flash/flashParams.js"
 import { button, getHtmlElement } from "./htmlElement.js"
-import { flashParamSchema } from "../flash/flashParamSchema.js"
+
+import { flashParamSchema } from "../../config/flashParamSchema.js"
 
 export interface FlashParamElements {
     addition: {
@@ -33,33 +34,43 @@ export interface FlashParamElements {
 export const flashParamElements: FlashParamElements = {
     addition: {
         digit: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "addition-digit"),
+            htmlElement: getHtmlElement("select", "addition-digit"),
             schema: flashParamSchema.addition.digit,
         }),
         length: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "addition-length"),
+            htmlElement: getHtmlElement("select", "addition-length"),
             schema: flashParamSchema.addition.length,
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "addition-time"),
+            digitElements: {
+                int: getHtmlElement("select", "addition-time-int"),
+                dec1: getHtmlElement("select", "addition-time-dec1"),
+                dec2: getHtmlElement("select", "addition-time-dec2"),
+            },
             schema: flashParamSchema.addition.time,
         }),
     },
     multiplication: {
         digit1: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-digit-1"),
+            htmlElement: getHtmlElement("select", "multiplication-digit-1"),
             schema: flashParamSchema.multiplication.digit1,
         }),
         digit2: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-digit-2"),
+            htmlElement: getHtmlElement("select", "multiplication-digit-2"),
             schema: flashParamSchema.multiplication.digit2,
         }),
         length: new FlashNumberWithDifficultySupportParam({
-            htmlElement: getHtmlElement("input", "multiplication-length"),
+            htmlElement: getHtmlElement("select", "multiplication-length"),
             schema: flashParamSchema.multiplication.length,
         }),
         time: new FlashTimeParam({
             htmlElement: getHtmlElement("input", "multiplication-time"),
+            digitElements: {
+                int: getHtmlElement("select", "multiplication-time-int"),
+                dec1: getHtmlElement("select", "multiplication-time-dec1"),
+                dec2: getHtmlElement("select", "multiplication-time-dec2"),
+            },
             schema: flashParamSchema.multiplication.time,
         }),
     },

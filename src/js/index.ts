@@ -5,9 +5,9 @@ import { type FlashAnswer } from "./flash/flashNumbers.js"
 import { getTime } from "./time.js"
 import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
-import { audioObj, isMuted } from "./sound.js"
+import { audioObj, isMuted } from "./sound/sound.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
-import { changeMode, type FlashParamSet } from "./flash/flashParamSet.js"
+import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
 import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
 import { flashParamElements } from "./dom/flashParamElements.js"
@@ -25,21 +25,20 @@ import {
     numberHistoryDisplay,
     type ParamsModalOperation,
     questionNumberArea,
-    switchInputAnswerBoxTab,
-    versionNumber
+    switchInputAnswerBoxTab
 } from "./dom/htmlElement.js"
-import { type FlashMode } from "./globals.js"
 import { latestFlashNumberHistory } from "./flash/flashNumberHistory.js"
+import { getFlashSuite } from "./flash/flashSuite.js"
+import { measuredTime } from "./flash/measuredTime.js"
+import { type AudioObjKey } from "./globals.js"
+import { waitLoaded } from "./loadStatusManager.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
 }
 
-function flash(options: FlashOptions = {}): void {
-    const measuredTime = {
-        start: 0,
-        end: 0,
-    }
+async function flash(options: FlashOptions = {}): Promise<void> {
+    measuredTime.reset()
 
     /**
      * 答え入力のための準備的な。
@@ -58,19 +57,19 @@ function flash(options: FlashOptions = {}): void {
 
             button.repeat.disabled = true
             if (!isMuted()) {
-                audioObj.answer[0].play()
+                audioObj.play("answer")
             }
 
             setTimeout(() => {
-                let resultAudio: Howl
+                let resultAudioObj: AudioObjKey
                 if (numberStr === answer.toString()) {
-                    resultAudio = audioObj.correct[0]
+                    resultAudioObj = "correct"
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）\n`
                 } else if (numberStr.length > 0) {
-                    resultAudio = audioObj.incorrect[0]
+                    resultAudioObj = "incorrect"
                     headerMessage.innerText = `不正解...（${headerMessage.innerText}）\n`
                 } else {
-                    resultAudio = audioObj.silence[0]
+                    resultAudioObj = "silence"
                     headerMessage.innerText = "答え\n"
                 }
                 {
@@ -81,7 +80,7 @@ function flash(options: FlashOptions = {}): void {
                 }
                 questionNumberArea.innerText = answer.toDisplay()
                 if (!isMuted()) {
-                    resultAudio.play()
+                    audioObj.play(resultAudioObj)
                 }
 
                 enableHtmlButtons()
@@ -156,95 +155,6 @@ function flash(options: FlashOptions = {}): void {
         }
     }
 
-    const getFlashSuite = (numbersToDisplay: string[], requestParam: FlashParamSet<FlashMode>): Array<{
-        playTickFunction: () => void
-        toggleNumberFunction: () => void
-        _toggleTiming: number
-    }> => {
-        /**
-         * 数字を表示させる順番を作成する。点滅なので数字・空文字の順番に配列に入れていく。
-         * @param {string[]} fmtNumbers 整形された数字の配列
-         * @returns {string[]} 点滅も含めた数字の表示順の配列
-         */
-        function generateToggleNumberSuite(fmtNumbers: string[]): string[] {
-            const toggleNumberSuite: string[] = []
-            for (let i = 0; i < fmtNumbers.length; i++) {
-                toggleNumberSuite.push(fmtNumbers[i])
-                toggleNumberSuite.push("")
-            }
-            return toggleNumberSuite
-        }
-
-        /**
-         * 画面の表示に合わせて鳴らす音の順番の配列を作成する。
-         */
-        function generateSoundSuite(): Array<Howl | null> {
-            const sounds: Array<null | Howl> = []
-            for (let i = 0; i < requestParam.length; ++i) {
-                sounds.push(isMuted() ? null : audioObj.tick[i])
-                sounds.push(null)
-            }
-            return sounds
-        }
-
-        const result = Array.from({ length: requestParam.length * 2 }, () => {
-            return {
-                toggleNumberFunction: () => {
-                },
-                playTickFunction: () => {
-                },
-                _toggleTiming: 0,
-            }
-        })
-
-        const toggleNumberSuite = generateToggleNumberSuite(numbersToDisplay)
-        for (const [i, toggleNumber] of toggleNumberSuite.entries()) {
-            if (i === 0) {
-                result[i].toggleNumberFunction = () => {
-                    measuredTime.start = getTime()
-                    questionNumberArea.innerText = toggleNumber
-                }
-            } else if (i === toggleNumberSuite.length - 1) {
-                result[i].toggleNumberFunction = () => {
-                    questionNumberArea.innerText = toggleNumber
-                    measuredTime.end = getTime()
-                }
-            } else {
-                result[i].toggleNumberFunction = () => {
-                    questionNumberArea.innerText = toggleNumber
-                }
-            }
-        }
-
-        const soundSuite = generateSoundSuite()
-        for (const [i, sound] of soundSuite.entries()) {
-            result[i].playTickFunction = sound === null
-                ? () => {
-                }
-                : () => {
-                    sound.play()
-                }
-        }
-
-        for (let i = 0; i < result.length; i++) {
-            result[i]._toggleTiming =
-                requestParam.time *
-                (Math.floor(i / 2) * 100 + requestParam.flashRate * (i % 2)) /
-                ((requestParam.length - 1) * 100 + requestParam.flashRate)
-        }
-
-        return result
-    }
-
-    const playBeepFunctions = audioObj.beep.map(
-        a => isMuted()
-            ? () => {
-            }
-            : () => {
-                a.play()
-            }
-    )
-
     // ここからフラッシュ出題の処理
     const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
     if (!flashQuestionCreator.difficultyIsSupported()) {
@@ -253,11 +163,17 @@ function flash(options: FlashOptions = {}): void {
         }
         options.allowUnknownDifficulty = true
     }
-    // 設定を取得する
+
+    // 出題するフラッシュ
     const question = flashQuestionCreator.create(options)
-    const requestParam = question.paramSet
-    const numbersToDisplay = question.flash.numbers.toDisplay()
-    const flashAnswer = question.flash.answer
+
+    // フラッシュ音声と表示タイミング
+    const flashSuite = await getFlashSuite({
+        soundExtension: flashParamElements.common.soundExtension.valueV1,
+        paramSet: question.paramSet,
+        prepareAnswerInputFunc: getPrepareAnswerInputFunc(question.flash.answer),
+        numbersToDisplay: question.flash.numbers.toDisplay(),
+    })
 
     // 答えと出題数字履歴を作成する
     headerMessage.innerText = ""
@@ -287,22 +203,9 @@ function flash(options: FlashOptions = {}): void {
     disableHtmlButtons()
     setFullscreenMode(true)
     noticeArea.innerText = ""
-    warmUpDisplayArea(0)
-    const beforeBeepTime = 500
-    const beepInterval = 875
-    const flashStartTiming = beforeBeepTime + beepInterval * 2
-    const flashSuite = getFlashSuite(numbersToDisplay, requestParam)
-    const prepareAnswerInputFunc = getPrepareAnswerInputFunc(flashAnswer)
-    setTimeout(() => {
-        audioObj.silence[0].play()
-    }, 0)
-    setFlashTimeOut(playBeepFunctions[0], beforeBeepTime - requestParam.offset)
-    setFlashTimeOut(playBeepFunctions[1], beforeBeepTime + beepInterval - requestParam.offset)
-    for (let i = 0; i < flashSuite.length; i++) {
-        setFlashTimeOut(flashSuite[i].playTickFunction, flashStartTiming + flashSuite[i]._toggleTiming - requestParam.offset)
-        setFlashTimeOut(flashSuite[i].toggleNumberFunction, flashStartTiming + flashSuite[i]._toggleTiming)
+    for (const flashSuiteElement of flashSuite) {
+        setFlashTimeOut(flashSuiteElement.fn, flashSuiteElement.delay)
     }
-    setFlashTimeOut(prepareAnswerInputFunc, flashStartTiming + requestParam.time + 300)
 }
 
 function configureModalFocusing(): void {
@@ -329,35 +232,6 @@ function configureModalFocusing(): void {
     })
 }
 
-/**
- * 表示エリアのウォーミングアップ。
- * フォントの読み込みに時間がかかるため，ウォーミングアップで 1 回見えない文字を光らせておく。
- * @param {number} timeoutMs
- * @returns {number}
- */
-function warmUpDisplayArea(timeoutMs: number): number {
-    const currentNumberColor = questionNumberArea.style.color
-    const prepareGameFunctions = [
-        () => {
-            questionNumberArea.style.color = "black"
-        },
-        () => {
-            questionNumberArea.innerText = "0"
-        },
-        () => {
-            questionNumberArea.innerText = ""
-        },
-        () => {
-            questionNumberArea.style.color = currentNumberColor
-        },
-    ]
-    prepareGameFunctions.forEach((func) => {
-        setTimeout(func, timeoutMs)
-        timeoutMs += 50
-    })
-    return timeoutMs
-}
-
 function clearInputAnswerBox(): void {
     inputAnswerBox.value = ""
     inputAnswerBoxTouchDisplay.value = ""
@@ -365,36 +239,16 @@ function clearInputAnswerBox(): void {
 }
 
 (() => {
-    // バージョン番号
-    const version = APP_VERSION
-    const warmupDelay = 1000
+    const setup = async (): Promise<void> => {
+        const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
-    const setup = (): void => {
         audioObj.load(flashParamElements.common.soundExtension.valueV1);
 
         // ページ読み込み時処理
         (() => {
-            let timeoutMs = warmUpDisplayArea(warmupDelay)
-            const prepareGameFunctions = [
-                () => {
-                    changeMode("addition")
-                },
-                configureModalFocusing,
-                () => {
-                    button.help.disabled = false
-                    button.openCommonMoreConfig.disabled = false
-                    button.loadParams.disabled = false
-                    button.saveParams.disabled = false
-                    button.deleteParams.disabled = false
-                    button.start.disabled = false
-                },
-                registerShortcuts,
-            ]
-            prepareGameFunctions.forEach((func) => {
-                setTimeout(func, timeoutMs)
-                timeoutMs += 50
-            })
-
+            changeMode("addition")
+            configureModalFocusing()
+            registerShortcuts()
             if (isTouchDevice()) {
                 button.help.style.display = "none"
             }
@@ -447,19 +301,14 @@ function clearInputAnswerBox(): void {
             })
         })();
 
-        // バージョン番号の表示
-        (() => {
-            versionNumber.innerText = version
-        })();
-
         // set onclick events in index.html
         (() => {
             // フラッシュ操作
             button.start.addEventListener("click", () => {
-                flash()
+                void flash()
             })
             button.repeat.addEventListener("click", () => {
-                flash({ repeat: true })
+                void flash({ repeat: true })
             })
 
             // モード切り替え
@@ -502,21 +351,61 @@ function clearInputAnswerBox(): void {
                 answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
                 new bootstrap.Modal(modals.number_history).show()
             })
+
+            // 終了ボタン
+            button.doQuit.addEventListener("click", () => {
+                window.close()
+            })
         })()
+
+        // フラッシュ出題エリアの選択を禁止する
+        calculateArea.addEventListener("selectstart", (event) => {
+            event.preventDefault()
+        })
+
+        await waitLoadedPromise
     };
 
+    // autoload
     (() => {
-        const button: HTMLButtonElement | null = document.querySelector("#welcomeModal .modal-footer > button")
-        if (button == null) {
-            throw new Error("element not found: modal footer button")
-        }
+        // setup welcome modal
+        (() => {
+            const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
+            if (button == null) {
+                throw new Error("element not found: modal footer button")
+            }
+            const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
+            if (spinner === null) {
+                throw new Error("element not found: button spinner")
+            }
+            const text = button.querySelector<HTMLSpanElement>(".button-text")
+            if (text === null) {
+                throw new Error("element not found: button text")
+            }
+            const welcomeModal = new bootstrap.Modal(modals.welcome, {
+                backdrop: "static",
+                keyboard: false,
+                focus: true,
+            })
 
-        button.addEventListener("click", setup)
-        const welcomeModal = new bootstrap.Modal(modals.welcome, {
-            backdrop: "static",
-            keyboard: false,
-            focus: true,
-        })
-        welcomeModal.show()
+            button.addEventListener("click", () => {
+                button.disabled = true
+                // keep button width
+                button.style.width = getComputedStyle(button).width
+                spinner.classList.remove("d-none")
+                text.classList.add("d-none")
+                setup()
+                    .then(_ => {
+                        welcomeModal.hide()
+                    })
+                    .catch(_ => {
+                        alert("フォント・音声の読み込みに失敗しました。")
+                        if (confirm("もう一度読み込みますか？")) {
+                            location.reload()
+                        }
+                    })
+            })
+            welcomeModal.show()
+        })()
     })()
 })()
