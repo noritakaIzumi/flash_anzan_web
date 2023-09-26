@@ -33,6 +33,7 @@ import { measuredTime } from "./flash/measuredTime.js"
 import { type AudioObjKey } from "./globals.js"
 import { waitLoaded } from "./loadStatusManager.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParamStorage.js"
+import { isMutedConfig } from "./sound/isMutedConfig.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -240,8 +241,8 @@ function clearInputAnswerBox(): void {
     const setup = async (): Promise<void> => {
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
-        audioObj.load(getHtmlElement("select", "sound-extension").value)
-        audioObj.isMuted = getHtmlElement("input", "is-muted").checked;
+        isMutedConfig.isMuted = getHtmlElement("input", "is-muted").checked
+        audioObj.load(getHtmlElement("select", "sound-extension").value);
 
         // ページ読み込み時処理
         (() => {
