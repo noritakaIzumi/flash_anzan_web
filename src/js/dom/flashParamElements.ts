@@ -3,7 +3,6 @@ import {
     FlashIsMutedParam,
     FlashNumberParam,
     FlashNumberWithDifficultySupportParam,
-    FlashSoundExtensionParam,
     FlashTimeParam
 } from "../flash/flashParams.js"
 import { button, getHtmlElement } from "./htmlElement.js"
@@ -26,7 +25,6 @@ export interface FlashParamElements {
         difficulty: FlashDifficultyParam
         offset: FlashNumberParam
         isMuted: FlashIsMutedParam
-        soundExtension: FlashSoundExtensionParam
     }
 }
 
@@ -89,10 +87,6 @@ export const flashParamElements: FlashParamElements = {
                 buttonElement: button.isMuted,
                 audioStatusElement: getHtmlElement("label", "audio-status"),
             },
-        }),
-        soundExtension: new FlashSoundExtensionParam({
-            htmlElement: getHtmlElement("select", "sound-extension"),
-            schema: flashParamSchema.common.soundExtension,
         }),
     },
 }

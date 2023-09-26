@@ -1,19 +1,11 @@
-import {
-    flashDifficulty,
-    type FlashDifficulty,
-    savedParamsKeyName,
-    soundExtension,
-    type SoundExtension
-} from "../globals.js"
-import { audioObj } from "../sound/sound.js"
+import { flashDifficulty, type FlashDifficulty, savedParamsKeyName } from "../globals.js"
 import { button, modals } from "../dom/htmlElement.js"
 import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
 import {
     type FlashDifficultyParamSchema,
     type FlashIsMutedParamSchema,
     type FlashNumberParamSchema,
-    type FlashNumberParamWithDifficultySupportSchema,
-    type FlashSoundExtensionParamSchema
+    type FlashNumberParamWithDifficultySupportSchema
 } from "./flashParamSchema.js"
 
 export function fixValue(limit: {
@@ -323,46 +315,6 @@ FlashIsMutedParamOptions
     }
 }
 
-export class FlashSoundExtensionParam extends FlashParam<
-HTMLSelectElement,
-FlashSoundExtensionParamSchema,
-SoundExtension
-> {
-    get valueV1(): SoundExtension {
-        return this.htmlElement.value as SoundExtension
-    }
-
-    set valueV1(value: SoundExtension) {
-        this.htmlElement.value = value
-        this.htmlElement.dispatchEvent(new Event("change"))
-    }
-
-    get valueV0(): SoundExtension {
-        return this.valueV1
-    }
-
-    set valueV0(value: string) {
-        if (!(soundExtension as unknown as string[]).includes(value)) {
-            throw new RangeError("invalid extension")
-        }
-        this.valueV1 = value as SoundExtension
-    }
-
-    constructor(props: {
-        htmlElement: HTMLSelectElement
-        schema: {
-            default: SoundExtension
-        }
-        options?: never
-    }) {
-        super(props)
-        this.valueV1 = props.schema.default
-        this.htmlElement.addEventListener("change", () => {
-            audioObj.load(this.htmlElement.value as SoundExtension)
-        })
-    }
-}
-
 export function doLoadParams(): void {
     const modal = modals.params.load.complete
     const modalMessage = modal.querySelector(".modal-body > p")
@@ -395,7 +347,6 @@ export function doLoadParams(): void {
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
                 flashParamElements.common.offset.valueV0 = parsedParams.common.offset
                 flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
-                flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
                 break
         }
     })
@@ -423,7 +374,6 @@ export function doSaveParams(): void {
     params.common.difficulty = flashParamElements.common.difficulty.valueV0
     params.common.offset = flashParamElements.common.offset.valueV0
     params.common.isMuted = flashParamElements.common.isMuted.valueV0
-    params.common.soundExtension = flashParamElements.common.soundExtension.valueV0
 
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params))
 }

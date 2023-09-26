@@ -1,4 +1,4 @@
-import { type AudioObjKey, type SoundExtension } from "../globals.js"
+import { type AudioObjKey, soundExtension, type SoundExtension } from "../globals.js"
 import { Howl, type HowlOptions } from "howler"
 import { flashParamElements } from "../dom/flashParamElements.js"
 import { initAudioBuffers } from "./playSound.js"
@@ -35,10 +35,15 @@ function getHowl(extension: SoundExtension): Howl {
 class AudioObj {
     private currentHowl: Howl | undefined
 
-    load(extension: SoundExtension): void {
-        this.currentHowl = getHowl(extension)
-        void initAudioBuffers(extension, "beep")
-        void initAudioBuffers(extension, "tick")
+    load(extension: string): void {
+        if (!(soundExtension as unknown as string[]).includes(extension)) {
+            throw new RangeError("invalid extension")
+        }
+
+        const validatedExtension = extension as SoundExtension
+        this.currentHowl = getHowl(validatedExtension)
+        void initAudioBuffers(validatedExtension, "beep")
+        void initAudioBuffers(validatedExtension, "tick")
     }
 
     play(name: AudioObjKey): void {

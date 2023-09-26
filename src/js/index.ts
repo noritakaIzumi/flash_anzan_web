@@ -14,7 +14,7 @@ import { flashParamElements } from "./dom/flashParamElements.js"
 import {
     answerNumberDisplay,
     button,
-    calculateArea,
+    calculateArea, getHtmlElement,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
@@ -171,7 +171,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
     // フラッシュ音声と表示タイミング
     const flashSuite = await getFlashSuite({
-        soundExtension: flashParamElements.common.soundExtension.valueV1,
         paramSet: question.paramSet,
         prepareAnswerInputFunc: getPrepareAnswerInputFunc(question.flash.answer),
         numbersToDisplay: question.flash.numbers.toDisplay(),
@@ -244,7 +243,7 @@ function clearInputAnswerBox(): void {
     const setup = async (): Promise<void> => {
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
-        audioObj.load(flashParamElements.common.soundExtension.valueV1);
+        audioObj.load(getHtmlElement("select", "sound-extension").value);
 
         // ページ読み込み時処理
         (() => {
@@ -333,11 +332,6 @@ function clearInputAnswerBox(): void {
                 flashParamElements.common.difficulty.valueV1 = "hard"
             })
 
-            // サウンド
-            button.isMuted.addEventListener("change", event => {
-                flashParamElements.common.isMuted.valueV1 = (event.target as HTMLInputElement).checked
-            })
-
             // 出題設定読み込み
             button.doLoadParams.addEventListener("click", doLoadParams)
             button.doSaveParams.addEventListener("click", doSaveParams)
@@ -370,6 +364,11 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
+        // サウンド
+        button.isMuted.addEventListener("change", event => {
+            flashParamElements.common.isMuted.valueV1 = (event.target as HTMLInputElement).checked
+        });
+
         // setup welcome modal
         (() => {
             const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")

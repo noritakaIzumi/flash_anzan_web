@@ -1,6 +1,6 @@
-import { audioObj } from "../sound/sound.js"
+import { audioObj, isMuted } from "../sound/sound.js"
 import { type FlashParamSet } from "./flashParamSet.js"
-import { type FlashMode, type SoundExtension } from "../globals.js"
+import { type FlashMode } from "../globals.js"
 import { measuredTime } from "./measuredTime.js"
 import { getTime } from "../time.js"
 import { questionNumberArea } from "../dom/htmlElement.js"
@@ -62,54 +62,50 @@ export interface FlashSegment {
 
 export type FlashSuite = FlashSegment[]
 
-export interface GetFlashSuiteParams {
-    soundExtension: SoundExtension
+export interface GetFlashSuiteArgs {
     paramSet: FlashParamSet<any>
     prepareAnswerInputFunc: () => void
     numbersToDisplay: string[]
 }
 
-export async function getFlashSuite({
-    soundExtension,
-    paramSet,
-    prepareAnswerInputFunc,
-    numbersToDisplay,
-}: GetFlashSuiteParams): Promise<FlashSuite> {
-    const toggleTimings = getToggleTimings(paramSet)
-    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
+export async function getFlashSuite(args: GetFlashSuiteArgs): Promise<FlashSuite> {
+    const toggleTimings = getToggleTimings(args.paramSet)
+    const toggleNumberFunctions = getToggleNumberFunctions(args.numbersToDisplay)
     const playSoundCreator = getPlaySoundCreator()
-    const beepSound = await playSoundCreator.createBeep({ soundExtension, beepInterval, beepCount })
-    const tickSound = await playSoundCreator.createTick({ soundExtension, toggleTimings })
+    const beepSound = await playSoundCreator.createBeep({ beepInterval, beepCount })
+    const tickSound = await playSoundCreator.createTick({ toggleTimings })
 
     const flashSuite: FlashSuite = []
-    flashSuite.push({
-        fn: () => {
-            audioObj.play("silence")
-        },
-        delay: 0,
-    })
-    flashSuite.push({
-        fn: () => {
-            beepSound.play()
-        },
-        delay: firstBeepTiming - paramSet.offset,
-    })
     const flashStartTiming = firstTickTiming
-    flashSuite.push({
-        fn: () => {
-            tickSound.play()
-        },
-        delay: flashStartTiming - paramSet.offset,
-    })
-    for (let i = 0; i < paramSet.length * 2; i++) {
+    if (!isMuted()) {
+        flashSuite.push({
+            fn: () => {
+                audioObj.play("silence")
+            },
+            delay: 0,
+        })
+        flashSuite.push({
+            fn: () => {
+                beepSound.play()
+            },
+            delay: firstBeepTiming - args.paramSet.offset,
+        })
+        flashSuite.push({
+            fn: () => {
+                tickSound.play()
+            },
+            delay: flashStartTiming - args.paramSet.offset,
+        })
+    }
+    for (let i = 0; i < args.paramSet.length * 2; i++) {
         flashSuite.push({
             fn: toggleNumberFunctions[i],
             delay: flashStartTiming + toggleTimings[i],
         })
     }
     flashSuite.push({
-        fn: prepareAnswerInputFunc,
-        delay: flashStartTiming + toggleTimings[paramSet.length * 2 - 1] + 300,
+        fn: args.prepareAnswerInputFunc,
+        delay: flashStartTiming + toggleTimings[args.paramSet.length * 2 - 1] + 300,
     })
     return flashSuite
 }
