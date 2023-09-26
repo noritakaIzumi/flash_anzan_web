@@ -329,7 +329,7 @@ export function getMultiplicationModeComplexityThresholdMapKey(digitCount: Flash
 
 export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<"addition"> {
     protected getComplexity(carries: number[], digitCount: FlashDigit["addition"]): number {
-        return calculateComplexity(carries.slice(1), digitCount)
+        return calculateComplexity(carries, digitCount)
     }
 
     protected getComplexityThresholdMapKey(digitCount: FlashDigit["addition"], length: number): ComplexityThresholdMapKey["addition"] {
