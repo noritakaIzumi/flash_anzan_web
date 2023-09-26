@@ -6,13 +6,13 @@ export const flashParamSchema: FlashParamSchema = {
             min: 1,
             max: 14,
             default: 1,
-            difficultySupportMax: 8,
+            difficultySupportMax: 10,
         },
         length: {
             min: 2,
             max: 100,
             default: 3,
-            difficultySupportMax: 30,
+            difficultySupportMax: 15,
         },
         time: {
             min: 1_000,
@@ -25,19 +25,19 @@ export const flashParamSchema: FlashParamSchema = {
             min: 1,
             max: 7,
             default: 1,
-            difficultySupportMax: 4,
+            difficultySupportMax: 5,
         },
         digit2: {
             min: 1,
             max: 7,
             default: 1,
-            difficultySupportMax: 4,
+            difficultySupportMax: 5,
         },
         length: {
             min: 2,
             max: 30,
             default: 2,
-            difficultySupportMax: 30,
+            difficultySupportMax: 15,
         },
         time: {
             min: 1_000,
