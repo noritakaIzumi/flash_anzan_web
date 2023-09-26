@@ -26,7 +26,6 @@ export const button = {
     addition: getHtmlElement("a", "pills-addition-tab"),
     subtraction: getHtmlElement("a", "pills-subtraction-tab"),
     multiplication: getHtmlElement("a", "pills-multiplication-tab"),
-    closeInputAnswer: getHtmlElement("button", "closeInputAnswerModal"),
     help: getHtmlElement("button", "help-button"),
     openCommonMoreConfig: getHtmlElement("button", "open-common-more-config-button"),
     difficulty: {
