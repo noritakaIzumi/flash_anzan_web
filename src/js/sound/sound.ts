@@ -1,13 +1,13 @@
 import { type AudioObjKey, soundExtension, type SoundExtension } from "../globals.js"
 import { Howl, type HowlOptions } from "howler"
-import { flashParamElements } from "../dom/flashParamElements.js"
 import { initAudioBuffers } from "./playSound.js"
 import { howler2OptionWav } from "../lib/howler2OptionWav.js"
 import { howler2OptionOgg } from "../lib/howler2OptionOgg.js"
 import { loadStatusManager } from "../loadStatusManager.js"
+import { getHtmlElement } from "../dom/htmlElement.js"
 
 export function isMuted(): boolean {
-    return flashParamElements.common.isMuted.valueV1
+    return getHtmlElement("input", "is-muted").checked
 }
 
 const howlStore: { [ext in SoundExtension]?: Howl | undefined } = {}

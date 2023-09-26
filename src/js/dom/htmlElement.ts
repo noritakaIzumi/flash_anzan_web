@@ -34,7 +34,6 @@ export const button = {
         normal: getHtmlElement("input", "difficulty-normal"),
         hard: getHtmlElement("input", "difficulty-hard"),
     },
-    isMuted: getHtmlElement("input", "is-muted-button"),
     quit: getHtmlElement("button", "quit-button"),
     doQuit: getHtmlElement("button", "do-quit-button"),
 }

@@ -6,7 +6,6 @@ import { getTime } from "./time.js"
 import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
 import { audioObj, isMuted } from "./sound/sound.js"
-import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParams.js"
 import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
 import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
@@ -32,6 +31,7 @@ import { getFlashSuite } from "./flash/flashSuite.js"
 import { measuredTime } from "./flash/measuredTime.js"
 import { type AudioObjKey } from "./globals.js"
 import { waitLoaded } from "./loadStatusManager.js"
+import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParamStorage.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -364,11 +364,6 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
-        // サウンド
-        button.isMuted.addEventListener("change", event => {
-            flashParamElements.common.isMuted.valueV1 = (event.target as HTMLInputElement).checked
-        });
-
         // setup welcome modal
         (() => {
             const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
