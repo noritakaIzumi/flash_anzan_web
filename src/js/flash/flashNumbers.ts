@@ -12,7 +12,7 @@ import {
     multiplyFigure,
     type UnknownFlashDifficulty
 } from "../globals.js"
-import { type FlashParam } from "./flashParamSet.js"
+import { type FlashParamSet } from "./flashParamSet.js"
 import { type FlashNumberHistory, flashNumberHistoryRegistry } from "./flashNumberHistory.js"
 import { type ExecuteInterface } from "../interface/executeInterface.js"
 import { type FlashOptions } from "./flashQuestionCreator.js"
@@ -141,7 +141,7 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
         this.GetFlashAnswerAdapter = getFlashAnswerAdapter
     }
 
-    execute(requestParam: FlashParam<FlashDigit[T]>, options: FlashOptions = {}): Flash<T> {
+    execute(requestParam: FlashParamSet<T>, options: FlashOptions = {}): Flash<T> {
         const numberHistoryObj = this.getNumberHistoryObj()
         const digitIsSame = numberHistoryObj?.digitEquals(requestParam.digit) ?? false
         const numberHistory = numberHistoryObj?.numberHistory.raw ?? []

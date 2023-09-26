@@ -24,7 +24,6 @@ export interface FlashParamElements {
     }
     common: {
         difficulty: FlashDifficultyParam
-        flashRate: FlashNumberParam
         offset: FlashNumberParam
         isMuted: FlashIsMutedParam
         soundExtension: FlashSoundExtensionParam
@@ -78,10 +77,6 @@ export const flashParamElements: FlashParamElements = {
         difficulty: new FlashDifficultyParam({
             htmlElement: getHtmlElement("select", "difficulty"),
             schema: flashParamSchema.common.difficulty,
-        }),
-        flashRate: new FlashNumberParam({
-            htmlElement: getHtmlElement("input", "common-flashRate"),
-            schema: flashParamSchema.common.flashRate,
         }),
         offset: new FlashNumberParam({
             htmlElement: getHtmlElement("input", "common-offset"),

@@ -5,14 +5,14 @@ import { measuredTime } from "./measuredTime.js"
 import { getTime } from "../time.js"
 import { questionNumberArea } from "../dom/htmlElement.js"
 import { getPlaySoundCreator } from "../sound/playSound.js"
-import { beepCount, beepInterval, firstBeepTiming, firstTickTiming } from "../../config/flashTiming.js"
+import { beepCount, beepInterval, firstBeepTiming, firstTickTiming, flashRate } from "../../config/flashTiming.js"
 
 export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] => {
     const result: number[] = []
     for (let i = 0; i < paramSet.length * 2; i++) {
         result.push(paramSet.time *
-            (Math.floor(i / 2) * 100 + paramSet.flashRate * (i % 2)) /
-            ((paramSet.length - 1) * 100 + 50)
+            (Math.floor(i / 2) * 100 + flashRate * (i % 2)) /
+            ((paramSet.length - 1) * 100 + flashRate)
         )
     }
     return result

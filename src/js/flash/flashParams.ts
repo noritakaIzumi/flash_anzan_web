@@ -393,7 +393,6 @@ export function doLoadParams(): void {
                 break
             case "common":
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
-                flashParamElements.common.flashRate.valueV0 = parsedParams.common.flashRate
                 flashParamElements.common.offset.valueV0 = parsedParams.common.offset
                 flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
                 flashParamElements.common.soundExtension.valueV0 = parsedParams.common.soundExtension
@@ -422,7 +421,6 @@ export function doSaveParams(): void {
     params.multiplication.length = flashParamElements.multiplication.length.valueV0
     params.multiplication.time = flashParamElements.multiplication.time.valueV0
     params.common.difficulty = flashParamElements.common.difficulty.valueV0
-    params.common.flashRate = flashParamElements.common.flashRate.valueV0
     params.common.offset = flashParamElements.common.offset.valueV0
     params.common.isMuted = flashParamElements.common.isMuted.valueV0
     params.common.soundExtension = flashParamElements.common.soundExtension.valueV0

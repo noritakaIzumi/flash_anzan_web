@@ -9,21 +9,11 @@ export function changeMode(mode: FlashMode): void {
     currentFlashMode.value = mode
 }
 
-export interface FlashParam<TDigit> {
-    digit: TDigit
-    length: number
-    time: number
-    difficulty: FlashDifficulty
-    flashRate: number
-    offset: number
-}
-
 export interface FlashParamSet<T extends FlashMode> {
     digit: FlashDigit[T]
     length: number
     time: number
     difficulty: FlashDifficulty
-    flashRate: number
     offset: number
 }
 
@@ -38,7 +28,6 @@ export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSe
             length: flashParamElements.addition.length.updateParam().valueV1,
             time: flashParamElements.addition.time.updateParam().valueV1,
             difficulty: flashParamElements.common.difficulty.valueV1,
-            flashRate: flashParamElements.common.flashRate.updateParam().valueV1,
             offset: flashParamElements.common.offset.updateParam().valueV1,
         }
     }
@@ -54,7 +43,6 @@ export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashP
             length: flashParamElements.multiplication.length.updateParam().valueV1,
             time: flashParamElements.multiplication.time.updateParam().valueV1,
             difficulty: flashParamElements.common.difficulty.valueV1,
-            flashRate: flashParamElements.common.flashRate.updateParam().valueV1,
             offset: flashParamElements.common.offset.updateParam().valueV1,
         }
     }
