@@ -1,9 +1,3 @@
-self.addEventListener("install", function (event) {
-})
-
-self.addEventListener("fetch", function (event) {
-})
-
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 self.addEventListener("activate", async function () {
     // delete all ServiceWorker caches
