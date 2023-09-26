@@ -380,7 +380,19 @@ export abstract class AbstractCreateRawNumberAdapter<T extends keyof FlashDigit>
     abstract execute(): void
 }
 
-export class AdditionModeEasyDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"addition"> {
+export abstract class AbstractAdditionModeCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"addition"> {
+    abstract execute(): void
+
+    protected register(number: FlashDigit["addition"], carry: number): void {
+        // 最初の数字を追加するときは繰り上がりは必ず 0 なので登録しない
+        if (this.numbers.length > 0) {
+            this.carries.push(carry)
+        }
+        this.numbers.push(number)
+    }
+}
+
+export class AdditionModeEasyDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
     execute(): void {
         let tempAbacusValue: number
         let getIntRetry = 0
@@ -406,28 +418,25 @@ export class AdditionModeEasyDifficultyCreateRawNumberAdapter extends AbstractCr
                 }
 
                 this.abacus = this.abacus.add(bestNumber)
-                this.numbers.push(bestNumber)
-                this.carries.push(this.abacus.carry)
+                this.register(bestNumber, this.abacus.carry)
                 break
             }
 
-            this.numbers.push(number)
-            this.carries.push(this.abacus.carry)
+            this.register(number, this.abacus.carry)
             break
         }
     }
 }
 
-export class AdditionModeNormalDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"addition"> {
+export class AdditionModeNormalDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
     execute(): void {
         const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, true)
         this.abacus = new Abacus(this.abacus.value).add(number)
-        this.numbers.push(number)
-        this.carries.push(this.abacus.carry)
+        this.register(number, this.abacus.carry)
     }
 }
 
-export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"addition"> {
+export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
     execute(): void {
         let tempAbacusValue: number
         let getIntRetry = 0
@@ -453,13 +462,11 @@ export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractCr
                 }
 
                 this.abacus = this.abacus.add(bestNumber)
-                this.numbers.push(bestNumber)
-                this.carries.push(this.abacus.carry)
+                this.register(bestNumber, this.abacus.carry)
                 break
             }
 
-            this.numbers.push(number)
-            this.carries.push(this.abacus.carry)
+            this.register(number, this.abacus.carry)
             break
         }
     }
