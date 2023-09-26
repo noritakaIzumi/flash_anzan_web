@@ -1,4 +1,4 @@
-import { audioObj, isMuted } from "../sound/sound.js"
+import { audioObj } from "../sound/sound.js"
 import { type FlashParamSet } from "./flashParamSet.js"
 import { type FlashMode } from "../globals.js"
 import { measuredTime } from "./measuredTime.js"
@@ -77,7 +77,7 @@ export async function getFlashSuite(args: GetFlashSuiteArgs): Promise<FlashSuite
 
     const flashSuite: FlashSuite = []
     const flashStartTiming = firstTickTiming
-    if (!isMuted()) {
+    if (!audioObj.isMuted) {
         flashSuite.push({
             fn: () => {
                 audioObj.play("silence")

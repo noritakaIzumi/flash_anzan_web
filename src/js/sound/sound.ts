@@ -4,11 +4,6 @@ import { initAudioBuffers } from "./playSound.js"
 import { howler2OptionWav } from "../lib/howler2OptionWav.js"
 import { howler2OptionOgg } from "../lib/howler2OptionOgg.js"
 import { loadStatusManager } from "../loadStatusManager.js"
-import { getHtmlElement } from "../dom/htmlElement.js"
-
-export function isMuted(): boolean {
-    return getHtmlElement("input", "is-muted").checked
-}
 
 const howlStore: { [ext in SoundExtension]?: Howl | undefined } = {}
 
@@ -34,6 +29,15 @@ function getHowl(extension: SoundExtension): Howl {
 
 class AudioObj {
     private currentHowl: Howl | undefined
+    private _isMuted: boolean = true
+
+    get isMuted(): boolean {
+        return this._isMuted
+    }
+
+    set isMuted(value: boolean) {
+        this._isMuted = value
+    }
 
     load(extension: string): void {
         if (!(soundExtension as unknown as string[]).includes(extension)) {

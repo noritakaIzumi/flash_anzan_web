@@ -5,7 +5,7 @@ import { type FlashAnswer } from "./flash/flashNumbers.js"
 import { getTime } from "./time.js"
 import { currentFlashMode } from "./currentFlashMode.js"
 import { disableHtmlButtons, enableHtmlButtons, isFullscreen, isTouchDevice, setFullscreenMode } from "./screen.js"
-import { audioObj, isMuted } from "./sound/sound.js"
+import { audioObj } from "./sound/sound.js"
 import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
 import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
@@ -13,7 +13,8 @@ import { flashParamElements } from "./dom/flashParamElements.js"
 import {
     answerNumberDisplay,
     button,
-    calculateArea, getHtmlElement,
+    calculateArea,
+    getHtmlElement,
     headerMessage,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
@@ -58,7 +59,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             }
 
             button.repeat.disabled = true
-            if (!isMuted()) {
+            if (!audioObj.isMuted) {
                 audioObj.play("answer")
             }
 
@@ -75,7 +76,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                     headerMessage.innerText = "答え"
                 }
                 questionNumberArea.innerText = answer.toDisplay()
-                if (!isMuted()) {
+                if (!audioObj.isMuted) {
                     audioObj.play(resultAudioObj)
                 }
 
@@ -243,7 +244,8 @@ function clearInputAnswerBox(): void {
     const setup = async (): Promise<void> => {
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
-        audioObj.load(getHtmlElement("select", "sound-extension").value);
+        audioObj.load(getHtmlElement("select", "sound-extension").value)
+        audioObj.isMuted = getHtmlElement("input", "is-muted").checked;
 
         // ページ読み込み時処理
         (() => {
