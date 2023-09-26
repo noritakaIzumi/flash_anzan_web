@@ -51,6 +51,9 @@ class AudioObj {
     }
 
     play(name: AudioObjKey): void {
+        if (this.isMuted) {
+            return
+        }
         if (this.currentHowl === undefined) {
             throw new Error("audio is not initialized")
         }

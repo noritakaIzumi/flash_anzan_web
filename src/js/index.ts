@@ -59,9 +59,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             }
 
             button.repeat.disabled = true
-            if (!audioObj.isMuted) {
-                audioObj.play("answer")
-            }
+            audioObj.play("answer")
 
             setTimeout(() => {
                 let resultAudioObj: AudioObjKey
@@ -76,9 +74,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                     headerMessage.innerText = "答え"
                 }
                 questionNumberArea.innerText = answer.toDisplay()
-                if (!audioObj.isMuted) {
-                    audioObj.play(resultAudioObj)
-                }
+                audioObj.play(resultAudioObj)
 
                 enableHtmlButtons()
                 button.numberHistory.disabled = false

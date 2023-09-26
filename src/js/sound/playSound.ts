@@ -1,5 +1,6 @@
 import { audioAttr, type AudioObjKey, type AudioPath, type SoundExtension } from "../globals.js"
 import { getCrunkerInstance } from "./crunker.js"
+import { audioObj } from "./sound.js"
 
 const audioBuffersRegistry: { [name in AudioObjKey]?: AudioBuffer } = {}
 
@@ -79,6 +80,9 @@ export class PlaySound {
     }
 
     play(): void {
+        if (audioObj.isMuted) {
+            return
+        }
         this.crunker.play(this.buffer)
     }
 }

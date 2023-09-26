@@ -75,29 +75,27 @@ export async function getFlashSuite(args: GetFlashSuiteArgs): Promise<FlashSuite
     const flashSuite: FlashSuite = []
     const flashStartTiming = firstTickTiming
 
-    if (!audioObj.isMuted) {
-        const playSoundCreator = getPlaySoundCreator()
-        const beepSound = await playSoundCreator.createBeep({ beepInterval, beepCount })
-        const tickSound = await playSoundCreator.createTick({ toggleTimings })
-        flashSuite.push({
-            fn: () => {
-                audioObj.play("silence")
-            },
-            delay: 0,
-        })
-        flashSuite.push({
-            fn: () => {
-                beepSound.play()
-            },
-            delay: firstBeepTiming - args.paramSet.offset,
-        })
-        flashSuite.push({
-            fn: () => {
-                tickSound.play()
-            },
-            delay: flashStartTiming - args.paramSet.offset,
-        })
-    }
+    const playSoundCreator = getPlaySoundCreator()
+    const beepSound = await playSoundCreator.createBeep({ beepInterval, beepCount })
+    const tickSound = await playSoundCreator.createTick({ toggleTimings })
+    flashSuite.push({
+        fn: () => {
+            audioObj.play("silence")
+        },
+        delay: 0,
+    })
+    flashSuite.push({
+        fn: () => {
+            beepSound.play()
+        },
+        delay: firstBeepTiming - args.paramSet.offset,
+    })
+    flashSuite.push({
+        fn: () => {
+            tickSound.play()
+        },
+        delay: flashStartTiming - args.paramSet.offset,
+    })
 
     for (let i = 0; i < args.paramSet.length * 2; i++) {
         flashSuite.push({
