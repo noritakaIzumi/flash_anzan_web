@@ -30,10 +30,6 @@ export default defineConfig({
         },
     },
     define: {
-        APP_CONFIG_FIRST_BEEP_TIMING: 500,
-        APP_CONFIG_BEEP_INTERVAL: 849.609375,
-        APP_CONFIG_BEEP_COUNT: 2,
-        APP_CONFIG_FIRST_TICK_TIMING: 2257.8125,
         APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT: 30000,
     },
     plugins: [
