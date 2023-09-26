@@ -286,19 +286,11 @@ FlashIsMutedParamOptions
     }
 
     get valueV0(): string {
-        return this.valueV1 ? "on" : "off"
+        throw new Error("valueV0 of isMuted param is deprecated")
     }
 
-    set valueV0(value: string) {
-        if (value === "on") {
-            this.valueV1 = true
-            return
-        }
-        if (value === "off") {
-            this.valueV1 = false
-            return
-        }
-        throw new RangeError(`invalid param: isMuted=${value}`)
+    set valueV0(_value: string) {
+        throw new Error("valueV0 of isMuted param is deprecated")
     }
 
     constructor(props: {
@@ -346,7 +338,6 @@ export function doLoadParams(): void {
             case "common":
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
                 flashParamElements.common.offset.valueV0 = parsedParams.common.offset
-                flashParamElements.common.isMuted.valueV0 = parsedParams.common.isMuted
                 break
         }
     })
@@ -373,7 +364,6 @@ export function doSaveParams(): void {
     params.multiplication.time = flashParamElements.multiplication.time.valueV0
     params.common.difficulty = flashParamElements.common.difficulty.valueV0
     params.common.offset = flashParamElements.common.offset.valueV0
-    params.common.isMuted = flashParamElements.common.isMuted.valueV0
 
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params))
 }
