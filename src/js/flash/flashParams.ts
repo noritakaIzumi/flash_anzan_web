@@ -31,6 +31,10 @@ export function setupInputElementForTouch(element: HTMLInputElement): void {
 abstract class FlashParam<K extends HTMLElement & {
     value: string
 }, T, U, VOptions = never> {
+    get htmlElement(): K {
+        return this._htmlElement
+    }
+
     abstract get valueV1(): U
     abstract set valueV1(value: string | number)
 
@@ -43,7 +47,7 @@ abstract class FlashParam<K extends HTMLElement & {
      */
     abstract set valueV0(value: string)
 
-    protected htmlElement: K
+    private readonly _htmlElement: K
     protected schema: T
 
     protected constructor(props: {
@@ -51,7 +55,7 @@ abstract class FlashParam<K extends HTMLElement & {
         schema: T
         options?: VOptions
     }) {
-        this.htmlElement = props.htmlElement
+        this._htmlElement = props.htmlElement
         this.schema = props.schema
     }
 }
@@ -102,6 +106,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
     set valueV1(value: string | number) {
         const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
         this.htmlElement.value = String(fixedValue)
+        this.htmlElement.dispatchEvent(new Event("change"))
     }
 
     get valueV0(): string {

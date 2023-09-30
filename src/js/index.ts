@@ -34,6 +34,7 @@ import { type AudioObjKey } from "./globals.js"
 import { waitLoaded } from "./loadStatusManager.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParamStorage.js"
 import { isMutedConfig } from "./sound/isMutedConfig.js"
+import { initFixNumberInterval } from "./flash/fixNumberInterval.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -352,6 +353,8 @@ function clearInputAnswerBox(): void {
                 window.close()
             })
         })()
+
+        initFixNumberInterval()
 
         // フラッシュ出題エリアの選択を禁止する
         calculateArea.addEventListener("selectstart", (event) => {

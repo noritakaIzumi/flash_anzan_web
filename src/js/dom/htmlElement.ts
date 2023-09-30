@@ -80,3 +80,7 @@ export const fonts = {
     abacus: getHtmlElement("link", "preload-font--abacus"),
     kosugimaru: getHtmlElement("link", "preload-font--kosugimaru"),
 }
+export const checkboxes = {
+    fixNumberInterval: getHtmlElement("input", "fix-number-interval"),
+    hideAnswer: getHtmlElement("input", "hide-answer"),
+}

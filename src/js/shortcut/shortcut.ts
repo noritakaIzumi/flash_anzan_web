@@ -2,7 +2,7 @@ import { type FlashMode } from "../globals.js"
 import { toggleFullscreenMode } from "../screen.js"
 import { shortcut } from "./handler.js"
 import { flashParamElements } from "../dom/flashParamElements.js"
-import { button } from "../dom/htmlElement.js"
+import { button, checkboxes } from "../dom/htmlElement.js"
 
 export function registerShortcuts(): void {
     shortcut.add("ctrl+o", () => {
@@ -49,6 +49,9 @@ export function registerShortcuts(): void {
     })
     shortcut.add("ctrl+,", () => {
         button.openCommonMoreConfig.click()
+    })
+    shortcut.add("shift+n", () => {
+        checkboxes.fixNumberInterval.click()
     })
 }
 
