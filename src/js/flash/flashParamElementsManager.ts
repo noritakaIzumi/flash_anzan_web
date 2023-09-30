@@ -4,7 +4,7 @@ import { FlashLengthAndTimeMemory } from "./flashLengthAndTimeMemory.js"
 import { type FlashMode } from "../globals.js"
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
-    private readonly elements: FlashParamElements[T]
+    protected readonly elements: FlashParamElements[T]
     private readonly flashLengthAndTimeMemory: FlashLengthAndTimeMemory
 
     constructor(props: { elements: FlashParamElements[T], flashLengthAndTimeMemory: FlashLengthAndTimeMemory }) {
@@ -13,7 +13,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         this.initialize()
     }
 
-    private initialize(): void {
+    protected initialize(): void {
         // 表示間隔を固定するオプション
         checkboxes.fixNumberInterval.addEventListener("change", () => {
             const lengthParam = this.elements.length
@@ -32,7 +32,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         })
     }
 
-    setLength(length: number): void {
+    private setLength(length: number): void {
         this.elements.length.valueV1 = length
         if (checkboxes.fixNumberInterval.checked) {
             this.elements.time.valueV1 = this.flashLengthAndTimeMemory.expandTime(length)
@@ -45,9 +45,51 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 }
 
 export class AdditionModeFlashParamElementsManager extends FlashParamElementsManager<"addition"> {
+    protected initialize(): void {
+        super.initialize()
+        this.elements.digit.htmlElement.addEventListener("change", event => {
+            event.preventDefault()
+            this.setDigit(Number(this.elements.digit.htmlElement.value))
+        })
+    }
+
+    private setDigit(digit: number): void {
+        this.elements.digit.valueV1 = digit
+    }
+
+    increaseDigit(diff: number): void {
+        this.setDigit(this.elements.digit.valueV1 + diff)
+    }
 }
 
 export class MultiplicationModeFlashParamElementsManager extends FlashParamElementsManager<"multiplication"> {
+    protected initialize(): void {
+        super.initialize()
+        this.elements.digit1.htmlElement.addEventListener("change", event => {
+            event.preventDefault()
+            this.setDigit1(Number(this.elements.digit1.htmlElement.value))
+        })
+        this.elements.digit2.htmlElement.addEventListener("change", event => {
+            event.preventDefault()
+            this.setDigit2(Number(this.elements.digit2.htmlElement.value))
+        })
+    }
+
+    private setDigit1(digit: number): void {
+        this.elements.digit1.valueV1 = digit
+    }
+
+    private setDigit2(digit: number): void {
+        this.elements.digit2.valueV1 = digit
+    }
+
+    increaseDigit1(diff: number): void {
+        this.setDigit1(this.elements.digit1.valueV1 + diff)
+    }
+
+    increaseDigit2(diff: number): void {
+        this.setDigit2(this.elements.digit2.valueV1 + diff)
+    }
 }
 
 export const additionModeFlashParamElementsManager = new AdditionModeFlashParamElementsManager({

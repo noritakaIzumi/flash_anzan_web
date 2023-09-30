@@ -66,16 +66,16 @@ export function changeShortcut(mode: FlashMode): void {
     switch (mode) {
         case "multiplication":
             shortcut.add("y", () => {
-                flashParamElements.multiplication.digit1.increaseParam(1)
+                multiplicationModeFlashParamElementsManager.increaseDigit1(1)
             })
             shortcut.add("h", () => {
-                flashParamElements.multiplication.digit1.increaseParam(-1)
+                multiplicationModeFlashParamElementsManager.increaseDigit1(-1)
             })
             shortcut.add("u", () => {
-                flashParamElements.multiplication.digit2.increaseParam(1)
+                multiplicationModeFlashParamElementsManager.increaseDigit2(1)
             })
             shortcut.add("j", () => {
-                flashParamElements.multiplication.digit2.increaseParam(-1)
+                multiplicationModeFlashParamElementsManager.increaseDigit2(-1)
             })
             shortcut.add("i", () => {
                 multiplicationModeFlashParamElementsManager.increaseLength(1)
@@ -104,10 +104,10 @@ export function changeShortcut(mode: FlashMode): void {
             break
         case "addition":
             shortcut.add("u", () => {
-                flashParamElements.addition.digit.increaseParam(1)
+                additionModeFlashParamElementsManager.increaseDigit(1)
             })
             shortcut.add("j", () => {
-                flashParamElements.addition.digit.increaseParam(-1)
+                additionModeFlashParamElementsManager.increaseDigit(-1)
             })
             shortcut.add("i", () => {
                 additionModeFlashParamElementsManager.increaseLength(1)

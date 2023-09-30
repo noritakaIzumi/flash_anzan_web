@@ -88,12 +88,8 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         setupInputElementForTouch(this.htmlElement)
     }
 
-    increaseParam(amount: number): void {
-        this.valueV1 = fixValue(this.schema, Math.floor(this.valueV1) + amount)
-    }
-
     updateParam(): FlashNumberParam {
-        this.increaseParam(0)
+        this.valueV1 += 0
         return this
     }
 }
@@ -131,12 +127,8 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
         this.valueV1 = this.schema.default
     }
 
-    increaseParam(amount: number): void {
-        this.valueV1 = this.valueV1 + amount
-    }
-
     updateParam(): FlashNumberWithDifficultySupportParam {
-        this.increaseParam(0)
+        this.valueV1 += 0
         return this
     }
 }
