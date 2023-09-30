@@ -3,6 +3,7 @@ import { toggleFullscreenMode } from "../screen.js"
 import { shortcut } from "./handler.js"
 import { flashParamElements } from "../dom/flashParamElements.js"
 import { button, checkboxes } from "../dom/htmlElement.js"
+import { flashParamElementsManager } from "../flash/flashParamElementsManager.js"
 
 export function registerShortcuts(): void {
     shortcut.add("ctrl+o", () => {
@@ -74,10 +75,10 @@ export function changeShortcut(mode: FlashMode): void {
                 flashParamElements.multiplication.digit2.increaseParam(-1)
             })
             shortcut.add("i", () => {
-                flashParamElements.multiplication.length.increaseParam(1)
+                flashParamElementsManager.increaseLength("addition", 1)
             })
             shortcut.add("k", () => {
-                flashParamElements.multiplication.length.increaseParam(-1)
+                flashParamElementsManager.increaseLength("addition", -1)
             })
             shortcut.add("o", () => {
                 flashParamElements.multiplication.time.increaseParam(1000)
@@ -106,10 +107,10 @@ export function changeShortcut(mode: FlashMode): void {
                 flashParamElements.addition.digit.increaseParam(-1)
             })
             shortcut.add("i", () => {
-                flashParamElements.addition.length.increaseParam(1)
+                flashParamElementsManager.increaseLength("addition", 1)
             })
             shortcut.add("k", () => {
-                flashParamElements.addition.length.increaseParam(-1)
+                flashParamElementsManager.increaseLength("addition", -1)
             })
             shortcut.add("o", () => {
                 flashParamElements.addition.time.increaseParam(1000)

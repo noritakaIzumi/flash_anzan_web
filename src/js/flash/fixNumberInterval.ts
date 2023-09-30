@@ -18,12 +18,4 @@ export function initFixNumberInterval(): void {
             }
         }
     })
-    for (const flashMode of flashModes) {
-        flashParamElements[flashMode].length.htmlElement.addEventListener("change", () => {
-            if (checkboxes.fixNumberInterval.checked) {
-                const length = flashParamElements[flashMode].length.valueV1
-                flashParamElements[flashMode].time.valueV1 = flashLengthAndTimeMemories[flashMode].expandTime(length)
-            }
-        })
-    }
 }

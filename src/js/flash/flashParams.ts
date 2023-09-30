@@ -106,7 +106,6 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
     set valueV1(value: string | number) {
         const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
         this.htmlElement.value = String(fixedValue)
-        this.htmlElement.dispatchEvent(new Event("change"))
     }
 
     get valueV0(): string {
