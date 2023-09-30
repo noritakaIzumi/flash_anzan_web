@@ -61,6 +61,7 @@ export class PlaySoundCreator {
 }
 
 let playSoundCreator: PlaySoundCreator | undefined
+
 export function getPlaySoundCreator(): PlaySoundCreator {
     if (playSoundCreator === undefined) {
         playSoundCreator = new PlaySoundCreator()

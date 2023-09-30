@@ -47,7 +47,13 @@ export async function waitLoaded(timeout: number = 0): Promise<void> {
                 reject(new Error("failed to load sounds/fonts"))
                 return
             }
-            setTimeout((): void => { doWaitLoaded().then(r => { resolve(r) }).catch(r => { reject(r) }) }, 100)
+            setTimeout((): void => {
+                doWaitLoaded().then(r => {
+                    resolve(r)
+                }).catch(r => {
+                    reject(r)
+                })
+            }, 100)
         })
     }
 

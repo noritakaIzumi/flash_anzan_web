@@ -197,7 +197,11 @@ export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<"mu
     }
 }
 
-interface CreateRawNumberState<T extends keyof FlashDigit> { numbers: Array<FlashDigit[T]>, carries: number[], abacus: Abacus }
+interface CreateRawNumberState<T extends keyof FlashDigit> {
+    numbers: Array<FlashDigit[T]>
+    carries: number[]
+    abacus: Abacus
+}
 
 interface AbstractCreateRawNumberAdapterConstructorArgs<T extends keyof FlashDigit> {
     digitCount: FlashDigit[T]

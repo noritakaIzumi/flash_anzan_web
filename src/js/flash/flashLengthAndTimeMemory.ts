@@ -1,6 +1,7 @@
-import { type FlashMode } from "../globals.js"
-
-export interface Memory { length?: number, time?: number }
+export interface Memory {
+    length?: number
+    time?: number
+}
 
 export class FlashLengthAndTimeMemory {
     private memory: Memory = {}
@@ -20,9 +21,4 @@ export class FlashLengthAndTimeMemory {
     public delete(): void {
         this.memory = {}
     }
-}
-
-export const flashLengthAndTimeMemories: { [key in FlashMode]: FlashLengthAndTimeMemory } = {
-    addition: new FlashLengthAndTimeMemory(),
-    multiplication: new FlashLengthAndTimeMemory(),
 }
