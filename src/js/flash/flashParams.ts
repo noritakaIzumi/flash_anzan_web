@@ -1,5 +1,5 @@
 import { flashDifficulty, type FlashDifficulty } from "../globals.js"
-import { button } from "../dom/htmlElement.js"
+import { button, checkboxes } from "../dom/htmlElement.js"
 import {
     type FlashDifficultyParamSchema,
     type FlashNumberParamSchema,
@@ -164,6 +164,8 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         this.digitElements.int.value = String(Math.floor(fixedValue / 1000))
         this.digitElements.dec1.value = String(Math.floor((fixedValue % 1000) / 100))
         this.digitElements.dec2.value = String(Math.floor((fixedValue % 100) / 10))
+
+        this.htmlElement.dispatchEvent(new Event("change"))
     }
 
     get valueV0(): string {
@@ -215,12 +217,29 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
     }
 
     increaseParam(amount: number): void {
+        if (checkboxes.fixNumberInterval.checked) {
+            return
+        }
         this.valueV1 += amount
     }
 
     updateParam(): FlashTimeParam {
         this.increaseParam(0)
         return this
+    }
+
+    private changeDisabled(disabled: boolean): void {
+        this.digitElements.int.disabled = disabled
+        this.digitElements.dec1.disabled = disabled
+        this.digitElements.dec2.disabled = disabled
+    }
+
+    disableElement(): void {
+        this.changeDisabled(true)
+    }
+
+    enableElement(): void {
+        this.changeDisabled(false)
     }
 }
 

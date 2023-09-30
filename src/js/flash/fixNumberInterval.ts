@@ -10,8 +10,10 @@ export function initFixNumberInterval(): void {
             const lengthParam = flashParamElements[flashMode].length
             const timeParam = flashParamElements[flashMode].time
             if (checkboxes.fixNumberInterval.checked) {
+                timeParam.disableElement()
                 flashLengthAndTimeMemories[flashMode].save({ length: lengthParam.valueV1, time: timeParam.valueV1 })
             } else {
+                timeParam.enableElement()
                 flashLengthAndTimeMemories[flashMode].delete()
             }
         }
