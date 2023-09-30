@@ -26,10 +26,23 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
                 this.flashLengthAndTimeMemory.delete()
             }
         })
+
         this.elements.length.htmlElement.addEventListener("change", event => {
             event.preventDefault()
             this.setLength(Number(this.elements.length.htmlElement.value))
         })
+
+        const setTimeFromElements = (event: Event): void => {
+            event.preventDefault()
+            this.setTime(
+                Number(this.elements.time.digitElements.int.value) * 1000 +
+                Number(this.elements.time.digitElements.dec1.value) * 100 +
+                Number(this.elements.time.digitElements.dec2.value) * 10
+            )
+        }
+        this.elements.time.digitElements.int.addEventListener("change", setTimeFromElements)
+        this.elements.time.digitElements.dec1.addEventListener("change", setTimeFromElements)
+        this.elements.time.digitElements.dec2.addEventListener("change", setTimeFromElements)
     }
 
     private setLength(length: number): void {
@@ -41,6 +54,14 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 
     increaseLength(diff: number): void {
         this.setLength(this.elements.length.valueV1 + diff)
+    }
+
+    private setTime(time: number): void {
+        this.elements.time.valueV1 = time
+    }
+
+    increaseTime(diff: number): void {
+        this.setTime(this.elements.time.valueV1 + diff)
     }
 }
 

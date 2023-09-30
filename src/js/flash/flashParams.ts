@@ -140,7 +140,11 @@ export interface FlashTimeDigitElements {
 }
 
 export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberParamSchema, number> {
-    private readonly digitElements: FlashTimeDigitElements
+    get digitElements(): FlashTimeDigitElements {
+        return this._digitElements
+    }
+
+    private readonly _digitElements: FlashTimeDigitElements
 
     get valueV1(): number {
         return Math.round(Number(this.htmlElement.value) * 1000)
@@ -152,11 +156,9 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         this.htmlElement.max = String(this.schema.max)
         this.htmlElement.min = String(this.schema.min)
 
-        this.digitElements.int.value = String(Math.floor(fixedValue / 1000))
-        this.digitElements.dec1.value = String(Math.floor((fixedValue % 1000) / 100))
-        this.digitElements.dec2.value = String(Math.floor((fixedValue % 100) / 10))
-
-        this.htmlElement.dispatchEvent(new Event("change"))
+        this._digitElements.int.value = String(Math.floor(fixedValue / 1000))
+        this._digitElements.dec1.value = String(Math.floor((fixedValue % 1000) / 100))
+        this._digitElements.dec2.value = String(Math.floor((fixedValue % 100) / 10))
     }
 
     get valueV0(): string {
@@ -173,13 +175,13 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         schema: FlashNumberParamSchema
     }) {
         super(props)
-        this.digitElements = props.digitElements
+        this._digitElements = props.digitElements
         this.setupDigitElements()
         this.valueV1 = this.schema.default
     }
 
     private concatValues(): string {
-        return `${this.digitElements.int.value}${this.digitElements.dec1.value}${this.digitElements.dec2.value}0`
+        return `${this._digitElements.int.value}${this._digitElements.dec1.value}${this._digitElements.dec2.value}0`
     }
 
     private setupDigitElements(): void {
@@ -193,36 +195,31 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
             }
         }
 
-        addOptions(this.digitElements.int, Math.floor(this.schema.min / 1000), Math.floor(this.schema.max / 1000))
-        addOptions(this.digitElements.dec1, 0, 9)
-        addOptions(this.digitElements.dec2, 0, 9)
-        this.digitElements.int.addEventListener("change", () => {
+        addOptions(this._digitElements.int, Math.floor(this.schema.min / 1000), Math.floor(this.schema.max / 1000))
+        addOptions(this._digitElements.dec1, 0, 9)
+        addOptions(this._digitElements.dec2, 0, 9)
+        this._digitElements.int.addEventListener("change", () => {
             this.valueV1 = this.concatValues()
         })
-        this.digitElements.dec1.addEventListener("change", () => {
+        this._digitElements.dec1.addEventListener("change", () => {
             this.valueV1 = this.concatValues()
         })
-        this.digitElements.dec2.addEventListener("change", () => {
+        this._digitElements.dec2.addEventListener("change", () => {
             this.valueV1 = this.concatValues()
         })
-    }
-
-    increaseParam(amount: number): void {
-        if (checkboxes.fixNumberInterval.checked) {
-            return
-        }
-        this.valueV1 += amount
     }
 
     updateParam(): FlashTimeParam {
-        this.increaseParam(0)
+        if (!checkboxes.fixNumberInterval.checked) {
+            this.valueV1 += 0
+        }
         return this
     }
 
     private changeDisabled(disabled: boolean): void {
-        this.digitElements.int.disabled = disabled
-        this.digitElements.dec1.disabled = disabled
-        this.digitElements.dec2.disabled = disabled
+        this._digitElements.int.disabled = disabled
+        this._digitElements.dec1.disabled = disabled
+        this._digitElements.dec2.disabled = disabled
     }
 
     disableElement(): void {

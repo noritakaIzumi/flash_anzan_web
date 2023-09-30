@@ -84,22 +84,22 @@ export function changeShortcut(mode: FlashMode): void {
                 multiplicationModeFlashParamElementsManager.increaseLength(-1)
             })
             shortcut.add("o", () => {
-                flashParamElements.multiplication.time.increaseParam(1000)
+                multiplicationModeFlashParamElementsManager.increaseTime(1000)
             })
             shortcut.add("l", () => {
-                flashParamElements.multiplication.time.increaseParam(-1000)
+                multiplicationModeFlashParamElementsManager.increaseTime(-1000)
             })
             shortcut.add("shift+o", () => {
-                flashParamElements.multiplication.time.increaseParam(100)
+                multiplicationModeFlashParamElementsManager.increaseTime(100)
             })
             shortcut.add("shift+l", () => {
-                flashParamElements.multiplication.time.increaseParam(-100)
+                multiplicationModeFlashParamElementsManager.increaseTime(-100)
             })
             shortcut.add("ctrl+shift+o", () => {
-                flashParamElements.multiplication.time.increaseParam(10)
+                multiplicationModeFlashParamElementsManager.increaseTime(10)
             })
             shortcut.add("ctrl+shift+l", () => {
-                flashParamElements.multiplication.time.increaseParam(-10)
+                multiplicationModeFlashParamElementsManager.increaseTime(-10)
             })
             break
         case "addition":
@@ -116,22 +116,22 @@ export function changeShortcut(mode: FlashMode): void {
                 additionModeFlashParamElementsManager.increaseLength(-1)
             })
             shortcut.add("o", () => {
-                flashParamElements.addition.time.increaseParam(1000)
+                additionModeFlashParamElementsManager.increaseTime(1000)
             })
             shortcut.add("l", () => {
-                flashParamElements.addition.time.increaseParam(-1000)
+                additionModeFlashParamElementsManager.increaseTime(-1000)
             })
             shortcut.add("shift+o", () => {
-                flashParamElements.addition.time.increaseParam(100)
+                additionModeFlashParamElementsManager.increaseTime(100)
             })
             shortcut.add("shift+l", () => {
-                flashParamElements.addition.time.increaseParam(-100)
+                additionModeFlashParamElementsManager.increaseTime(-100)
             })
             shortcut.add("ctrl+shift+o", () => {
-                flashParamElements.addition.time.increaseParam(10)
+                additionModeFlashParamElementsManager.increaseTime(10)
             })
             shortcut.add("ctrl+shift+l", () => {
-                flashParamElements.addition.time.increaseParam(-10)
+                additionModeFlashParamElementsManager.increaseTime(-10)
             })
             break
     }
