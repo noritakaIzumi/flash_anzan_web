@@ -55,7 +55,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
          * @param {FlashAnswer} answer
          * @param offset
          */
-        function displayAnswer(numberStr: string, answer: FlashAnswer, offset: number): void {
+        function displayResult(numberStr: string, answer: FlashAnswer, offset: number): void {
             const headerMessageInnerText1 = numberStr !== ""
                 ? "あなたの答え：" + Number(numberStr).toLocaleString()
                 : "あなたの答え："
@@ -91,16 +91,17 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
                 enableHtmlButtons()
                 button.numberHistory.disabled = false
-                if (isFullscreen()) {
-                    if (isTouchDevice()) { // タッチデバイス
-                        calculateArea.addEventListener("touchend", (event) => {
-                            event.preventDefault()
-                            setFullscreenMode(false)
-                        }, { once: true })
-                        noticeArea.innerText = "画面をタッチすると戻ります。"
-                    } else { // 非タッチデバイス
-                        noticeArea.innerText = "W キーを押すと戻ります。"
-                    }
+                if (!isFullscreen()) {
+                    return
+                }
+                if (isTouchDevice()) { // タッチデバイス
+                    calculateArea.addEventListener("touchend", (event) => {
+                        event.preventDefault()
+                        setFullscreenMode(false)
+                    }, { once: true })
+                    noticeArea.innerText = "画面をタッチすると戻ります。"
+                } else { // 非タッチデバイス
+                    noticeArea.innerText = "W キーを押すと戻ります。"
                 }
             }, timeToDisplay + offset)
         }
@@ -145,7 +146,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                     throw new Error("element not found: btn send answer")
                 }
                 btnSendAnswer.addEventListener("click", () => {
-                    displayAnswer(inputAnswerBoxTouchActual.value, answer, offset)
+                    displayResult(inputAnswerBoxTouchActual.value, answer, offset)
                     modal.hide()
                 }, { once: true })
             } else {
@@ -155,7 +156,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                             document.activeElement?.id === "input-answer-box" &&
                             String(event.key).toLowerCase() === "enter"
                         ) {
-                            displayAnswer(inputAnswerBox.value, answer, offset)
+                            displayResult(inputAnswerBox.value, answer, offset)
                             modal.hide()
                             return
                         }
