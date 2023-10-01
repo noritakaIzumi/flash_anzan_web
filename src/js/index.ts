@@ -12,7 +12,7 @@ import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestio
 import {
     answerNumberDisplay,
     button,
-    calculateArea,
+    calculateArea, checkboxes,
     getHtmlElement,
     headerMessage,
     inputAnswerBox,
@@ -63,14 +63,21 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
             setTimeout(() => {
                 let resultAudioObj: AudioObjKey
-                if (numberStr === answer.toString()) {
+                const isCorrect = numberStr === answer.toString()
+                if (isCorrect) {
                     resultAudioObj = "correct"
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）`
                 } else {
                     resultAudioObj = "incorrect"
                     headerMessage.innerText = `不正解...（${headerMessage.innerText}）`
                 }
-                questionNumberArea.innerText = answer.toDisplay()
+                if (!checkboxes.hideAnswer.checked) {
+                    questionNumberArea.innerText = answer.toDisplay()
+                } else if (isCorrect) {
+                    questionNumberArea.innerHTML = "<span class=\"bi-emoji-smile-fill text-success\"></span>"
+                } else {
+                    questionNumberArea.innerHTML = "<span class=\"bi-emoji-frown-fill text-danger\"></span>"
+                }
                 audioObj.play(resultAudioObj)
 
                 enableHtmlButtons()

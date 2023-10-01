@@ -56,6 +56,9 @@ export function registerShortcuts(): void {
     shortcut.add("shift+n", () => {
         checkboxes.fixNumberInterval.click()
     })
+    shortcut.add("shift+m", () => {
+        checkboxes.hideAnswer.click()
+    })
 }
 
 export function changeShortcut(mode: FlashMode): void {
