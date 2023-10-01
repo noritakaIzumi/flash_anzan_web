@@ -28,7 +28,17 @@ export default defineConfig({
                 assetFileNames: 'assets/[name].[hash].[ext]',
             },
         },
+        // Tauri uses Chromium on Windows and WebKit on macOS and Linux
+        target: process.env.TAURI_PLATFORM === 'windows' ? 'chrome105' : 'safari13',
+        // don't minify for debug builds
+        minify: (process.env.TAURI_DEBUG == null) ? 'esbuild' : false,
+        // produce sourcemaps for debug builds
+        sourcemap: !(process.env.TAURI_DEBUG == null),
     },
+    // to make use of `TAURI_PLATFORM`, `TAURI_ARCH`, `TAURI_FAMILY`,
+    // `TAURI_PLATFORM_VERSION`, `TAURI_PLATFORM_TYPE` and `TAURI_DEBUG`
+    // env variables
+    envPrefix: ['VITE_', 'TAURI_'],
     define: {
         APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT: 30000,
     },
@@ -52,5 +62,8 @@ export default defineConfig({
         watch: {
             usePolling: false,
         },
+        strictPort: true, // Tauri expects a fixed port, fail if that port is not available
     },
+    // prevent vite from obscuring rust errors
+    clearScreen: false,
 })
