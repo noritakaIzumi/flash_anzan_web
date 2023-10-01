@@ -46,14 +46,16 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     /**
      * 答え入力のための準備的な。
      * @param {FlashAnswer} answer
+     * @param offset
      */
-    const getPrepareAnswerInputFunc = (answer: FlashAnswer): () => void => {
+    const getPrepareAnswerInputFunc = (answer: FlashAnswer, offset: number): () => void => {
         /**
          * 答えを表示する
          * @param {string} numberStr 答えの数字
          * @param {FlashAnswer} answer
+         * @param offset
          */
-        function displayAnswer(numberStr: string, answer: FlashAnswer): void {
+        function displayAnswer(numberStr: string, answer: FlashAnswer, offset: number): void {
             const headerMessageInnerText1 = numberStr !== ""
                 ? "あなたの答え：" + Number(numberStr).toLocaleString()
                 : "あなたの答え："
@@ -70,14 +72,22 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                         ? "<span class=\"bi-emoji-smile-fill text-success\"></span>"
                         : "<span class=\"bi-emoji-frown-fill text-danger\"></span>"
 
-            headerMessage.innerText = headerMessageInnerText1
-            button.repeat.disabled = true
-            audioObj.play("answer")
+            const timeToDisplay = 1200
 
+            setTimeout(() => {
+                audioObj.play("answer")
+            }, 0)
+            setTimeout(() => {
+                headerMessage.innerText = headerMessageInnerText1
+                button.repeat.disabled = true
+            }, offset)
+
+            setTimeout(() => {
+                audioObj.play(resultAudioObj)
+            }, timeToDisplay)
             setTimeout(() => {
                 headerMessage.innerText = headerMessageInnerText2
                 questionNumberArea.innerHTML = questionNumberAreaInnerHTML
-                audioObj.play(resultAudioObj)
 
                 enableHtmlButtons()
                 button.numberHistory.disabled = false
@@ -92,7 +102,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                         noticeArea.innerText = "W キーを押すと戻ります。"
                     }
                 }
-            }, 1200)
+            }, timeToDisplay + offset)
         }
 
         return () => {
@@ -135,7 +145,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                     throw new Error("element not found: btn send answer")
                 }
                 btnSendAnswer.addEventListener("click", () => {
-                    displayAnswer(inputAnswerBoxTouchActual.value, answer)
+                    displayAnswer(inputAnswerBoxTouchActual.value, answer, offset)
                     modal.hide()
                 }, { once: true })
             } else {
@@ -145,7 +155,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                             document.activeElement?.id === "input-answer-box" &&
                             String(event.key).toLowerCase() === "enter"
                         ) {
-                            displayAnswer(inputAnswerBox.value, answer)
+                            displayAnswer(inputAnswerBox.value, answer, offset)
                             modal.hide()
                             return
                         }
@@ -172,7 +182,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     // フラッシュ音声と表示タイミング
     const flashSuite = await getFlashSuite({
         paramSet: question.paramSet,
-        prepareAnswerInputFunc: getPrepareAnswerInputFunc(question.flash.answer),
+        prepareAnswerInputFunc: getPrepareAnswerInputFunc(question.flash.answer, question.paramSet.offset),
         numbersToDisplay: question.flash.numbers.toDisplay(),
     })
 
