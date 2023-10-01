@@ -59,5 +59,7 @@ export const flashParamSchema: FlashParamSchema = {
         },
         isMuted: { default: false },
         soundExtension: { default: "wav" },
+        fixNumberInterval: { default: false },
+        hideAnswer: { default: true },
     },
 }

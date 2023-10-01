@@ -6,6 +6,9 @@ export function getHtmlElement<K extends keyof HTMLElementTagNameMap>(tagName: K
     return element
 }
 
+export const htmlElements = {
+    soundExtension: getHtmlElement("select", "sound-extension"),
+}
 export const headerMessage = getHtmlElement("div", "header-message")
 export const questionNumberArea = getHtmlElement("div", "question-number-area")
 export const calculateArea = getHtmlElement("div", "calculate-area")
@@ -81,6 +84,7 @@ export const fonts = {
     kosugimaru: getHtmlElement("link", "preload-font--kosugimaru"),
 }
 export const checkboxes = {
+    isMuted: getHtmlElement("input", "is-muted"),
     fixNumberInterval: getHtmlElement("input", "fix-number-interval"),
     hideAnswer: getHtmlElement("input", "hide-answer"),
 }

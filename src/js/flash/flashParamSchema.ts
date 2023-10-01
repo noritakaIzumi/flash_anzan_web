@@ -20,6 +20,10 @@ export interface FlashSoundExtensionParamSchema {
     default: SoundExtension
 }
 
+export interface FlashCheckboxParamSchema {
+    default: boolean
+}
+
 export interface FlashParamSchema {
     addition: {
         digit: FlashNumberParamWithDifficultySupportSchema
@@ -38,5 +42,7 @@ export interface FlashParamSchema {
         offset: FlashNumberParamSchema
         isMuted: FlashIsMutedParamSchema
         soundExtension: FlashSoundExtensionParamSchema
+        fixNumberInterval: FlashCheckboxParamSchema
+        hideAnswer: FlashCheckboxParamSchema
     }
 }

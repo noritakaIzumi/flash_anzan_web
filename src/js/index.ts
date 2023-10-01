@@ -14,7 +14,7 @@ import {
     button,
     calculateArea, checkboxes,
     getHtmlElement,
-    headerMessage,
+    headerMessage, htmlElements,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
@@ -33,6 +33,7 @@ import { type AudioObjKey } from "./globals.js"
 import { waitLoaded } from "./loadStatusManager.js"
 import { doDeleteParams, doLoadParams, doSaveParams } from "./flash/flashParamStorage.js"
 import { isMutedConfig } from "./sound/isMutedConfig.js"
+import { flashParamSchema } from "../config/flashParamSchema.js"
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -244,8 +245,8 @@ function clearInputAnswerBox(): void {
     const setup = async (): Promise<void> => {
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
-        isMutedConfig.isMuted = getHtmlElement("input", "is-muted").checked
-        audioObj.load(getHtmlElement("select", "sound-extension").value);
+        isMutedConfig.isMuted = checkboxes.isMuted.checked
+        audioObj.load(htmlElements.soundExtension.value);
 
         // ページ読み込み時処理
         (() => {
@@ -355,44 +356,48 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
-        // setup welcome modal
-        (() => {
-            const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
-            if (button == null) {
-                throw new Error("element not found: modal footer button")
-            }
-            const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
-            if (spinner === null) {
-                throw new Error("element not found: button spinner")
-            }
-            const text = button.querySelector<HTMLSpanElement>(".button-text")
-            if (text === null) {
-                throw new Error("element not found: button text")
-            }
-            const welcomeModal = new bootstrap.Modal(modals.welcome, {
-                backdrop: "static",
-                keyboard: false,
-                focus: true,
-            })
+        // default value
+        checkboxes.isMuted.checked = flashParamSchema.common.isMuted.default
+        htmlElements.soundExtension.value = flashParamSchema.common.soundExtension.default
+        checkboxes.fixNumberInterval.checked = flashParamSchema.common.fixNumberInterval.default
+        checkboxes.hideAnswer.checked = flashParamSchema.common.hideAnswer.default
 
-            button.addEventListener("click", () => {
-                button.disabled = true
-                // keep button width
-                button.style.width = getComputedStyle(button).width
-                spinner.classList.remove("d-none")
-                text.classList.add("d-none")
-                setup()
-                    .then(_ => {
-                        welcomeModal.hide()
-                    })
-                    .catch(_ => {
-                        alert("フォント・音声の読み込みに失敗しました。")
-                        if (confirm("もう一度読み込みますか？")) {
-                            location.reload()
-                        }
-                    })
-            })
-            welcomeModal.show()
-        })()
+        // setup welcome modal
+        const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
+        if (button == null) {
+            throw new Error("element not found: modal footer button")
+        }
+        const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
+        if (spinner === null) {
+            throw new Error("element not found: button spinner")
+        }
+        const text = button.querySelector<HTMLSpanElement>(".button-text")
+        if (text === null) {
+            throw new Error("element not found: button text")
+        }
+        const welcomeModal = new bootstrap.Modal(modals.welcome, {
+            backdrop: "static",
+            keyboard: false,
+            focus: true,
+        })
+
+        button.addEventListener("click", () => {
+            button.disabled = true
+            // keep button width
+            button.style.width = getComputedStyle(button).width
+            spinner.classList.remove("d-none")
+            text.classList.add("d-none")
+            setup()
+                .then(_ => {
+                    welcomeModal.hide()
+                })
+                .catch(_ => {
+                    alert("フォント・音声の読み込みに失敗しました。")
+                    if (confirm("もう一度読み込みますか？")) {
+                        location.reload()
+                    }
+                })
+        })
+        welcomeModal.show()
     })()
 })()
