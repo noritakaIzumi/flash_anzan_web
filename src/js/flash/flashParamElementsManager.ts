@@ -75,7 +75,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
     private set _length(length: number) {
         this.elements.length.valueV1 = length
         if (checkboxes.fixNumberInterval.checked) {
-            this.elements.time.valueV1 = this.flashLengthAndTimeMemory.expandTime(length)
+            this.elements.time.valueV1 = this.flashLengthAndTimeMemory.expandTime(this._length) // use computed length
         }
     }
 
