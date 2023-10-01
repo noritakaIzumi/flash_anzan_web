@@ -2,7 +2,7 @@ import { getTime } from './time.js'
 import { fonts } from './dom/htmlElement.js'
 
 export const loadStatusKey = ['sound', 'font-abacus', 'font-header-message'] as const
-export type LoadStatusKey = typeof loadStatusKey[number]
+export type LoadStatusKey = (typeof loadStatusKey)[number]
 
 export class LoadStatusManager {
     private status: { [key in LoadStatusKey]: boolean } = {
@@ -26,7 +26,7 @@ export class LoadStatusManager {
 
     isAllLoaded(): boolean {
         this.updateFontLoadStatus()
-        return Object.values(this.status).filter(loaded => !loaded).length <= 0
+        return Object.values(this.status).filter((loaded) => !loaded).length <= 0
     }
 }
 
@@ -48,11 +48,13 @@ export async function waitLoaded(timeout: number = 0): Promise<void> {
                 return
             }
             setTimeout((): void => {
-                doWaitLoaded().then(r => {
-                    resolve(r)
-                }).catch(r => {
-                    reject(r)
-                })
+                doWaitLoaded()
+                    .then((r) => {
+                        resolve(r)
+                    })
+                    .catch((r) => {
+                        reject(r)
+                    })
             }, 100)
         })
     }

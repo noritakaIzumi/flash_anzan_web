@@ -30,7 +30,7 @@ export function isFullscreen(): boolean {
  * ボタンを無効化する。
  */
 export function disableHtmlButtons(): void {
-    disableConfigTarget.forEach(element => {
+    disableConfigTarget.forEach((element) => {
         element.disabled = true
     })
 }
@@ -39,7 +39,7 @@ export function disableHtmlButtons(): void {
  * ボタンを有効化する。
  */
 export function enableHtmlButtons(): void {
-    disableConfigTarget.forEach(element => {
+    disableConfigTarget.forEach((element) => {
         element.disabled = false
     })
 }

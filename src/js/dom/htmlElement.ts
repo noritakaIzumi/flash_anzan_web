@@ -1,4 +1,7 @@
-export function getHtmlElement<K extends keyof HTMLElementTagNameMap>(tagName: K, id: string): HTMLElementTagNameMap[K] {
+export function getHtmlElement<K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+    id: string
+): HTMLElementTagNameMap[K] {
     const element = document.getElementsByTagName(tagName).namedItem(id)
     if (element === null) {
         throw new ReferenceError(`element does not exist (tagName: ${tagName}, id: ${id})`)
@@ -54,7 +57,7 @@ export const noticeInputAnswerNonTouchDevice = getHtmlElement('span', 'notice-in
 export const numberHistoryDisplay = getHtmlElement('td', 'number-history-display')
 export const answerNumberDisplay = getHtmlElement('td', 'answer-number-display')
 export const paramsModalOperation = ['load', 'save', 'delete'] as const
-export type ParamsModalOperation = typeof paramsModalOperation[number]
+export type ParamsModalOperation = (typeof paramsModalOperation)[number]
 export const modals: {
     welcome: HTMLDivElement
     params: { [op in ParamsModalOperation]: { [phase in 'confirm' | 'complete']: HTMLDivElement } }

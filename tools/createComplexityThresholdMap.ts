@@ -45,15 +45,20 @@ function readComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityTh
     return JSON.parse(fs.readFileSync(filepath, 'utf-8'))
 }
 
-function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityThresholdMapKey[T], sample: number[]): void {
+function writeComplexitySample<T extends FlashMode>(
+    mode: T,
+    mapKey: ComplexityThresholdMapKey[T],
+    sample: number[]
+): void {
     const filepath = complexitySampleFilepath(mode, mapKey)
     fs.writeFileSync(filepath, JSON.stringify(sample, undefined, 2))
 }
 
-(() => {
+;(() => {
     // main
     const importComplexitySampleMapFromFile: boolean = process.argv[2] === 'reuse'
-    const complexityThresholdMapFilepath = path.dirname(path.dirname(filename)) + '/src/js/lib/complexityThresholdMap.ts'
+    const complexityThresholdMapFilepath =
+        path.dirname(path.dirname(filename)) + '/src/js/lib/complexityThresholdMap.ts'
 
     const complexitySampleMap: ComplexitySampleMap = {
         addition: {},
@@ -75,15 +80,25 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
         fs.mkdirSync(`${complexitySampleMapDir}/${mode}`, { recursive: true })
     }
     const additionModeParamSchema = flashParamSchema.addition
-    for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.difficultySupportMax; ++digitCount) {
-        for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.difficultySupportMax; ++length) {
+    for (
+        let digitCount = additionModeParamSchema.digit.min;
+        digitCount <= additionModeParamSchema.digit.difficultySupportMax;
+        ++digitCount
+    ) {
+        for (
+            let length = additionModeParamSchema.length.min;
+            length <= additionModeParamSchema.length.difficultySupportMax;
+            ++length
+        ) {
             const mapKey: ComplexityThresholdMapKey['addition'] = `${digitCount}-${length}`
             if (importComplexitySampleMapFromFile) {
                 complexitySampleMap[mode][mapKey] = readComplexitySample('addition', mapKey)
             } else {
                 complexitySampleMap[mode][mapKey] = []
                 for (let _ = 0; _ < sampleCount; _++) {
-                    const createRawNumberAdapter = new AdditionModeUnknownDifficultyCreateRawNumberAdapter({ digitCount })
+                    const createRawNumberAdapter = new AdditionModeUnknownDifficultyCreateRawNumberAdapter({
+                        digitCount,
+                    })
                     for (let i = 0; i < length; i++) {
                         createRawNumberAdapter.execute()
                     }
@@ -103,15 +118,29 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
         fs.mkdirSync(`${complexitySampleMapDir}/${mode}`, { recursive: true })
     }
     const multiplicationModeParamSchema = flashParamSchema.multiplication
-    for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax; digitCount1++) {
-        for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax; digitCount2++) {
-            for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.difficultySupportMax; length++) {
+    for (
+        let digitCount1 = multiplicationModeParamSchema.digit1.min;
+        digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax;
+        digitCount1++
+    ) {
+        for (
+            let digitCount2 = multiplicationModeParamSchema.digit2.min;
+            digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax;
+            digitCount2++
+        ) {
+            for (
+                let length = multiplicationModeParamSchema.length.min;
+                length <= multiplicationModeParamSchema.length.difficultySupportMax;
+                length++
+            ) {
                 const mapKey: ComplexityThresholdMapKey['multiplication'] = `${digitCount1}-${digitCount2}-${length}`
                 const flippedMapKey: ComplexityThresholdMapKey['multiplication'] = `${digitCount2}-${digitCount1}-${length}`
                 if (flippedMapKey in complexityThresholdMap.multiplication) {
                     complexitySampleMap[mode][mapKey] = complexitySampleMap[mode][flippedMapKey]
                     complexityThresholdMap[mode][mapKey] = complexityThresholdMap[mode][flippedMapKey]
-                    console.log(`${mode} ${digitCount1} 桁× ${digitCount2} 桁 ${length} 口: ${digitCount2} 桁× ${digitCount1} 桁 ${length} 口 から copy`)
+                    console.log(
+                        `${mode} ${digitCount1} 桁× ${digitCount2} 桁 ${length} 口: ${digitCount2} 桁× ${digitCount1} 桁 ${length} 口 から copy`
+                    )
                     continue
                 }
                 if (importComplexitySampleMapFromFile) {
@@ -119,7 +148,9 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
                 } else {
                     complexitySampleMap[mode][mapKey] = []
                     for (let _ = 0; _ < sampleCount; _++) {
-                        const createRawNumberAdapter = new MultiplicationModeUnknownDifficultyCreateRawNumberAdapter({ digitCount: [digitCount1, digitCount2] })
+                        const createRawNumberAdapter = new MultiplicationModeUnknownDifficultyCreateRawNumberAdapter({
+                            digitCount: [digitCount1, digitCount2],
+                        })
                         for (let i = 0; i < length; i++) {
                             createRawNumberAdapter.execute()
                         }
@@ -129,7 +160,10 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
                     }
                     writeComplexitySample(mode, mapKey, complexitySampleMap[mode][mapKey])
                 }
-                complexityThresholdMap.multiplication[mapKey] = getRank(complexitySampleMap.multiplication[mapKey], threshold)
+                complexityThresholdMap.multiplication[mapKey] = getRank(
+                    complexitySampleMap.multiplication[mapKey],
+                    threshold
+                )
                 console.log(`${mode} ${digitCount1} 桁× ${digitCount2} 桁 ${length} 口: completed`)
             }
         }

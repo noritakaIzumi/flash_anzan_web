@@ -53,7 +53,10 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<'addi
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(this.paramSet.digit, flashParamSchema.addition.length.difficultySupportMax)
+        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(
+            this.paramSet.digit,
+            flashParamSchema.addition.length.difficultySupportMax
+        )
         return complexityThresholdMapKey in complexityThresholdMap.addition
     }
 
@@ -84,7 +87,10 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(this.paramSet.digit, flashParamSchema.multiplication.length.difficultySupportMax)
+        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(
+            this.paramSet.digit,
+            flashParamSchema.multiplication.length.difficultySupportMax
+        )
         return complexityThresholdMapKey in complexityThresholdMap.multiplication
     }
 
@@ -109,7 +115,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
     }
 }
 
-const flashQuestion: { [mode in FlashMode]: new() => FlashQuestionCreator<mode> } = {
+const flashQuestion: { [mode in FlashMode]: new () => FlashQuestionCreator<mode> } = {
     addition: AdditionModeFlashQuestionCreator,
     multiplication: MultiplicationModeFlashQuestionCreator,
 }

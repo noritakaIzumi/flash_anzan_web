@@ -62,7 +62,7 @@ export function registerShortcuts(): void {
 }
 
 export function changeShortcut(mode: FlashMode): void {
-    ['y', 'h', 'u', 'j', 'i', 'k', 'o', 'l', 'shift+o', 'shift+l', 'ctrl+shift+o', 'ctrl+shift+l'].forEach(key => {
+    ;['y', 'h', 'u', 'j', 'i', 'k', 'o', 'l', 'shift+o', 'shift+l', 'ctrl+shift+o', 'ctrl+shift+l'].forEach((key) => {
         shortcut.remove(key)
     })
     switch (mode) {

@@ -36,7 +36,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         })
 
         // length
-        this.elements.length.htmlElement.addEventListener('change', event => {
+        this.elements.length.htmlElement.addEventListener('change', (event) => {
             event.preventDefault()
             this._length = Number(this.elements.length.htmlElement.value)
         })
@@ -66,7 +66,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         this._difficulty = flashParamSchema.common.difficulty.default
 
         // offset
-        this.commonElements.offset.htmlElement.addEventListener('change', event => {
+        this.commonElements.offset.htmlElement.addEventListener('change', (event) => {
             event.preventDefault()
             this._offset = Number(this.commonElements.offset.htmlElement.value)
         })
@@ -142,7 +142,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 export class AdditionModeFlashParamElementsManager extends FlashParamElementsManager<'addition'> {
     protected initialize(): void {
         super.initialize()
-        this.elements.digit.htmlElement.addEventListener('change', event => {
+        this.elements.digit.htmlElement.addEventListener('change', (event) => {
             event.preventDefault()
             this._digit = Number(this.elements.digit.htmlElement.value)
         })
@@ -169,11 +169,11 @@ export class AdditionModeFlashParamElementsManager extends FlashParamElementsMan
 export class MultiplicationModeFlashParamElementsManager extends FlashParamElementsManager<'multiplication'> {
     protected initialize(): void {
         super.initialize()
-        this.elements.digit1.htmlElement.addEventListener('change', event => {
+        this.elements.digit1.htmlElement.addEventListener('change', (event) => {
             event.preventDefault()
             this._digit1 = Number(this.elements.digit1.htmlElement.value)
         })
-        this.elements.digit2.htmlElement.addEventListener('change', event => {
+        this.elements.digit2.htmlElement.addEventListener('change', (event) => {
             event.preventDefault()
             this._digit2 = Number(this.elements.digit2.htmlElement.value)
         })

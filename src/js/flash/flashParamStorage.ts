@@ -17,7 +17,7 @@ export function doLoadParams(): void {
     modalMessage.innerHTML = '設定を読み込みました'
 
     const parsedParams = JSON.parse(loadedParams)
-    Object.keys(parsedParams).forEach(mode => {
+    Object.keys(parsedParams).forEach((mode) => {
         switch (mode as keyof typeof flashParamElements) {
             case 'addition':
                 flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit

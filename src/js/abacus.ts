@@ -22,9 +22,11 @@ export class Abacus {
     }
 
     private updateBeads(num: number): void {
-        const numArr = String(num).split('').map((d) => {
-            return Number(d)
-        })
+        const numArr = String(num)
+            .split('')
+            .map((d) => {
+                return Number(d)
+            })
         for (let i = numArr.length - 1; i >= 0; i--) {
             const d = numArr.shift()
             if (d === undefined) {

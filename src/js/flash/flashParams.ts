@@ -5,10 +5,13 @@ import {
     type FlashNumberParamWithDifficultySupportSchema
 } from './flashParamSchema.js'
 
-export function fixValue(limit: {
-    max: number
-    min: number
-}, targetValue: number): number {
+export function fixValue(
+    limit: {
+        max: number
+        min: number
+    },
+    targetValue: number
+): number {
     return Math.floor(Math.min(limit.max, Math.max(limit.min, targetValue)))
 }
 
@@ -27,9 +30,14 @@ export function setupInputElementForTouch(element: HTMLInputElement): void {
     })
 }
 
-abstract class FlashParam<K extends HTMLElement & {
-    value: string
-}, T, U, VOptions = never> {
+abstract class FlashParam<
+    K extends HTMLElement & {
+        value: string
+    },
+    T,
+    U,
+    VOptions = never
+> {
     get htmlElement(): K {
         return this._htmlElement
     }
@@ -49,11 +57,7 @@ abstract class FlashParam<K extends HTMLElement & {
     private readonly _htmlElement: K
     protected schema: T
 
-    constructor(props: {
-        htmlElement: K
-        schema: T
-        options?: VOptions
-    }) {
+    constructor(props: { htmlElement: K, schema: T, options?: VOptions }) {
         this._htmlElement = props.htmlElement
         this.schema = props.schema
     }
@@ -76,10 +80,7 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.valueV1 = value
     }
 
-    constructor(props: {
-        htmlElement: HTMLInputElement
-        schema: FlashNumberParamSchema
-    }) {
+    constructor(props: { htmlElement: HTMLInputElement, schema: FlashNumberParamSchema }) {
         super(props)
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
@@ -88,7 +89,11 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     }
 }
 
-export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelectElement, FlashNumberParamWithDifficultySupportSchema, number> {
+export class FlashNumberWithDifficultySupportParam extends FlashParam<
+HTMLSelectElement,
+FlashNumberParamWithDifficultySupportSchema,
+number
+> {
     get valueV1(): number {
         return Number(this.htmlElement.value)
     }
@@ -106,10 +111,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
         this.valueV1 = value
     }
 
-    constructor(props: {
-        htmlElement: HTMLSelectElement
-        schema: FlashNumberParamWithDifficultySupportSchema
-    }) {
+    constructor(props: { htmlElement: HTMLSelectElement, schema: FlashNumberParamWithDifficultySupportSchema }) {
         super(props)
         for (let i = this.schema.max; i >= this.schema.min; i--) {
             const strNum = String(i)

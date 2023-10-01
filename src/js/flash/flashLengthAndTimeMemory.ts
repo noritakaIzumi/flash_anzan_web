@@ -15,7 +15,7 @@ export class FlashLengthAndTimeMemory {
         if (this.memory.time === undefined || this.memory.length === undefined) {
             throw new Error('length and time not remembered')
         }
-        return this.memory.time * (length * 2 - 1) / (this.memory.length * 2 - 1)
+        return (this.memory.time * (length * 2 - 1)) / (this.memory.length * 2 - 1)
     }
 
     public delete(): void {

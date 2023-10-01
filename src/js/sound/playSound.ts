@@ -30,23 +30,18 @@ export class PlaySoundCreator {
         this.crunker = getCrunkerInstance()
     }
 
-    async createBeep(props: {
-        beepInterval: number
-        beepCount: number
-    }): Promise<PlaySound> {
+    async createBeep(props: { beepInterval: number, beepCount: number }): Promise<PlaySound> {
         const beepAudioBuffer = await getAudioBuffers('beep')
 
         const audios: AudioBuffer[] = []
         for (let i = 0; i < props.beepCount; i++) {
-            audios.push(this.crunker.padAudio(beepAudioBuffer, 0, props.beepInterval * i / 1000))
+            audios.push(this.crunker.padAudio(beepAudioBuffer, 0, (props.beepInterval * i) / 1000))
         }
 
         return new PlaySound(this.crunker.mergeAudio(audios))
     }
 
-    async createTick(props: {
-        toggleTimings: number[]
-    }): Promise<PlaySound> {
+    async createTick(props: { toggleTimings: number[] }): Promise<PlaySound> {
         const tickAudioBuffer = await getAudioBuffers('tick')
 
         const audios: AudioBuffer[] = []

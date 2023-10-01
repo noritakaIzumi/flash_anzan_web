@@ -28,18 +28,27 @@ function getRandomDigit(excepts: number[] = []): number {
     return d[Math.floor(Math.random() * d.length)]
 }
 
-function getRandomInt(digitCount: number, previousNum: number | null = null, digitAllDifferent: boolean = false): number {
-    const previousNumDigits = previousNum === null
-        ? []
-        : String(previousNum).split('').reverse().map((n) => {
-            return Number(n)
-        })
+function getRandomInt(
+    digitCount: number,
+    previousNum: number | null = null,
+    digitAllDifferent: boolean = false
+): number {
+    const previousNumDigits =
+        previousNum === null
+            ? []
+            : String(previousNum)
+                .split('')
+                .reverse()
+                .map((n) => {
+                    return Number(n)
+                })
     const digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))]
     let i = 0
     while (i < digitCount - 1) {
-        const digit = digitCount <= 9 && digitAllDifferent
-            ? getRandomDigit(digits.concat(previousNumDigits[i]))
-            : getRandomDigit([previousNumDigits[i]])
+        const digit =
+            digitCount <= 9 && digitAllDifferent
+                ? getRandomDigit(digits.concat(previousNumDigits[i]))
+                : getRandomDigit([previousNumDigits[i]])
         digits.push(digit)
         i++
     }
@@ -122,20 +131,18 @@ export interface Flash<T extends FlashMode> {
 
 export abstract class AbstractFlashGenerator<T extends FlashMode> implements ExecuteInterface {
     protected createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
-    protected FlashNumbersClass: new(numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
-    protected GetFlashAnswerAdapter: new() => AbstractGetFlashAnswerAdapter<T>
+    protected FlashNumbersClass: new (numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
+    protected GetFlashAnswerAdapter: new () => AbstractGetFlashAnswerAdapter<T>
 
-    constructor(
-        {
-            createNewNumbersAdapter,
-            flashNumbersClass,
-            getFlashAnswerAdapter,
-        }: {
-            createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
-            flashNumbersClass: new(numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
-            getFlashAnswerAdapter: new() => AbstractGetFlashAnswerAdapter<T>
-        }
-    ) {
+    constructor({
+        createNewNumbersAdapter,
+        flashNumbersClass,
+        getFlashAnswerAdapter,
+    }: {
+        createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
+        flashNumbersClass: new (numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
+        getFlashAnswerAdapter: new () => AbstractGetFlashAnswerAdapter<T>
+    }) {
         this.createNewNumbersAdapter = createNewNumbersAdapter
         this.FlashNumbersClass = flashNumbersClass
         this.GetFlashAnswerAdapter = getFlashAnswerAdapter
@@ -154,7 +161,14 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 if (requestParam.length < numberHistory.length) {
                     return numberHistory.slice(0, requestParam.length)
                 }
-                return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options).slice(numberHistory.length - requestParam.length))
+                return numberHistory.concat(
+                    this.createNumbers(
+                        requestParam.digit,
+                        requestParam.length,
+                        requestParam.difficulty,
+                        options
+                    ).slice(numberHistory.length - requestParam.length)
+                )
             }
             return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options)
         })()
@@ -167,7 +181,12 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
 
     protected abstract getNumberHistoryObj(): FlashNumberHistory<FlashDigit[T]> | null
 
-    protected createNumbers(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty, options: FlashOptions): Array<FlashDigit[T]> {
+    protected createNumbers(
+        digitCount: FlashDigit[T],
+        length: number,
+        difficulty: FlashDifficulty,
+        options: FlashOptions
+    ): Array<FlashDigit[T]> {
         let retry = 0
         while (retry < generateNumbersRetryLimit) {
             try {
@@ -209,10 +228,12 @@ interface AbstractCreateRawNumberAdapterConstructorArgs<T extends keyof FlashDig
 }
 
 type CreateRawNumberAdapterMapByMode<T extends FlashMode> = {
-    [key in FlashDifficulty | UnknownFlashDifficulty]: new(args: AbstractCreateRawNumberAdapterConstructorArgs<T>) => AbstractCreateRawNumberAdapter<T>
+    [key in FlashDifficulty | UnknownFlashDifficulty]: new (
+        args: AbstractCreateRawNumberAdapterConstructorArgs<T>
+    ) => AbstractCreateRawNumberAdapter<T>
 }
 type ComplexityIsValidAdapterMapByMode = {
-    [key in FlashDifficulty]: new() => AbstractComplexityIsValidAdapter
+    [key in FlashDifficulty]: new () => AbstractComplexityIsValidAdapter
 }
 
 export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> implements ExecuteInterface {
@@ -221,28 +242,34 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
     protected complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
     protected difficultySupportMaxLength: number
 
-    constructor(
-        {
-            createRawNumberAdapterMapByMode,
-            complexityIsValidAdapterMapByMode,
-            complexityThresholdMapByMode,
-            difficultySupportMaxLength,
-        }: {
-            createRawNumberAdapterMapByMode: CreateRawNumberAdapterMapByMode<T>
-            complexityIsValidAdapterMapByMode: ComplexityIsValidAdapterMapByMode
-            complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
-            difficultySupportMaxLength: number
-        }
-    ) {
+    constructor({
+        createRawNumberAdapterMapByMode,
+        complexityIsValidAdapterMapByMode,
+        complexityThresholdMapByMode,
+        difficultySupportMaxLength,
+    }: {
+        createRawNumberAdapterMapByMode: CreateRawNumberAdapterMapByMode<T>
+        complexityIsValidAdapterMapByMode: ComplexityIsValidAdapterMapByMode
+        complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
+        difficultySupportMaxLength: number
+    }) {
         this.createRawNumberAdaptersByMode = createRawNumberAdapterMapByMode
         this.complexityIsValidAdaptersByMode = complexityIsValidAdapterMapByMode
         this.complexityThresholdMapByMode = complexityThresholdMapByMode
         this.difficultySupportMaxLength = difficultySupportMaxLength
     }
 
-    execute(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty, options: FlashOptions): Array<FlashDigit[T]> {
+    execute(
+        digitCount: FlashDigit[T],
+        length: number,
+        difficulty: FlashDifficulty,
+        options: FlashOptions
+    ): Array<FlashDigit[T]> {
         const complexityThresholdMapLengthKey = Math.min(length, this.difficultySupportMaxLength)
-        const complexityThresholdMapKey = this.getComplexityThresholdMapKey(digitCount, complexityThresholdMapLengthKey)
+        const complexityThresholdMapKey = this.getComplexityThresholdMapKey(
+            digitCount,
+            complexityThresholdMapLengthKey
+        )
         const complexityThreshold = this.complexityThresholdMapByMode[complexityThresholdMapKey]
 
         if (complexityThreshold === undefined) {
@@ -254,7 +281,9 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
                 }
                 return createRawNumberAdapter.getResult().numbers
             }
-            throw new RangeError(`complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`)
+            throw new RangeError(
+                `complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`
+            )
         }
 
         const firstCreateLength = complexityThresholdMapLengthKey
@@ -266,7 +295,10 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
         const numbers = result.numbers
         const carries = result.carries
         const complexity = this.getComplexity(carries, digitCount)
-        const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(complexity, complexityThreshold)
+        const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(
+            complexity,
+            complexityThreshold
+        )
         if (!complexityIsValid) {
             throw new CreatedNumbersDoNotSatisfyConstraintError()
         }
@@ -295,7 +327,10 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
                 createRawNumberAdapter.execute()
                 const result = createRawNumberAdapter.getResult()
                 const complexity = this.getComplexity(result.carries, digitCount)
-                const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(complexity, complexityThreshold)
+                const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(
+                    complexity,
+                    complexityThreshold
+                )
                 if (complexityIsValid) {
                     return {
                         numbers: result.numbers.slice(-1),
@@ -320,14 +355,23 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
 
     protected abstract getComplexity(carries: number[], digitCount: FlashDigit[T]): number
 
-    protected abstract getComplexityThresholdMapKey(digitCount: FlashDigit[T], length: number): ComplexityThresholdMapKey[T]
+    protected abstract getComplexityThresholdMapKey(
+        digitCount: FlashDigit[T],
+        length: number
+    ): ComplexityThresholdMapKey[T]
 }
 
-export function getAdditionModeComplexityThresholdMapKey(digitCount: FlashDigit['addition'], length: number): ComplexityThresholdMapKey['addition'] {
+export function getAdditionModeComplexityThresholdMapKey(
+    digitCount: FlashDigit['addition'],
+    length: number
+): ComplexityThresholdMapKey['addition'] {
     return `${digitCount}-${length}`
 }
 
-export function getMultiplicationModeComplexityThresholdMapKey(digitCount: FlashDigit['multiplication'], length: number): ComplexityThresholdMapKey['multiplication'] {
+export function getMultiplicationModeComplexityThresholdMapKey(
+    digitCount: FlashDigit['multiplication'],
+    length: number
+): ComplexityThresholdMapKey['multiplication'] {
     return `${digitCount[0]}-${digitCount[1]}-${length}`
 }
 
@@ -336,7 +380,10 @@ export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumber
         return calculateComplexity(carries, digitCount)
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit['addition'], length: number): ComplexityThresholdMapKey['addition'] {
+    protected getComplexityThresholdMapKey(
+        digitCount: FlashDigit['addition'],
+        length: number
+    ): ComplexityThresholdMapKey['addition'] {
         return getAdditionModeComplexityThresholdMapKey(digitCount, length)
     }
 }
@@ -346,7 +393,10 @@ export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNew
         return calculateComplexity(carries, digitCount[0] * digitCount[1])
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit['multiplication'], length: number): ComplexityThresholdMapKey['multiplication'] {
+    protected getComplexityThresholdMapKey(
+        digitCount: FlashDigit['multiplication'],
+        length: number
+    ): ComplexityThresholdMapKey['multiplication'] {
         return getMultiplicationModeComplexityThresholdMapKey(digitCount, length)
     }
 }
@@ -354,8 +404,7 @@ export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNew
 /**
  * 生成された数字が条件を満たさない場合に返されるエラー
  */
-export class CreatedNumbersDoNotSatisfyConstraintError extends Error {
-}
+export class CreatedNumbersDoNotSatisfyConstraintError extends Error {}
 
 export abstract class AbstractCreateRawNumberAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
     protected readonly digitCount: FlashDigit[T]
@@ -480,19 +529,32 @@ export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractAd
  * たし算モード・難易度未指定
  * 複雑度境界リストの作成に使用する
  */
-export class AdditionModeUnknownDifficultyCreateRawNumberAdapter extends AdditionModeNormalDifficultyCreateRawNumberAdapter {
-}
+export class AdditionModeUnknownDifficultyCreateRawNumberAdapter extends AdditionModeNormalDifficultyCreateRawNumberAdapter {}
 
 export class MultiplicationModeEasyDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<'multiplication'> {
     execute(): void {
-        const number1 = getRandomInt(this.digitCount[0], this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null, true)
-        const number2 = getRandomInt(this.digitCount[1], this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null, true)
-        const digits1 = String(number1).split('').reverse().map((n) => {
-            return Number(n)
-        })
-        const digits2 = String(number2).split('').reverse().map((n) => {
-            return Number(n)
-        })
+        const number1 = getRandomInt(
+            this.digitCount[0],
+            this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null,
+            true
+        )
+        const number2 = getRandomInt(
+            this.digitCount[1],
+            this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null,
+            true
+        )
+        const digits1 = String(number1)
+            .split('')
+            .reverse()
+            .map((n) => {
+                return Number(n)
+            })
+        const digits2 = String(number2)
+            .split('')
+            .reverse()
+            .map((n) => {
+                return Number(n)
+            })
         for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
             for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
                 this.abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
@@ -504,18 +566,15 @@ export class MultiplicationModeEasyDifficultyCreateRawNumberAdapter extends Abst
     }
 }
 
-export class MultiplicationModeNormalDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {
-}
+export class MultiplicationModeNormalDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
-export class MultiplicationModeHardDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {
-}
+export class MultiplicationModeHardDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
 /**
  * かけ算モード・難易度未指定
  * 複雑度境界リストの作成に使用する
  */
-export class MultiplicationModeUnknownDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {
-}
+export class MultiplicationModeUnknownDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
 export type CreateRawNumberAdapterMap = { [mode in FlashMode]: CreateRawNumberAdapterMapByMode<mode> }
 export const createRawNumberAdapterMap: CreateRawNumberAdapterMap = {
@@ -539,15 +598,16 @@ export abstract class AbstractComplexityIsValidAdapter implements ExecuteInterfa
 
 export class AdditionModeEasyDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
+        return (
+            (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
             complexity < complexitySchema.easy
+        )
     }
 }
 
 export class AdditionModeNormalDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return complexity >= complexitySchema.easy &&
-            complexity < complexitySchema.hard
+        return complexity >= complexitySchema.easy && complexity < complexitySchema.hard
     }
 }
 
@@ -559,15 +619,16 @@ export class AdditionModeHardDifficultyComplexityIsValidAdapter extends Abstract
 
 export class MultiplicationModeEasyDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
+        return (
+            (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
             complexity < complexitySchema.easy
+        )
     }
 }
 
 export class MultiplicationModeNormalDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return complexity >= complexitySchema.easy &&
-            complexity < complexitySchema.hard
+        return complexity >= complexitySchema.easy && complexity < complexitySchema.hard
     }
 }
 

@@ -61,8 +61,7 @@ export class LatestFlashNumberHistory {
         return LatestFlashNumberHistory.instance
     }
 
-    private constructor() {
-    }
+    private constructor() {}
 
     get history(): FlashNumberHistory<any> | null {
         return this._history
@@ -100,7 +99,11 @@ export class AdditionModeFlashNumberHistoryRegistry extends AbstractFlashNumberH
 }
 
 export class MultiplicationModeFlashNumberHistoryRegistry extends AbstractFlashNumberHistoryRegistry<'multiplication'> {
-    register(digit: FlashDigit['multiplication'], numbers: FlashNumbers<FlashDigit['multiplication']>, answer: FlashAnswer): void {
+    register(
+        digit: FlashDigit['multiplication'],
+        numbers: FlashNumbers<FlashDigit['multiplication']>,
+        answer: FlashAnswer
+    ): void {
         this.history = new MultiplicationModeFlashNumberHistory(digit, numbers, answer)
     }
 }

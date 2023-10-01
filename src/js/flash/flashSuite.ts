@@ -10,9 +10,9 @@ import { beepCount, beepInterval, firstBeepTiming, firstTickTiming, flashRate } 
 export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] => {
     const result: number[] = []
     for (let i = 0; i < paramSet.length * 2; i++) {
-        result.push(paramSet.time *
-            (Math.floor(i / 2) * 100 + flashRate * (i % 2)) /
-            ((paramSet.length - 1) * 100 + flashRate)
+        result.push(
+            (paramSet.time * (Math.floor(i / 2) * 100 + flashRate * (i % 2))) /
+                ((paramSet.length - 1) * 100 + flashRate)
         )
     }
     return result
