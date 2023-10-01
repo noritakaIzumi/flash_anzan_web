@@ -12,9 +12,10 @@ import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestio
 import {
     answerNumberDisplay,
     button,
-    calculateArea, checkboxes,
-    getHtmlElement,
-    headerMessage, htmlElements,
+    calculateArea,
+    checkboxes,
+    headerMessage,
+    htmlElements,
     inputAnswerBox,
     inputAnswerBoxTouchActual,
     inputAnswerBoxTouchDisplay,
@@ -402,6 +403,6 @@ function clearInputAnswerBox(): void {
                     })
             })
             welcomeModal.show()
-        })();
+        })()
     })()
 })()
