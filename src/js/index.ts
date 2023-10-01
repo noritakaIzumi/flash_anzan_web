@@ -133,12 +133,13 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                     noticeInputAnswerNonTouchDevice.style.display = "block"
                 }
             modals.input_answer.addEventListener("shown.bs.modal", listener)
+
             const modal = new bootstrap.Modal(modals.input_answer, {
                 backdrop: false,
                 keyboard: false,
                 focus: true,
             })
-            modal.show()
+
             // 回答送信時のイベント設定
             if (isTouchDevice()) {
                 const btnSendAnswer: HTMLButtonElement | null = document.querySelector("#input-answer-box-area-touch .btn-send-answer")
@@ -165,6 +166,8 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                 }
                 document.addEventListener("keydown", listener(), { once: true })
             }
+
+            modal.show()
         }
     }
 
