@@ -111,7 +111,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
         schema: FlashNumberParamWithDifficultySupportSchema
     }) {
         super(props)
-        for (let i = this.schema.min; i <= this.schema.max; i++) {
+        for (let i = this.schema.max; i >= this.schema.min; i--) {
             const strNum = String(i)
             const element = document.createElement("option")
             element.value = strNum
@@ -175,7 +175,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
 
     private setupDigitElements(): void {
         function addOptions(parent: HTMLSelectElement, start: number, end: number): void {
-            for (let i = start; i <= end; i++) {
+            for (let i = end; i >= start; i--) {
                 const strNum = String(i)
                 const element = document.createElement("option")
                 element.value = strNum
