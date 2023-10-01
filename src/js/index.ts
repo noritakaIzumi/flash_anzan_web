@@ -54,32 +54,29 @@ async function flash(options: FlashOptions = {}): Promise<void> {
          * @param {FlashAnswer} answer
          */
         function displayAnswer(numberStr: string, answer: FlashAnswer): void {
-            if (numberStr !== "") {
-                headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString()
-            } else {
-                headerMessage.innerText = "あなたの答え："
-            }
+            const headerMessageInnerText1 = numberStr !== ""
+                ? "あなたの答え：" + Number(numberStr).toLocaleString()
+                : "あなたの答え："
+            const isCorrect = numberStr === answer.toString()
+            const resultAudioObj: AudioObjKey = isCorrect ? "correct" : "incorrect"
+            const headerMessageInnerText2: string =
+                isCorrect
+                    ? `正解！（${headerMessageInnerText1}）`
+                    : `不正解...（${headerMessageInnerText1}）`
+            const questionNumberAreaInnerHTML =
+                !checkboxes.hideAnswer.checked
+                    ? answer.toDisplay()
+                    : isCorrect
+                        ? "<span class=\"bi-emoji-smile-fill text-success\"></span>"
+                        : "<span class=\"bi-emoji-frown-fill text-danger\"></span>"
 
+            headerMessage.innerText = headerMessageInnerText1
             button.repeat.disabled = true
             audioObj.play("answer")
 
             setTimeout(() => {
-                let resultAudioObj: AudioObjKey
-                const isCorrect = numberStr === answer.toString()
-                if (isCorrect) {
-                    resultAudioObj = "correct"
-                    headerMessage.innerText = `正解！（${headerMessage.innerText}）`
-                } else {
-                    resultAudioObj = "incorrect"
-                    headerMessage.innerText = `不正解...（${headerMessage.innerText}）`
-                }
-                if (!checkboxes.hideAnswer.checked) {
-                    questionNumberArea.innerText = answer.toDisplay()
-                } else if (isCorrect) {
-                    questionNumberArea.innerHTML = "<span class=\"bi-emoji-smile-fill text-success\"></span>"
-                } else {
-                    questionNumberArea.innerHTML = "<span class=\"bi-emoji-frown-fill text-danger\"></span>"
-                }
+                headerMessage.innerText = headerMessageInnerText2
+                questionNumberArea.innerHTML = questionNumberAreaInnerHTML
                 audioObj.play(resultAudioObj)
 
                 enableHtmlButtons()
