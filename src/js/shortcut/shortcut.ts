@@ -1,7 +1,6 @@
 import { type FlashMode } from "../globals.js"
 import { toggleFullscreenMode } from "../screen.js"
 import { shortcut } from "./handler.js"
-import { flashParamElements } from "../dom/flashParamElements.js"
 import { button, checkboxes } from "../dom/htmlElement.js"
 import {
     additionModeFlashParamElementsManager,
@@ -34,13 +33,13 @@ export function registerShortcuts(): void {
         button.multiplication.click()
     })
     shortcut.add("d", () => {
-        flashParamElements.common.difficulty.valueV1 = "easy"
+        button.difficulty.easy.click()
     })
     shortcut.add("f", () => {
-        flashParamElements.common.difficulty.valueV1 = "normal"
+        button.difficulty.normal.click()
     })
     shortcut.add("g", () => {
-        flashParamElements.common.difficulty.valueV1 = "hard"
+        button.difficulty.hard.click()
     })
     shortcut.add("n", () => {
         button.numberHistory.click()

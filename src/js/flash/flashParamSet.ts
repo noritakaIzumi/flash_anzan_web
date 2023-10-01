@@ -2,7 +2,6 @@ import { type FlashDifficulty, type FlashDigit, type FlashMode } from "../global
 import { currentFlashMode } from "../currentFlashMode.js"
 import { changeShortcut } from "../shortcut/shortcut.js"
 import { type ExecuteInterface } from "../interface/executeInterface.js"
-import { flashParamElements } from "../dom/flashParamElements.js"
 import {
     additionModeFlashParamElementsManager,
     multiplicationModeFlashParamElementsManager
@@ -31,7 +30,7 @@ export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSe
             digit: additionModeFlashParamElementsManager.getValidatedDigit(),
             length: additionModeFlashParamElementsManager.getValidatedLength(),
             time: additionModeFlashParamElementsManager.getValidatedTime(),
-            difficulty: flashParamElements.common.difficulty.valueV1,
+            difficulty: additionModeFlashParamElementsManager.getValidatedDifficulty(),
             offset: additionModeFlashParamElementsManager.getValidatedOffset(),
         }
     }
@@ -46,7 +45,7 @@ export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashP
             ],
             length: multiplicationModeFlashParamElementsManager.getValidatedLength(),
             time: multiplicationModeFlashParamElementsManager.getValidatedTime(),
-            difficulty: flashParamElements.common.difficulty.valueV1,
+            difficulty: multiplicationModeFlashParamElementsManager.getValidatedDifficulty(),
             offset: multiplicationModeFlashParamElementsManager.getValidatedOffset(),
         }
     }

@@ -1,8 +1,9 @@
 import { flashParamElements, type FlashParamElements } from "../dom/flashParamElements.js"
-import { checkboxes } from "../dom/htmlElement.js"
+import { button, checkboxes } from "../dom/htmlElement.js"
 import { FlashLengthAndTimeMemory } from "./flashLengthAndTimeMemory.js"
-import { type FlashMode } from "../globals.js"
+import { type FlashDifficulty, type FlashMode } from "../globals.js"
 import { type FlashDifficultyParam, type FlashNumberParam } from "./flashParams.js"
+import { flashParamSchema } from "../../config/flashParamSchema.js"
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
@@ -52,6 +53,18 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         this.elements.time.digitElements.dec1.addEventListener("change", setTimeFromElements)
         this.elements.time.digitElements.dec2.addEventListener("change", setTimeFromElements)
 
+        // difficulty
+        button.difficulty.easy.addEventListener("click", () => {
+            this._difficulty = "easy"
+        })
+        button.difficulty.normal.addEventListener("click", () => {
+            this._difficulty = "normal"
+        })
+        button.difficulty.hard.addEventListener("click", () => {
+            this._difficulty = "hard"
+        })
+        this._difficulty = flashParamSchema.common.difficulty.default
+
         // offset
         this.commonElements.offset.htmlElement.addEventListener("change", event => {
             event.preventDefault()
@@ -97,6 +110,19 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
             return
         }
         this._time += diff
+    }
+
+    private set _difficulty(difficulty: FlashDifficulty) {
+        button.difficulty[difficulty].checked = true
+        this.commonElements.difficulty.valueV1 = difficulty
+    }
+
+    private get _difficulty(): FlashDifficulty {
+        return this.commonElements.difficulty.valueV1
+    }
+
+    getValidatedDifficulty(): FlashDifficulty {
+        return this._difficulty
     }
 
     private set _offset(offset: number) {

@@ -1,5 +1,4 @@
 import { flashDifficulty, type FlashDifficulty } from "../globals.js"
-import { button } from "../dom/htmlElement.js"
 import {
     type FlashDifficultyParamSchema,
     type FlashNumberParamSchema,
@@ -50,7 +49,7 @@ abstract class FlashParam<K extends HTMLElement & {
     private readonly _htmlElement: K
     protected schema: T
 
-    protected constructor(props: {
+    constructor(props: {
         htmlElement: K
         schema: T
         options?: VOptions
@@ -220,7 +219,6 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
     }
 
     set valueV1(value: FlashDifficulty) {
-        button.difficulty[value].checked = true
         this.htmlElement.value = value
     }
 
@@ -237,13 +235,5 @@ export class FlashDifficultyParam extends FlashParam<HTMLSelectElement, FlashDif
         if (!(flashDifficulty as unknown as string[]).includes(value)) {
             throw new RangeError(`invalid difficulty: ${value}`)
         }
-    }
-
-    constructor(props: {
-        htmlElement: HTMLSelectElement
-        schema: FlashDifficultyParamSchema
-    }) {
-        super(props)
-        this.valueV1 = this.schema.default
     }
 }

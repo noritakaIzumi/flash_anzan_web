@@ -9,7 +9,6 @@ import { audioObj } from "./sound/sound.js"
 import { changeMode } from "./flash/flashParamSet.js"
 import { registerShortcuts } from "./shortcut/shortcut.js"
 import { type FlashOptions, getFlashQuestionCreator } from "./flash/flashQuestionCreator.js"
-import { flashParamElements } from "./dom/flashParamElements.js"
 import {
     answerNumberDisplay,
     button,
@@ -318,17 +317,6 @@ function clearInputAnswerBox(): void {
             // button.subtraction.addEventListener('click', () => changeMode(modeNames.subtraction))
             button.multiplication.addEventListener("click", () => {
                 changeMode("multiplication")
-            })
-
-            // 難易度切り替え
-            button.difficulty.easy.addEventListener("click", () => {
-                flashParamElements.common.difficulty.valueV1 = "easy"
-            })
-            button.difficulty.normal.addEventListener("click", () => {
-                flashParamElements.common.difficulty.valueV1 = "normal"
-            })
-            button.difficulty.hard.addEventListener("click", () => {
-                flashParamElements.common.difficulty.valueV1 = "hard"
             })
 
             // 出題設定読み込み
