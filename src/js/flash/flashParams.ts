@@ -87,11 +87,6 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.htmlElement.min = String(this.schema.min)
         setupInputElementForTouch(this.htmlElement)
     }
-
-    updateParam(): FlashNumberParam {
-        this.valueV1 += 0
-        return this
-    }
 }
 
 export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelectElement, FlashNumberParamWithDifficultySupportSchema, number> {

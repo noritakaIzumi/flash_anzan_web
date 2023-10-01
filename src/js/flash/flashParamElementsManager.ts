@@ -2,13 +2,20 @@ import { flashParamElements, type FlashParamElements } from "../dom/flashParamEl
 import { checkboxes } from "../dom/htmlElement.js"
 import { FlashLengthAndTimeMemory } from "./flashLengthAndTimeMemory.js"
 import { type FlashMode } from "../globals.js"
+import { type FlashDifficultyParam, type FlashNumberParam } from "./flashParams.js"
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
     private readonly flashLengthAndTimeMemory: FlashLengthAndTimeMemory
+    private readonly commonElements: { difficulty: FlashDifficultyParam, offset: FlashNumberParam }
 
-    constructor(props: { elements: FlashParamElements[T], flashLengthAndTimeMemory: FlashLengthAndTimeMemory }) {
+    constructor(props: {
+        elements: FlashParamElements[T]
+        commonElements: FlashParamElements["common"]
+        flashLengthAndTimeMemory: FlashLengthAndTimeMemory
+    }) {
         this.elements = props.elements
+        this.commonElements = props.commonElements
         this.flashLengthAndTimeMemory = props.flashLengthAndTimeMemory
         this.initialize()
     }
@@ -27,11 +34,13 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
             }
         })
 
+        // length
         this.elements.length.htmlElement.addEventListener("change", event => {
             event.preventDefault()
             this._length = Number(this.elements.length.htmlElement.value)
         })
 
+        // time
         const setTimeFromElements = (event: Event): void => {
             event.preventDefault()
             this._time =
@@ -42,6 +51,12 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         this.elements.time.digitElements.int.addEventListener("change", setTimeFromElements)
         this.elements.time.digitElements.dec1.addEventListener("change", setTimeFromElements)
         this.elements.time.digitElements.dec2.addEventListener("change", setTimeFromElements)
+
+        // offset
+        this.commonElements.offset.htmlElement.addEventListener("change", event => {
+            event.preventDefault()
+            this._offset = Number(this.commonElements.offset.htmlElement.value)
+        })
     }
 
     private set _length(length: number) {
@@ -82,6 +97,19 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
             return
         }
         this._time += diff
+    }
+
+    private set _offset(offset: number) {
+        this.commonElements.offset.valueV1 = offset
+    }
+
+    private get _offset(): number {
+        return this.commonElements.offset.valueV1
+    }
+
+    getValidatedOffset(): number {
+        this._offset += 0
+        return this._offset
     }
 }
 
@@ -162,9 +190,11 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
 export const additionModeFlashParamElementsManager = new AdditionModeFlashParamElementsManager({
     elements: flashParamElements.addition,
+    commonElements: flashParamElements.common,
     flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
 })
 export const multiplicationModeFlashParamElementsManager = new MultiplicationModeFlashParamElementsManager({
     elements: flashParamElements.multiplication,
+    commonElements: flashParamElements.common,
     flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
 })

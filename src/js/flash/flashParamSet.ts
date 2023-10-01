@@ -32,7 +32,7 @@ export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSe
             length: additionModeFlashParamElementsManager.getValidatedLength(),
             time: additionModeFlashParamElementsManager.getValidatedTime(),
             difficulty: flashParamElements.common.difficulty.valueV1,
-            offset: flashParamElements.common.offset.updateParam().valueV1,
+            offset: additionModeFlashParamElementsManager.getValidatedOffset(),
         }
     }
 }
@@ -47,7 +47,7 @@ export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashP
             length: multiplicationModeFlashParamElementsManager.getValidatedLength(),
             time: multiplicationModeFlashParamElementsManager.getValidatedTime(),
             difficulty: flashParamElements.common.difficulty.valueV1,
-            offset: flashParamElements.common.offset.updateParam().valueV1,
+            offset: multiplicationModeFlashParamElementsManager.getValidatedOffset(),
         }
     }
 }
