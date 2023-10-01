@@ -253,9 +253,6 @@ function clearInputAnswerBox(): void {
             changeMode("addition")
             configureModalFocusing()
             registerShortcuts()
-            if (isTouchDevice()) {
-                button.help.style.display = "none"
-            }
         })();
 
         // タッチデバイスの回答入力
@@ -356,48 +353,55 @@ function clearInputAnswerBox(): void {
 
     // autoload
     (() => {
-        // default value
-        checkboxes.isMuted.checked = flashParamSchema.common.isMuted.default
-        htmlElements.soundExtension.value = flashParamSchema.common.soundExtension.default
-        checkboxes.fixNumberInterval.checked = flashParamSchema.common.fixNumberInterval.default
-        checkboxes.hideAnswer.checked = flashParamSchema.common.hideAnswer.default
+        (() => {
+            // default value
+            checkboxes.isMuted.checked = flashParamSchema.common.isMuted.default
+            htmlElements.soundExtension.value = flashParamSchema.common.soundExtension.default
+            checkboxes.fixNumberInterval.checked = flashParamSchema.common.fixNumberInterval.default
+            checkboxes.hideAnswer.checked = flashParamSchema.common.hideAnswer.default
+            if (isTouchDevice()) {
+                button.help.style.display = "none"
+            }
+        })();
 
-        // setup welcome modal
-        const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
-        if (button == null) {
-            throw new Error("element not found: modal footer button")
-        }
-        const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
-        if (spinner === null) {
-            throw new Error("element not found: button spinner")
-        }
-        const text = button.querySelector<HTMLSpanElement>(".button-text")
-        if (text === null) {
-            throw new Error("element not found: button text")
-        }
-        const welcomeModal = new bootstrap.Modal(modals.welcome, {
-            backdrop: "static",
-            keyboard: false,
-            focus: true,
-        })
+        (() => {
+            // setup welcome modal
+            const button = document.querySelector<HTMLButtonElement>("#welcomeModal .modal-footer > button")
+            if (button == null) {
+                throw new Error("element not found: modal footer button")
+            }
+            const spinner = button.querySelector<HTMLSpanElement>(".spinner-border")
+            if (spinner === null) {
+                throw new Error("element not found: button spinner")
+            }
+            const text = button.querySelector<HTMLSpanElement>(".button-text")
+            if (text === null) {
+                throw new Error("element not found: button text")
+            }
+            const welcomeModal = new bootstrap.Modal(modals.welcome, {
+                backdrop: "static",
+                keyboard: false,
+                focus: true,
+            })
 
-        button.addEventListener("click", () => {
-            button.disabled = true
-            // keep button width
-            button.style.width = getComputedStyle(button).width
-            spinner.classList.remove("d-none")
-            text.classList.add("d-none")
-            setup()
-                .then(_ => {
-                    welcomeModal.hide()
-                })
-                .catch(_ => {
-                    alert("フォント・音声の読み込みに失敗しました。")
-                    if (confirm("もう一度読み込みますか？")) {
-                        location.reload()
-                    }
-                })
-        })
-        welcomeModal.show()
+            button.addEventListener("click", () => {
+                button.disabled = true
+                // keep button width
+                button.style.width = getComputedStyle(button).width
+                spinner.classList.remove("d-none")
+                text.classList.add("d-none")
+                setup()
+                    .then(_ => {
+                        welcomeModal.hide()
+                    })
+                    .catch(_ => {
+                        alert("フォント・音声の読み込みに失敗しました。")
+                        if (confirm("もう一度読み込みますか？")) {
+                            location.reload()
+                        }
+                    })
+            })
+            welcomeModal.show()
+        })();
     })()
 })()
