@@ -3,6 +3,10 @@ import { currentFlashMode } from "../currentFlashMode.js"
 import { changeShortcut } from "../shortcut/shortcut.js"
 import { type ExecuteInterface } from "../interface/executeInterface.js"
 import { flashParamElements } from "../dom/flashParamElements.js"
+import {
+    additionModeFlashParamElementsManager,
+    multiplicationModeFlashParamElementsManager
+} from "./flashParamElementsManager.js"
 
 export function changeMode(mode: FlashMode): void {
     changeShortcut(mode)
@@ -24,9 +28,9 @@ export abstract class AbstractGetFlashParamSetAdapter<T extends FlashMode> imple
 export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<"addition"> {
     execute(): FlashParamSet<"addition"> {
         return {
-            digit: flashParamElements.addition.digit.updateParam().valueV1,
-            length: flashParamElements.addition.length.updateParam().valueV1,
-            time: flashParamElements.addition.time.updateParam().valueV1,
+            digit: additionModeFlashParamElementsManager.getValidatedDigit(),
+            length: additionModeFlashParamElementsManager.getValidatedLength(),
+            time: additionModeFlashParamElementsManager.getValidatedTime(),
             difficulty: flashParamElements.common.difficulty.valueV1,
             offset: flashParamElements.common.offset.updateParam().valueV1,
         }
@@ -37,11 +41,11 @@ export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashP
     execute(): FlashParamSet<"multiplication"> {
         return {
             digit: [
-                flashParamElements.multiplication.digit1.updateParam().valueV1,
-                flashParamElements.multiplication.digit2.updateParam().valueV1,
+                multiplicationModeFlashParamElementsManager.getValidatedDigit1(),
+                multiplicationModeFlashParamElementsManager.getValidatedDigit2(),
             ],
-            length: flashParamElements.multiplication.length.updateParam().valueV1,
-            time: flashParamElements.multiplication.time.updateParam().valueV1,
+            length: multiplicationModeFlashParamElementsManager.getValidatedLength(),
+            time: multiplicationModeFlashParamElementsManager.getValidatedTime(),
             difficulty: flashParamElements.common.difficulty.valueV1,
             offset: flashParamElements.common.offset.updateParam().valueV1,
         }
