@@ -114,7 +114,8 @@
             <div class="my-2 me-3">
                 <ul class="nav nav-pills" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="pills-addition-tab" data-bs-toggle="pill" href="#addition-mode-config"
+                        <a class="nav-link active" id="pills-addition-tab" data-bs-toggle="pill"
+                           href="#addition-mode-config"
                            role="tab" aria-selected="true">
                             <i class="bi bi-plus"></i><span class="ps-2">たし算</span>
                         </a>
@@ -179,10 +180,13 @@
                         <label for="addition-time-dec1" class="d-none"></label>
                         <label for="addition-time-dec2" class="d-none"></label>
                         <div class="input-group input-group-lg">
-                            <select id="addition-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <select id="addition-time-int" class="form-select text-end"
+                                    style="min-width: fit-content"></select>
                             <span class="input-group-text">.</span>
-                            <select id="addition-time-dec1" class="form-select text-end" style="max-width: fit-content"></select>
-                            <select id="addition-time-dec2" class="form-select text-end" style="max-width: fit-content"></select>
+                            <select id="addition-time-dec1" class="form-select text-end"
+                                    style="max-width: fit-content"></select>
+                            <select id="addition-time-dec2" class="form-select text-end"
+                                    style="max-width: fit-content"></select>
                             <span class="input-group-text">秒</span>
                         </div>
                         <input type="number" inputmode="numeric" id="addition-time" class="d-none" autocomplete="off">
@@ -216,13 +220,17 @@
                         <label for="multiplication-time-dec1" class="d-none"></label>
                         <label for="multiplication-time-dec2" class="d-none"></label>
                         <div class="input-group input-group-lg">
-                            <select id="multiplication-time-int" class="form-select text-end" style="min-width: fit-content"></select>
+                            <select id="multiplication-time-int" class="form-select text-end"
+                                    style="min-width: fit-content"></select>
                             <span class="input-group-text">.</span>
-                            <select id="multiplication-time-dec1" class="form-select text-end" style="max-width: fit-content"></select>
-                            <select id="multiplication-time-dec2" class="form-select text-end" style="max-width: fit-content"></select>
+                            <select id="multiplication-time-dec1" class="form-select text-end"
+                                    style="max-width: fit-content"></select>
+                            <select id="multiplication-time-dec2" class="form-select text-end"
+                                    style="max-width: fit-content"></select>
                             <span class="input-group-text">秒</span>
                         </div>
-                        <input type="number" inputmode="numeric" id="multiplication-time" class="d-none" autocomplete="off">
+                        <input type="number" inputmode="numeric" id="multiplication-time" class="d-none"
+                               autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -230,7 +238,8 @@
         <div class="d-flex justify-content-start my-3">
             <div class="form-check form-switch me-3">
                 <input class="form-check-input" type="checkbox" value="" id="fix-number-interval">
-                <label class="form-check-label text-light" for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
+                <label class="form-check-label text-light"
+                       for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
             </div>
             <div class="form-check form-switch me-3">
                 <input class="form-check-input" type="checkbox" value="" id="hide-answer">
@@ -293,7 +302,8 @@
                     <h5 class="mb-3">タイミング</h5>
                     <div id="common-more-config" class="container w-auto">
                         <div class="row">
-                            <label for="common-offset" class="form-label">オフセット<br>（音が遅れているときは + 、数字の表示が遅れているときは - にしてください）</label>
+                            <label for="common-offset" class="form-label">オフセット<br>（音が遅れているときは +
+                                、数字の表示が遅れているときは - にしてください）</label>
                             <div class="input-group mb-2 col">
                                 <input type="number" inputmode="numeric" id="common-offset"
                                        class="form-control text-end">
@@ -418,7 +428,8 @@
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header d-sm-none d-lg-block">
-                <h5 class="modal-title" id="inputAnswerModalLabel">答えを入力してください<span id="notice-input-answer-non-touch-device">（Enter キーで送信します）</span></h5>
+                <h5 class="modal-title" id="inputAnswerModalLabel">答えを入力してください<span
+                        id="notice-input-answer-non-touch-device">（Enter キーで送信します）</span></h5>
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs d-none" id="switchInputAnswerBoxTab" role="tablist">
@@ -457,7 +468,8 @@
                             aria-labelledby="switchInputAnswerBoxTab-keyboard-tab"
                     >
                         <label for="input-answer-box" style="display: none;"></label>
-                        <input type="number" id="input-answer-box" inputmode="numeric" class="form-control input-answer-box" autocomplete="off">
+                        <input type="number" id="input-answer-box" inputmode="numeric"
+                               class="form-control input-answer-box" autocomplete="off">
                     </div>
                     <div
                             class="tab-pane"
@@ -468,13 +480,15 @@
                         <div class="row">
                             <div class="col-sm-9">
                                 <label for="input-answer-box-touch-display" style="display: none;"></label>
-                                <input type="text" id="input-answer-box-touch-display" inputmode="numeric" class="form-control input-answer-box" autocomplete="off" readonly>
+                                <input type="text" id="input-answer-box-touch-display" inputmode="numeric"
+                                       class="form-control input-answer-box" autocomplete="off" readonly>
                                 <div class="input-answer-keyboard-touch"></div>
                                 <input type="hidden" id="input-answer-box-touch-actual">
                             </div>
                             <div class="col-sm-3 d-flex flex-sm-column justify-content-end align-bottom">
                                 <div class="p-2">
-                                    <button type="button" class="btn btn-secondary btn-clear-input-answer-box">消す</button>
+                                    <button type="button" class="btn btn-secondary btn-clear-input-answer-box">消す
+                                    </button>
                                 </div>
                                 <div class="p-2">
                                     <button type="button" class="btn btn-primary btn-send-answer">送信</button>
@@ -534,186 +548,192 @@
 </div>
 <!-- Help -->
 <div class="modal" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="helpModalLabel">ショートカット</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <table class="table table-borderless">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">一般</th>
+                    </tr>
+                    </thead>
                     <tbody>
                     <tr>
-                        <td>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col" colspan="2">一般</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>ヘルプを開く</td>
-                                    <td><kbd>Q</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>環境設定を開く</td>
-                                    <td><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>,</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>出題設定を読み込む</td>
-                                    <td><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>O</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>出題設定を保存する</td>
-                                    <td><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>S</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>出題設定を削除する</td>
-                                    <td><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>R</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>フルスクリーンモードを切り替える</td>
-                                    <td><kbd>W</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>終了する</td>
-                                    <td><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>W</kbd><span
-                                            class="px-2">または</span><kbd>Alt</kbd><span
-                                            class="px-1">+</span><kbd>F4</kbd></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                        <td>
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th scope="col" colspan="2">プレイ</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>出題する</td>
-                                    <td><kbd>S</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>前回の数字で出題する</td>
-                                    <td><kbd>R</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>出題された数字の履歴を見る</td>
-                                    <td><kbd>N</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>たし算モードに切り替える</td>
-                                    <td><kbd>Z</kbd></td>
-                                </tr>
-                                <tr>
-                                    <td>かけ算モードに切り替える</td>
-                                    <td><kbd>C</kbd></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <table class="table table-borderless">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col" colspan="2">たし算</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>桁数を増やす</td>
-                                                <td><kbd>U</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>桁数を減らす</td>
-                                                <td><kbd>J</kbd></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col" colspan="2">かけ算</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>かけられる数の桁数を増やす</td>
-                                                <td><kbd>Y</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>かけられる数の桁数を減らす</td>
-                                                <td><kbd>H</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>かける数の桁数を増やす</td>
-                                                <td><kbd>U</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>かける数の桁数を減らす</td>
-                                                <td><kbd>J</kbd></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col" colspan="2">たし算・かけ算共通</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>口数を増やす</td>
-                                                <td><kbd>I</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>口数を減らす</td>
-                                                <td><kbd>K</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>秒数を増やす</td>
-                                                <td><kbd>O</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>秒数を減らす</td>
-                                                <td><kbd>L</kbd></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col" colspan="2">難易度設定</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr>
-                                                <td>かんたん</td>
-                                                <td><kbd>D</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>ふつう</td>
-                                                <td><kbd>F</kbd></td>
-                                            </tr>
-                                            <tr>
-                                                <td>むずかしい</td>
-                                                <td><kbd>G</kbd></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </td>
+                        <td>ショートカットメニューを開く</td>
+                        <td class="text-end"><kbd>Q</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>環境設定を開く</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>,</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>出題設定を読み込む</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>O</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>出題設定を保存する</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>S</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>出題設定を削除する</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>R</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>フルスクリーンモードを切り替える</td>
+                        <td class="text-end"><kbd>W</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>終了する</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>W</kbd><span
+                                class="px-2">または</span><kbd>Alt</kbd><span
+                                class="px-1">+</span><kbd>F4</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">プレイ</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>出題する</td>
+                        <td class="text-end"><kbd>S</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>前回の数字で出題する</td>
+                        <td class="text-end"><kbd>R</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>出題された数字の履歴を見る</td>
+                        <td class="text-end"><kbd>N</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>たし算モードに切り替える</td>
+                        <td class="text-end"><kbd>Z</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>かけ算モードに切り替える</td>
+                        <td class="text-end"><kbd>C</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">難易度設定</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>かんたん</td>
+                        <td class="text-end"><kbd>D</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>ふつう</td>
+                        <td class="text-end"><kbd>F</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>むずかしい</td>
+                        <td class="text-end"><kbd>G</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">たし算モード</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>桁数を増やす</td>
+                        <td class="text-end"><kbd>U</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>桁数を減らす</td>
+                        <td class="text-end"><kbd>J</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">かけ算モード</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>かけられる数の桁数を増やす</td>
+                        <td class="text-end"><kbd>Y</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>かけられる数の桁数を減らす</td>
+                        <td class="text-end"><kbd>H</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>かける数の桁数を増やす</td>
+                        <td class="text-end"><kbd>U</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>かける数の桁数を減らす</td>
+                        <td class="text-end"><kbd>J</kbd></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="2">各モード共通</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>口数を増やす</td>
+                        <td class="text-end"><kbd>I</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>口数を減らす</td>
+                        <td class="text-end"><kbd>K</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 1 秒増やす</td>
+                        <td class="text-end"><kbd>O</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 1 秒減らす</td>
+                        <td class="text-end"><kbd>L</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 0.1 秒増やす</td>
+                        <td class="text-end"><kbd>Shift</kbd><span class="px-1">+</span><kbd>O</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 0.1 秒減らす</td>
+                        <td class="text-end"><kbd>Shift</kbd><span class="px-1">+</span><kbd>L</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 0.01 秒増やす</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>Shift</kbd><span
+                                class="px-1">+</span><kbd>O</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>秒数を 0.01 秒減らす</td>
+                        <td class="text-end"><kbd>Ctrl</kbd><span class="px-1">+</span><kbd>Shift</kbd><span
+                                class="px-1">+</span><kbd>L</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>表示間隔を固定したまま口数を変更する</td>
+                        <td class="text-end"><kbd>Shift</kbd><span class="px-1">+</span><kbd>N</kbd></td>
+                    </tr>
+                    <tr>
+                        <td>答えを表示せず正誤判定のみ行う</td>
+                        <td class="text-end"><kbd>Shift</kbd><span class="px-1">+</span><kbd>M</kbd></td>
                     </tr>
                     </tbody>
                 </table>
