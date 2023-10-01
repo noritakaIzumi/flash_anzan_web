@@ -1,4 +1,4 @@
-import { type FlashDifficulty, type SoundExtension } from "../globals.js"
+import { type FlashDifficulty, type SoundExtension } from '../globals.js'
 
 export interface FlashNumberParamSchema {
     min: number

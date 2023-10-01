@@ -1,5 +1,5 @@
-import { Abacus } from "../abacus.js"
-import { calculateComplexity } from "./flashAnalysis.js"
+import { Abacus } from '../abacus.js'
+import { calculateComplexity } from './flashAnalysis.js'
 import {
     type Complexity,
     type ComplexityThreshold,
@@ -11,11 +11,11 @@ import {
     generateNumbersRetryLimit,
     multiplyFigure,
     type UnknownFlashDifficulty
-} from "../globals.js"
-import { type FlashParamSet } from "./flashParamSet.js"
-import { type FlashNumberHistory, flashNumberHistoryRegistry } from "./flashNumberHistory.js"
-import { type ExecuteInterface } from "../interface/executeInterface.js"
-import { type FlashOptions } from "./flashQuestionCreator.js"
+} from '../globals.js'
+import { type FlashParamSet } from './flashParamSet.js'
+import { type FlashNumberHistory, flashNumberHistoryRegistry } from './flashNumberHistory.js'
+import { type ExecuteInterface } from '../interface/executeInterface.js'
+import { type FlashOptions } from './flashQuestionCreator.js'
 
 function getRandomDigit(excepts: number[] = []): number {
     const d: number[] = []
@@ -31,7 +31,7 @@ function getRandomDigit(excepts: number[] = []): number {
 function getRandomInt(digitCount: number, previousNum: number | null = null, digitAllDifferent: boolean = false): number {
     const previousNumDigits = previousNum === null
         ? []
-        : String(previousNum).split("").reverse().map((n) => {
+        : String(previousNum).split('').reverse().map((n) => {
             return Number(n)
         })
     const digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))]
@@ -43,7 +43,7 @@ function getRandomInt(digitCount: number, previousNum: number | null = null, dig
         digits.push(digit)
         i++
     }
-    return Number(String(digits[0]) + digits.slice(1).reverse().join(""))
+    return Number(String(digits[0]) + digits.slice(1).reverse().join(''))
 }
 
 export interface ToDisplayInterface<T> {
@@ -83,13 +83,13 @@ export abstract class FlashNumbers<T> implements ToDisplayInterface<string[]> {
     abstract toDisplay(): string[]
 }
 
-export class AdditionModeFlashNumbers extends FlashNumbers<FlashDigit["addition"]> {
+export class AdditionModeFlashNumbers extends FlashNumbers<FlashDigit['addition']> {
     toDisplay(): string[] {
         return this._raw.map((n) => n.toLocaleString())
     }
 }
 
-export class MultiplicationModeFlashNumbers extends FlashNumbers<FlashDigit["multiplication"]> {
+export class MultiplicationModeFlashNumbers extends FlashNumbers<FlashDigit['multiplication']> {
     toDisplay(): string[] {
         return this._raw.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString())
     }
@@ -99,14 +99,14 @@ export abstract class AbstractGetFlashAnswerAdapter<T extends FlashMode> impleme
     abstract execute(numbers: Array<FlashDigit[T]>): FlashAnswer
 }
 
-export class AdditionModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<"addition"> {
-    execute(numbers: Array<FlashDigit["addition"]>): FlashAnswer {
+export class AdditionModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<'addition'> {
+    execute(numbers: Array<FlashDigit['addition']>): FlashAnswer {
         return new FlashAnswer(numbers.reduce((a, b) => a + b))
     }
 }
 
-export class MultiplicationModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<"multiplication"> {
-    execute(numbers: Array<FlashDigit["multiplication"]>): FlashAnswer {
+export class MultiplicationModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<'multiplication'> {
+    execute(numbers: Array<FlashDigit['multiplication']>): FlashAnswer {
         let sum: number = 0
         for (const [number1, number2] of numbers) {
             sum += number1 * number2
@@ -181,18 +181,18 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 }
             }
         }
-        throw new Error("retry limit exceeded for generating numbers")
+        throw new Error('retry limit exceeded for generating numbers')
     }
 }
 
-export class AdditionModeFlashGenerator extends AbstractFlashGenerator<"addition"> {
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["addition"]> | null {
+export class AdditionModeFlashGenerator extends AbstractFlashGenerator<'addition'> {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit['addition']> | null {
         return flashNumberHistoryRegistry.addition.history
     }
 }
 
-export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<"multiplication"> {
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["multiplication"]> | null {
+export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<'multiplication'> {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit['multiplication']> | null {
         return flashNumberHistoryRegistry.multiplication.history
     }
 }
@@ -323,30 +323,30 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
     protected abstract getComplexityThresholdMapKey(digitCount: FlashDigit[T], length: number): ComplexityThresholdMapKey[T]
 }
 
-export function getAdditionModeComplexityThresholdMapKey(digitCount: FlashDigit["addition"], length: number): ComplexityThresholdMapKey["addition"] {
+export function getAdditionModeComplexityThresholdMapKey(digitCount: FlashDigit['addition'], length: number): ComplexityThresholdMapKey['addition'] {
     return `${digitCount}-${length}`
 }
 
-export function getMultiplicationModeComplexityThresholdMapKey(digitCount: FlashDigit["multiplication"], length: number): ComplexityThresholdMapKey["multiplication"] {
+export function getMultiplicationModeComplexityThresholdMapKey(digitCount: FlashDigit['multiplication'], length: number): ComplexityThresholdMapKey['multiplication'] {
     return `${digitCount[0]}-${digitCount[1]}-${length}`
 }
 
-export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<"addition"> {
-    protected getComplexity(carries: number[], digitCount: FlashDigit["addition"]): number {
+export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<'addition'> {
+    protected getComplexity(carries: number[], digitCount: FlashDigit['addition']): number {
         return calculateComplexity(carries, digitCount)
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit["addition"], length: number): ComplexityThresholdMapKey["addition"] {
+    protected getComplexityThresholdMapKey(digitCount: FlashDigit['addition'], length: number): ComplexityThresholdMapKey['addition'] {
         return getAdditionModeComplexityThresholdMapKey(digitCount, length)
     }
 }
 
-export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<"multiplication"> {
-    protected getComplexity(carries: number[], digitCount: FlashDigit["multiplication"]): number {
+export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<'multiplication'> {
+    protected getComplexity(carries: number[], digitCount: FlashDigit['multiplication']): number {
         return calculateComplexity(carries, digitCount[0] * digitCount[1])
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit["multiplication"], length: number): ComplexityThresholdMapKey["multiplication"] {
+    protected getComplexityThresholdMapKey(digitCount: FlashDigit['multiplication'], length: number): ComplexityThresholdMapKey['multiplication'] {
         return getMultiplicationModeComplexityThresholdMapKey(digitCount, length)
     }
 }
@@ -384,10 +384,10 @@ export abstract class AbstractCreateRawNumberAdapter<T extends keyof FlashDigit>
     abstract execute(): void
 }
 
-export abstract class AbstractAdditionModeCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"addition"> {
+export abstract class AbstractAdditionModeCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<'addition'> {
     abstract execute(): void
 
-    protected register(number: FlashDigit["addition"], carry: number): void {
+    protected register(number: FlashDigit['addition'], carry: number): void {
         // 最初の数字を追加するときは繰り上がりは必ず 0 なので登録しない
         if (this.numbers.length > 0) {
             this.carries.push(carry)
@@ -483,14 +483,14 @@ export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractAd
 export class AdditionModeUnknownDifficultyCreateRawNumberAdapter extends AdditionModeNormalDifficultyCreateRawNumberAdapter {
 }
 
-export class MultiplicationModeEasyDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<"multiplication"> {
+export class MultiplicationModeEasyDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<'multiplication'> {
     execute(): void {
         const number1 = getRandomInt(this.digitCount[0], this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null, true)
         const number2 = getRandomInt(this.digitCount[1], this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null, true)
-        const digits1 = String(number1).split("").reverse().map((n) => {
+        const digits1 = String(number1).split('').reverse().map((n) => {
             return Number(n)
         })
-        const digits2 = String(number2).split("").reverse().map((n) => {
+        const digits2 = String(number2).split('').reverse().map((n) => {
             return Number(n)
         })
         for (let p1 = digits1.length - 1; p1 >= 0; p1--) {

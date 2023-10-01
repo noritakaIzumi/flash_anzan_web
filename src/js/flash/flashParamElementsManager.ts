@@ -1,9 +1,9 @@
-import { flashParamElements, type FlashParamElements } from "../dom/flashParamElements.js"
-import { button, checkboxes } from "../dom/htmlElement.js"
-import { FlashLengthAndTimeMemory } from "./flashLengthAndTimeMemory.js"
-import { type FlashDifficulty, type FlashMode } from "../globals.js"
-import { type FlashDifficultyParam, type FlashNumberParam } from "./flashParams.js"
-import { flashParamSchema } from "../../config/flashParamSchema.js"
+import { flashParamElements, type FlashParamElements } from '../dom/flashParamElements.js'
+import { button, checkboxes } from '../dom/htmlElement.js'
+import { FlashLengthAndTimeMemory } from './flashLengthAndTimeMemory.js'
+import { type FlashDifficulty, type FlashMode } from '../globals.js'
+import { type FlashDifficultyParam, type FlashNumberParam } from './flashParams.js'
+import { flashParamSchema } from '../../config/flashParamSchema.js'
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
@@ -12,7 +12,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 
     constructor(props: {
         elements: FlashParamElements[T]
-        commonElements: FlashParamElements["common"]
+        commonElements: FlashParamElements['common']
         flashLengthAndTimeMemory: FlashLengthAndTimeMemory
     }) {
         this.elements = props.elements
@@ -23,7 +23,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 
     protected initialize(): void {
         // 表示間隔を固定するオプション
-        checkboxes.fixNumberInterval.addEventListener("change", () => {
+        checkboxes.fixNumberInterval.addEventListener('change', () => {
             const lengthParam = this.elements.length
             const timeParam = this.elements.time
             if (checkboxes.fixNumberInterval.checked) {
@@ -36,7 +36,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         })
 
         // length
-        this.elements.length.htmlElement.addEventListener("change", event => {
+        this.elements.length.htmlElement.addEventListener('change', event => {
             event.preventDefault()
             this._length = Number(this.elements.length.htmlElement.value)
         })
@@ -49,24 +49,24 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
                 Number(this.elements.time.digitElements.dec1.value) * 100 +
                 Number(this.elements.time.digitElements.dec2.value) * 10
         }
-        this.elements.time.digitElements.int.addEventListener("change", setTimeFromElements)
-        this.elements.time.digitElements.dec1.addEventListener("change", setTimeFromElements)
-        this.elements.time.digitElements.dec2.addEventListener("change", setTimeFromElements)
+        this.elements.time.digitElements.int.addEventListener('change', setTimeFromElements)
+        this.elements.time.digitElements.dec1.addEventListener('change', setTimeFromElements)
+        this.elements.time.digitElements.dec2.addEventListener('change', setTimeFromElements)
 
         // difficulty
-        button.difficulty.easy.addEventListener("click", () => {
-            this._difficulty = "easy"
+        button.difficulty.easy.addEventListener('click', () => {
+            this._difficulty = 'easy'
         })
-        button.difficulty.normal.addEventListener("click", () => {
-            this._difficulty = "normal"
+        button.difficulty.normal.addEventListener('click', () => {
+            this._difficulty = 'normal'
         })
-        button.difficulty.hard.addEventListener("click", () => {
-            this._difficulty = "hard"
+        button.difficulty.hard.addEventListener('click', () => {
+            this._difficulty = 'hard'
         })
         this._difficulty = flashParamSchema.common.difficulty.default
 
         // offset
-        this.commonElements.offset.htmlElement.addEventListener("change", event => {
+        this.commonElements.offset.htmlElement.addEventListener('change', event => {
             event.preventDefault()
             this._offset = Number(this.commonElements.offset.htmlElement.value)
         })
@@ -139,10 +139,10 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
     }
 }
 
-export class AdditionModeFlashParamElementsManager extends FlashParamElementsManager<"addition"> {
+export class AdditionModeFlashParamElementsManager extends FlashParamElementsManager<'addition'> {
     protected initialize(): void {
         super.initialize()
-        this.elements.digit.htmlElement.addEventListener("change", event => {
+        this.elements.digit.htmlElement.addEventListener('change', event => {
             event.preventDefault()
             this._digit = Number(this.elements.digit.htmlElement.value)
         })
@@ -166,14 +166,14 @@ export class AdditionModeFlashParamElementsManager extends FlashParamElementsMan
     }
 }
 
-export class MultiplicationModeFlashParamElementsManager extends FlashParamElementsManager<"multiplication"> {
+export class MultiplicationModeFlashParamElementsManager extends FlashParamElementsManager<'multiplication'> {
     protected initialize(): void {
         super.initialize()
-        this.elements.digit1.htmlElement.addEventListener("change", event => {
+        this.elements.digit1.htmlElement.addEventListener('change', event => {
             event.preventDefault()
             this._digit1 = Number(this.elements.digit1.htmlElement.value)
         })
-        this.elements.digit2.htmlElement.addEventListener("change", event => {
+        this.elements.digit2.htmlElement.addEventListener('change', event => {
             event.preventDefault()
             this._digit2 = Number(this.elements.digit2.htmlElement.value)
         })

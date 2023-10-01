@@ -1,4 +1,4 @@
-import { type FlashParamSchema } from "../js/flash/flashParamSchema.js"
+import { type FlashParamSchema } from '../js/flash/flashParamSchema.js'
 
 export const flashParamSchema: FlashParamSchema = {
     addition: {
@@ -46,7 +46,7 @@ export const flashParamSchema: FlashParamSchema = {
         },
     },
     common: {
-        difficulty: { default: "easy" },
+        difficulty: { default: 'easy' },
         flashRate: {
             min: 1,
             max: 99,
@@ -58,7 +58,7 @@ export const flashParamSchema: FlashParamSchema = {
             default: 0,
         },
         isMuted: { default: false },
-        soundExtension: { default: "wav" },
+        soundExtension: { default: 'wav' },
         fixNumberInterval: { default: false },
         hideAnswer: { default: true },
     },

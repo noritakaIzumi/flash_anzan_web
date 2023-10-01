@@ -1,11 +1,11 @@
-import { audioObj } from "../sound/sound.js"
-import { type FlashParamSet } from "./flashParamSet.js"
-import { type FlashMode } from "../globals.js"
-import { measuredTime } from "./measuredTime.js"
-import { getTime } from "../time.js"
-import { questionNumberArea } from "../dom/htmlElement.js"
-import { getPlaySoundCreator } from "../sound/playSound.js"
-import { beepCount, beepInterval, firstBeepTiming, firstTickTiming, flashRate } from "../../config/flashTiming.js"
+import { audioObj } from '../sound/sound.js'
+import { type FlashParamSet } from './flashParamSet.js'
+import { type FlashMode } from '../globals.js'
+import { measuredTime } from './measuredTime.js'
+import { getTime } from '../time.js'
+import { questionNumberArea } from '../dom/htmlElement.js'
+import { getPlaySoundCreator } from '../sound/playSound.js'
+import { beepCount, beepInterval, firstBeepTiming, firstTickTiming, flashRate } from '../../config/flashTiming.js'
 
 export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] => {
     const result: number[] = []
@@ -28,7 +28,7 @@ export const getToggleNumberFunctions = (numbersToDisplay: string[]): Array<() =
         const toggleNumberSuite: string[] = []
         for (let i = 0; i < fmtNumbers.length; i++) {
             toggleNumberSuite.push(fmtNumbers[i])
-            toggleNumberSuite.push("")
+            toggleNumberSuite.push('')
         }
         return toggleNumberSuite
     }
@@ -80,7 +80,7 @@ export async function getFlashSuite(args: GetFlashSuiteArgs): Promise<FlashSuite
     const tickSound = await playSoundCreator.createTick({ toggleTimings })
     flashSuite.push({
         fn: () => {
-            audioObj.play("silence")
+            audioObj.play('silence')
         },
         delay: 0,
     })

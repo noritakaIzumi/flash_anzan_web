@@ -1,9 +1,9 @@
-import { flashDifficulty, type FlashDifficulty } from "../globals.js"
+import { flashDifficulty, type FlashDifficulty } from '../globals.js'
 import {
     type FlashDifficultyParamSchema,
     type FlashNumberParamSchema,
     type FlashNumberParamWithDifficultySupportSchema
-} from "./flashParamSchema.js"
+} from './flashParamSchema.js'
 
 export function fixValue(limit: {
     max: number
@@ -15,13 +15,13 @@ export function fixValue(limit: {
 const tempValueStore: Record<string, string | undefined> = {}
 
 export function setupInputElementForTouch(element: HTMLInputElement): void {
-    element.addEventListener("focus", () => {
+    element.addEventListener('focus', () => {
         tempValueStore[element.id] = element.value
-        element.value = ""
+        element.value = ''
     })
-    element.addEventListener("blur", () => {
-        if (element.value === "") {
-            element.value = tempValueStore[element.id] ?? ""
+    element.addEventListener('blur', () => {
+        if (element.value === '') {
+            element.value = tempValueStore[element.id] ?? ''
             tempValueStore[element.id] = undefined
         }
     })
@@ -113,7 +113,7 @@ export class FlashNumberWithDifficultySupportParam extends FlashParam<HTMLSelect
         super(props)
         for (let i = this.schema.max; i >= this.schema.min; i--) {
             const strNum = String(i)
-            const element = document.createElement("option")
+            const element = document.createElement('option')
             element.value = strNum
             element.textContent = strNum
             this.htmlElement.appendChild(element)
@@ -177,7 +177,7 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         function addOptions(parent: HTMLSelectElement, start: number, end: number): void {
             for (let i = end; i >= start; i--) {
                 const strNum = String(i)
-                const element = document.createElement("option")
+                const element = document.createElement('option')
                 element.value = strNum
                 element.textContent = strNum
                 parent.appendChild(element)
@@ -187,13 +187,13 @@ export class FlashTimeParam extends FlashParam<HTMLInputElement, FlashNumberPara
         addOptions(this._digitElements.int, Math.floor(this.schema.min / 1000), Math.floor(this.schema.max / 1000))
         addOptions(this._digitElements.dec1, 0, 9)
         addOptions(this._digitElements.dec2, 0, 9)
-        this._digitElements.int.addEventListener("change", () => {
+        this._digitElements.int.addEventListener('change', () => {
             this.valueV1 = this.concatValues()
         })
-        this._digitElements.dec1.addEventListener("change", () => {
+        this._digitElements.dec1.addEventListener('change', () => {
             this.valueV1 = this.concatValues()
         })
-        this._digitElements.dec2.addEventListener("change", () => {
+        this._digitElements.dec2.addEventListener('change', () => {
             this.valueV1 = this.concatValues()
         })
     }

@@ -1,36 +1,36 @@
-import { type flashParamElementCategoryName, flashParamElements } from "../dom/flashParamElements.js"
-import { savedParamsKeyName } from "../globals.js"
-import { button, modals } from "../dom/htmlElement.js"
+import { type flashParamElementCategoryName, flashParamElements } from '../dom/flashParamElements.js'
+import { savedParamsKeyName } from '../globals.js'
+import { button, modals } from '../dom/htmlElement.js'
 
 export function doLoadParams(): void {
     const modal = modals.params.load.complete
-    const modalMessage = modal.querySelector(".modal-body > p")
+    const modalMessage = modal.querySelector('.modal-body > p')
     if (modalMessage === null) {
-        throw new Error("element not found: modal message")
+        throw new Error('element not found: modal message')
     }
 
     const loadedParams = localStorage.getItem(savedParamsKeyName)
     if (loadedParams === null) {
-        modalMessage.innerHTML = "設定がありません"
+        modalMessage.innerHTML = '設定がありません'
         return
     }
-    modalMessage.innerHTML = "設定を読み込みました"
+    modalMessage.innerHTML = '設定を読み込みました'
 
     const parsedParams = JSON.parse(loadedParams)
     Object.keys(parsedParams).forEach(mode => {
         switch (mode as keyof typeof flashParamElements) {
-            case "addition":
+            case 'addition':
                 flashParamElements.addition.digit.valueV0 = parsedParams.addition.digit
                 flashParamElements.addition.length.valueV0 = parsedParams.addition.length
                 flashParamElements.addition.time.valueV0 = parsedParams.addition.time
                 break
-            case "multiplication":
+            case 'multiplication':
                 flashParamElements.multiplication.digit1.valueV0 = parsedParams.multiplication.digit1
                 flashParamElements.multiplication.digit2.valueV0 = parsedParams.multiplication.digit2
                 flashParamElements.multiplication.length.valueV0 = parsedParams.multiplication.length
                 flashParamElements.multiplication.time.valueV0 = parsedParams.multiplication.time
                 break
-            case "common":
+            case 'common':
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
                 flashParamElements.common.offset.valueV0 = parsedParams.common.offset
                 break

@@ -1,4 +1,4 @@
-import { type FlashMode } from "./globals.js"
+import { type FlashMode } from './globals.js'
 
 export class CurrentFlashMode {
     get value(): FlashMode {
@@ -18,7 +18,7 @@ export class CurrentFlashMode {
 
     public static getInstance(): CurrentFlashMode {
         if (CurrentFlashMode.instance === undefined) {
-            CurrentFlashMode.instance = new CurrentFlashMode("addition")
+            CurrentFlashMode.instance = new CurrentFlashMode('addition')
         }
         return CurrentFlashMode.instance
     }

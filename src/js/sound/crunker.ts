@@ -1,4 +1,4 @@
-import Crunker from "crunker"
+import Crunker from 'crunker'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error

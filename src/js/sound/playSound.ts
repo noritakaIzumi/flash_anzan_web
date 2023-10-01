@@ -1,6 +1,6 @@
-import { audioAttr, type AudioObjKey, type AudioPath, type SoundExtension } from "../globals.js"
-import { getCrunkerInstance } from "./crunker.js"
-import { isMutedConfig } from "./isMutedConfig.js"
+import { audioAttr, type AudioObjKey, type AudioPath, type SoundExtension } from '../globals.js'
+import { getCrunkerInstance } from './crunker.js'
+import { isMutedConfig } from './isMutedConfig.js'
 
 const audioBuffersRegistry: { [name in AudioObjKey]?: AudioBuffer } = {}
 
@@ -16,7 +16,7 @@ export async function initAudioBuffers(extension: SoundExtension, name: AudioObj
 async function getAudioBuffers(name: AudioObjKey): Promise<AudioBuffer> {
     const audioBuffer = audioBuffersRegistry[name]
     if (audioBuffer === undefined) {
-        throw new Error("audio is not initialized")
+        throw new Error('audio is not initialized')
     }
     return audioBuffersRegistry[name] as AudioBuffer
 }
@@ -34,7 +34,7 @@ export class PlaySoundCreator {
         beepInterval: number
         beepCount: number
     }): Promise<PlaySound> {
-        const beepAudioBuffer = await getAudioBuffers("beep")
+        const beepAudioBuffer = await getAudioBuffers('beep')
 
         const audios: AudioBuffer[] = []
         for (let i = 0; i < props.beepCount; i++) {
@@ -47,7 +47,7 @@ export class PlaySoundCreator {
     async createTick(props: {
         toggleTimings: number[]
     }): Promise<PlaySound> {
-        const tickAudioBuffer = await getAudioBuffers("tick")
+        const tickAudioBuffer = await getAudioBuffers('tick')
 
         const audios: AudioBuffer[] = []
         for (const [i, toggleTiming] of props.toggleTimings.entries()) {

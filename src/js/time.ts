@@ -3,10 +3,10 @@
 // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 const now = window.performance && (
     performance.now ||
-    ("mozNow" in performance && performance.mozNow) ||
-    ("msNow" in performance && performance.msNow) ||
-    ("oNow" in performance && performance.oNow) ||
-    ("webkitNow" in performance && performance.webkitNow)
+    ('mozNow' in performance && performance.mozNow) ||
+    ('msNow' in performance && performance.msNow) ||
+    ('oNow' in performance && performance.oNow) ||
+    ('webkitNow' in performance && performance.webkitNow)
 ) as () => number
 
 export const getTime = function (): number {

@@ -1,8 +1,8 @@
-import { type HowlOptions } from "howler"
+import { type HowlOptions } from 'howler'
 
 export const howler2OptionWav: HowlOptions = {
     src: [
-        "sounds/flash_audiosprite.wav",
+        'sounds/flash_audiosprite.wav',
     ],
     sprite: {
         answer: [

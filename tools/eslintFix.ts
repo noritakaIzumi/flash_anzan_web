@@ -1,4 +1,4 @@
-import { ESLint } from "eslint"
+import { ESLint } from 'eslint'
 
 export function eslintFix(filepath: string): void {
     // lint

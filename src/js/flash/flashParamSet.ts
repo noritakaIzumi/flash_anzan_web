@@ -1,11 +1,11 @@
-import { type FlashDifficulty, type FlashDigit, type FlashMode } from "../globals.js"
-import { currentFlashMode } from "../currentFlashMode.js"
-import { changeShortcut } from "../shortcut/shortcut.js"
-import { type ExecuteInterface } from "../interface/executeInterface.js"
+import { type FlashDifficulty, type FlashDigit, type FlashMode } from '../globals.js'
+import { currentFlashMode } from '../currentFlashMode.js'
+import { changeShortcut } from '../shortcut/shortcut.js'
+import { type ExecuteInterface } from '../interface/executeInterface.js'
 import {
     additionModeFlashParamElementsManager,
     multiplicationModeFlashParamElementsManager
-} from "./flashParamElementsManager.js"
+} from './flashParamElementsManager.js'
 
 export function changeMode(mode: FlashMode): void {
     changeShortcut(mode)
@@ -24,8 +24,8 @@ export abstract class AbstractGetFlashParamSetAdapter<T extends FlashMode> imple
     abstract execute(): FlashParamSet<T>
 }
 
-export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<"addition"> {
-    execute(): FlashParamSet<"addition"> {
+export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<'addition'> {
+    execute(): FlashParamSet<'addition'> {
         return {
             digit: additionModeFlashParamElementsManager.getValidatedDigit(),
             length: additionModeFlashParamElementsManager.getValidatedLength(),
@@ -36,8 +36,8 @@ export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSe
     }
 }
 
-export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<"multiplication"> {
-    execute(): FlashParamSet<"multiplication"> {
+export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<'multiplication'> {
+    execute(): FlashParamSet<'multiplication'> {
         return {
             digit: [
                 multiplicationModeFlashParamElementsManager.getValidatedDigit1(),

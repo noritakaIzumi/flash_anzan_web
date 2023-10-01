@@ -1,23 +1,23 @@
 // noinspection SpellCheckingInspection
-import audiosprite from "audiosprite"
-import { fileURLToPath } from "url"
-import path from "path"
-import { type AudioPath, soundExtension, type SoundExtension } from "../src/js/globals.js"
-import * as fs from "fs"
-import { eslintFix } from "./eslintFix.js"
+import audiosprite from 'audiosprite'
+import { fileURLToPath } from 'url'
+import path from 'path'
+import { type AudioPath, soundExtension, type SoundExtension } from '../src/js/globals.js'
+import * as fs from 'fs'
+import { eslintFix } from './eslintFix.js'
 
 const filename = fileURLToPath(import.meta.url)
 const rootPath = path.dirname(path.dirname(filename))
 const publicSoundsPath = `${rootPath}/src/public/sounds`
 
 // FIXME: types が format=howler2 に対応していないため、型を上書きして暫定対応
-function getOpts(extension: SoundExtension): Omit<audiosprite.Option, "format"> & { format: audiosprite.ExportType | "howler2" } {
+function getOpts(extension: SoundExtension): Omit<audiosprite.Option, 'format'> & { format: audiosprite.ExportType | 'howler2' } {
     return {
         output: `${publicSoundsPath}/flash_audiosprite`,
-        path: "sounds",
+        path: 'sounds',
         export: extension,
-        format: "howler2",
-        log: "debug",
+        format: 'howler2',
+        log: 'debug',
         channels: 2,
     }
 }
@@ -58,7 +58,7 @@ import { type HowlOptions } from "howler"
 
 export const ${basename}: HowlOptions = ${JSON.stringify(obj, null, 2)}
 `.trim()
-            fs.writeFileSync(filepath, data, { encoding: "utf-8" })
+            fs.writeFileSync(filepath, data, { encoding: 'utf-8' })
             eslintFix(filepath)
         })
     }

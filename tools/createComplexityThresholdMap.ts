@@ -1,22 +1,22 @@
-import { calculateComplexity } from "../src/js/flash/flashAnalysis.js"
+import { calculateComplexity } from '../src/js/flash/flashAnalysis.js'
 import {
     type ComplexityThreshold,
     type ComplexityThresholdMap,
     type ComplexityThresholdMapKey,
     type FlashMode
-} from "../src/js/globals.js"
+} from '../src/js/globals.js'
 import {
     AdditionModeUnknownDifficultyCreateRawNumberAdapter,
     MultiplicationModeUnknownDifficultyCreateRawNumberAdapter
-} from "../src/js/flash/flashNumbers.js"
-import * as fs from "fs"
-import * as path from "path"
-import { fileURLToPath } from "url"
-import { flashParamSchema } from "../src/config/flashParamSchema.js"
-import { eslintFix } from "./eslintFix.js"
+} from '../src/js/flash/flashNumbers.js'
+import * as fs from 'fs'
+import * as path from 'path'
+import { fileURLToPath } from 'url'
+import { flashParamSchema } from '../src/config/flashParamSchema.js'
+import { eslintFix } from './eslintFix.js'
 
 const filename = fileURLToPath(import.meta.url)
-const complexitySampleMapDir = path.dirname(path.dirname(filename)) + "/data/complexitySampleMap"
+const complexitySampleMapDir = path.dirname(path.dirname(filename)) + '/data/complexitySampleMap'
 
 function getRank(numbers: number[], threshold: Threshold): ComplexityThreshold {
     const half = (numbers.length / 2) | 0
@@ -42,7 +42,7 @@ function complexitySampleFilepath<T extends FlashMode>(mode: T, mapKey: Complexi
 
 function readComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityThresholdMapKey[T]): number[] {
     const filepath = complexitySampleFilepath(mode, mapKey)
-    return JSON.parse(fs.readFileSync(filepath, "utf-8"))
+    return JSON.parse(fs.readFileSync(filepath, 'utf-8'))
 }
 
 function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityThresholdMapKey[T], sample: number[]): void {
@@ -52,8 +52,8 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
 
 (() => {
     // main
-    const importComplexitySampleMapFromFile: boolean = process.argv[2] === "reuse"
-    const complexityThresholdMapFilepath = path.dirname(path.dirname(filename)) + "/src/js/lib/complexityThresholdMap.ts"
+    const importComplexitySampleMapFromFile: boolean = process.argv[2] === 'reuse'
+    const complexityThresholdMapFilepath = path.dirname(path.dirname(filename)) + '/src/js/lib/complexityThresholdMap.ts'
 
     const complexitySampleMap: ComplexitySampleMap = {
         addition: {},
@@ -70,16 +70,16 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
         easy: 0.8,
     }
 
-    let mode: FlashMode = "addition"
+    let mode: FlashMode = 'addition'
     if (!importComplexitySampleMapFromFile) {
         fs.mkdirSync(`${complexitySampleMapDir}/${mode}`, { recursive: true })
     }
     const additionModeParamSchema = flashParamSchema.addition
     for (let digitCount = additionModeParamSchema.digit.min; digitCount <= additionModeParamSchema.digit.difficultySupportMax; ++digitCount) {
         for (let length = additionModeParamSchema.length.min; length <= additionModeParamSchema.length.difficultySupportMax; ++length) {
-            const mapKey: ComplexityThresholdMapKey["addition"] = `${digitCount}-${length}`
+            const mapKey: ComplexityThresholdMapKey['addition'] = `${digitCount}-${length}`
             if (importComplexitySampleMapFromFile) {
-                complexitySampleMap[mode][mapKey] = readComplexitySample("addition", mapKey)
+                complexitySampleMap[mode][mapKey] = readComplexitySample('addition', mapKey)
             } else {
                 complexitySampleMap[mode][mapKey] = []
                 for (let _ = 0; _ < sampleCount; _++) {
@@ -98,7 +98,7 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
         }
     }
 
-    mode = "multiplication"
+    mode = 'multiplication'
     if (!importComplexitySampleMapFromFile) {
         fs.mkdirSync(`${complexitySampleMapDir}/${mode}`, { recursive: true })
     }
@@ -106,8 +106,8 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
     for (let digitCount1 = multiplicationModeParamSchema.digit1.min; digitCount1 <= multiplicationModeParamSchema.digit1.difficultySupportMax; digitCount1++) {
         for (let digitCount2 = multiplicationModeParamSchema.digit2.min; digitCount2 <= multiplicationModeParamSchema.digit2.difficultySupportMax; digitCount2++) {
             for (let length = multiplicationModeParamSchema.length.min; length <= multiplicationModeParamSchema.length.difficultySupportMax; length++) {
-                const mapKey: ComplexityThresholdMapKey["multiplication"] = `${digitCount1}-${digitCount2}-${length}`
-                const flippedMapKey: ComplexityThresholdMapKey["multiplication"] = `${digitCount2}-${digitCount1}-${length}`
+                const mapKey: ComplexityThresholdMapKey['multiplication'] = `${digitCount1}-${digitCount2}-${length}`
+                const flippedMapKey: ComplexityThresholdMapKey['multiplication'] = `${digitCount2}-${digitCount1}-${length}`
                 if (flippedMapKey in complexityThresholdMap.multiplication) {
                     complexitySampleMap[mode][mapKey] = complexitySampleMap[mode][flippedMapKey]
                     complexityThresholdMap[mode][mapKey] = complexityThresholdMap[mode][flippedMapKey]
@@ -115,7 +115,7 @@ function writeComplexitySample<T extends FlashMode>(mode: T, mapKey: ComplexityT
                     continue
                 }
                 if (importComplexitySampleMapFromFile) {
-                    complexitySampleMap[mode][mapKey] = readComplexitySample("multiplication", mapKey)
+                    complexitySampleMap[mode][mapKey] = readComplexitySample('multiplication', mapKey)
                 } else {
                     complexitySampleMap[mode][mapKey] = []
                     for (let _ = 0; _ < sampleCount; _++) {
@@ -145,7 +145,7 @@ export const complexityThresholdMap: ComplexityThresholdMap = ${JSON.stringify(c
 `.trim()
         )
         eslintFix(complexityThresholdMapFilepath)
-        console.log("write end")
+        console.log('write end')
     } catch (e) {
         console.log(e)
     }
