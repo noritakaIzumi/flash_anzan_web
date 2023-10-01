@@ -55,7 +55,7 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             if (numberStr !== "") {
                 headerMessage.innerText = "あなたの答え：" + Number(numberStr).toLocaleString()
             } else {
-                headerMessage.innerText = ""
+                headerMessage.innerText = "あなたの答え："
             }
 
             button.repeat.disabled = true
@@ -66,12 +66,9 @@ async function flash(options: FlashOptions = {}): Promise<void> {
                 if (numberStr === answer.toString()) {
                     resultAudioObj = "correct"
                     headerMessage.innerText = `正解！（${headerMessage.innerText}）`
-                } else if (numberStr.length > 0) {
+                } else {
                     resultAudioObj = "incorrect"
                     headerMessage.innerText = `不正解...（${headerMessage.innerText}）`
-                } else {
-                    resultAudioObj = "silence"
-                    headerMessage.innerText = "答え"
                 }
                 questionNumberArea.innerText = answer.toDisplay()
                 audioObj.play(resultAudioObj)
