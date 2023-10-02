@@ -1,12 +1,12 @@
 {
   "name": "aurora-flash",
-  "version": "0.34.5",
+  "version": "0.35.0",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "aurora-flash",
-      "version": "0.34.5",
+      "version": "0.35.0",
       "license": "MIT",
       "dependencies": {
         "bootstrap": "^5.1.3",
