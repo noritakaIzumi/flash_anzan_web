@@ -1,27 +1,19 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "build": {
-    "beforeBuildCommand": "npm run build",
-    "beforeDevCommand": "npm run start",
-    "devPath": "http://localhost:8080",
-    "distDir": "../dist"
-  },
   "package": {
-    "productName": "aurora-flash",
-    "version": "0.34.5"
+    "productName": "aurora-flash"
   },
   "tauri": {
-    "allowlist": {
-      "all": false
-    },
+    "windows": [
+      {
+        "title": "おーろら★ふらっしゅ",
+        "maximized": true
+      }
+    ],
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
-      "copyright": "© 2020- Noritaka IZUMI",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
+      "targets": "all",
+      "identifier": "com.fairy-select.aurora-flash",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -29,8 +21,14 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.fairy-select.aurora-flash",
+      "resources": [],
+      "copyright": "© 2020- Noritaka IZUMI",
+      "category": "EducationalGame",
+      "shortDescription": "",
       "longDescription": "",
+      "deb": {
+        "depends": []
+      },
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -38,29 +36,30 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
+      "externalBin": [],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
-        "timestampUrl": ""
+        "timestampUrl": "",
+        "wix": {
+          "language": "jp-JP"
+        }
       }
+    },
+    "allowlist": {
+      "all": false
     },
     "security": {
       "csp": null
     },
     "updater": {
       "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 600,
-        "resizable": true,
-        "title": "おーろら★ふらっしゅ",
-        "width": 800
-      }
-    ]
+    }
+  },
+  "build": {
+    "devPath": "http://localhost:8080",
+    "distDir": "../dist",
+    "beforeDevCommand": "npm run start",
+    "beforeBuildCommand": "npm run build"
   }
 }
