@@ -1,4 +1,4 @@
-import { average, standardDeviation } from "../lib/analysis.js"
+import { average, standardDeviation } from '../lib/analysis.js'
 
 /**
  * 計算の複雑度を求める（繰り上がり回数などから算出）。

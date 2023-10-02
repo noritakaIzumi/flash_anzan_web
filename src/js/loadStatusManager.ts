@@ -1,13 +1,13 @@
-import { getTime } from "./time.js"
-import { fonts } from "./dom/htmlElement.js"
+import { getTime } from './time.js'
+import { fonts } from './dom/htmlElement.js'
 
-export const loadStatusKey = ["sound", "font-abacus", "font-header-message"] as const
-export type LoadStatusKey = typeof loadStatusKey[number]
+export const loadStatusKey = ['sound', 'font-abacus', 'font-header-message'] as const
+export type LoadStatusKey = (typeof loadStatusKey)[number]
 
 export class LoadStatusManager {
     private status: { [key in LoadStatusKey]: boolean } = {
-        "font-abacus": false,
-        "font-header-message": false,
+        'font-abacus': false,
+        'font-header-message': false,
         sound: false,
     }
 
@@ -20,13 +20,13 @@ export class LoadStatusManager {
     }
 
     private updateFontLoadStatus(): void {
-        this.status["font-abacus"] = fonts.abacus.dataset.loaded === "1"
-        this.status["font-header-message"] = fonts.kosugimaru.dataset.loaded === "1"
+        this.status['font-abacus'] = fonts.abacus.dataset.loaded === '1'
+        this.status['font-header-message'] = fonts.kosugimaru.dataset.loaded === '1'
     }
 
     isAllLoaded(): boolean {
         this.updateFontLoadStatus()
-        return Object.values(this.status).filter(loaded => !loaded).length <= 0
+        return Object.values(this.status).filter((loaded) => !loaded).length <= 0
     }
 }
 
@@ -44,10 +44,18 @@ export async function waitLoaded(timeout: number = 0): Promise<void> {
             }
             now = getTime()
             if (start + timeout < now) {
-                reject(new Error("failed to load sounds/fonts"))
+                reject(new Error('failed to load sounds/fonts'))
                 return
             }
-            setTimeout((): void => { doWaitLoaded().then(r => { resolve(r) }).catch(r => { reject(r) }) }, 100)
+            setTimeout((): void => {
+                doWaitLoaded()
+                    .then((r) => {
+                        resolve(r)
+                    })
+                    .catch((r) => {
+                        reject(r)
+                    })
+            }, 100)
         })
     }
 

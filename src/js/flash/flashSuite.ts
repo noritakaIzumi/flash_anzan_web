@@ -1,17 +1,18 @@
-import { audioObj } from "../sound/sound.js"
-import { type FlashParamSet } from "./flashParamSet.js"
-import { type FlashMode, type SoundExtension } from "../globals.js"
-import { measuredTime } from "./measuredTime.js"
-import { getTime } from "../time.js"
-import { questionNumberArea } from "../dom/htmlElement.js"
-import { getPlaySoundCreator } from "../sound/playSound.js"
+import { audioObj } from '../sound/sound.js'
+import { type FlashParamSet } from './flashParamSet.js'
+import { type FlashMode } from '../globals.js'
+import { measuredTime } from './measuredTime.js'
+import { getTime } from '../time.js'
+import { questionNumberArea } from '../dom/htmlElement.js'
+import { getPlaySoundCreator } from '../sound/playSound.js'
+import { beepCount, beepInterval, firstBeepTiming, firstTickTiming, flashRate } from '../../config/flashTiming.js'
 
 export const getToggleTimings = (paramSet: FlashParamSet<FlashMode>): number[] => {
     const result: number[] = []
     for (let i = 0; i < paramSet.length * 2; i++) {
-        result.push(paramSet.time *
-            (Math.floor(i / 2) * 100 + paramSet.flashRate * (i % 2)) /
-            ((paramSet.length - 1) * 100 + paramSet.flashRate)
+        result.push(
+            (paramSet.time * (Math.floor(i / 2) * 100 + flashRate * (i % 2))) /
+                ((paramSet.length - 1) * 100 + flashRate)
         )
     }
     return result
@@ -27,7 +28,7 @@ export const getToggleNumberFunctions = (numbersToDisplay: string[]): Array<() =
         const toggleNumberSuite: string[] = []
         for (let i = 0; i < fmtNumbers.length; i++) {
             toggleNumberSuite.push(fmtNumbers[i])
-            toggleNumberSuite.push("")
+            toggleNumberSuite.push('')
         }
         return toggleNumberSuite
     }
@@ -61,29 +62,25 @@ export interface FlashSegment {
 
 export type FlashSuite = FlashSegment[]
 
-export interface GetFlashSuiteParams {
-    soundExtension: SoundExtension
+export interface GetFlashSuiteArgs {
     paramSet: FlashParamSet<any>
     prepareAnswerInputFunc: () => void
     numbersToDisplay: string[]
 }
 
-export async function getFlashSuite({
-    soundExtension,
-    paramSet,
-    prepareAnswerInputFunc,
-    numbersToDisplay,
-}: GetFlashSuiteParams): Promise<FlashSuite> {
-    const toggleTimings = getToggleTimings(paramSet)
-    const toggleNumberFunctions = getToggleNumberFunctions(numbersToDisplay)
-    const playSoundCreator = getPlaySoundCreator()
-    const beepSound = await playSoundCreator.createBeep({ soundExtension, beepInterval: APP_CONFIG_BEEP_INTERVAL, beepCount: APP_CONFIG_BEEP_COUNT })
-    const tickSound = await playSoundCreator.createTick({ soundExtension, toggleTimings })
+export async function getFlashSuite(args: GetFlashSuiteArgs): Promise<FlashSuite> {
+    const toggleTimings = getToggleTimings(args.paramSet)
+    const toggleNumberFunctions = getToggleNumberFunctions(args.numbersToDisplay)
 
     const flashSuite: FlashSuite = []
+    const flashStartTiming = firstTickTiming
+
+    const playSoundCreator = getPlaySoundCreator()
+    const beepSound = await playSoundCreator.createBeep({ beepInterval, beepCount })
+    const tickSound = await playSoundCreator.createTick({ toggleTimings })
     flashSuite.push({
         fn: () => {
-            audioObj.play("silence")
+            audioObj.play('silence')
         },
         delay: 0,
     })
@@ -91,24 +88,24 @@ export async function getFlashSuite({
         fn: () => {
             beepSound.play()
         },
-        delay: APP_CONFIG_FIRST_BEEP_TIMING - paramSet.offset,
+        delay: firstBeepTiming - args.paramSet.offset,
     })
-    const flashStartTiming = APP_CONFIG_FIRST_BEEP_TIMING + APP_CONFIG_BEEP_INTERVAL * APP_CONFIG_BEEP_COUNT
     flashSuite.push({
         fn: () => {
             tickSound.play()
         },
-        delay: flashStartTiming - paramSet.offset,
+        delay: flashStartTiming - args.paramSet.offset,
     })
-    for (let i = 0; i < paramSet.length * 2; i++) {
+
+    for (let i = 0; i < args.paramSet.length * 2; i++) {
         flashSuite.push({
             fn: toggleNumberFunctions[i],
             delay: flashStartTiming + toggleTimings[i],
         })
     }
     flashSuite.push({
-        fn: prepareAnswerInputFunc,
-        delay: flashStartTiming + paramSet.time + 300,
+        fn: args.prepareAnswerInputFunc,
+        delay: flashStartTiming + toggleTimings[args.paramSet.length * 2 - 1] + 300,
     })
     return flashSuite
 }

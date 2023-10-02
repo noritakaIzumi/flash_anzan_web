@@ -2,14 +2,14 @@ import {
     AdditionModeGetFlashParamSetAdapter,
     type FlashParamSet,
     MultiplicationModeGetFlashParamSetAdapter
-} from "./flashParamSet.js"
+} from './flashParamSet.js'
 import {
     AdditionModeCreateNewNumbersAdapter,
     AdditionModeFlashGenerator,
     AdditionModeFlashNumbers,
     AdditionModeGetFlashAnswerAdapter,
     complexityIsValidAdapterMap,
-    createRawNumbersAdapterMap,
+    createRawNumberAdapterMap,
     type Flash,
     getAdditionModeComplexityThresholdMapKey,
     getMultiplicationModeComplexityThresholdMapKey,
@@ -17,10 +17,11 @@ import {
     MultiplicationModeFlashGenerator,
     MultiplicationModeFlashNumbers,
     MultiplicationModeGetFlashAnswerAdapter
-} from "./flashNumbers.js"
-import { complexityThresholdMap } from "../lib/complexityThresholdMap.js"
-import { flashNumberHistoryRegistry } from "./flashNumberHistory.js"
-import { type FlashMode } from "../globals.js"
+} from './flashNumbers.js'
+import { complexityThresholdMap } from '../lib/complexityThresholdMap.js'
+import { flashNumberHistoryRegistry } from './flashNumberHistory.js'
+import { type FlashMode } from '../globals.js'
+import { flashParamSchema } from '../../config/flashParamSchema.js'
 
 export interface FlashOptions {
     repeat?: boolean
@@ -46,22 +47,26 @@ interface FlashQuestion<T extends FlashMode> {
     flash: Flash<T>
 }
 
-export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addition"> {
-    protected getParamSet(): FlashParamSet<"addition"> {
+export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<'addition'> {
+    protected getParamSet(): FlashParamSet<'addition'> {
         return new AdditionModeGetFlashParamSetAdapter().execute()
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(this.paramSet.digit, this.paramSet.length)
+        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(
+            this.paramSet.digit,
+            flashParamSchema.addition.length.difficultySupportMax
+        )
         return complexityThresholdMapKey in complexityThresholdMap.addition
     }
 
-    create(option: FlashOptions): FlashQuestion<"addition"> {
+    create(option: FlashOptions): FlashQuestion<'addition'> {
         const flash = new AdditionModeFlashGenerator({
             createNewNumbersAdapter: new AdditionModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.addition,
+                createRawNumberAdapterMapByMode: createRawNumberAdapterMap.addition,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.addition,
                 complexityThresholdMapByMode: complexityThresholdMap.addition,
+                difficultySupportMaxLength: flashParamSchema.addition.length.difficultySupportMax,
             }),
             flashNumbersClass: AdditionModeFlashNumbers,
             getFlashAnswerAdapter: AdditionModeGetFlashAnswerAdapter,
@@ -76,22 +81,26 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<"addi
     }
 }
 
-export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator<"multiplication"> {
-    protected getParamSet(): FlashParamSet<"multiplication"> {
+export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator<'multiplication'> {
+    protected getParamSet(): FlashParamSet<'multiplication'> {
         return new MultiplicationModeGetFlashParamSetAdapter().execute()
     }
 
     difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(this.paramSet.digit, this.paramSet.length)
+        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(
+            this.paramSet.digit,
+            flashParamSchema.multiplication.length.difficultySupportMax
+        )
         return complexityThresholdMapKey in complexityThresholdMap.multiplication
     }
 
-    create(option: FlashOptions): FlashQuestion<"multiplication"> {
+    create(option: FlashOptions): FlashQuestion<'multiplication'> {
         const flash = new MultiplicationModeFlashGenerator({
             createNewNumbersAdapter: new MultiplicationModeCreateNewNumbersAdapter({
-                createRawNumbersAdapterMapByMode: createRawNumbersAdapterMap.multiplication,
+                createRawNumberAdapterMapByMode: createRawNumberAdapterMap.multiplication,
                 complexityIsValidAdapterMapByMode: complexityIsValidAdapterMap.multiplication,
                 complexityThresholdMapByMode: complexityThresholdMap.multiplication,
+                difficultySupportMaxLength: flashParamSchema.multiplication.length.difficultySupportMax,
             }),
             flashNumbersClass: MultiplicationModeFlashNumbers,
             getFlashAnswerAdapter: MultiplicationModeGetFlashAnswerAdapter,
@@ -106,7 +115,7 @@ export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator
     }
 }
 
-const flashQuestion: { [mode in FlashMode]: new() => FlashQuestionCreator<mode> } = {
+const flashQuestion: { [mode in FlashMode]: new () => FlashQuestionCreator<mode> } = {
     addition: AdditionModeFlashQuestionCreator,
     multiplication: MultiplicationModeFlashQuestionCreator,
 }

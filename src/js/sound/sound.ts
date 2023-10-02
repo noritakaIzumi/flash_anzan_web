@@ -1,14 +1,10 @@
-import { type AudioObjKey, type SoundExtension } from "../globals.js"
-import { Howl, type HowlOptions } from "howler"
-import { flashParamElements } from "../dom/flashParamElements.js"
-import { initAudioBuffers } from "./playSound.js"
-import { howler2OptionWav } from "../lib/howler2OptionWav.js"
-import { howler2OptionOgg } from "../lib/howler2OptionOgg.js"
-import { loadStatusManager } from "../loadStatusManager.js"
-
-export function isMuted(): boolean {
-    return flashParamElements.common.isMuted.valueV1
-}
+import { type AudioObjKey, soundExtension, type SoundExtension } from '../globals.js'
+import { Howl, type HowlOptions } from 'howler'
+import { initAudioBuffers } from './playSound.js'
+import { howler2OptionWav } from '../lib/howler2OptionWav.js'
+import { howler2OptionOgg } from '../lib/howler2OptionOgg.js'
+import { loadStatusManager } from '../loadStatusManager.js'
+import { isMutedConfig } from './isMutedConfig.js'
 
 const howlStore: { [ext in SoundExtension]?: Howl | undefined } = {}
 
@@ -19,7 +15,7 @@ function getHowlOptions(ext: SoundExtension): HowlOptions {
     }
     const option = optionMap[ext]
     option.onload = () => {
-        loadStatusManager.markAsLoaded("sound")
+        loadStatusManager.markAsLoaded('sound')
     }
     return option
 }
@@ -35,21 +31,29 @@ function getHowl(extension: SoundExtension): Howl {
 class AudioObj {
     private currentHowl: Howl | undefined
 
-    load(extension: SoundExtension): void {
-        this.currentHowl = getHowl(extension)
-        void initAudioBuffers(extension, "beep")
-        void initAudioBuffers(extension, "tick")
+    load(extension: string): void {
+        if (!(soundExtension as unknown as string[]).includes(extension)) {
+            throw new RangeError('invalid extension')
+        }
+
+        const validatedExtension = extension as SoundExtension
+        this.currentHowl = getHowl(validatedExtension)
+        void initAudioBuffers(validatedExtension, 'beep')
+        void initAudioBuffers(validatedExtension, 'tick')
     }
 
     play(name: AudioObjKey): void {
+        if (isMutedConfig.isMuted) {
+            return
+        }
         if (this.currentHowl === undefined) {
-            throw new Error("audio is not initialized")
+            throw new Error('audio is not initialized')
         }
         switch (name) {
-            case "answer":
-            case "correct":
-            case "incorrect":
-            case "silence":
+            case 'answer':
+            case 'correct':
+            case 'incorrect':
+            case 'silence':
                 this.currentHowl.play(name)
                 break
             default:

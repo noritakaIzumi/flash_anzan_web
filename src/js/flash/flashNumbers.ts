@@ -1,5 +1,5 @@
-import { Abacus } from "../abacus.js"
-import { calculateComplexity } from "./flashAnalysis.js"
+import { Abacus } from '../abacus.js'
+import { calculateComplexity } from './flashAnalysis.js'
 import {
     type Complexity,
     type ComplexityThreshold,
@@ -11,11 +11,11 @@ import {
     generateNumbersRetryLimit,
     multiplyFigure,
     type UnknownFlashDifficulty
-} from "../globals.js"
-import { type FlashParam } from "./flashParamSet.js"
-import { type FlashNumberHistory, flashNumberHistoryRegistry } from "./flashNumberHistory.js"
-import { type ExecuteInterface } from "../interface/executeInterface.js"
-import { type FlashOptions } from "./flashQuestionCreator.js"
+} from '../globals.js'
+import { type FlashParamSet } from './flashParamSet.js'
+import { type FlashNumberHistory, flashNumberHistoryRegistry } from './flashNumberHistory.js'
+import { type ExecuteInterface } from '../interface/executeInterface.js'
+import { type FlashOptions } from './flashQuestionCreator.js'
 
 function getRandomDigit(excepts: number[] = []): number {
     const d: number[] = []
@@ -28,22 +28,31 @@ function getRandomDigit(excepts: number[] = []): number {
     return d[Math.floor(Math.random() * d.length)]
 }
 
-function getRandomInt(digitCount: number, previousNum: number | null = null, digitAllDifferent: boolean = false): number {
-    const previousNumDigits = previousNum === null
-        ? []
-        : String(previousNum).split("").reverse().map((n) => {
-            return Number(n)
-        })
+function getRandomInt(
+    digitCount: number,
+    previousNum: number | null = null,
+    digitAllDifferent: boolean = false
+): number {
+    const previousNumDigits =
+        previousNum === null
+            ? []
+            : String(previousNum)
+                .split('')
+                .reverse()
+                .map((n) => {
+                    return Number(n)
+                })
     const digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))]
     let i = 0
     while (i < digitCount - 1) {
-        const digit = digitCount <= 9 && digitAllDifferent
-            ? getRandomDigit(digits.concat(previousNumDigits[i]))
-            : getRandomDigit([previousNumDigits[i]])
+        const digit =
+            digitCount <= 9 && digitAllDifferent
+                ? getRandomDigit(digits.concat(previousNumDigits[i]))
+                : getRandomDigit([previousNumDigits[i]])
         digits.push(digit)
         i++
     }
-    return Number(String(digits[0]) + digits.slice(1).reverse().join(""))
+    return Number(String(digits[0]) + digits.slice(1).reverse().join(''))
 }
 
 export interface ToDisplayInterface<T> {
@@ -83,13 +92,13 @@ export abstract class FlashNumbers<T> implements ToDisplayInterface<string[]> {
     abstract toDisplay(): string[]
 }
 
-export class AdditionModeFlashNumbers extends FlashNumbers<FlashDigit["addition"]> {
+export class AdditionModeFlashNumbers extends FlashNumbers<FlashDigit['addition']> {
     toDisplay(): string[] {
         return this._raw.map((n) => n.toLocaleString())
     }
 }
 
-export class MultiplicationModeFlashNumbers extends FlashNumbers<FlashDigit["multiplication"]> {
+export class MultiplicationModeFlashNumbers extends FlashNumbers<FlashDigit['multiplication']> {
     toDisplay(): string[] {
         return this._raw.map((p) => p[0].toLocaleString() + multiplyFigure + p[1].toLocaleString())
     }
@@ -99,14 +108,14 @@ export abstract class AbstractGetFlashAnswerAdapter<T extends FlashMode> impleme
     abstract execute(numbers: Array<FlashDigit[T]>): FlashAnswer
 }
 
-export class AdditionModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<"addition"> {
-    execute(numbers: Array<FlashDigit["addition"]>): FlashAnswer {
+export class AdditionModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<'addition'> {
+    execute(numbers: Array<FlashDigit['addition']>): FlashAnswer {
         return new FlashAnswer(numbers.reduce((a, b) => a + b))
     }
 }
 
-export class MultiplicationModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<"multiplication"> {
-    execute(numbers: Array<FlashDigit["multiplication"]>): FlashAnswer {
+export class MultiplicationModeGetFlashAnswerAdapter extends AbstractGetFlashAnswerAdapter<'multiplication'> {
+    execute(numbers: Array<FlashDigit['multiplication']>): FlashAnswer {
         let sum: number = 0
         for (const [number1, number2] of numbers) {
             sum += number1 * number2
@@ -122,26 +131,24 @@ export interface Flash<T extends FlashMode> {
 
 export abstract class AbstractFlashGenerator<T extends FlashMode> implements ExecuteInterface {
     protected createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
-    protected FlashNumbersClass: new(numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
-    protected GetFlashAnswerAdapter: new() => AbstractGetFlashAnswerAdapter<T>
+    protected FlashNumbersClass: new (numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
+    protected GetFlashAnswerAdapter: new () => AbstractGetFlashAnswerAdapter<T>
 
-    constructor(
-        {
-            createNewNumbersAdapter,
-            flashNumbersClass,
-            getFlashAnswerAdapter,
-        }: {
-            createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
-            flashNumbersClass: new(numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
-            getFlashAnswerAdapter: new() => AbstractGetFlashAnswerAdapter<T>
-        }
-    ) {
+    constructor({
+        createNewNumbersAdapter,
+        flashNumbersClass,
+        getFlashAnswerAdapter,
+    }: {
+        createNewNumbersAdapter: AbstractCreateNewNumbersAdapter<T>
+        flashNumbersClass: new (numbers: Array<FlashDigit[T]>) => FlashNumbers<FlashDigit[T]>
+        getFlashAnswerAdapter: new () => AbstractGetFlashAnswerAdapter<T>
+    }) {
         this.createNewNumbersAdapter = createNewNumbersAdapter
         this.FlashNumbersClass = flashNumbersClass
         this.GetFlashAnswerAdapter = getFlashAnswerAdapter
     }
 
-    execute(requestParam: FlashParam<FlashDigit[T]>, options: FlashOptions = {}): Flash<T> {
+    execute(requestParam: FlashParamSet<T>, options: FlashOptions = {}): Flash<T> {
         const numberHistoryObj = this.getNumberHistoryObj()
         const digitIsSame = numberHistoryObj?.digitEquals(requestParam.digit) ?? false
         const numberHistory = numberHistoryObj?.numberHistory.raw ?? []
@@ -154,7 +161,14 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 if (requestParam.length < numberHistory.length) {
                     return numberHistory.slice(0, requestParam.length)
                 }
-                return numberHistory.concat(this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options).slice(numberHistory.length - requestParam.length))
+                return numberHistory.concat(
+                    this.createNumbers(
+                        requestParam.digit,
+                        requestParam.length,
+                        requestParam.difficulty,
+                        options
+                    ).slice(numberHistory.length - requestParam.length)
+                )
             }
             return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options)
         })()
@@ -167,7 +181,12 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
 
     protected abstract getNumberHistoryObj(): FlashNumberHistory<FlashDigit[T]> | null
 
-    protected createNumbers(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty, options: FlashOptions): Array<FlashDigit[T]> {
+    protected createNumbers(
+        digitCount: FlashDigit[T],
+        length: number,
+        difficulty: FlashDifficulty,
+        options: FlashOptions
+    ): Array<FlashDigit[T]> {
         let retry = 0
         while (retry < generateNumbersRetryLimit) {
             try {
@@ -181,104 +200,203 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                 }
             }
         }
-        throw new Error("retry limit exceeded for generating numbers")
+        throw new Error('retry limit exceeded for generating numbers')
     }
 }
 
-export class AdditionModeFlashGenerator extends AbstractFlashGenerator<"addition"> {
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["addition"]> | null {
+export class AdditionModeFlashGenerator extends AbstractFlashGenerator<'addition'> {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit['addition']> | null {
         return flashNumberHistoryRegistry.addition.history
     }
 }
 
-export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<"multiplication"> {
-    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit["multiplication"]> | null {
+export class MultiplicationModeFlashGenerator extends AbstractFlashGenerator<'multiplication'> {
+    protected getNumberHistoryObj(): FlashNumberHistory<FlashDigit['multiplication']> | null {
         return flashNumberHistoryRegistry.multiplication.history
     }
 }
 
-type CreateRawNumbersAdapterMapByMode<T extends FlashMode> = {
-    [key in FlashDifficulty | UnknownFlashDifficulty]: new() => AbstractCreateRawNumbersAdapter<T>
+interface CreateRawNumberState<T extends keyof FlashDigit> {
+    numbers: Array<FlashDigit[T]>
+    carries: number[]
+    abacus: Abacus
+}
+
+interface AbstractCreateRawNumberAdapterConstructorArgs<T extends keyof FlashDigit> {
+    digitCount: FlashDigit[T]
+    saved?: CreateRawNumberState<T> | undefined
+}
+
+type CreateRawNumberAdapterMapByMode<T extends FlashMode> = {
+    [key in FlashDifficulty | UnknownFlashDifficulty]: new (
+        args: AbstractCreateRawNumberAdapterConstructorArgs<T>
+    ) => AbstractCreateRawNumberAdapter<T>
 }
 type ComplexityIsValidAdapterMapByMode = {
-    [key in FlashDifficulty]: new() => AbstractComplexityIsValidAdapter
+    [key in FlashDifficulty]: new () => AbstractComplexityIsValidAdapter
 }
 
 export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> implements ExecuteInterface {
-    protected createRawNumbersAdaptersByMode: CreateRawNumbersAdapterMapByMode<T>
+    protected createRawNumberAdaptersByMode: CreateRawNumberAdapterMapByMode<T>
     protected complexityIsValidAdaptersByMode: ComplexityIsValidAdapterMapByMode
     protected complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
+    protected difficultySupportMaxLength: number
 
-    constructor(
-        {
-            createRawNumbersAdapterMapByMode,
-            complexityIsValidAdapterMapByMode,
-            complexityThresholdMapByMode,
-        }: {
-            createRawNumbersAdapterMapByMode: CreateRawNumbersAdapterMapByMode<T>
-            complexityIsValidAdapterMapByMode: ComplexityIsValidAdapterMapByMode
-            complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
-        }
-    ) {
-        this.createRawNumbersAdaptersByMode = createRawNumbersAdapterMapByMode
+    constructor({
+        createRawNumberAdapterMapByMode,
+        complexityIsValidAdapterMapByMode,
+        complexityThresholdMapByMode,
+        difficultySupportMaxLength,
+    }: {
+        createRawNumberAdapterMapByMode: CreateRawNumberAdapterMapByMode<T>
+        complexityIsValidAdapterMapByMode: ComplexityIsValidAdapterMapByMode
+        complexityThresholdMapByMode: ComplexityThresholdMapByMode<T>
+        difficultySupportMaxLength: number
+    }) {
+        this.createRawNumberAdaptersByMode = createRawNumberAdapterMapByMode
         this.complexityIsValidAdaptersByMode = complexityIsValidAdapterMapByMode
         this.complexityThresholdMapByMode = complexityThresholdMapByMode
+        this.difficultySupportMaxLength = difficultySupportMaxLength
     }
 
-    execute(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty, options: FlashOptions): Array<FlashDigit[T]> {
-        const complexityThresholdMapKey = this.getComplexityThresholdMapKey(digitCount, length)
+    execute(
+        digitCount: FlashDigit[T],
+        length: number,
+        difficulty: FlashDifficulty,
+        options: FlashOptions
+    ): Array<FlashDigit[T]> {
+        const complexityThresholdMapLengthKey = Math.min(length, this.difficultySupportMaxLength)
+        const complexityThresholdMapKey = this.getComplexityThresholdMapKey(
+            digitCount,
+            complexityThresholdMapLengthKey
+        )
         const complexityThreshold = this.complexityThresholdMapByMode[complexityThresholdMapKey]
 
         if (complexityThreshold === undefined) {
             if (options.allowUnknownDifficulty ?? false) {
                 // eslint-disable-next-line new-cap
-                return new this.createRawNumbersAdaptersByMode.unknown().execute(digitCount, length).numbers
+                const createRawNumberAdapter = new this.createRawNumberAdaptersByMode.unknown({ digitCount })
+                for (let _ = 0; _ < length; _++) {
+                    createRawNumberAdapter.execute()
+                }
+                return createRawNumberAdapter.getResult().numbers
             }
-            throw new RangeError(`complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`)
+            throw new RangeError(
+                `complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`
+            )
         }
 
-        const result = new this.createRawNumbersAdaptersByMode[difficulty]().execute(digitCount, length)
+        const firstCreateLength = complexityThresholdMapLengthKey
+        const createRawNumberAdapter = new this.createRawNumberAdaptersByMode[difficulty]({ digitCount })
+        for (let _ = 0; _ < firstCreateLength; _++) {
+            createRawNumberAdapter.execute()
+        }
+        const result = createRawNumberAdapter.getResult()
         const numbers = result.numbers
         const carries = result.carries
-
         const complexity = this.getComplexity(carries, digitCount)
-        const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(complexity, complexityThreshold)
+        const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(
+            complexity,
+            complexityThreshold
+        )
         if (!complexityIsValid) {
             throw new CreatedNumbersDoNotSatisfyConstraintError()
         }
 
+        if (length <= this.difficultySupportMaxLength) {
+            return numbers
+        }
+
+        /*
+         * 難易度サポートされている口数を超える場合は、n 口目からの最大サポート口数についてフラッシュ複雑度を判定する
+         *
+         * ex. サポート最大口数が 30 口で 32 口作成する場合、
+         * - 2 口目から 31 口目の 30 口でフラッシュ複雑度を判定し、
+         * - 3 口目から 32 口目の 30 口でフラッシュ複雑度を判定する。
+         */
+
+        let abacus = result.abacus
+
+        const createExtraNumber = (start: number, abacus: Abacus): CreateRawNumberState<T> => {
+            let retry = 0
+            while (retry < generateNumbersRetryLimit) {
+                const createRawNumberAdapter = new this.createRawNumberAdaptersByMode[difficulty]({
+                    digitCount,
+                    saved: { numbers: numbers.slice(start + 1), carries: carries.slice(start + 1), abacus },
+                })
+                createRawNumberAdapter.execute()
+                const result = createRawNumberAdapter.getResult()
+                const complexity = this.getComplexity(result.carries, digitCount)
+                const complexityIsValid = new this.complexityIsValidAdaptersByMode[difficulty]().execute(
+                    complexity,
+                    complexityThreshold
+                )
+                if (complexityIsValid) {
+                    return {
+                        numbers: result.numbers.slice(-1),
+                        carries: result.carries.slice(-1),
+                        abacus: result.abacus,
+                    }
+                }
+                retry++
+            }
+            throw new CreatedNumbersDoNotSatisfyConstraintError()
+        }
+
+        const extraCreateLength = length - this.difficultySupportMaxLength
+        for (let i = 0; i < extraCreateLength; i++) {
+            const extraResult = createExtraNumber(i, abacus)
+            numbers.push(...extraResult.numbers)
+            carries.push(...extraResult.carries)
+            abacus = extraResult.abacus
+        }
         return numbers
     }
 
     protected abstract getComplexity(carries: number[], digitCount: FlashDigit[T]): number
 
-    protected abstract getComplexityThresholdMapKey(digitCount: FlashDigit[T], length: number): ComplexityThresholdMapKey[T]
+    protected abstract getComplexityThresholdMapKey(
+        digitCount: FlashDigit[T],
+        length: number
+    ): ComplexityThresholdMapKey[T]
 }
 
-export function getAdditionModeComplexityThresholdMapKey(digitCount: FlashDigit["addition"], length: number): ComplexityThresholdMapKey["addition"] {
+export function getAdditionModeComplexityThresholdMapKey(
+    digitCount: FlashDigit['addition'],
+    length: number
+): ComplexityThresholdMapKey['addition'] {
     return `${digitCount}-${length}`
 }
 
-export function getMultiplicationModeComplexityThresholdMapKey(digitCount: FlashDigit["multiplication"], length: number): ComplexityThresholdMapKey["multiplication"] {
+export function getMultiplicationModeComplexityThresholdMapKey(
+    digitCount: FlashDigit['multiplication'],
+    length: number
+): ComplexityThresholdMapKey['multiplication'] {
     return `${digitCount[0]}-${digitCount[1]}-${length}`
 }
 
-export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<"addition"> {
-    protected getComplexity(carries: number[], digitCount: FlashDigit["addition"]): number {
-        return calculateComplexity(carries.slice(1), digitCount)
+export class AdditionModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<'addition'> {
+    protected getComplexity(carries: number[], digitCount: FlashDigit['addition']): number {
+        return calculateComplexity(carries, digitCount)
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit["addition"], length: number): ComplexityThresholdMapKey["addition"] {
+    protected getComplexityThresholdMapKey(
+        digitCount: FlashDigit['addition'],
+        length: number
+    ): ComplexityThresholdMapKey['addition'] {
         return getAdditionModeComplexityThresholdMapKey(digitCount, length)
     }
 }
 
-export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<"multiplication"> {
-    protected getComplexity(carries: number[], digitCount: FlashDigit["multiplication"]): number {
+export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNewNumbersAdapter<'multiplication'> {
+    protected getComplexity(carries: number[], digitCount: FlashDigit['multiplication']): number {
         return calculateComplexity(carries, digitCount[0] * digitCount[1])
     }
 
-    protected getComplexityThresholdMapKey(digitCount: FlashDigit["multiplication"], length: number): ComplexityThresholdMapKey["multiplication"] {
+    protected getComplexityThresholdMapKey(
+        digitCount: FlashDigit['multiplication'],
+        length: number
+    ): ComplexityThresholdMapKey['multiplication'] {
         return getMultiplicationModeComplexityThresholdMapKey(digitCount, length)
     }
 }
@@ -286,142 +404,123 @@ export class MultiplicationModeCreateNewNumbersAdapter extends AbstractCreateNew
 /**
  * 生成された数字が条件を満たさない場合に返されるエラー
  */
-export class CreatedNumbersDoNotSatisfyConstraintError extends Error {
+export class CreatedNumbersDoNotSatisfyConstraintError extends Error {}
+
+export abstract class AbstractCreateRawNumberAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
+    protected readonly digitCount: FlashDigit[T]
+    // 出題数字
+    protected numbers: Array<FlashDigit[T]>
+    // 繰り上がり回数
+    protected carries: number[]
+    // そろばんオブジェクト
+    protected abacus: Abacus
+
+    constructor(args: AbstractCreateRawNumberAdapterConstructorArgs<T>) {
+        this.digitCount = args.digitCount
+        this.numbers = args.saved === undefined ? [] : args.saved.numbers
+        this.carries = args.saved === undefined ? [] : args.saved.carries
+        this.abacus = args.saved === undefined ? new Abacus(0) : args.saved.abacus
+    }
+
+    getResult(): CreateRawNumberState<T> {
+        return {
+            numbers: this.numbers,
+            carries: this.carries,
+            abacus: this.abacus,
+        }
+    }
+
+    abstract execute(): void
 }
 
-export abstract class AbstractCreateRawNumbersAdapter<T extends keyof FlashDigit> implements ExecuteInterface {
-    abstract execute(digitCount: FlashDigit[T], length: number): { numbers: Array<FlashDigit[T]>, carries: number[] }
+export abstract class AbstractAdditionModeCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<'addition'> {
+    abstract execute(): void
+
+    protected register(number: FlashDigit['addition'], carry: number): void {
+        // 最初の数字を追加するときは繰り上がりは必ず 0 なので登録しない
+        if (this.numbers.length > 0) {
+            this.carries.push(carry)
+        }
+        this.numbers.push(number)
+    }
 }
 
-export class AdditionModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
+export class AdditionModeEasyDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
+    execute(): void {
         let tempAbacusValue: number
-        for (let i = 0; i < length; i++) {
-            let getIntRetry = 0
-            let bestNumber = 0
-            let bestCarry = -1
-            while (true) {
-                const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, true)
+        let getIntRetry = 0
+        let bestNumber = 0
+        let bestCarry = -1
+        while (true) {
+            const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, true)
 
-                tempAbacusValue = abacus.value
-                abacus = new Abacus(abacus.value).add(number)
+            tempAbacusValue = this.abacus.value
+            this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (abacus.carry > digitCount) {
-                    if (abacus.carry > bestCarry) {
-                        bestNumber = number
-                        bestCarry = abacus.carry
-                    }
-
-                    abacus = new Abacus(tempAbacusValue)
-
-                    if (getIntRetry < 100) {
-                        getIntRetry++
-                        continue
-                    }
-
-                    abacus = abacus.add(bestNumber)
-                    numbers.push(bestNumber)
-                    carries.push(abacus.carry)
-                    break
+            if (this.abacus.carry > this.digitCount) {
+                if (this.abacus.carry > bestCarry) {
+                    bestNumber = number
+                    bestCarry = this.abacus.carry
                 }
 
-                numbers.push(number)
-                carries.push(abacus.carry)
+                this.abacus = new Abacus(tempAbacusValue)
+
+                if (getIntRetry < 100) {
+                    getIntRetry++
+                    continue
+                }
+
+                this.abacus = this.abacus.add(bestNumber)
+                this.register(bestNumber, this.abacus.carry)
                 break
             }
-        }
 
-        return {
-            numbers,
-            carries,
+            this.register(number, this.abacus.carry)
+            break
         }
     }
 }
 
-export class AdditionModeNormalDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
-        for (let i = 0; i < length; i++) {
-            const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, true)
-            abacus = new Abacus(abacus.value).add(number)
-            numbers.push(number)
-            carries.push(abacus.carry)
-        }
-
-        return {
-            numbers,
-            carries,
-        }
+export class AdditionModeNormalDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
+    execute(): void {
+        const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, true)
+        this.abacus = new Abacus(this.abacus.value).add(number)
+        this.register(number, this.abacus.carry)
     }
 }
 
-export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"addition"> {
-    execute(digitCount: FlashDigit["addition"], length: number): {
-        numbers: Array<FlashDigit["addition"]>
-        carries: number[]
-    } {
-        // 出題数字
-        const numbers: Array<FlashDigit["addition"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        let abacus = new Abacus(0)
+export class AdditionModeHardDifficultyCreateRawNumberAdapter extends AbstractAdditionModeCreateRawNumberAdapter {
+    execute(): void {
         let tempAbacusValue: number
-        for (let i = 0; i < length; i++) {
-            let getIntRetry = 0
-            let bestNumber = 0
-            let bestCarry = -1
-            while (true) {
-                const number = getRandomInt(digitCount, numbers.slice(-1)[0] ?? null, false)
+        let getIntRetry = 0
+        let bestNumber = 0
+        let bestCarry = -1
+        while (true) {
+            const number = getRandomInt(this.digitCount, this.numbers.slice(-1)[0] ?? null, false)
 
-                tempAbacusValue = abacus.value
-                abacus = new Abacus(abacus.value).add(number)
+            tempAbacusValue = this.abacus.value
+            this.abacus = new Abacus(this.abacus.value).add(number)
 
-                if (i >= 1 && abacus.carry < digitCount) {
-                    if (abacus.carry > bestCarry) {
-                        bestNumber = number
-                        bestCarry = abacus.carry
-                    }
-
-                    abacus = new Abacus(tempAbacusValue)
-
-                    if (getIntRetry < 100) {
-                        getIntRetry++
-                        continue
-                    }
-
-                    abacus = abacus.add(bestNumber)
-                    numbers.push(bestNumber)
-                    carries.push(abacus.carry)
-                    break
+            if (this.numbers.length >= 1 && this.abacus.carry < this.digitCount) {
+                if (this.abacus.carry > bestCarry) {
+                    bestNumber = number
+                    bestCarry = this.abacus.carry
                 }
 
-                numbers.push(number)
-                carries.push(abacus.carry)
+                this.abacus = new Abacus(tempAbacusValue)
+
+                if (getIntRetry < 100) {
+                    getIntRetry++
+                    continue
+                }
+
+                this.abacus = this.abacus.add(bestNumber)
+                this.register(bestNumber, this.abacus.carry)
                 break
             }
-        }
 
-        return {
-            numbers,
-            carries,
+            this.register(number, this.abacus.carry)
+            break
         }
     }
 }
@@ -430,73 +529,66 @@ export class AdditionModeHardDifficultyCreateRawNumbersAdapter extends AbstractC
  * たし算モード・難易度未指定
  * 複雑度境界リストの作成に使用する
  */
-export class AdditionModeUnknownDifficultyCreateRawNumbersAdapter extends AdditionModeNormalDifficultyCreateRawNumbersAdapter {
-}
+export class AdditionModeUnknownDifficultyCreateRawNumberAdapter extends AdditionModeNormalDifficultyCreateRawNumberAdapter {}
 
-export class MultiplicationModeEasyDifficultyCreateRawNumbersAdapter extends AbstractCreateRawNumbersAdapter<"multiplication"> {
-    execute(digitCount: FlashDigit["multiplication"], length: number): {
-        numbers: Array<FlashDigit["multiplication"]>
-        carries: number[]
-    } {
-        // そろばん
-        let abacus = new Abacus(0)
-        // 出題数字
-        const numbers: Array<FlashDigit["multiplication"]> = []
-        // 繰り上がり回数
-        const carries: number[] = []
-
-        for (let i = 0; i < length; i++) {
-            const number1 = getRandomInt(digitCount[0], numbers.length > 0 ? numbers.slice(-1)[0][0] : null, true)
-            const number2 = getRandomInt(digitCount[1], numbers.length > 0 ? numbers.slice(-1)[0][1] : null, true)
-            const digits1 = String(number1).split("").reverse().map((n) => {
+export class MultiplicationModeEasyDifficultyCreateRawNumberAdapter extends AbstractCreateRawNumberAdapter<'multiplication'> {
+    execute(): void {
+        const number1 = getRandomInt(
+            this.digitCount[0],
+            this.numbers.length > 0 ? this.numbers.slice(-1)[0][0] : null,
+            true
+        )
+        const number2 = getRandomInt(
+            this.digitCount[1],
+            this.numbers.length > 0 ? this.numbers.slice(-1)[0][1] : null,
+            true
+        )
+        const digits1 = String(number1)
+            .split('')
+            .reverse()
+            .map((n) => {
                 return Number(n)
             })
-            const digits2 = String(number2).split("").reverse().map((n) => {
+        const digits2 = String(number2)
+            .split('')
+            .reverse()
+            .map((n) => {
                 return Number(n)
             })
-            for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
-                for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
-                    abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
-                }
+        for (let p1 = digits1.length - 1; p1 >= 0; p1--) {
+            for (let p2 = digits2.length - 1; p2 >= 0; p2--) {
+                this.abacus.add(digits1[p1] * digits2[p2] * Math.pow(10, p1 + p2))
             }
-            numbers.push([number1, number2])
-            carries.push(abacus.carry)
-            abacus = new Abacus(abacus.value)
         }
-
-        return {
-            numbers,
-            carries,
-        }
+        this.numbers.push([number1, number2])
+        this.carries.push(this.abacus.carry)
+        this.abacus = new Abacus(this.abacus.value)
     }
 }
 
-export class MultiplicationModeNormalDifficultyCreateRawNumbersAdapter extends MultiplicationModeEasyDifficultyCreateRawNumbersAdapter {
-}
+export class MultiplicationModeNormalDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
-export class MultiplicationModeHardDifficultyCreateRawNumbersAdapter extends MultiplicationModeEasyDifficultyCreateRawNumbersAdapter {
-}
+export class MultiplicationModeHardDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
 /**
  * かけ算モード・難易度未指定
  * 複雑度境界リストの作成に使用する
  */
-export class MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter extends MultiplicationModeEasyDifficultyCreateRawNumbersAdapter {
-}
+export class MultiplicationModeUnknownDifficultyCreateRawNumberAdapter extends MultiplicationModeEasyDifficultyCreateRawNumberAdapter {}
 
-export type CreateRawNumbersAdapterMap = { [mode in FlashMode]: CreateRawNumbersAdapterMapByMode<mode> }
-export const createRawNumbersAdapterMap: CreateRawNumbersAdapterMap = {
+export type CreateRawNumberAdapterMap = { [mode in FlashMode]: CreateRawNumberAdapterMapByMode<mode> }
+export const createRawNumberAdapterMap: CreateRawNumberAdapterMap = {
     addition: {
-        easy: AdditionModeEasyDifficultyCreateRawNumbersAdapter,
-        normal: AdditionModeNormalDifficultyCreateRawNumbersAdapter,
-        hard: AdditionModeHardDifficultyCreateRawNumbersAdapter,
-        unknown: AdditionModeUnknownDifficultyCreateRawNumbersAdapter,
+        easy: AdditionModeEasyDifficultyCreateRawNumberAdapter,
+        normal: AdditionModeNormalDifficultyCreateRawNumberAdapter,
+        hard: AdditionModeHardDifficultyCreateRawNumberAdapter,
+        unknown: AdditionModeUnknownDifficultyCreateRawNumberAdapter,
     },
     multiplication: {
-        easy: MultiplicationModeEasyDifficultyCreateRawNumbersAdapter,
-        normal: MultiplicationModeNormalDifficultyCreateRawNumbersAdapter,
-        hard: MultiplicationModeHardDifficultyCreateRawNumbersAdapter,
-        unknown: MultiplicationModeUnknownDifficultyCreateRawNumbersAdapter,
+        easy: MultiplicationModeEasyDifficultyCreateRawNumberAdapter,
+        normal: MultiplicationModeNormalDifficultyCreateRawNumberAdapter,
+        hard: MultiplicationModeHardDifficultyCreateRawNumberAdapter,
+        unknown: MultiplicationModeUnknownDifficultyCreateRawNumberAdapter,
     },
 }
 
@@ -506,15 +598,16 @@ export abstract class AbstractComplexityIsValidAdapter implements ExecuteInterfa
 
 export class AdditionModeEasyDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
+        return (
+            (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
             complexity < complexitySchema.easy
+        )
     }
 }
 
 export class AdditionModeNormalDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return complexity >= complexitySchema.easy &&
-            complexity < complexitySchema.hard
+        return complexity >= complexitySchema.easy && complexity < complexitySchema.hard
     }
 }
 
@@ -526,15 +619,16 @@ export class AdditionModeHardDifficultyComplexityIsValidAdapter extends Abstract
 
 export class MultiplicationModeEasyDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
+        return (
+            (complexitySchema.easy <= 0 && complexity <= 0) || // 1 桁 2 口 easy の閾値が 0 であることへの対応
             complexity < complexitySchema.easy
+        )
     }
 }
 
 export class MultiplicationModeNormalDifficultyComplexityIsValidAdapter extends AbstractComplexityIsValidAdapter {
     execute(complexity: Complexity, complexitySchema: ComplexityThreshold): boolean {
-        return complexity >= complexitySchema.easy &&
-            complexity < complexitySchema.hard
+        return complexity >= complexitySchema.easy && complexity < complexitySchema.hard
     }
 }
 

@@ -1,130 +1,139 @@
-import { type FlashMode } from "../globals.js"
-import { toggleFullscreenMode } from "../screen.js"
-import { shortcut } from "./handler.js"
-import { flashParamElements } from "../dom/flashParamElements.js"
-import { button } from "../dom/htmlElement.js"
+import { type FlashMode } from '../globals.js'
+import { toggleFullscreenMode } from '../screen.js'
+import { shortcut } from './handler.js'
+import { button, checkboxes } from '../dom/htmlElement.js'
+import {
+    additionModeFlashParamElementsManager,
+    multiplicationModeFlashParamElementsManager
+} from '../flash/flashParamElementsManager.js'
 
 export function registerShortcuts(): void {
-    shortcut.add("ctrl+o", () => {
+    shortcut.add('ctrl+o', () => {
         button.loadParams.click()
     })
-    shortcut.add("ctrl+s", () => {
+    shortcut.add('ctrl+s', () => {
         button.saveParams.click()
     })
-    shortcut.add("ctrl+r", () => {
+    shortcut.add('ctrl+r', () => {
         button.deleteParams.click()
     })
-    shortcut.add("s", () => {
+    shortcut.add('s', () => {
         button.start.click()
     })
-    shortcut.add("r", () => {
+    shortcut.add('r', () => {
         button.repeat.click()
     })
-    shortcut.add("z", () => {
+    shortcut.add('z', () => {
         button.addition.click()
     })
-    shortcut.add("x", () => {
+    shortcut.add('x', () => {
         button.subtraction.click()
     })
-    shortcut.add("c", () => {
+    shortcut.add('c', () => {
         button.multiplication.click()
     })
-    shortcut.add("d", () => {
-        flashParamElements.common.difficulty.valueV1 = "easy"
+    shortcut.add('d', () => {
+        button.difficulty.easy.click()
     })
-    shortcut.add("f", () => {
-        flashParamElements.common.difficulty.valueV1 = "normal"
+    shortcut.add('f', () => {
+        button.difficulty.normal.click()
     })
-    shortcut.add("g", () => {
-        flashParamElements.common.difficulty.valueV1 = "hard"
+    shortcut.add('g', () => {
+        button.difficulty.hard.click()
     })
-    shortcut.add("n", () => {
+    shortcut.add('n', () => {
         button.numberHistory.click()
     })
-    shortcut.add("w", () => {
+    shortcut.add('w', () => {
         toggleFullscreenMode()
     })
-    shortcut.add("q", () => {
+    shortcut.add('q', () => {
         button.help.click()
     })
-    shortcut.add("ctrl+,", () => {
+    shortcut.add('ctrl+,', () => {
         button.openCommonMoreConfig.click()
+    })
+    shortcut.add('shift+n', () => {
+        checkboxes.fixNumberInterval.click()
+    })
+    shortcut.add('shift+m', () => {
+        checkboxes.hideAnswer.click()
     })
 }
 
 export function changeShortcut(mode: FlashMode): void {
-    ["y", "h", "u", "j", "i", "k", "o", "l", "shift+o", "shift+l", "ctrl+shift+o", "ctrl+shift+l"].forEach(key => {
+    ;['y', 'h', 'u', 'j', 'i', 'k', 'o', 'l', 'shift+o', 'shift+l', 'ctrl+shift+o', 'ctrl+shift+l'].forEach((key) => {
         shortcut.remove(key)
     })
     switch (mode) {
-        case "multiplication":
-            shortcut.add("y", () => {
-                flashParamElements.multiplication.digit1.increaseParam(1)
+        case 'multiplication':
+            shortcut.add('y', () => {
+                multiplicationModeFlashParamElementsManager.increaseDigit1(1)
             })
-            shortcut.add("h", () => {
-                flashParamElements.multiplication.digit1.increaseParam(-1)
+            shortcut.add('h', () => {
+                multiplicationModeFlashParamElementsManager.increaseDigit1(-1)
             })
-            shortcut.add("u", () => {
-                flashParamElements.multiplication.digit2.increaseParam(1)
+            shortcut.add('u', () => {
+                multiplicationModeFlashParamElementsManager.increaseDigit2(1)
             })
-            shortcut.add("j", () => {
-                flashParamElements.multiplication.digit2.increaseParam(-1)
+            shortcut.add('j', () => {
+                multiplicationModeFlashParamElementsManager.increaseDigit2(-1)
             })
-            shortcut.add("i", () => {
-                flashParamElements.multiplication.length.increaseParam(1)
+            shortcut.add('i', () => {
+                multiplicationModeFlashParamElementsManager.increaseLength(1)
             })
-            shortcut.add("k", () => {
-                flashParamElements.multiplication.length.increaseParam(-1)
+            shortcut.add('k', () => {
+                multiplicationModeFlashParamElementsManager.increaseLength(-1)
             })
-            shortcut.add("o", () => {
-                flashParamElements.multiplication.time.increaseParam(1000)
+            shortcut.add('o', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(1000)
             })
-            shortcut.add("l", () => {
-                flashParamElements.multiplication.time.increaseParam(-1000)
+            shortcut.add('l', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(-1000)
             })
-            shortcut.add("shift+o", () => {
-                flashParamElements.multiplication.time.increaseParam(100)
+            shortcut.add('shift+o', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(100)
             })
-            shortcut.add("shift+l", () => {
-                flashParamElements.multiplication.time.increaseParam(-100)
+            shortcut.add('shift+l', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(-100)
             })
-            shortcut.add("ctrl+shift+o", () => {
-                flashParamElements.multiplication.time.increaseParam(10)
+            shortcut.add('ctrl+shift+o', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(10)
             })
-            shortcut.add("ctrl+shift+l", () => {
-                flashParamElements.multiplication.time.increaseParam(-10)
+            shortcut.add('ctrl+shift+l', () => {
+                multiplicationModeFlashParamElementsManager.increaseTime(-10)
             })
             break
-        case "addition":
-            shortcut.add("u", () => {
-                flashParamElements.addition.digit.increaseParam(1)
+        case 'addition':
+            shortcut.add('u', () => {
+                additionModeFlashParamElementsManager.increaseDigit(1)
             })
-            shortcut.add("j", () => {
-                flashParamElements.addition.digit.increaseParam(-1)
+            shortcut.add('j', () => {
+                additionModeFlashParamElementsManager.increaseDigit(-1)
             })
-            shortcut.add("i", () => {
-                flashParamElements.addition.length.increaseParam(1)
+            shortcut.add('i', () => {
+                additionModeFlashParamElementsManager.increaseLength(1)
             })
-            shortcut.add("k", () => {
-                flashParamElements.addition.length.increaseParam(-1)
+            shortcut.add('k', () => {
+                additionModeFlashParamElementsManager.increaseLength(-1)
             })
-            shortcut.add("o", () => {
-                flashParamElements.addition.time.increaseParam(1000)
+            shortcut.add('o', () => {
+                additionModeFlashParamElementsManager.increaseTime(1000)
             })
-            shortcut.add("l", () => {
-                flashParamElements.addition.time.increaseParam(-1000)
+            shortcut.add('l', () => {
+                additionModeFlashParamElementsManager.increaseTime(-1000)
             })
-            shortcut.add("shift+o", () => {
-                flashParamElements.addition.time.increaseParam(100)
+            shortcut.add('shift+o', () => {
+                additionModeFlashParamElementsManager.increaseTime(100)
             })
-            shortcut.add("shift+l", () => {
-                flashParamElements.addition.time.increaseParam(-100)
+            shortcut.add('shift+l', () => {
+                additionModeFlashParamElementsManager.increaseTime(-100)
             })
-            shortcut.add("ctrl+shift+o", () => {
-                flashParamElements.addition.time.increaseParam(10)
+            shortcut.add('ctrl+shift+o', () => {
+                additionModeFlashParamElementsManager.increaseTime(10)
             })
-            shortcut.add("ctrl+shift+l", () => {
-                flashParamElements.addition.time.increaseParam(-10)
+            shortcut.add('ctrl+shift+l', () => {
+                additionModeFlashParamElementsManager.increaseTime(-10)
             })
             break
     }
