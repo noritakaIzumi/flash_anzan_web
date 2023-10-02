@@ -1,5 +1,11 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+  "build": {
+    "devPath": "http://localhost:8080",
+    "distDir": "../dist",
+    "beforeDevCommand": "npm run start",
+    "beforeBuildCommand": "npm run build"
+  },
   "package": {
     "productName": "aurora-flash"
   },
@@ -24,8 +30,8 @@
       "resources": [],
       "copyright": "© 2020- Noritaka IZUMI",
       "category": "EducationalGame",
-      "shortDescription": "",
-      "longDescription": "",
+      "shortDescription": "フラッシュ暗算",
+      "longDescription": "フラッシュ暗算。連続で表示される数字を計算するゲームです。",
       "deb": {
         "depends": []
       },
@@ -41,8 +47,11 @@
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
         "timestampUrl": "",
+        "webviewInstallMode": {
+          "type": "embedBootstrapper"
+        },
         "wix": {
-          "language": "jp-JP"
+          "language": "ja-JP"
         }
       }
     },
@@ -55,11 +64,5 @@
     "updater": {
       "active": false
     }
-  },
-  "build": {
-    "devPath": "http://localhost:8080",
-    "distDir": "../dist",
-    "beforeDevCommand": "npm run start",
-    "beforeBuildCommand": "npm run build"
   }
 }
