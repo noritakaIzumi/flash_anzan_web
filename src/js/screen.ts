@@ -1,4 +1,5 @@
 import { button, calculateArea, disableConfigTarget, questionNumberArea } from './dom/htmlElement.js'
+import { errorMessage } from "./flash/errorMessage.js"
 
 export function isTouchDevice(): boolean {
     return window.ontouchstart === null
@@ -71,6 +72,7 @@ function setDisabledDifficultySelect(disabled: boolean): void {
  */
 export function disableDifficultySelect(): void {
     setDisabledDifficultySelect(true)
+    errorMessage.addError('difficultyNotSupported')
 }
 
 /**
@@ -78,4 +80,5 @@ export function disableDifficultySelect(): void {
  */
 export function enableDifficultySelect(): void {
     setDisabledDifficultySelect(false)
+    errorMessage.removeError('difficultyNotSupported')
 }

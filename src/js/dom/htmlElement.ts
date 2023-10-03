@@ -11,6 +11,7 @@ export function getHtmlElement<K extends keyof HTMLElementTagNameMap>(
 
 export const htmlElements = {
     soundExtension: getHtmlElement('select', 'sound-extension'),
+    errorMessage: getHtmlElement('div', 'error-message'),
 }
 export const headerMessage = getHtmlElement('div', 'header-message')
 export const questionNumberArea = getHtmlElement('div', 'question-number-area')
