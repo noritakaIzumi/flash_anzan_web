@@ -38,6 +38,7 @@ export const audioAttr = {
 export const multiplyFigure = '*'
 
 export const savedParamsKeyName = 'flash_anzan_params'
+export const savedEnvironmentParamsKeyName = 'flash_anzan_environment_params'
 
 // 10 % の確率を連続で外す確率が 5000 分の 1 以下となる最小の回数
 export const generateNumbersRetryLimit = 81

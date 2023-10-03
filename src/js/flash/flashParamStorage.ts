@@ -1,5 +1,5 @@
 import { type flashParamElementCategoryName, flashParamElements } from '../dom/flashParamElements.js'
-import { savedParamsKeyName } from '../globals.js'
+import { savedEnvironmentParamsKeyName, savedParamsKeyName } from '../globals.js'
 import { button, modals } from '../dom/htmlElement.js'
 
 export function doLoadParams(): void {
@@ -32,7 +32,6 @@ export function doLoadParams(): void {
                 break
             case 'common':
                 flashParamElements.common.difficulty.valueV0 = parsedParams.common.difficulty
-                flashParamElements.common.offset.valueV0 = parsedParams.common.offset
                 break
         }
     })
@@ -58,11 +57,37 @@ export function doSaveParams(): void {
     params.multiplication.length = flashParamElements.multiplication.length.valueV0
     params.multiplication.time = flashParamElements.multiplication.time.valueV0
     params.common.difficulty = flashParamElements.common.difficulty.valueV0
-    params.common.offset = flashParamElements.common.offset.valueV0
 
     localStorage.setItem(savedParamsKeyName, JSON.stringify(params))
 }
 
 export function doDeleteParams(): void {
     localStorage.removeItem(savedParamsKeyName)
+    localStorage.removeItem(savedEnvironmentParamsKeyName)
+}
+
+interface EnvironmentParams { offset: number }
+
+function validateEnvironmentParams(loadedParams: string): EnvironmentParams {
+    const parsedParams = JSON.parse(loadedParams)
+    return {
+        offset: typeof parsedParams.offset === 'number' ? parsedParams.offset : 0,
+    }
+}
+
+export function doLoadEnvironmentParams(): void {
+    const loadedParams = localStorage.getItem(savedEnvironmentParamsKeyName)
+    if (loadedParams === null) {
+        return
+    }
+
+    const parsedParams = validateEnvironmentParams(loadedParams)
+    flashParamElements.common.offset.valueV1 = parsedParams.offset
+}
+
+export function doSaveEnvironmentParams(): void {
+    const params: EnvironmentParams = {
+        offset: flashParamElements.common.offset.valueV1,
+    }
+    localStorage.setItem(savedEnvironmentParamsKeyName, JSON.stringify(params))
 }
