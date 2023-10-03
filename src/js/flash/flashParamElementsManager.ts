@@ -141,7 +141,7 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
 
     protected abstract difficultyIsSupported(): boolean
 
-    protected updateDifficultySupportStatus(): void {
+    updateDifficultySupportStatus(): void {
         if (this.difficultyIsSupported()) {
             enableDifficultySelect()
         } else {
@@ -244,13 +244,20 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
     }
 }
 
-export const additionModeFlashParamElementsManager = new AdditionModeFlashParamElementsManager({
-    elements: flashParamElements.addition,
-    commonElements: flashParamElements.common,
-    flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
-})
-export const multiplicationModeFlashParamElementsManager = new MultiplicationModeFlashParamElementsManager({
-    elements: flashParamElements.multiplication,
-    commonElements: flashParamElements.common,
-    flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
-})
+export interface FlashParamElementsManagers {
+    addition: AdditionModeFlashParamElementsManager
+    multiplication: MultiplicationModeFlashParamElementsManager
+}
+
+export const flashParamElementsManagers: FlashParamElementsManagers = {
+    addition: new AdditionModeFlashParamElementsManager({
+        elements: flashParamElements.addition,
+        commonElements: flashParamElements.common,
+        flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
+    }),
+    multiplication: new MultiplicationModeFlashParamElementsManager({
+        elements: flashParamElements.multiplication,
+        commonElements: flashParamElements.common,
+        flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
+    }),
+}
