@@ -1,4 +1,4 @@
-import { calculateArea, disableConfigTarget, questionNumberArea } from './dom/htmlElement.js'
+import { button, calculateArea, disableConfigTarget, questionNumberArea } from './dom/htmlElement.js'
 
 export function isTouchDevice(): boolean {
     return window.ontouchstart === null
@@ -58,4 +58,24 @@ export function expandCalculateArea(): void {
 export function contractCalculateArea(): void {
     questionNumberArea.classList.remove('big-size-number')
     calculateArea.classList.remove('full-screen')
+}
+
+function setDisabledDifficultySelect(disabled: boolean): void {
+    button.difficulty.easy.disabled = disabled
+    button.difficulty.normal.disabled = disabled
+    button.difficulty.hard.disabled = disabled
+}
+
+/**
+ * 難易度選択ボタンを無効にする
+ */
+export function disableDifficultySelect(): void {
+    setDisabledDifficultySelect(true)
+}
+
+/**
+ * 難易度選択ボタンを有効にする
+ */
+export function enableDifficultySelect(): void {
+    setDisabledDifficultySelect(false)
 }

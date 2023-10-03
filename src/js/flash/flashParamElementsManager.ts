@@ -4,6 +4,7 @@ import { FlashLengthAndTimeMemory } from './flashLengthAndTimeMemory.js'
 import { type FlashDifficulty, type FlashMode } from '../globals.js'
 import { type FlashDifficultyParam, type FlashNumberParam } from './flashParams.js'
 import { flashParamSchema } from '../../config/flashParamSchema.js'
+import { disableDifficultySelect, enableDifficultySelect } from '../screen.js'
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
@@ -150,6 +151,14 @@ export class AdditionModeFlashParamElementsManager extends FlashParamElementsMan
 
     set _digit(digit: number) {
         this.elements.digit.valueV1 = digit
+        const difficultySupported =
+            flashParamSchema.addition.digit.min <= digit &&
+            digit <= flashParamSchema.addition.digit.difficultySupportMax
+        if (difficultySupported) {
+            enableDifficultySelect()
+        } else {
+            disableDifficultySelect()
+        }
     }
 
     get _digit(): number {
@@ -181,6 +190,14 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
     private set _digit1(digit: number) {
         this.elements.digit1.valueV1 = digit
+        const difficultySupported =
+            flashParamSchema.multiplication.digit1.min <= digit &&
+            digit <= flashParamSchema.multiplication.digit1.difficultySupportMax
+        if (difficultySupported) {
+            enableDifficultySelect()
+        } else {
+            disableDifficultySelect()
+        }
     }
 
     private get _digit1(): number {
@@ -198,6 +215,14 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
     private set _digit2(digit: number) {
         this.elements.digit2.valueV1 = digit
+        const difficultySupported =
+            flashParamSchema.multiplication.digit2.min <= digit &&
+            digit <= flashParamSchema.multiplication.digit2.difficultySupportMax
+        if (difficultySupported) {
+            enableDifficultySelect()
+        } else {
+            disableDifficultySelect()
+        }
     }
 
     private get _digit2(): number {

@@ -189,12 +189,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
 
     // ここからフラッシュ出題の処理
     const flashQuestionCreator = getFlashQuestionCreator(currentFlashMode.value)
-    if (!flashQuestionCreator.difficultyIsSupported()) {
-        if (!confirm('難易度設定がサポートされていない桁数・口数ですがよろしいですか？')) {
-            return
-        }
-        options.allowUnknownDifficulty = true
-    }
 
     // 出題するフラッシュ
     const question = flashQuestionCreator.create(options)
