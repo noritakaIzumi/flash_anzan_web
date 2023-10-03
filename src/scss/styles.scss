@@ -209,3 +209,7 @@ input[type="number"] {
 .operation-panel {
   height: calc(100vh - map-get($spacers, 2) * 2 - 1px);
 }
+
+.difficulty-not-supported {
+  background-color: $pink-100;
+}

@@ -114,10 +114,15 @@ number
     constructor(props: { htmlElement: HTMLSelectElement, schema: FlashNumberParamWithDifficultySupportSchema }) {
         super(props)
         for (let i = this.schema.max; i >= this.schema.min; i--) {
+            const difficultyIsSupported = this.schema.min <= i && i <= this.schema.difficultySupportMax
+
             const strNum = String(i)
             const element = document.createElement('option')
             element.value = strNum
             element.textContent = strNum
+            if (!difficultyIsSupported) {
+                element.classList.add('difficulty-not-supported')
+            }
             this.htmlElement.appendChild(element)
         }
         this.valueV1 = this.schema.default

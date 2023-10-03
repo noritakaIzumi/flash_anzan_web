@@ -151,9 +151,10 @@ export class AdditionModeFlashParamElementsManager extends FlashParamElementsMan
 
     set _digit(digit: number) {
         this.elements.digit.valueV1 = digit
+
         const difficultySupported =
-            flashParamSchema.addition.digit.min <= digit &&
-            digit <= flashParamSchema.addition.digit.difficultySupportMax
+            flashParamSchema.addition.digit.min <= this.elements.digit.valueV1 &&
+            this.elements.digit.valueV1 <= flashParamSchema.addition.digit.difficultySupportMax
         if (difficultySupported) {
             enableDifficultySelect()
         } else {
@@ -190,9 +191,10 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
     private set _digit1(digit: number) {
         this.elements.digit1.valueV1 = digit
+
         const difficultySupported =
-            flashParamSchema.multiplication.digit1.min <= digit &&
-            digit <= flashParamSchema.multiplication.digit1.difficultySupportMax
+            flashParamSchema.multiplication.digit1.min <= this.elements.digit1.valueV1 &&
+            this.elements.digit1.valueV1 <= flashParamSchema.multiplication.digit1.difficultySupportMax
         if (difficultySupported) {
             enableDifficultySelect()
         } else {
@@ -215,9 +217,10 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
     private set _digit2(digit: number) {
         this.elements.digit2.valueV1 = digit
+
         const difficultySupported =
-            flashParamSchema.multiplication.digit2.min <= digit &&
-            digit <= flashParamSchema.multiplication.digit2.difficultySupportMax
+            flashParamSchema.multiplication.digit2.min <= this.elements.digit2.valueV1 &&
+            this.elements.digit2.valueV1 <= flashParamSchema.multiplication.digit2.difficultySupportMax
         if (difficultySupported) {
             enableDifficultySelect()
         } else {
