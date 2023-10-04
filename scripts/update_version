@@ -27,7 +27,6 @@ function main() {
   pushd src-tauri || return 1
 
   # Cargo.toml, Cargo.lock
-  # version = "0.35.0"
   sed -i -Ee 's/^(version = ")([0-9]+\.)+[0-9]+(")/\1'"$version"'\3/' Cargo.toml
   cargo generate-lockfile
 
