@@ -18,8 +18,7 @@
     "./vite.config.ts",
     "./src/public/sw.js",
     "./src/**/*.ts",
-    "./tools/**/*.ts",
-    "./lint-staged.config.js"
+    "./tools/**/*.ts"
   ],
   "lib": [
     "WebWorker"

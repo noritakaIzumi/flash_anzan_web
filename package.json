@@ -44,7 +44,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint:eslint": "eslint --fix './**/*.{js,ts}'",
     "lint:prettier": "prettier --write './**/*.{js,ts}'",
-    "update-version": "npm i --package-lock-only",
+    "update-version": "bash ./scripts/update_version",
     "prepare": "husky install",
     "tauri": "tauri"
   },
