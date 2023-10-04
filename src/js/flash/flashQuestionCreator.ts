@@ -11,8 +11,6 @@ import {
     complexityIsValidAdapterMap,
     createRawNumberAdapterMap,
     type Flash,
-    getAdditionModeComplexityThresholdMapKey,
-    getMultiplicationModeComplexityThresholdMapKey,
     MultiplicationModeCreateNewNumbersAdapter,
     MultiplicationModeFlashGenerator,
     MultiplicationModeFlashNumbers,
@@ -25,7 +23,6 @@ import { flashParamSchema } from '../../config/flashParamSchema.js'
 
 export interface FlashOptions {
     repeat?: boolean
-    allowUnknownDifficulty?: boolean
 }
 
 export abstract class FlashQuestionCreator<T extends FlashMode> {
@@ -36,8 +33,6 @@ export abstract class FlashQuestionCreator<T extends FlashMode> {
     }
 
     protected abstract getParamSet(): FlashParamSet<T>
-
-    abstract difficultyIsSupported(): boolean
 
     abstract create(option: FlashOptions): FlashQuestion<T>
 }
@@ -50,14 +45,6 @@ interface FlashQuestion<T extends FlashMode> {
 export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<'addition'> {
     protected getParamSet(): FlashParamSet<'addition'> {
         return new AdditionModeGetFlashParamSetAdapter().execute()
-    }
-
-    difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getAdditionModeComplexityThresholdMapKey(
-            this.paramSet.digit,
-            flashParamSchema.addition.length.difficultySupportMax
-        )
-        return complexityThresholdMapKey in complexityThresholdMap.addition
     }
 
     create(option: FlashOptions): FlashQuestion<'addition'> {
@@ -84,14 +71,6 @@ export class AdditionModeFlashQuestionCreator extends FlashQuestionCreator<'addi
 export class MultiplicationModeFlashQuestionCreator extends FlashQuestionCreator<'multiplication'> {
     protected getParamSet(): FlashParamSet<'multiplication'> {
         return new MultiplicationModeGetFlashParamSetAdapter().execute()
-    }
-
-    difficultyIsSupported(): boolean {
-        const complexityThresholdMapKey = getMultiplicationModeComplexityThresholdMapKey(
-            this.paramSet.digit,
-            flashParamSchema.multiplication.length.difficultySupportMax
-        )
-        return complexityThresholdMapKey in complexityThresholdMap.multiplication
     }
 
     create(option: FlashOptions): FlashQuestion<'multiplication'> {

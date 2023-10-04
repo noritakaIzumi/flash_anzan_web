@@ -4,6 +4,7 @@ import { FlashLengthAndTimeMemory } from './flashLengthAndTimeMemory.js'
 import { type FlashDifficulty, type FlashMode } from '../globals.js'
 import { type FlashDifficultyParam, type FlashNumberParam } from './flashParams.js'
 import { flashParamSchema } from '../../config/flashParamSchema.js'
+import { disableDifficultySelect, enableDifficultySelect } from '../screen.js'
 
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
@@ -137,6 +138,16 @@ export abstract class FlashParamElementsManager<T extends FlashMode> {
         this._offset += 0
         return this._offset
     }
+
+    protected abstract difficultyIsSupported(): boolean
+
+    updateDifficultySupportStatus(): void {
+        if (this.difficultyIsSupported()) {
+            enableDifficultySelect()
+        } else {
+            disableDifficultySelect()
+        }
+    }
 }
 
 export class AdditionModeFlashParamElementsManager extends FlashParamElementsManager<'addition'> {
@@ -148,8 +159,16 @@ export class AdditionModeFlashParamElementsManager extends FlashParamElementsMan
         })
     }
 
+    protected difficultyIsSupported(): boolean {
+        return (
+            flashParamSchema.addition.digit.min <= this.elements.digit.valueV1 &&
+            this.elements.digit.valueV1 <= flashParamSchema.addition.digit.difficultySupportMax
+        )
+    }
+
     set _digit(digit: number) {
         this.elements.digit.valueV1 = digit
+        this.updateDifficultySupportStatus()
     }
 
     get _digit(): number {
@@ -179,8 +198,18 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
         })
     }
 
+    protected difficultyIsSupported(): boolean {
+        return (
+            flashParamSchema.multiplication.digit1.min <= this.elements.digit1.valueV1 &&
+            this.elements.digit1.valueV1 <= flashParamSchema.multiplication.digit1.difficultySupportMax &&
+            flashParamSchema.multiplication.digit2.min <= this.elements.digit2.valueV1 &&
+            this.elements.digit2.valueV1 <= flashParamSchema.multiplication.digit2.difficultySupportMax
+        )
+    }
+
     private set _digit1(digit: number) {
         this.elements.digit1.valueV1 = digit
+        this.updateDifficultySupportStatus()
     }
 
     private get _digit1(): number {
@@ -198,6 +227,7 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
 
     private set _digit2(digit: number) {
         this.elements.digit2.valueV1 = digit
+        this.updateDifficultySupportStatus()
     }
 
     private get _digit2(): number {
@@ -214,13 +244,20 @@ export class MultiplicationModeFlashParamElementsManager extends FlashParamEleme
     }
 }
 
-export const additionModeFlashParamElementsManager = new AdditionModeFlashParamElementsManager({
-    elements: flashParamElements.addition,
-    commonElements: flashParamElements.common,
-    flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
-})
-export const multiplicationModeFlashParamElementsManager = new MultiplicationModeFlashParamElementsManager({
-    elements: flashParamElements.multiplication,
-    commonElements: flashParamElements.common,
-    flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
-})
+export interface FlashParamElementsManagers {
+    addition: AdditionModeFlashParamElementsManager
+    multiplication: MultiplicationModeFlashParamElementsManager
+}
+
+export const flashParamElementsManagers: FlashParamElementsManagers = {
+    addition: new AdditionModeFlashParamElementsManager({
+        elements: flashParamElements.addition,
+        commonElements: flashParamElements.common,
+        flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
+    }),
+    multiplication: new MultiplicationModeFlashParamElementsManager({
+        elements: flashParamElements.multiplication,
+        commonElements: flashParamElements.common,
+        flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
+    }),
+}

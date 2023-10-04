@@ -3,13 +3,16 @@ import { currentFlashMode } from '../currentFlashMode.js'
 import { changeShortcut } from '../shortcut/shortcut.js'
 import { type ExecuteInterface } from '../interface/executeInterface.js'
 import {
-    additionModeFlashParamElementsManager,
-    multiplicationModeFlashParamElementsManager
+    flashParamElementsManagers,
+    MultiplicationModeFlashParamElementsManager
 } from './flashParamElementsManager.js'
+import { flashParamElements } from '../dom/flashParamElements.js'
+import { FlashLengthAndTimeMemory } from './flashLengthAndTimeMemory.js'
 
 export function changeMode(mode: FlashMode): void {
     changeShortcut(mode)
     currentFlashMode.value = mode
+    flashParamElementsManagers[mode].updateDifficultySupportStatus()
 }
 
 export interface FlashParamSet<T extends FlashMode> {
@@ -27,11 +30,11 @@ export abstract class AbstractGetFlashParamSetAdapter<T extends FlashMode> imple
 export class AdditionModeGetFlashParamSetAdapter extends AbstractGetFlashParamSetAdapter<'addition'> {
     execute(): FlashParamSet<'addition'> {
         return {
-            digit: additionModeFlashParamElementsManager.getValidatedDigit(),
-            length: additionModeFlashParamElementsManager.getValidatedLength(),
-            time: additionModeFlashParamElementsManager.getValidatedTime(),
-            difficulty: additionModeFlashParamElementsManager.getValidatedDifficulty(),
-            offset: additionModeFlashParamElementsManager.getValidatedOffset(),
+            digit: flashParamElementsManagers.addition.getValidatedDigit(),
+            length: flashParamElementsManagers.addition.getValidatedLength(),
+            time: flashParamElementsManagers.addition.getValidatedTime(),
+            difficulty: flashParamElementsManagers.addition.getValidatedDifficulty(),
+            offset: flashParamElementsManagers.addition.getValidatedOffset(),
         }
     }
 }
@@ -40,13 +43,17 @@ export class MultiplicationModeGetFlashParamSetAdapter extends AbstractGetFlashP
     execute(): FlashParamSet<'multiplication'> {
         return {
             digit: [
-                multiplicationModeFlashParamElementsManager.getValidatedDigit1(),
-                multiplicationModeFlashParamElementsManager.getValidatedDigit2(),
+                flashParamElementsManagers.multiplication.getValidatedDigit1(),
+                flashParamElementsManagers.multiplication.getValidatedDigit2(),
             ],
-            length: multiplicationModeFlashParamElementsManager.getValidatedLength(),
-            time: multiplicationModeFlashParamElementsManager.getValidatedTime(),
-            difficulty: multiplicationModeFlashParamElementsManager.getValidatedDifficulty(),
-            offset: multiplicationModeFlashParamElementsManager.getValidatedOffset(),
+            length: flashParamElementsManagers.multiplication.getValidatedLength(),
+            time: flashParamElementsManagers.multiplication.getValidatedTime(),
+            difficulty: flashParamElementsManagers.multiplication.getValidatedDifficulty(),
+            offset: new MultiplicationModeFlashParamElementsManager({
+                elements: flashParamElements.multiplication,
+                commonElements: flashParamElements.common,
+                flashLengthAndTimeMemory: new FlashLengthAndTimeMemory(),
+            }).getValidatedOffset(),
         }
     }
 }

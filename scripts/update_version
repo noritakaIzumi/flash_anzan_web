@@ -1,0 +1,37 @@
+#!/bin/bash
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE:-$0}")/.." && pwd)
+
+#
+# Update version of files such as package.json Cargo.toml
+#
+function main() {
+  local version
+  version=$1
+
+  if [[ -z "$version" ]]; then
+    echo 'version number is not passed'
+    return 1
+  fi
+  if ! [[ "$version" =~ ^([0-9]+\.)+[0-9]+ ]]; then
+    echo 'version number is invalid'
+    return 1
+  fi
+
+  pushd "$repo_root" || return 1
+
+  # package.json, package-lock.json
+  sed -i -Ee 's/^(\s+"version": ")([0-9]+\.)+[0-9]+(")/\1'"$version"'\3/' package.json
+  npm i --package-lock-only
+
+  pushd src-tauri || return 1
+
+  # Cargo.toml, Cargo.lock
+  sed -i -Ee 's/^(version = ")([0-9]+\.)+[0-9]+(")/\1'"$version"'\3/' Cargo.toml
+  cargo generate-lockfile
+
+  popd || return 1
+  popd || return 1
+}
+
+main "$@"

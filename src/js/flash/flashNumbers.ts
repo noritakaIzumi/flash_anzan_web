@@ -165,12 +165,11 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                     this.createNumbers(
                         requestParam.digit,
                         requestParam.length,
-                        requestParam.difficulty,
-                        options
+                        requestParam.difficulty
                     ).slice(numberHistory.length - requestParam.length)
                 )
             }
-            return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty, options)
+            return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty)
         })()
 
         return {
@@ -184,13 +183,12 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
     protected createNumbers(
         digitCount: FlashDigit[T],
         length: number,
-        difficulty: FlashDifficulty,
-        options: FlashOptions
+        difficulty: FlashDifficulty
     ): Array<FlashDigit[T]> {
         let retry = 0
         while (retry < generateNumbersRetryLimit) {
             try {
-                return this.createNewNumbersAdapter.execute(digitCount, length, difficulty, options)
+                return this.createNewNumbersAdapter.execute(digitCount, length, difficulty)
             } catch (e: any) {
                 if (e instanceof CreatedNumbersDoNotSatisfyConstraintError) {
                     // TODO: 開発時だけ何かログを出す
@@ -262,8 +260,7 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
     execute(
         digitCount: FlashDigit[T],
         length: number,
-        difficulty: FlashDifficulty,
-        options: FlashOptions
+        difficulty: FlashDifficulty
     ): Array<FlashDigit[T]> {
         const complexityThresholdMapLengthKey = Math.min(length, this.difficultySupportMaxLength)
         const complexityThresholdMapKey = this.getComplexityThresholdMapKey(
@@ -273,17 +270,12 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
         const complexityThreshold = this.complexityThresholdMapByMode[complexityThresholdMapKey]
 
         if (complexityThreshold === undefined) {
-            if (options.allowUnknownDifficulty ?? false) {
-                // eslint-disable-next-line new-cap
-                const createRawNumberAdapter = new this.createRawNumberAdaptersByMode.unknown({ digitCount })
-                for (let _ = 0; _ < length; _++) {
-                    createRawNumberAdapter.execute()
-                }
-                return createRawNumberAdapter.getResult().numbers
+            // eslint-disable-next-line new-cap
+            const createRawNumberAdapter = new this.createRawNumberAdaptersByMode.unknown({ digitCount })
+            for (let _ = 0; _ < length; _++) {
+                createRawNumberAdapter.execute()
             }
-            throw new RangeError(
-                `complexity threshold not found at key: (digit: ${JSON.stringify(digitCount)}, length: ${length})`
-            )
+            return createRawNumberAdapter.getResult().numbers
         }
 
         const firstCreateLength = complexityThresholdMapLengthKey

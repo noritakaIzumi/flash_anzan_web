@@ -4,7 +4,7 @@ export const flashParamSchema: FlashParamSchema = {
     addition: {
         digit: {
             min: 1,
-            max: 8,
+            max: 14,
             default: 1,
             difficultySupportMax: 8,
         },
@@ -23,13 +23,13 @@ export const flashParamSchema: FlashParamSchema = {
     multiplication: {
         digit1: {
             min: 1,
-            max: 4,
+            max: 7,
             default: 1,
             difficultySupportMax: 4,
         },
         digit2: {
             min: 1,
-            max: 4,
+            max: 7,
             default: 1,
             difficultySupportMax: 4,
         },

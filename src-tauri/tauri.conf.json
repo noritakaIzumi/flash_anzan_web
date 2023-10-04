@@ -7,7 +7,7 @@
     "beforeBuildCommand": "npm run build"
   },
   "package": {
-    "productName": "aurora-flash"
+    "productName": "Aurora Flash"
   },
   "tauri": {
     "windows": [
