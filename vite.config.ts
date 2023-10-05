@@ -1,5 +1,5 @@
 import { defineConfig, type UserConfig } from 'vite'
-import { internalIpV4 } from 'internal-ip'
+import { internalIpV4Sync } from 'internal-ip'
 import * as path from 'path'
 import * as fs from 'fs'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -17,8 +17,8 @@ const [appName, appDescription] = (() => {
 })()
 
 // noinspection JSUnusedGlobalSymbols
-export default defineConfig(async () => {
-    const host = await internalIpV4()
+export default defineConfig(() => {
+    const host = internalIpV4Sync()
 
     const config: UserConfig = {
         root: path.resolve(__dirname, 'src'),
@@ -63,7 +63,7 @@ export default defineConfig(async () => {
         },
         server: {
             host: '0.0.0.0',
-            port: 8080,
+            port: 5173,
             strictPort: true,
             hmr: {
                 protocol: 'ws',
