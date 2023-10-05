@@ -19,7 +19,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.fairy-select.aurora-flash",
+      "identifier": "com.fairyselect.auroraflash",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -55,14 +55,8 @@
         }
       }
     },
-    "allowlist": {
-      "all": false
-    },
     "security": {
       "csp": null
-    },
-    "updater": {
-      "active": false
     }
   }
 }
