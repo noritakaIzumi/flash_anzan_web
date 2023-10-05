@@ -21,6 +21,15 @@
         "arrays": "always-multiline",
         "objects": "always-multiline"
       }
+    ],
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "singleline": {
+          "delimiter": "semi",
+          "requireLast": false
+        }
+      }
     ]
   },
   "ignorePatterns": [
