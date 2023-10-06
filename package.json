@@ -45,6 +45,7 @@
     "build:complexity_map": "ts-node tools/createComplexityThresholdMap.ts",
     "build:sound": "ts-node tools/combineSounds.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npm run lint:eslint; npm run lint:prettier",
     "lint:eslint": "eslint --fix './**/*.{js,ts}'",
     "lint:prettier": "prettier --write './**/*.{js,ts}'",
     "update-version": "bash ./scripts/update_version",
