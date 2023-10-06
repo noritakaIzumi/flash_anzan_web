@@ -17,3 +17,10 @@ key.properties
 
 /.tauri
 /tauri.settings.gradle
+
+/app/arm/
+/app/arm64/
+/app/universal/
+/app/x86/
+/app/x86_64/
+
