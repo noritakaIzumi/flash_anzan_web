@@ -3,11 +3,11 @@ import {
     type ComplexityThreshold,
     type ComplexityThresholdMap,
     type ComplexityThresholdMapKey,
-    type FlashMode
+    type FlashMode,
 } from '../src/js/globals.js'
 import {
     AdditionModeUnknownDifficultyCreateRawNumberAdapter,
-    MultiplicationModeUnknownDifficultyCreateRawNumberAdapter
+    MultiplicationModeUnknownDifficultyCreateRawNumberAdapter,
 } from '../src/js/flash/flashNumbers.js'
 import * as fs from 'fs'
 import * as path from 'path'

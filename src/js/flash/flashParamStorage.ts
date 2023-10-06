@@ -66,7 +66,9 @@ export function doDeleteParams(): void {
     localStorage.removeItem(savedEnvironmentParamsKeyName)
 }
 
-interface EnvironmentParams { offset: number }
+interface EnvironmentParams {
+    offset: number
+}
 
 function validateEnvironmentParams(loadedParams: string): EnvironmentParams {
     const parsedParams = JSON.parse(loadedParams)

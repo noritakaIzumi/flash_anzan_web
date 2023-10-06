@@ -28,6 +28,7 @@
         "@typescript-eslint/eslint-plugin": "^6.7.0",
         "audiosprite": "^0.7.2",
         "eslint": "^8.49.0",
+        "eslint-config-prettier": "^9.0.0",
         "eslint-config-standard-with-typescript": "^39.0.0",
         "eslint-plugin-import": "^2.28.1",
         "eslint-plugin-n": "^16.1.0",
@@ -2327,6 +2328,18 @@
       },
       "funding": {
         "url": "https://opencollective.com/eslint"
+      }
+    },
+    "node_modules/eslint-config-prettier": {
+      "version": "9.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-9.0.0.tgz",
+      "integrity": "sha512-IcJsTkJae2S35pRsRAwoCE+925rJJStOdkKnLVgtE+tEpqU0EVVM7OqrwxqgptKdX29NUwC82I5pXsGFIgSevw==",
+      "dev": true,
+      "bin": {
+        "eslint-config-prettier": "bin/cli.js"
+      },
+      "peerDependencies": {
+        "eslint": ">=7.0.0"
       }
     },
     "node_modules/eslint-config-standard": {

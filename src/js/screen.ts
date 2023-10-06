@@ -1,5 +1,5 @@
 import { button, calculateArea, disableConfigTarget, questionNumberArea } from './dom/htmlElement.js'
-import { errorMessage } from "./flash/errorMessage.js"
+import { errorMessage } from './flash/errorMessage.js'
 
 export function isTouchDevice(): boolean {
     return window.ontouchstart === null

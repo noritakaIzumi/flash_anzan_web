@@ -2,7 +2,7 @@ import {
     FlashDifficultyParam,
     FlashNumberParam,
     FlashNumberWithDifficultySupportParam,
-    FlashTimeParam
+    FlashTimeParam,
 } from '../flash/flashParams.js'
 import { getHtmlElement } from './htmlElement.js'
 

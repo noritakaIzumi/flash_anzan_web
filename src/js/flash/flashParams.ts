@@ -2,7 +2,7 @@ import { flashDifficulty, type FlashDifficulty } from '../globals.js'
 import {
     type FlashDifficultyParamSchema,
     type FlashNumberParamSchema,
-    type FlashNumberParamWithDifficultySupportSchema
+    type FlashNumberParamWithDifficultySupportSchema,
 } from './flashParamSchema.js'
 
 export function fixValue(
@@ -36,7 +36,7 @@ abstract class FlashParam<
     },
     T,
     U,
-    VOptions = never
+    VOptions = never,
 > {
     get htmlElement(): K {
         return this._htmlElement
@@ -57,7 +57,7 @@ abstract class FlashParam<
     private readonly _htmlElement: K
     protected schema: T
 
-    constructor(props: { htmlElement: K, schema: T, options?: VOptions }) {
+    constructor(props: { htmlElement: K; schema: T; options?: VOptions }) {
         this._htmlElement = props.htmlElement
         this.schema = props.schema
     }
@@ -80,7 +80,7 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
         this.valueV1 = value
     }
 
-    constructor(props: { htmlElement: HTMLInputElement, schema: FlashNumberParamSchema }) {
+    constructor(props: { htmlElement: HTMLInputElement; schema: FlashNumberParamSchema }) {
         super(props)
         this.valueV1 = this.schema.default
         this.htmlElement.max = String(this.schema.max)
@@ -90,9 +90,9 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
 }
 
 export class FlashNumberWithDifficultySupportParam extends FlashParam<
-HTMLSelectElement,
-FlashNumberParamWithDifficultySupportSchema,
-number
+    HTMLSelectElement,
+    FlashNumberParamWithDifficultySupportSchema,
+    number
 > {
     get valueV1(): number {
         return Number(this.htmlElement.value)
@@ -111,7 +111,7 @@ number
         this.valueV1 = value
     }
 
-    constructor(props: { htmlElement: HTMLSelectElement, schema: FlashNumberParamWithDifficultySupportSchema }) {
+    constructor(props: { htmlElement: HTMLSelectElement; schema: FlashNumberParamWithDifficultySupportSchema }) {
         super(props)
         for (let i = this.schema.max; i >= this.schema.min; i--) {
             const difficultyIsSupported = this.schema.min <= i && i <= this.schema.difficultySupportMax

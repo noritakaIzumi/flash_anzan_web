@@ -25,7 +25,7 @@ import {
     numberHistoryDisplay,
     type ParamsModalOperation,
     questionNumberArea,
-    switchInputAnswerBoxTab
+    switchInputAnswerBoxTab,
 } from './dom/htmlElement.js'
 import { latestFlashNumberHistory } from './flash/flashNumberHistory.js'
 import { getFlashSuite } from './flash/flashSuite.js'
@@ -37,7 +37,7 @@ import {
     doLoadEnvironmentParams,
     doLoadParams,
     doSaveEnvironmentParams,
-    doSaveParams
+    doSaveParams,
 } from './flash/flashParamStorage.js'
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
@@ -73,8 +73,8 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             const questionNumberAreaInnerHTML = !checkboxes.hideAnswer.checked
                 ? answer.toDisplay()
                 : isCorrect
-                    ? '<span class="bi-emoji-smile-fill text-success"></span>'
-                    : '<span class="bi-emoji-frown-fill text-danger"></span>'
+                ? '<span class="bi-emoji-smile-fill text-success"></span>'
+                : '<span class="bi-emoji-frown-fill text-danger"></span>'
 
             const timeToDisplay = 1200
 
@@ -128,20 +128,20 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
-                    const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer')
-                    if (modalFooter === null) {
-                        throw new Error('element not found: modal footer')
-                    }
-                    modalFooter.style.display = 'none'
-                    switchInputAnswerBoxTab.touchTab.click()
-                    noticeInputAnswerNonTouchDevice.style.display = 'none'
-                }
+                      const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer')
+                      if (modalFooter === null) {
+                          throw new Error('element not found: modal footer')
+                      }
+                      modalFooter.style.display = 'none'
+                      switchInputAnswerBoxTab.touchTab.click()
+                      noticeInputAnswerNonTouchDevice.style.display = 'none'
+                  }
                 : () => {
-                    clearInputAnswerBox()
-                    switchInputAnswerBoxTab.keyboardTab.click()
-                    inputAnswerBox.focus()
-                    noticeInputAnswerNonTouchDevice.style.display = 'block'
-                }
+                      clearInputAnswerBox()
+                      switchInputAnswerBoxTab.keyboardTab.click()
+                      inputAnswerBox.focus()
+                      noticeInputAnswerNonTouchDevice.style.display = 'block'
+                  }
             modals.input_answer.addEventListener('shown.bs.modal', listener)
 
             const modal = new bootstrap.Modal(modals.input_answer, {

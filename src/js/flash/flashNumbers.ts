@@ -10,7 +10,7 @@ import {
     type FlashMode,
     generateNumbersRetryLimit,
     multiplyFigure,
-    type UnknownFlashDifficulty
+    type UnknownFlashDifficulty,
 } from '../globals.js'
 import { type FlashParamSet } from './flashParamSet.js'
 import { type FlashNumberHistory, flashNumberHistoryRegistry } from './flashNumberHistory.js'
@@ -37,11 +37,11 @@ function getRandomInt(
         previousNum === null
             ? []
             : String(previousNum)
-                .split('')
-                .reverse()
-                .map((n) => {
-                    return Number(n)
-                })
+                  .split('')
+                  .reverse()
+                  .map((n) => {
+                      return Number(n)
+                  })
     const digits = [getRandomDigit([0].concat(previousNumDigits.slice(-1)))]
     let i = 0
     while (i < digitCount - 1) {
@@ -162,11 +162,9 @@ export abstract class AbstractFlashGenerator<T extends FlashMode> implements Exe
                     return numberHistory.slice(0, requestParam.length)
                 }
                 return numberHistory.concat(
-                    this.createNumbers(
-                        requestParam.digit,
-                        requestParam.length,
-                        requestParam.difficulty
-                    ).slice(numberHistory.length - requestParam.length)
+                    this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty).slice(
+                        numberHistory.length - requestParam.length
+                    )
                 )
             }
             return this.createNumbers(requestParam.digit, requestParam.length, requestParam.difficulty)
@@ -257,11 +255,7 @@ export abstract class AbstractCreateNewNumbersAdapter<T extends FlashMode> imple
         this.difficultySupportMaxLength = difficultySupportMaxLength
     }
 
-    execute(
-        digitCount: FlashDigit[T],
-        length: number,
-        difficulty: FlashDifficulty
-    ): Array<FlashDigit[T]> {
+    execute(digitCount: FlashDigit[T], length: number, difficulty: FlashDifficulty): Array<FlashDigit[T]> {
         const complexityThresholdMapLengthKey = Math.min(length, this.difficultySupportMaxLength)
         const complexityThresholdMapKey = this.getComplexityThresholdMapKey(
             digitCount,
