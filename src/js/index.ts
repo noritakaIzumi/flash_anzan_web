@@ -362,11 +362,6 @@ function clearInputAnswerBox(): void {
                 answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
                 new bootstrap.Modal(modals.number_history).show()
             })
-
-            // 終了ボタン
-            button.doQuit.addEventListener('click', () => {
-                window.close()
-            })
         })()
 
         // フラッシュ出題エリアの選択を禁止する

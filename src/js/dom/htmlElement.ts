@@ -40,8 +40,6 @@ export const button = {
         normal: getHtmlElement('input', 'difficulty-normal'),
         hard: getHtmlElement('input', 'difficulty-hard'),
     },
-    quit: getHtmlElement('button', 'quit-button'),
-    doQuit: getHtmlElement('button', 'do-quit-button'),
 }
 export const disableConfigTarget = [
     button.start,
