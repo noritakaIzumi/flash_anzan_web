@@ -25,6 +25,7 @@ import {
     numberHistoryDisplay,
     questionNumberArea,
     switchInputAnswerBoxTab,
+    tooltips,
 } from './dom/htmlElement.js'
 import { latestFlashNumberHistory } from './flash/flashNumberHistory.js'
 import { getFlashSuite } from './flash/flashSuite.js'
@@ -244,6 +245,8 @@ function clearInputAnswerBox(): void {
 
         isMutedConfig.isMuted = checkboxes.isMuted.checked
         audioObj.load(htmlElements.soundExtension.value)
+        // eslint-disable-next-line no-new
+        new bootstrap.Tooltip(tooltips.configOffset)
 
         // ページ読み込み時処理
         ;(() => {

@@ -69,7 +69,8 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
-            <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">
+            <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
+                    data-bs-target="#privacyPolicyModal">
                 <i class="bi bi-info"></i>
             </button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
@@ -281,20 +282,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div>
-                    <h5 class="mb-3">タイミング</h5>
-                    <div id="common-more-config" class="container w-auto">
-                        <div class="row">
-                            <label for="common-offset" class="form-label">オフセット<br>（音が遅れているときは +
-                                、数字の表示が遅れているときは - にしてください）</label>
-                            <div class="input-group mb-2 col">
-                                <input type="number" inputmode="numeric" id="common-offset"
-                                       class="form-control text-end">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">ms</span>
-                                </div>
-                            </div>
-                        </div>
+                <div id="common-more-config" class="container w-auto">
+                    <div class="input-group mb-2 col">
+                        <label for="common-offset" class="input-group-text">オフセット</label>
+                        <input type="number" inputmode="numeric" id="common-offset" class="form-control text-end">
+                        <span class="input-group-text">ms<span id="config-offset-tooltip"
+                                                               class="bi bi-question-circle-fill ms-2"
+                                                               data-bs-toggle="tooltip"
+                                                               data-bs-title="音が遅れているときは +、数字の表示が遅れているときは - にしてください"
+                        ></span></span>
                     </div>
                 </div>
             </div>
@@ -608,7 +604,8 @@
     </div>
 </div>
 <!-- Privacy policy -->
-<div class="modal" id="privacyPolicyModal" tabindex="-1" role="dialog" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true">
+<div class="modal" id="privacyPolicyModal" tabindex="-1" role="dialog" aria-labelledby="privacyPolicyModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-fullscreen-lg-down modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">

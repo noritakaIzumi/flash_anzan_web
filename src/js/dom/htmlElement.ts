@@ -61,3 +61,6 @@ export const checkboxes = {
     fixNumberInterval: getHtmlElement('input', 'fix-number-interval'),
     hideAnswer: getHtmlElement('input', 'hide-answer'),
 }
+export const tooltips = {
+    configOffset: getHtmlElement('span', 'config-offset-tooltip'),
+}
