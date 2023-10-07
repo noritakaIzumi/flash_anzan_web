@@ -8,7 +8,10 @@ const rootPath = path.dirname(path.dirname(filename))
 
 const md = new MarkdownIt()
 const content = fs.readFileSync(`${rootPath}/README.md`).toString()
-const result = md.render(content)
+const result = md
+    .render(content)
+    .replace(/<a.*?>/g, '')
+    .replace(/<\/a>/g, '')
 
 const filepath = `${rootPath}/src/html/readme.html`
 fs.writeFileSync(filepath, result)
