@@ -16,6 +16,11 @@ const [appName, appDescription] = (() => {
     return [body.name, body.description]
 })()
 
+const readmeAsHtml = fs
+    .readFileSync(path.resolve(__dirname) + '/src/html/readme.html')
+    .toString()
+    .trim()
+
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig(() => {
     const host = internalIpV4Sync()
@@ -54,6 +59,7 @@ export default defineConfig(() => {
                         title: appName,
                         description: appDescription,
                         versionNumber: appVersion,
+                        readmeAsHtml,
                     },
                 },
             }),

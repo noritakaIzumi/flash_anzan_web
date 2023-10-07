@@ -69,6 +69,9 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
+            <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal" data-bs-target="#privacyPolicyModal">
+                <i class="bi bi-info"></i>
+            </button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
                     data-bs-toggle="modal" data-bs-target="#helpModal">
                 <i class="bi bi-keyboard"></i><span class="ps-2">キーボードショートカット</span>
@@ -243,9 +246,6 @@
             </div>
         </div>
         <div id="error-message" class="d-none d-flex justify-content-start my-3 text-warning"></div>
-    </div>
-    <div class="container-fluid">
-        <span id="version-number" class="text-light"><%- versionNumber %></span>
     </div>
 </div>
 
@@ -716,6 +716,24 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Privacy policy -->
+<div class="modal fade" id="privacyPolicyModal" tabindex="-1" role="dialog" aria-labelledby="privacyPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-fullscreen-lg-down modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyModalTitle"><%- title %> <%- versionNumber %></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <%- readmeAsHtml %>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
