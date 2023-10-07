@@ -31,7 +31,12 @@ import { getFlashSuite } from './flash/flashSuite.js'
 import { measuredTime } from './flash/measuredTime.js'
 import { type AudioObjKey } from './globals.js'
 import { waitLoaded } from './loadStatusManager.js'
-import { doLoadEnvironmentParams, doSaveEnvironmentParams } from './flash/flashParamStorage.js'
+import {
+    doLoadEnvironmentParams,
+    doLoadParams,
+    doSaveEnvironmentParams,
+    doSaveParams,
+} from './flash/flashParamStorage.js'
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
 
@@ -41,6 +46,7 @@ interface SetFlashTimeOutHandle {
 
 async function flash(options: FlashOptions = {}): Promise<void> {
     doSaveEnvironmentParams() // 環境設定はプレイごとに保存する
+    doSaveParams() // 出題設定はプレイごとに保存する
     measuredTime.reset()
 
     /**
@@ -242,6 +248,7 @@ function clearInputAnswerBox(): void {
         // ページ読み込み時処理
         ;(() => {
             doLoadEnvironmentParams()
+            doLoadParams()
             changeMode('addition')
             registerShortcuts()
         })()
