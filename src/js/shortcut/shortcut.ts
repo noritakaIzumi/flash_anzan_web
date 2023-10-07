@@ -5,15 +5,6 @@ import { button, checkboxes } from '../dom/htmlElement.js'
 import { flashParamElementsManagers } from '../flash/flashParamElementsManager.js'
 
 export function registerShortcuts(): void {
-    shortcut.add('ctrl+o', () => {
-        button.loadParams.click()
-    })
-    shortcut.add('ctrl+s', () => {
-        button.saveParams.click()
-    })
-    shortcut.add('ctrl+r', () => {
-        button.deleteParams.click()
-    })
     shortcut.add('s', () => {
         button.start.click()
     })

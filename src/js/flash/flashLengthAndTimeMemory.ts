@@ -6,7 +6,7 @@ export interface Memory {
 export class FlashLengthAndTimeMemory {
     private memory: Memory = {}
 
-    public save(args: { length: number, time: number }): void {
+    public save(args: { length: number; time: number }): void {
         this.memory.length = args.length
         this.memory.time = args.time
     }

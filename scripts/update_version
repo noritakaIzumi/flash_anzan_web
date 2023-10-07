@@ -1,34 +1,98 @@
 #!/bin/bash
 
+set -e
+
 repo_root=$(cd "$(dirname "${BASH_SOURCE:-$0}")/.." && pwd)
 
 #
 # Update version of files such as package.json Cargo.toml
 #
 function main() {
-  local version
-  version=$1
+  local version_up_method
+  version_up_method=$1
 
-  if [[ -z "$version" ]]; then
-    echo 'version number is not passed'
+  if [[ -z "$version_up_method" ]]; then
+    echo 'version up method is not passed'
     return 1
   fi
-  if ! [[ "$version" =~ ^([0-9]+\.)+[0-9]+ ]]; then
-    echo 'version number is invalid'
+  if ! [[ "$version_up_method" =~ ^[Mmr]$ ]]; then
+    echo 'version method is one of: M, m, r'
     return 1
   fi
+
+  # Version Name
+
+  local version_name_regex
+  version_name_regex="([0-9]+\.){2}[0-9]+"
+
+  local current_version_name
+  current_version_name=$(grep -Po '(?<="version": ")'"$version_name_regex"'(?=")' package.json)
+  echo 'current version name is '"$current_version_name"
+
+  local current_version_name_major
+  local current_version_name_minor
+  local current_version_name_revision
+  current_version_name_major=$(echo "$current_version_name" | cut -d'.' -f1)
+  current_version_name_minor=$(echo "$current_version_name" | cut -d'.' -f2)
+  current_version_name_revision=$(echo "$current_version_name" | cut -d'.' -f3)
+
+  local new_version_name_major
+  local new_version_name_minor
+  local new_version_name_revision
+  case $version_up_method in
+  "M")
+    new_version_name_major=$((current_version_name_major + 1))
+    new_version_name_minor=0
+    new_version_name_revision=0
+    ;;
+  "m")
+    new_version_name_major=$current_version_name_major
+    new_version_name_minor=$((current_version_name_minor + 1))
+    new_version_name_revision=0
+    ;;
+  "r")
+    new_version_name_major=$current_version_name_major
+    new_version_name_minor=$current_version_name_minor
+    new_version_name_revision=$((current_version_name_revision + 1))
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+
+  local new_version_name
+  new_version_name="$new_version_name_major.$new_version_name_minor.$new_version_name_revision"
+  echo 'new version name is '"$new_version_name"
 
   pushd "$repo_root" || return 1
 
   # package.json, package-lock.json
-  sed -i -Ee 's/^(\s+"version": ")([0-9]+\.)+[0-9]+(")/\1'"$version"'\3/' package.json
+  sed -i -Ee 's/^(\s*"version": ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' package.json
   npm i --package-lock-only
 
   pushd src-tauri || return 1
 
   # Cargo.toml, Cargo.lock
-  sed -i -Ee 's/^(version = ")([0-9]+\.)+[0-9]+(")/\1'"$version"'\3/' Cargo.toml
+  sed -i -Ee 's/^(\s*version = ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' Cargo.toml
   cargo generate-lockfile
+
+  # build.gradle.kts: versionCode
+  sed -i -Ee 's/^(\s*versionName = ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' gen/android/app/build.gradle.kts
+
+  # Version Code
+
+  # build.gradle.kts: versionCode
+  local current_version_code
+  current_version_code=$(grep -Po '(?<=versionCode = )[0-9]+' gen/android/app/build.gradle.kts)
+  if [[ "$current_version_code" =~ ^\d+$ ]]; then
+    echo 'versionCode in build.gradle.kts is invalid'
+    return 1
+  fi
+
+  local new_version_code
+  new_version_code=$((current_version_code + 1))
+  echo 'current versionCode is '"$current_version_code"' so new versionCode is '"$new_version_code"'.'
+  sed -i -Ee 's/^(\s*versionCode = )[0-9]+/\1'"$new_version_code"'/' gen/android/app/build.gradle.kts
 
   popd || return 1
   popd || return 1

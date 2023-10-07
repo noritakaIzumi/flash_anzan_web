@@ -4,24 +4,13 @@
     "es2021": true,
     "node": true
   },
-  "extends": "standard-with-typescript",
+  "extends": [
+    "standard-with-typescript",
+    "prettier"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
-  },
-  "rules": {
-    "@typescript-eslint/indent": [
-      "error",
-      4
-    ],
-    "@typescript-eslint/space-before-function-paren": "off",
-    "@typescript-eslint/comma-dangle": [
-      "error",
-      {
-        "arrays": "always-multiline",
-        "objects": "always-multiline"
-      }
-    ]
   },
   "ignorePatterns": [
     "/build/**/*",

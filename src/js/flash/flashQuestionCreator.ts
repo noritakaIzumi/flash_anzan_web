@@ -1,7 +1,7 @@
 import {
     AdditionModeGetFlashParamSetAdapter,
     type FlashParamSet,
-    MultiplicationModeGetFlashParamSetAdapter
+    MultiplicationModeGetFlashParamSetAdapter,
 } from './flashParamSet.js'
 import {
     AdditionModeCreateNewNumbersAdapter,
@@ -14,7 +14,7 @@ import {
     MultiplicationModeCreateNewNumbersAdapter,
     MultiplicationModeFlashGenerator,
     MultiplicationModeFlashNumbers,
-    MultiplicationModeGetFlashAnswerAdapter
+    MultiplicationModeGetFlashAnswerAdapter,
 } from './flashNumbers.js'
 import { complexityThresholdMap } from '../lib/complexityThresholdMap.js'
 import { flashNumberHistoryRegistry } from './flashNumberHistory.js'

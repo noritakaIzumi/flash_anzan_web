@@ -21,12 +21,6 @@ export const inputAnswerBoxTouchDisplay = getHtmlElement('input', 'input-answer-
 export const inputAnswerBoxTouchActual = getHtmlElement('input', 'input-answer-box-touch-actual')
 export const noticeArea = getHtmlElement('p', 'notice-area')
 export const button = {
-    loadParams: getHtmlElement('button', 'load-params-button'),
-    doLoadParams: getHtmlElement('button', 'do-load-params'),
-    saveParams: getHtmlElement('button', 'save-params-button'),
-    doSaveParams: getHtmlElement('button', 'do-save-params'),
-    deleteParams: getHtmlElement('button', 'delete-params-button'),
-    doDeleteParams: getHtmlElement('button', 'do-delete-params'),
     start: getHtmlElement('button', 'start-button'),
     repeat: getHtmlElement('button', 'repeat-button'),
     numberHistory: getHtmlElement('button', 'number-history-button'),
@@ -40,16 +34,8 @@ export const button = {
         normal: getHtmlElement('input', 'difficulty-normal'),
         hard: getHtmlElement('input', 'difficulty-hard'),
     },
-    quit: getHtmlElement('button', 'quit-button'),
-    doQuit: getHtmlElement('button', 'do-quit-button'),
 }
-export const disableConfigTarget = [
-    button.start,
-    button.repeat,
-    button.loadParams,
-    button.saveParams,
-    button.deleteParams,
-]
+export const disableConfigTarget = [button.start, button.repeat]
 export const switchInputAnswerBoxTab = {
     touchTab: getHtmlElement('button', 'switchInputAnswerBoxTab-touch-tab'),
     keyboardTab: getHtmlElement('button', 'switchInputAnswerBoxTab-keyboard-tab'),
@@ -57,29 +43,12 @@ export const switchInputAnswerBoxTab = {
 export const noticeInputAnswerNonTouchDevice = getHtmlElement('span', 'notice-input-answer-non-touch-device')
 export const numberHistoryDisplay = getHtmlElement('td', 'number-history-display')
 export const answerNumberDisplay = getHtmlElement('td', 'answer-number-display')
-export const paramsModalOperation = ['load', 'save', 'delete'] as const
-export type ParamsModalOperation = (typeof paramsModalOperation)[number]
 export const modals: {
     welcome: HTMLDivElement
-    params: { [op in ParamsModalOperation]: { [phase in 'confirm' | 'complete']: HTMLDivElement } }
     input_answer: HTMLDivElement
     number_history: HTMLDivElement
 } = {
     welcome: getHtmlElement('div', 'welcomeModal'),
-    params: {
-        load: {
-            confirm: getHtmlElement('div', 'loadParamsConfirmModal'),
-            complete: getHtmlElement('div', 'loadParamsCompletedModal'),
-        },
-        save: {
-            confirm: getHtmlElement('div', 'saveParamsConfirmModal'),
-            complete: getHtmlElement('div', 'saveParamsCompletedModal'),
-        },
-        delete: {
-            confirm: getHtmlElement('div', 'deleteParamsConfirmModal'),
-            complete: getHtmlElement('div', 'deleteParamsCompletedModal'),
-        },
-    },
     input_answer: getHtmlElement('div', 'inputAnswerModal'),
     number_history: getHtmlElement('div', 'numberHistoryModal'),
 }
@@ -91,4 +60,7 @@ export const checkboxes = {
     isMuted: getHtmlElement('input', 'is-muted'),
     fixNumberInterval: getHtmlElement('input', 'fix-number-interval'),
     hideAnswer: getHtmlElement('input', 'hide-answer'),
+}
+export const tooltips = {
+    configOffset: getHtmlElement('span', 'config-offset-tooltip'),
 }

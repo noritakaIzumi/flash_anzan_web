@@ -69,9 +69,9 @@
 <div class="operation-panel">
     <div class="container-fluid d-flex flex-wrap">
         <div class="p-2">
-            <button type="button" id="quit-button" class="btn btn-outline-danger me-2"
-                    data-bs-toggle="modal" data-bs-target="#comfirmQuitModal">
-                <i class="bi bi-x"></i><span class="ps-2">終了</span>
+            <button type="button" class="btn btn-outline-info me-2" data-bs-toggle="modal"
+                    data-bs-target="#privacyPolicyModal">
+                <i class="bi bi-info"></i>
             </button>
             <button type="button" id="help-button" class="btn btn-outline-info me-2"
                     data-bs-toggle="modal" data-bs-target="#helpModal">
@@ -80,20 +80,6 @@
             <button type="button" id="open-common-more-config-button" class="btn btn-outline-light me-2"
                     data-bs-toggle="modal" data-bs-target="#commonMoreConfigModal">
                 <i class="bi bi-gear-fill"></i><span class="ps-2">環境設定</span>
-            </button>
-        </div>
-        <div class="p-2">
-            <button type="button" id="load-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal">
-                <i class="bi bi-folder2-open"></i><span class="ps-2">読込</span>
-            </button>
-            <button type="button" id="save-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#saveParamsConfirmModal">
-                <i class="bi bi-save"></i><span class="ps-2">保存</span>
-            </button>
-            <button type="button" id="delete-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#deleteParamsConfirmModal">
-                <i class="bi bi-trash"></i><span class="ps-2">削除</span>
             </button>
         </div>
         <div class="p-2">
@@ -235,21 +221,12 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-start my-3">
-            <div class="form-check form-switch me-3">
-                <input class="form-check-input" type="checkbox" value="" id="fix-number-interval">
-                <label class="form-check-label text-light"
-                       for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
-            </div>
-            <div class="form-check form-switch me-3">
-                <input class="form-check-input" type="checkbox" value="" id="hide-answer">
-                <label class="form-check-label text-light" for="hide-answer">答えを表示せず正誤判定のみ行う</label>
-            </div>
+        <div class="form-check form-switch my-3">
+            <input class="form-check-input" type="checkbox" value="" id="fix-number-interval">
+            <label class="form-check-label text-light"
+                   for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
         </div>
         <div id="error-message" class="d-none d-flex justify-content-start my-3 text-warning"></div>
-    </div>
-    <div class="container-fluid">
-        <span id="version-number" class="text-light"><%- versionNumber %></span>
     </div>
 </div>
 
@@ -299,127 +276,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div>
-                    <h5 class="mb-3">タイミング</h5>
-                    <div id="common-more-config" class="container w-auto">
-                        <div class="row">
-                            <label for="common-offset" class="form-label">オフセット<br>（音が遅れているときは +
-                                、数字の表示が遅れているときは - にしてください）</label>
-                            <div class="input-group mb-2 col">
-                                <input type="number" inputmode="numeric" id="common-offset"
-                                       class="form-control text-end">
-                                <div class="input-group-append">
-                                    <span class="input-group-text">ms</span>
-                                </div>
-                            </div>
-                        </div>
+                <div id="common-more-config" class="container w-auto">
+                    <div class="input-group mb-2 col">
+                        <label for="common-offset" class="input-group-text">オフセット</label>
+                        <input type="number" inputmode="numeric" id="common-offset" class="form-control text-end">
+                        <span class="input-group-text">ms<span id="config-offset-tooltip"
+                                                               class="bi bi-question-circle-fill ms-2"
+                                                               data-bs-toggle="tooltip"
+                                                               data-bs-title="音が遅れているときは +、数字の表示が遅れているときは - にしてください"
+                        ></span></span>
+                    </div>
+                    <div class="form-check form-switch my-3">
+                        <input class="form-check-input" type="checkbox" value="" id="hide-answer">
+                        <label class="form-check-label" for="hide-answer">答えを表示せず正誤判定のみ行う</label>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Load Params -->
-<div class="modal" id="loadParamsConfirmModal" tabindex="-1" aria-labelledby="loadParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を読み込みますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-load-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#loadParamsCompletedModal">
-                    読み込む
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="loadParamsCompletedModal" tabindex="-1" aria-labelledby="loadParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>**SET BY JAVASCRIPT**</p>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Save Params -->
-<div class="modal" id="saveParamsConfirmModal" tabindex="-1" aria-labelledby="saveParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を保存しますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-save-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#saveParamsCompletedModal">
-                    保存する
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="saveParamsCompletedModal" tabindex="-1" aria-labelledby="saveParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を保存しました</p>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Delete Params -->
-<div class="modal" id="deleteParamsConfirmModal" tabindex="-1" aria-labelledby="deleteParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を削除しますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-delete-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#deleteParamsCompletedModal">
-                    削除する
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="deleteParamsCompletedModal" tabindex="-1" aria-labelledby="deleteParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を削除しました</p>
             </div>
         </div>
     </div>
@@ -525,24 +399,6 @@
                     </tr>
                     </tfoot>
                 </table>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Confirm to quit -->
-<div class="modal" id="comfirmQuitModal" tabindex="-1" aria-labelledby="comfirmQuitModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>終了しますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
-                <button type="button" id="do-quit-button" class="btn btn-primary" data-bs-dismiss="modal">はい</button>
             </div>
         </div>
     </div>
@@ -738,6 +594,24 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Privacy policy -->
+<div class="modal" id="privacyPolicyModal" tabindex="-1" role="dialog" aria-labelledby="privacyPolicyModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-fullscreen-lg-down modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyPolicyModalTitle"><%- title %> <%- versionNumber %></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <%- readmeAsHtml %>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>

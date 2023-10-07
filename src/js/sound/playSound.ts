@@ -30,7 +30,7 @@ export class PlaySoundCreator {
         this.crunker = getCrunkerInstance()
     }
 
-    async createBeep(props: { beepInterval: number, beepCount: number }): Promise<PlaySound> {
+    async createBeep(props: { beepInterval: number; beepCount: number }): Promise<PlaySound> {
         const beepAudioBuffer = await getAudioBuffers('beep')
 
         const audios: AudioBuffer[] = []

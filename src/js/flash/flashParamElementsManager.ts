@@ -9,7 +9,7 @@ import { disableDifficultySelect, enableDifficultySelect } from '../screen.js'
 export abstract class FlashParamElementsManager<T extends FlashMode> {
     protected readonly elements: FlashParamElements[T]
     private readonly flashLengthAndTimeMemory: FlashLengthAndTimeMemory
-    private readonly commonElements: { difficulty: FlashDifficultyParam, offset: FlashNumberParam }
+    private readonly commonElements: { difficulty: FlashDifficultyParam; offset: FlashNumberParam }
 
     constructor(props: {
         elements: FlashParamElements[T]

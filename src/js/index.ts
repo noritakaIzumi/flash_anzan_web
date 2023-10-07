@@ -23,9 +23,9 @@ import {
     noticeArea,
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
-    type ParamsModalOperation,
     questionNumberArea,
-    switchInputAnswerBoxTab
+    switchInputAnswerBoxTab,
+    tooltips,
 } from './dom/htmlElement.js'
 import { latestFlashNumberHistory } from './flash/flashNumberHistory.js'
 import { getFlashSuite } from './flash/flashSuite.js'
@@ -33,11 +33,10 @@ import { measuredTime } from './flash/measuredTime.js'
 import { type AudioObjKey } from './globals.js'
 import { waitLoaded } from './loadStatusManager.js'
 import {
-    doDeleteParams,
     doLoadEnvironmentParams,
     doLoadParams,
     doSaveEnvironmentParams,
-    doSaveParams
+    doSaveParams,
 } from './flash/flashParamStorage.js'
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
@@ -48,6 +47,7 @@ interface SetFlashTimeOutHandle {
 
 async function flash(options: FlashOptions = {}): Promise<void> {
     doSaveEnvironmentParams() // 環境設定はプレイごとに保存する
+    doSaveParams() // 出題設定はプレイごとに保存する
     measuredTime.reset()
 
     /**
@@ -73,8 +73,8 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             const questionNumberAreaInnerHTML = !checkboxes.hideAnswer.checked
                 ? answer.toDisplay()
                 : isCorrect
-                    ? '<span class="bi-emoji-smile-fill text-success"></span>'
-                    : '<span class="bi-emoji-frown-fill text-danger"></span>'
+                ? '<span class="bi-emoji-smile-fill text-success"></span>'
+                : '<span class="bi-emoji-frown-fill text-danger"></span>'
 
             const timeToDisplay = 1200
 
@@ -128,20 +128,20 @@ async function flash(options: FlashOptions = {}): Promise<void> {
             // モーダル表示時のイベント設定
             const listener = isTouchDevice()
                 ? () => {
-                    const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer')
-                    if (modalFooter === null) {
-                        throw new Error('element not found: modal footer')
-                    }
-                    modalFooter.style.display = 'none'
-                    switchInputAnswerBoxTab.touchTab.click()
-                    noticeInputAnswerNonTouchDevice.style.display = 'none'
-                }
+                      const modalFooter: HTMLDivElement | null = modals.input_answer.querySelector('.modal-footer')
+                      if (modalFooter === null) {
+                          throw new Error('element not found: modal footer')
+                      }
+                      modalFooter.style.display = 'none'
+                      switchInputAnswerBoxTab.touchTab.click()
+                      noticeInputAnswerNonTouchDevice.style.display = 'none'
+                  }
                 : () => {
-                    clearInputAnswerBox()
-                    switchInputAnswerBoxTab.keyboardTab.click()
-                    inputAnswerBox.focus()
-                    noticeInputAnswerNonTouchDevice.style.display = 'block'
-                }
+                      clearInputAnswerBox()
+                      switchInputAnswerBoxTab.keyboardTab.click()
+                      inputAnswerBox.focus()
+                      noticeInputAnswerNonTouchDevice.style.display = 'block'
+                  }
             modals.input_answer.addEventListener('shown.bs.modal', listener)
 
             const modal = new bootstrap.Modal(modals.input_answer, {
@@ -233,30 +233,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     }
 }
 
-function configureModalFocusing(): void {
-    ;(Object.keys(modals.params) as ParamsModalOperation[]).forEach((op) => {
-        const confirm = modals.params[op].confirm
-        const modalOkButton: HTMLButtonElement | null = confirm.querySelector('.modal-footer > button:last-child')
-        if (modalOkButton == null) {
-            throw new Error('element not found: modal ok button')
-        }
-        confirm.addEventListener('shown.bs.modal', () => {
-            modalOkButton.focus()
-        })
-
-        const completed = modals.params[op].complete
-        completed.addEventListener('shown.bs.modal', () => {
-            const modalEscapeButton: HTMLButtonElement | null = completed.querySelector('.modal-header > button')
-            if (modalEscapeButton == null) {
-                throw new Error('element not found: modal escape button')
-            }
-            setTimeout(() => {
-                modalEscapeButton.click()
-            }, 1000)
-        })
-    })
-}
-
 function clearInputAnswerBox(): void {
     inputAnswerBox.value = ''
     inputAnswerBoxTouchDisplay.value = ''
@@ -269,12 +245,14 @@ function clearInputAnswerBox(): void {
 
         isMutedConfig.isMuted = checkboxes.isMuted.checked
         audioObj.load(htmlElements.soundExtension.value)
+        // eslint-disable-next-line no-new
+        new bootstrap.Tooltip(tooltips.configOffset)
 
         // ページ読み込み時処理
         ;(() => {
             doLoadEnvironmentParams()
+            doLoadParams()
             changeMode('addition')
-            configureModalFocusing()
             registerShortcuts()
         })()
 
@@ -347,11 +325,6 @@ function clearInputAnswerBox(): void {
                 changeMode('multiplication')
             })
 
-            // 出題設定読み込み
-            button.doLoadParams.addEventListener('click', doLoadParams)
-            button.doSaveParams.addEventListener('click', doSaveParams)
-            button.doDeleteParams.addEventListener('click', doDeleteParams)
-
             // 出題履歴表示
             button.numberHistory.addEventListener('click', () => {
                 const latestHistory = latestFlashNumberHistory.history
@@ -361,11 +334,6 @@ function clearInputAnswerBox(): void {
                 numberHistoryDisplay.innerHTML = latestHistory.numberHistory.toDisplay().join('<br>')
                 answerNumberDisplay.innerText = latestHistory.answer.toDisplay()
                 new bootstrap.Modal(modals.number_history).show()
-            })
-
-            // 終了ボタン
-            button.doQuit.addEventListener('click', () => {
-                window.close()
             })
         })()
 
