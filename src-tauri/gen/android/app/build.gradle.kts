@@ -56,6 +56,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    ndkVersion = "26.0.10792818"
 }
 
 rust {
