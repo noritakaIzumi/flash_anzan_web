@@ -23,7 +23,6 @@ import {
     noticeArea,
     noticeInputAnswerNonTouchDevice,
     numberHistoryDisplay,
-    type ParamsModalOperation,
     questionNumberArea,
     switchInputAnswerBoxTab,
 } from './dom/htmlElement.js'
@@ -32,13 +31,7 @@ import { getFlashSuite } from './flash/flashSuite.js'
 import { measuredTime } from './flash/measuredTime.js'
 import { type AudioObjKey } from './globals.js'
 import { waitLoaded } from './loadStatusManager.js'
-import {
-    doDeleteParams,
-    doLoadEnvironmentParams,
-    doLoadParams,
-    doSaveEnvironmentParams,
-    doSaveParams,
-} from './flash/flashParamStorage.js'
+import { doLoadEnvironmentParams, doSaveEnvironmentParams } from './flash/flashParamStorage.js'
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
 
@@ -233,30 +226,6 @@ async function flash(options: FlashOptions = {}): Promise<void> {
     }
 }
 
-function configureModalFocusing(): void {
-    ;(Object.keys(modals.params) as ParamsModalOperation[]).forEach((op) => {
-        const confirm = modals.params[op].confirm
-        const modalOkButton: HTMLButtonElement | null = confirm.querySelector('.modal-footer > button:last-child')
-        if (modalOkButton == null) {
-            throw new Error('element not found: modal ok button')
-        }
-        confirm.addEventListener('shown.bs.modal', () => {
-            modalOkButton.focus()
-        })
-
-        const completed = modals.params[op].complete
-        completed.addEventListener('shown.bs.modal', () => {
-            const modalEscapeButton: HTMLButtonElement | null = completed.querySelector('.modal-header > button')
-            if (modalEscapeButton == null) {
-                throw new Error('element not found: modal escape button')
-            }
-            setTimeout(() => {
-                modalEscapeButton.click()
-            }, 1000)
-        })
-    })
-}
-
 function clearInputAnswerBox(): void {
     inputAnswerBox.value = ''
     inputAnswerBoxTouchDisplay.value = ''
@@ -274,7 +243,6 @@ function clearInputAnswerBox(): void {
         ;(() => {
             doLoadEnvironmentParams()
             changeMode('addition')
-            configureModalFocusing()
             registerShortcuts()
         })()
 
@@ -346,11 +314,6 @@ function clearInputAnswerBox(): void {
             button.multiplication.addEventListener('click', () => {
                 changeMode('multiplication')
             })
-
-            // 出題設定読み込み
-            button.doLoadParams.addEventListener('click', doLoadParams)
-            button.doSaveParams.addEventListener('click', doSaveParams)
-            button.doDeleteParams.addEventListener('click', doDeleteParams)
 
             // 出題履歴表示
             button.numberHistory.addEventListener('click', () => {

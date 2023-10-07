@@ -1,20 +1,12 @@
 import { type flashParamElementCategoryName, flashParamElements } from '../dom/flashParamElements.js'
 import { savedEnvironmentParamsKeyName, savedParamsKeyName } from '../globals.js'
-import { button, modals } from '../dom/htmlElement.js'
+import { button } from '../dom/htmlElement.js'
 
 export function doLoadParams(): void {
-    const modal = modals.params.load.complete
-    const modalMessage = modal.querySelector('.modal-body > p')
-    if (modalMessage === null) {
-        throw new Error('element not found: modal message')
-    }
-
     const loadedParams = localStorage.getItem(savedParamsKeyName)
     if (loadedParams === null) {
-        modalMessage.innerHTML = '設定がありません'
         return
     }
-    modalMessage.innerHTML = '設定を読み込みました'
 
     const parsedParams = JSON.parse(loadedParams)
     Object.keys(parsedParams).forEach((mode) => {

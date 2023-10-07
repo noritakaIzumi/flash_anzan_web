@@ -82,20 +82,6 @@
             </button>
         </div>
         <div class="p-2">
-            <button type="button" id="load-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#loadParamsConfirmModal">
-                <i class="bi bi-folder2-open"></i><span class="ps-2">読込</span>
-            </button>
-            <button type="button" id="save-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#saveParamsConfirmModal">
-                <i class="bi bi-save"></i><span class="ps-2">保存</span>
-            </button>
-            <button type="button" id="delete-params-button" class="btn btn-outline-warning me-2"
-                    data-bs-toggle="modal" data-bs-target="#deleteParamsConfirmModal">
-                <i class="bi bi-trash"></i><span class="ps-2">削除</span>
-            </button>
-        </div>
-        <div class="p-2">
             <button type="button" id="start-button" class="btn btn-danger me-2">
                 <i class="bi bi-play-fill"></i><span class="ps-2">スタート</span>
             </button>
@@ -314,108 +300,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Load Params -->
-<div class="modal" id="loadParamsConfirmModal" tabindex="-1" aria-labelledby="loadParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を読み込みますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-load-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#loadParamsCompletedModal">
-                    読み込む
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="loadParamsCompletedModal" tabindex="-1" aria-labelledby="loadParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="loadParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>**SET BY JAVASCRIPT**</p>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Save Params -->
-<div class="modal" id="saveParamsConfirmModal" tabindex="-1" aria-labelledby="saveParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を保存しますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-save-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#saveParamsCompletedModal">
-                    保存する
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="saveParamsCompletedModal" tabindex="-1" aria-labelledby="saveParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="saveParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を保存しました</p>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Delete Params -->
-<div class="modal" id="deleteParamsConfirmModal" tabindex="-1" aria-labelledby="deleteParamsConfirmModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsConfirmModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を削除しますか？</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                <button type="button" id="do-delete-params" class="btn btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#deleteParamsCompletedModal">
-                    削除する
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" id="deleteParamsCompletedModal" tabindex="-1" aria-labelledby="deleteParamsCompletedModalLabel">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteParamsCompletedModalLabel"><%- title %></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>設定を削除しました</p>
             </div>
         </div>
     </div>
