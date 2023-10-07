@@ -2,7 +2,7 @@
 
 ブラウザ版はこちらの URL で遊べます。
 
-https://aurora-flash.fairy-select.com/
+<https://aurora-flash.fairy-select.com/>
 
 作者自身の Web アプリ作成の勉強を兼ねて、フラッシュ暗算アプリ「おーろら★ふらっしゅ」を作成しました✨  
 桁数や口数、秒数を細かく設定可能です🙆  
