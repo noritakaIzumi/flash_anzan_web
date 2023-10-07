@@ -221,16 +221,10 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-start my-3">
-            <div class="form-check form-switch me-3">
-                <input class="form-check-input" type="checkbox" value="" id="fix-number-interval">
-                <label class="form-check-label text-light"
-                       for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
-            </div>
-            <div class="form-check form-switch me-3">
-                <input class="form-check-input" type="checkbox" value="" id="hide-answer">
-                <label class="form-check-label text-light" for="hide-answer">答えを表示せず正誤判定のみ行う</label>
-            </div>
+        <div class="form-check form-switch my-3">
+            <input class="form-check-input" type="checkbox" value="" id="fix-number-interval">
+            <label class="form-check-label text-light"
+                   for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
         </div>
         <div id="error-message" class="d-none d-flex justify-content-start my-3 text-warning"></div>
     </div>
@@ -291,6 +285,10 @@
                                                                data-bs-toggle="tooltip"
                                                                data-bs-title="音が遅れているときは +、数字の表示が遅れているときは - にしてください"
                         ></span></span>
+                    </div>
+                    <div class="form-check form-switch my-3">
+                        <input class="form-check-input" type="checkbox" value="" id="hide-answer">
+                        <label class="form-check-label" for="hide-answer">答えを表示せず正誤判定のみ行う</label>
                     </div>
                 </div>
             </div>
