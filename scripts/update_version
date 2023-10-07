@@ -36,21 +36,32 @@ function main() {
   current_version_name_minor=$(echo "$current_version_name" | cut -d'.' -f2)
   current_version_name_revision=$(echo "$current_version_name" | cut -d'.' -f3)
 
-  local new_version_name
+  local new_version_name_major
+  local new_version_name_minor
+  local new_version_name_revision
   case $version_up_method in
   "M")
-    new_version_name=$((current_version_name_major + 1))".0.0"
+    new_version_name_major=$((current_version_name_major + 1))
+    new_version_name_minor=0
+    new_version_name_revision=0
     ;;
   "m")
-    new_version_name="$current_version_name_major."$((current_version_name_minor + 1))".0"
+    new_version_name_major=$current_version_name_major
+    new_version_name_minor=$((current_version_name_minor + 1))
+    new_version_name_revision=0
     ;;
   "r")
-    new_version_name="$current_version_name_major.$current_version_name_minor."$((current_version_name_revision + 1))
+    new_version_name_major=$current_version_name_major
+    new_version_name_minor=$current_version_name_minor
+    new_version_name_revision=$((current_version_name_revision + 1))
     ;;
   *)
     return 1
     ;;
   esac
+
+  local new_version_name
+  new_version_name="$new_version_name_major.$new_version_name_minor.$new_version_name_revision"
   echo 'new version name is '"$new_version_name"
 
   pushd "$repo_root" || return 1
