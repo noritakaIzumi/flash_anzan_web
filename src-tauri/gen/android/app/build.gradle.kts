@@ -19,8 +19,8 @@ android {
         applicationId = "com.fairyselect.aurora_flash"
         minSdk = 24
         targetSdk = 33
-        versionCode = 4
-        versionName = "0.38.0"
+        versionCode = 6
+        versionName = "0.38.2"
     }
     signingConfigs {
         create("release") {
@@ -60,6 +60,11 @@ android {
         jvmTarget = "1.8"
     }
     ndkVersion = "26.0.10792818"
+    externalNativeBuild {
+        cmake {
+            version = "3.22.1"
+        }
+    }
 }
 
 rust {

@@ -69,7 +69,8 @@ export class FlashNumberParam extends FlashParam<HTMLInputElement, FlashNumberPa
     }
 
     set valueV1(value: string | number) {
-        this.htmlElement.value = String(value)
+        const fixedValue = fixValue(this.schema, Math.floor(Number(value)))
+        this.htmlElement.value = String(fixedValue)
     }
 
     get valueV0(): string {
