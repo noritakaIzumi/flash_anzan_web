@@ -1,6 +1,6 @@
 [package]
 name = "aurora-flash"
-version = "0.38.3"
+version = "0.38.4"
 description = "フラッシュ暗算"
 authors = ["Noritaka IZUMI<noritaka.izumi@gmail.com>"]
 license = "MIT"
