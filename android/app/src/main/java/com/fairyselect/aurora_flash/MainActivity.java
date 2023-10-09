@@ -2,6 +2,7 @@ package com.fairyselect.aurora_flash;
 
 import static android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -31,5 +32,13 @@ public class MainActivity extends BridgeActivity {
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
             );
         }
+
+        int black = Color.parseColor("#000000");
+
+        window.setNavigationBarColor(black);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.setNavigationBarDividerColor(black);
+        }
+        window.setStatusBarColor(black);
     }
 }
