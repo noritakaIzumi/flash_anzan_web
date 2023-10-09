@@ -47,6 +47,7 @@
     "start": "vite",
     "build": "vite build --emptyOutDir",
     "preview": "vite preview",
+    "sync:android": "npm run build && npx cap sync android",
     "build:complexity_map": "ts-node tools/createComplexityThresholdMap.ts",
     "build:sound": "ts-node tools/combineSounds.ts",
     "build:html_readme": "ts-node tools/convertReadmeToHtml.ts",
