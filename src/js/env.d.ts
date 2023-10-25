@@ -5,6 +5,7 @@ interface ImportMetaEnv {
     readonly VITE_APP_TITLE: string
     // more env variables...
     readonly VITE_APP_DEFAULT_OFFSET: string | undefined
+    readonly VITE_APP_STORE_URL: string | undefined
 }
 
 interface ImportMeta {

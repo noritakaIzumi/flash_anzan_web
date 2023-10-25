@@ -34,6 +34,7 @@ export const button = {
         normal: getHtmlElement('input', 'difficulty-normal'),
         hard: getHtmlElement('input', 'difficulty-hard'),
     },
+    openAppPage: getHtmlElement('button', 'open-app-page'),
 }
 export const disableConfigTarget = [button.start, button.repeat]
 export const switchInputAnswerBoxTab = {

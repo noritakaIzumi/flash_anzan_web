@@ -40,6 +40,7 @@ import {
 } from './flash/flashParamStorage.js'
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
+import { Browser } from '@capacitor/browser'
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -239,6 +240,21 @@ function clearInputAnswerBox(): void {
     inputAnswerBoxTouchActual.value = ''
 }
 
+function hideOpenAppPageButton(): void {
+    if (import.meta.env.MODE !== 'mobile') {
+        button.openAppPage.classList.add('d-none')
+        return
+    }
+
+    const url = import.meta.env.VITE_APP_STORE_URL
+    if (url === undefined) {
+        throw Error('app store url is not defined')
+    }
+    button.openAppPage.addEventListener('touchend', () => {
+        void Browser.open({ url })
+    })
+}
+
 ;(() => {
     const setup = async (): Promise<void> => {
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
@@ -254,6 +270,7 @@ function clearInputAnswerBox(): void {
             doLoadParams()
             changeMode('addition')
             registerShortcuts()
+            hideOpenAppPageButton()
         })()
 
         // タッチデバイスの回答入力
