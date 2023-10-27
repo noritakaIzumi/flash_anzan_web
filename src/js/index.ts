@@ -41,6 +41,7 @@ import {
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
 import { Browser } from '@capacitor/browser'
+import { AppUpdate, AppUpdateAvailability } from '@capawesome/capacitor-app-update'
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -256,7 +257,18 @@ function hideOpenAppPageButton(): void {
 }
 
 ;(() => {
+    const startFlexibleUpdate = async (): Promise<void> => {
+        const result = await AppUpdate.getAppUpdateInfo()
+        if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
+            return
+        }
+        if (result.flexibleUpdateAllowed ?? false) {
+            await AppUpdate.startFlexibleUpdate()
+        }
+    }
+
     const setup = async (): Promise<void> => {
+        await startFlexibleUpdate()
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
         isMutedConfig.isMuted = checkboxes.isMuted.checked
