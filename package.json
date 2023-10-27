@@ -1,6 +1,6 @@
 {
   "name": "aurora-flash",
-  "version": "0.39.11",
+  "version": "0.40.0",
   "description": "フラッシュ暗算",
   "type": "module",
   "dependencies": {

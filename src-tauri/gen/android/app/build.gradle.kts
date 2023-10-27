@@ -19,8 +19,8 @@ android {
         applicationId = "com.fairyselect.aurora_flash"
         minSdk = 24
         targetSdk = 33
-        versionCode = 20
-        versionName = "0.39.11"
+        versionCode = 21
+        versionName = "0.40.0"
     }
     signingConfigs {
         create("release") {
