@@ -41,7 +41,7 @@ import {
 import { isMutedConfig } from './sound/isMutedConfig.js'
 import { flashParamSchema } from '../config/flashParamSchema.js'
 import { Browser } from '@capacitor/browser'
-import { AppUpdate, AppUpdateAvailability } from '@capawesome/capacitor-app-update'
+import { checkMobileAppUpdate } from './mobile.js'
 
 interface SetFlashTimeOutHandle {
     value?: number
@@ -363,30 +363,9 @@ void (async () => {
         await waitLoadedPromise
     }
 
-    // check for updates on mobile
-    await (async () => {
-        if (import.meta.env.MODE !== 'mobile') {
-            return
-        }
-        const startFlexibleUpdate = async (): Promise<void> => {
-            const result = await AppUpdate.getAppUpdateInfo()
-            if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
-                return
-            }
-            if (result.flexibleUpdateAllowed ?? false) {
-                await AppUpdate.startFlexibleUpdate()
-            }
-        }
-        const completeFlexibleUpdate = async (): Promise<void> => {
-            await AppUpdate.completeFlexibleUpdate()
-        }
-
-        await startFlexibleUpdate()
-        await completeFlexibleUpdate()
-    })()
-
     // autoload
-    ;(() => {
+    await (async () => {
+        await checkMobileAppUpdate()
         ;(() => {
             // default value
             checkboxes.isMuted.checked = flashParamSchema.common.isMuted.default
