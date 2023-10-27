@@ -13,6 +13,7 @@ export const htmlElements = {
     soundExtension: getHtmlElement('select', 'sound-extension'),
     errorMessage: getHtmlElement('div', 'error-message'),
     inAppUpdateNotification: getHtmlElement('div', 'in-app-update-notification'),
+    inAppUpdateNotificationMessage: getHtmlElement('span', 'in-app-update-notification--message'),
 }
 export const headerMessage = getHtmlElement('div', 'header-message')
 export const questionNumberArea = getHtmlElement('div', 'question-number-area')
