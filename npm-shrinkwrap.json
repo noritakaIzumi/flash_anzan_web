@@ -13,6 +13,7 @@
         "@capacitor/browser": "^5.1.0",
         "@capacitor/cli": "^5.4.2",
         "@capacitor/core": "^5.4.2",
+        "@capawesome/capacitor-app-update": "^5.0.1",
         "@tauri-apps/api": "^2.0.0-alpha.8",
         "bootstrap": "^5.1.3",
         "bootstrap-icons": "^1.10.5",
@@ -184,6 +185,24 @@
       "integrity": "sha512-XbR1vldJFzBWHeoGPpgfNy3Zhjf0NxXdHEaGNANWVBg0ZWG2gwFr1dcRALUUQtbwrEEkCCNiLYg4YiQPRk7SEQ==",
       "dependencies": {
         "tslib": "^2.1.0"
+      }
+    },
+    "node_modules/@capawesome/capacitor-app-update": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/@capawesome/capacitor-app-update/-/capacitor-app-update-5.0.1.tgz",
+      "integrity": "sha512-A5I9hEFwqXYJ/Mc3xx+A0LLm0VrpPTcST9wQ08Mh+ybReDEUNwC+JEEppurJX+/tAUttnB6bZ/Kjh1jqsYPTkA==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/capawesome-team/"
+        },
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/capawesome"
+        }
+      ],
+      "peerDependencies": {
+        "@capacitor/core": "^5.0.0"
       }
     },
     "node_modules/@cspotcode/source-map-support": {
