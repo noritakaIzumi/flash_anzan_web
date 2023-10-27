@@ -1,12 +1,12 @@
 {
   "name": "aurora-flash",
-  "version": "0.39.6",
+  "version": "0.39.8",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "aurora-flash",
-      "version": "0.39.6",
+      "version": "0.39.8",
       "license": "MIT",
       "dependencies": {
         "@capacitor/android": "^5.4.2",
