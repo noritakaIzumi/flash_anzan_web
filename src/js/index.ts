@@ -256,19 +256,8 @@ function hideOpenAppPageButton(): void {
     })
 }
 
-;(() => {
-    const startFlexibleUpdate = async (): Promise<void> => {
-        const result = await AppUpdate.getAppUpdateInfo()
-        if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
-            return
-        }
-        if (result.flexibleUpdateAllowed ?? false) {
-            await AppUpdate.startFlexibleUpdate()
-        }
-    }
-
+void (async () => {
     const setup = async (): Promise<void> => {
-        await startFlexibleUpdate()
         const waitLoadedPromise = waitLoaded(APP_CONFIG_WAIT_SOUNDS_AND_FONTS_LOADED_TIMEOUT)
 
         isMutedConfig.isMuted = checkboxes.isMuted.checked
@@ -373,6 +362,28 @@ function hideOpenAppPageButton(): void {
 
         await waitLoadedPromise
     }
+
+    // check for updates on mobile
+    await (async () => {
+        if (import.meta.env.MODE !== 'mobile') {
+            return
+        }
+        const startFlexibleUpdate = async (): Promise<void> => {
+            const result = await AppUpdate.getAppUpdateInfo()
+            if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
+                return
+            }
+            if (result.flexibleUpdateAllowed ?? false) {
+                await AppUpdate.startFlexibleUpdate()
+            }
+        }
+        const completeFlexibleUpdate = async (): Promise<void> => {
+            await AppUpdate.completeFlexibleUpdate()
+        }
+
+        await startFlexibleUpdate()
+        await completeFlexibleUpdate()
+    })()
 
     // autoload
     ;(() => {
