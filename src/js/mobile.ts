@@ -48,7 +48,7 @@ export async function checkMobileAppUpdate(): Promise<void> {
                         const bytesDownloaded = state.bytesDownloaded as number
                         const totalBytesToDownloadMb = Math.floor(totalBytesToDownload / 10000) / 100
                         const downloadedPercentage = Math.floor((bytesDownloaded * 100) / totalBytesToDownload)
-                        htmlElements.inAppUpdateNotificationMessage.innerText += `(${totalBytesToDownloadMb} MB のうち ${downloadedPercentage}%)`
+                        htmlElements.inAppUpdateNotificationMessage.innerText += ` (${totalBytesToDownloadMb} MB のうち ${downloadedPercentage}%)`
                         break
                     }
                     default:
