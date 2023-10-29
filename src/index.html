@@ -227,6 +227,10 @@
                    for="fix-number-interval">表示間隔を固定したまま口数を変更する</label>
         </div>
         <div id="error-message" class="d-none d-flex justify-content-start my-3 text-warning"></div>
+        <div id="in-app-update-notification" class="d-none d-flex justify-content-start align-items-center my-3">
+            <span id="in-app-update-notification--message" class="text-warning"></span>
+            <button type="button" id="complete-flexible-update-button" class="d-none btn btn-warning">インストールする</button>
+        </div>
     </div>
 </div>
 
@@ -614,6 +618,7 @@
                 <%- readmeAsHtml %>
             </div>
             <div class="modal-footer">
+                <button id="open-app-page" type="button" class="btn btn-primary">評価する/更新を確認</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
             </div>
         </div>

@@ -18,7 +18,8 @@
     "./vite.config.ts",
     "./src/public/sw.js",
     "./src/**/*.ts",
-    "./tools/**/*.ts"
+    "./tools/**/*.ts",
+    "./capacitor.config.ts"
   ],
   "lib": [
     "WebWorker"

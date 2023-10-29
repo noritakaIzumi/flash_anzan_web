@@ -76,25 +76,28 @@ function main() {
   sed -i -Ee 's/^(\s*version = ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' Cargo.toml
   cargo generate-lockfile
 
-  # build.gradle.kts: versionCode
-  sed -i -Ee 's/^(\s*versionName = ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' gen/android/app/build.gradle.kts
+  popd || return 1
+
+  # build.gradle: versionCode
+  sed -i -Ee 's/^(\s*versionName ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' android/app/build.gradle
+  sed -i -Ee 's/^(\s*versionName = ")'"$version_name_regex"'(")/\1'"$new_version_name"'\3/' src-tauri/gen/android/app/build.gradle.kts
 
   # Version Code
 
   # build.gradle.kts: versionCode
   local current_version_code
-  current_version_code=$(grep -Po '(?<=versionCode = )[0-9]+' gen/android/app/build.gradle.kts)
+  current_version_code=$(grep -Po '(?<=versionCode )[0-9]+' android/app/build.gradle)
   if [[ "$current_version_code" =~ ^\d+$ ]]; then
-    echo 'versionCode in build.gradle.kts is invalid'
+    echo 'versionCode in build.gradle is invalid'
     return 1
   fi
 
   local new_version_code
   new_version_code=$((current_version_code + 1))
   echo 'current versionCode is '"$current_version_code"' so new versionCode is '"$new_version_code"'.'
-  sed -i -Ee 's/^(\s*versionCode = )[0-9]+/\1'"$new_version_code"'/' gen/android/app/build.gradle.kts
+  sed -i -Ee 's/^(\s*versionCode )[0-9]+/\1'"$new_version_code"'/' android/app/build.gradle
+  sed -i -Ee 's/^(\s*versionCode = )[0-9]+/\1'"$new_version_code"'/' src-tauri/gen/android/app/build.gradle.kts
 
-  popd || return 1
   popd || return 1
 }
 

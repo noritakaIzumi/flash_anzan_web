@@ -55,8 +55,14 @@
         }
       }
     },
+    "allowlist": {
+      "all": false
+    },
     "security": {
       "csp": null
+    },
+    "updater": {
+      "active": false
     }
   }
 }
