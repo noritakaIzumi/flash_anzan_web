@@ -7,7 +7,7 @@ const filename = fileURLToPath(import.meta.url)
 const rootPath = path.dirname(path.dirname(filename))
 
 const md = new MarkdownIt()
-const content = fs.readFileSync(`${rootPath}/README.md`).toString()
+const content = fs.readFileSync(`${rootPath}/src/html/README.md`).toString()
 
 const matched = content.match(/(?<=# \S+\n)[\s\S]*/)
 if (matched === null) {
