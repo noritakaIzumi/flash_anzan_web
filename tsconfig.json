@@ -19,7 +19,6 @@
     "./src/public/sw.js",
     "./src/**/*.ts",
     "./tools/**/*.ts",
-    "./capacitor.config.ts"
   ],
   "lib": [
     "WebWorker"

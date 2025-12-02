@@ -26,6 +26,8 @@ export interface FlashParamElements {
     }
 }
 
+flashParamSchema.common.offset.default = Number(import.meta.env.VITE_APP_DEFAULT_OFFSET ?? 0)
+
 export const flashParamElements: FlashParamElements = {
     addition: {
         digit: new FlashNumberWithDifficultySupportParam({

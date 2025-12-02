@@ -1,13 +1,5 @@
 import { type FlashParamSchema } from '../js/flash/flashParamSchema.js'
 
-function getDefaultOffset(): number {
-    const offset = import.meta.env.VITE_APP_DEFAULT_OFFSET
-    if (offset === undefined) {
-        return 0
-    }
-    return Number(offset)
-}
-
 export const flashParamSchema: FlashParamSchema = {
     addition: {
         digit: {
@@ -63,7 +55,7 @@ export const flashParamSchema: FlashParamSchema = {
         offset: {
             min: -500,
             max: 500,
-            default: getDefaultOffset(),
+            default: 0,
         },
         isMuted: { default: false },
         soundExtension: { default: 'wav' },
