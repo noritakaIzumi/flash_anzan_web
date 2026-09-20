@@ -36,6 +36,21 @@ winget install --exact --id Microsoft.VisualStudio.2022.BuildTools --override "-
 
 インストールオプションの詳細は [Microsoft の公式ドキュメント](https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=vs-2022) を参照してください。
 
+### MSIX Packaging Tool のインストール（MSIX 形式で配布する場合）
+
+ビルドしたデスクトップアプリのインストーラーを MSIX 形式に変換する場合は、MSIX Packaging Tool をインストールします。Windows 10 バージョン 1809 以降（Windows 11 を含む）と、ツールを実行するための管理者権限が必要です。
+
+1. PowerShell で次のコマンドを実行します。
+
+   ```powershell
+   winget install --exact --id 9N5LW3JBCXKF --source msstore
+   ```
+
+2. Microsoft Store へのサインインを求められた場合は、Microsoft アカウントでサインインし、画面の案内に従ってインストールを完了します。
+3. スタートメニューから **MSIX Packaging Tool** を起動し、ホーム画面が表示されることを確認します。管理者権限を求められた場合は許可してください。
+
+Microsoft Store で **MSIX Packaging Tool** を検索してインストールすることもできます。詳細やオフライン環境でのインストール方法は [Microsoft の公式ドキュメント](https://learn.microsoft.com/ja-jp/windows/msix/packaging-tool/tool-overview) を参照してください。
+
 ### ビルド
 
 スタートメニューから **Developer PowerShell for VS 2022** を開き、プロジェクトのルートディレクトリで実行します。
