@@ -1,12 +1,9 @@
 # flash_anzan_web
 
-## GitHub Pages へのデプロイ
+## AWS Amplify へのデプロイ
 
-GitHub リポジトリの **Settings → Pages → Build and deployment → Source** で **GitHub Actions** を選択してください。
-設定の詳細は [GitHub の公式ドキュメント](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) を参照してください。
-
-`main` への push で [pages.yml](.github/workflows/pages.yml) が `npm ci` と `npm run build` を実行し、`dist` を GitHub Pages に公開します。
-Node.js のバージョンは `package.json` の `volta.node` を使用します。
+Web サイトは AWS Amplify で公開しています。
+ビルド設定は [amplify.yml](amplify.yml) を参照してください。`npm ci` と `npm run build` を実行し、`dist` を公開対象にしています。
 
 ## Windows でのデスクトップアプリのビルド
 
