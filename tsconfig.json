@@ -16,11 +16,7 @@
   },
   "include": [
     "./vite.config.ts",
-    "./src/public/sw.js",
     "./src/**/*.ts",
     "./tools/**/*.ts",
-  ],
-  "lib": [
-    "WebWorker"
   ]
 }
