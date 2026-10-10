@@ -1,4 +1,4 @@
-import MarkdownIt = require('markdown-it')
+import MarkdownIt from 'markdown-it'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import * as fs from 'fs'
